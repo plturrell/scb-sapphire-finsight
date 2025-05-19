@@ -39,6 +39,7 @@ import { VietnamMonteCarloLlmAnalysis } from './VietnamMonteCarloLlmAnalysis';
 import NetworkAwareDataLoader from './NetworkAwareDataLoader';
 import { useNetworkAwareLoading, useAdaptiveFetch } from '@/hooks/useNetworkAwareLoading';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { TariffAlert } from '@/types';
 
 /**
  * Vietnam Tariff Dashboard Component - Network Enhanced
@@ -74,7 +75,7 @@ const VietnamTariffDashboard: React.FC = () => {
   );
 
   // Mock data fetch function for network-aware loader
-  const fetchTariffAlerts = async (offset: number, limit: number) => {
+  const fetchTariffAlerts = async (offset: number, limit: number): Promise<TariffAlert[]> => {
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
     return mockVietnamTariffAlerts.slice(offset, offset + limit);
   };
