@@ -5,18 +5,20 @@
   "installCommand": "npm ci --force",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "nodejs": {
-    "nodeVersion": "18"
-  },
   "env": {
     "NODE_ENV": "production",
     "SKIP_ENV_VALIDATION": "true"
   },
   "build": {
     "env": {
-      "NODE_ENV": "production",
+      "NODE_ENV": "production", 
       "NEXT_TELEMETRY_DISABLED": "1",
       "SKIP_ENV_VALIDATION": "true"
+    }
+  },
+  "functions": {
+    "pages/api/[...slug].js": {
+      "runtime": "nodejs18.x"
     }
   },
   "headers": [
