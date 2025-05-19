@@ -345,9 +345,9 @@ export default function ModernLayout({ children }: LayoutProps) {
             onClick={() => setJouleOpen(true)}
           >
             <div className="relative">
-              <Sparkles className="w-5 h-5 text-blue-600" />
+              <Sparkles className="w-5 h-5 text-purple-600" />
               <div className="absolute -inset-1">
-                <div className="animate-pulse w-7 h-7 rounded bg-blue-400 opacity-20"></div>
+                <div className="animate-pulse w-7 h-7 rounded bg-purple-400 opacity-20"></div>
               </div>
             </div>
           </button>
@@ -743,22 +743,27 @@ export default function ModernLayout({ children }: LayoutProps) {
       {jouleOpen && (
         <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out transform translate-x-0">
           {/* Joule Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-purple-50 to-violet-50">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Sparkles className="w-8 h-8 text-blue-600" />
+                <Sparkles className="w-8 h-8 text-purple-600" />
                 <div className="absolute -inset-1">
-                  <div className="animate-pulse w-10 h-10 rounded bg-blue-400 opacity-20"></div>
+                  <div className="animate-pulse w-10 h-10 rounded bg-purple-400 opacity-20"></div>
                 </div>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Joule AI Assistant</h2>
-                <p className="text-sm text-gray-600">Powered by SAP</p>
+                <h2 className="text-lg font-semibold text-gray-900">Joule</h2>
+                <p className="text-sm text-gray-600 flex items-center gap-2">
+                  Powered by 
+                  <svg width="32" height="16" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 30V0h14.4c4.5 0 8.1 1.4 10.8 4.2 2.7 2.8 4 6.3 4 10.8s-1.3 8-4 10.8c-2.7 2.8-6.3 4.2-10.8 4.2H0zm5.4-5.4h9c3 0 5.4-.9 7.2-2.7 1.8-1.8 2.7-4.2 2.7-7.2s-.9-5.4-2.7-7.2c-1.8-1.8-4.2-2.7-7.2-2.7h-9v19.8zM45 30l-9-30h5.7l6.3 21 6.3-21H60l-9 30h-6z" fill="#0074D0"/>
+                  </svg>
+                </p>
               </div>
             </div>
             <button
               onClick={() => setJouleOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-purple-100 rounded-lg transition-colors"
             >
               <X className="w-5 h-5 text-gray-500" />
             </button>

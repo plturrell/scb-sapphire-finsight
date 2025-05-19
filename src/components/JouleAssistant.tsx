@@ -14,7 +14,7 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
   const [messages, setMessages] = useState<JouleMessage[]>([
     {
       id: '1',
-      content: 'Hello! I am Joule, your AI assistant for SCB Sapphire FinSight. How can I help you with your financial analytics today?',
+      content: 'Hello! I am Joule, your SAP AI assistant. How can I help you with your financial analytics today?',
       sender: 'assistant',
       timestamp: new Date(),
       sources: [

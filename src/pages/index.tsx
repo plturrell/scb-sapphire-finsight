@@ -50,8 +50,8 @@ export default function Dashboard() {
         {/* SCB Banner Image */}
         <div className="w-full overflow-hidden rounded-md shadow-sm mb-6 max-h-[180px]">
           <Image 
-            src="/images/banner.png" 
-            alt="SCB Sapphire FinSight Banner" 
+            src="/assets/finsight_Banner.png" 
+            alt="FinSight Banner" 
             width={1200} 
             height={180} 
             className="w-full object-cover"
