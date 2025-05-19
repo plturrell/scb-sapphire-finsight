@@ -34,6 +34,8 @@ interface DeviceCapabilities {
   } | null;
   // Performance tier
   tier: 'high' | 'medium' | 'low';
+  // Screen size
+  screenSize: 'mobile' | 'tablet' | 'desktop';
 }
 
 export function useDeviceCapabilities(): DeviceCapabilities {
@@ -54,6 +56,7 @@ export function useDeviceCapabilities(): DeviceCapabilities {
     prefersColorScheme: 'light',
     battery: null,
     tier: 'medium',
+    screenSize: 'desktop',
   });
 
   useEffect(() => {
@@ -102,6 +105,16 @@ export function useDeviceCapabilities(): DeviceCapabilities {
           // Battery API might be restricted
         }
       }
+
+      // Calculate screen size
+      const width = window.innerWidth;
+      let screenSize: 'mobile' | 'tablet' | 'desktop' = 'desktop';
+      if (width < 768) {
+        screenSize = 'mobile';
+      } else if (width < 1024) {
+        screenSize = 'tablet';
+      }
+      newCapabilities.screenSize = screenSize;
 
       // Calculate performance tier
       const tier = calculatePerformanceTier({

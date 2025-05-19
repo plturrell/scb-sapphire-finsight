@@ -111,11 +111,11 @@ export function useNetworkAwareLoading() {
   }, [strategy.imageSizing]);
 
   // Progressive loading for large data sets
-  const loadDataProgressive = useCallback(async (
-    fetchFunction: (offset: number, limit: number) => Promise<any[]>,
+  const loadDataProgressive = useCallback(async <T>(
+    fetchFunction: (offset: number, limit: number) => Promise<T[]>,
     totalSize?: number
-  ) => {
-    const chunks: any[] = [];
+  ): Promise<T[]> => {
+    const chunks: T[] = [];
     let offset = 0;
     const chunkSize = Math.floor(strategy.chunkSize / 1024); // Convert to KB for records
 
@@ -164,7 +164,7 @@ export function useNetworkAwareLoading() {
   }, [strategy.enablePrefetch, strategy.chunkSize]);
 
   // Cache with network-aware expiration
-  const cacheWithStrategy = useCallback(async (key: string, fetchFunction: () => Promise<any>) => {
+  const cacheWithStrategy = useCallback(async <T>(key: string, fetchFunction: () => Promise<T>): Promise<T> => {
     const cacheKey = `nw-cache-${key}`;
     const cached = localStorage.getItem(cacheKey);
     
@@ -221,11 +221,11 @@ export function useNetworkAwareLoading() {
   }, [connection]);
 
   // Batch API requests for slow connections
-  const batchRequests = useCallback(async (requests: (() => Promise<any>)[]) => {
+  const batchRequests = useCallback(async <T>(requests: (() => Promise<T>)[]): Promise<T[]> => {
     const batchSize = connection.type === '2g' || connection.type === 'slow-2g' ? 1 :
                      connection.type === '3g' ? 3 : 5;
 
-    const results: any[] = [];
+    const results: T[] = [];
     for (let i = 0; i < requests.length; i += batchSize) {
       const batch = requests.slice(i, i + batchSize);
       const batchResults = await Promise.all(batch.map(req => req()));

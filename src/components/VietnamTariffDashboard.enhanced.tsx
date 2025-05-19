@@ -378,8 +378,8 @@ const VietnamTariffDashboard: React.FC = () => {
       {activeTab === 1 && (
         <VietnamMonteCarloHistory 
           onViewSimulation={handleViewSimulation}
-          onCompareSimulations={handleCompareSimulations}
-          fullAccess={loadHeavyContent}
+          onCompare={(ids) => handleCompareSimulations(ids[0])}
+          onNewSimulation={handleNewSimulation}
         />
       )}
 
@@ -399,9 +399,9 @@ const VietnamTariffDashboard: React.FC = () => {
             </Alert>
           ) : (
             <VietnamMonteCarloLlmAnalysis 
-              simulationId={selectedSimulationId} 
-              comparisonId={selectedComparisonId}
-              reducedMode={!loadHeavyContent}
+              analysis={llmAnalysis}
+              onGenerateReport={() => console.log('Generate report')}
+              onViewDetailedAnalysis={() => console.log('View detailed analysis')}
             />
           )}
         </Box>
