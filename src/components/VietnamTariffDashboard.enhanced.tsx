@@ -254,7 +254,7 @@ const VietnamTariffDashboard: React.FC = () => {
                                 {loadHeavyContent && (
                                   <TableCell>
                                     <Typography variant="caption">
-                                      {(alert.confidence * 100).toFixed(0)}%
+                                      {((alert.confidence || 0) * 100).toFixed(0)}%
                                     </Typography>
                                   </TableCell>
                                 )}
@@ -285,13 +285,13 @@ const VietnamTariffDashboard: React.FC = () => {
                               }}
                             >
                               <Typography variant="body2" fontWeight="medium" gutterBottom>
-                                {prediction.sector}
+                                {prediction.category}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                Tariff reduction: {(prediction.probabilityOfTariffReduction * 100).toFixed(0)}%
+                                Confidence: {((prediction.confidence || 0) * 100).toFixed(0)}%
                               </Typography>
                               <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                                Impact: {prediction.estimatedImpact}
+                                Impact: {prediction.impactLevel}
                               </Typography>
                               <Typography variant="caption" display="block">
                                 Timeframe: {prediction.timeframe}
@@ -363,7 +363,7 @@ const VietnamTariffDashboard: React.FC = () => {
                                   color={correlation.correlationScore > 0.7 ? 'success.main' :
                                          correlation.correlationScore > 0.5 ? 'warning.main' : 'text.secondary'}
                                 >
-                                  {correlation.correlationScore.toFixed(2)}
+                                  {(correlation.influence || 0).toFixed(2)}
                                 </Typography>
                               </TableCell>
                             </TableRow>
