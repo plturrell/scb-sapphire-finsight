@@ -85,11 +85,11 @@ export default function Layout({ children }: LayoutProps) {
         <div className="flex items-center h-full">
           <Link href="/" className="flex items-center">
             <Image 
-              src="/images/sc-logo.png" 
+              src="https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png" 
               alt="Standard Chartered" 
-              width={180} 
-              height={40} 
-              className="h-8 w-auto lg:h-10" 
+              width={150} 
+              height={36} 
+              className="h-7 w-auto lg:h-8" 
               priority
             />
           </Link>

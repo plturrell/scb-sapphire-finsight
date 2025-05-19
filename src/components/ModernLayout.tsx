@@ -300,13 +300,13 @@ export default function ModernLayout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[rgb(var(--fiori-content-bg))]">
-      {/* Modern Header */}
-      <header className="fiori-shell-header flex items-center px-4 justify-between z-50 h-14 lg:h-12 safe-top">
-        {/* Mobile Menu Button */}
+      {/* Modern Header - White background */}
+      <header className="bg-white shadow-sm border-b border-gray-200 flex items-center px-4 z-50 h-14">
+        {/* Hamburger Menu Button - Always visible */}
         <button
-          onClick={() => setSidebarOpen(true)}
-          className="lg:hidden p-2 -ml-2 text-white touch-manipulation"
-          aria-label="Open menu"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors mr-4"
+          aria-label="Toggle menu"
         >
           <Menu className="w-6 h-6" />
         </button>
@@ -315,11 +315,11 @@ export default function ModernLayout({ children }: LayoutProps) {
         <div className="flex items-center h-full">
           <Link href="/" className="flex items-center">
             <Image 
-              src="/images/sc-logo.png" 
+              src="https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png" 
               alt="Standard Chartered" 
-              width={180} 
-              height={40} 
-              className="h-8 w-auto lg:h-10" 
+              width={150} 
+              height={36} 
+              className="h-7 w-auto lg:h-8" 
               priority
             />
           </Link>
@@ -334,7 +334,7 @@ export default function ModernLayout({ children }: LayoutProps) {
           
           {/* App Finder - Desktop only */}
           <button 
-            className="hidden lg:flex h-full px-3 text-white hover:bg-white/10 items-center space-x-1 transition-colors"
+            className="hidden lg:flex h-full px-3 text-gray-700 hover:bg-gray-100 items-center space-x-1 transition-colors rounded"
             title="App Finder"
             onClick={() => setAppFinderOpen(true)}
           >
@@ -343,7 +343,7 @@ export default function ModernLayout({ children }: LayoutProps) {
 
           {/* Help - Desktop only */}
           <button 
-            className="hidden lg:flex h-full px-3 text-white hover:bg-white/10 transition-colors"
+            className="hidden lg:flex h-full px-3 text-gray-700 hover:bg-gray-100 transition-colors rounded"
             title="Help"
           >
             <HelpCircle className="w-5 h-5" />
@@ -352,7 +352,7 @@ export default function ModernLayout({ children }: LayoutProps) {
           {/* Notifications with Real-time Updates */}
           <div className="relative">
             <button 
-              className="h-full px-2 lg:px-3 text-white hover:bg-white/10 relative touch-manipulation transition-colors"
+              className="h-full px-2 lg:px-3 text-gray-700 hover:bg-gray-100 relative touch-manipulation transition-colors rounded"
               onClick={() => {
                 setNotificationsOpen(!notificationsOpen);
                 if (userMenuOpen) setUserMenuOpen(false);
@@ -472,14 +472,14 @@ export default function ModernLayout({ children }: LayoutProps) {
           {/* User Menu */}
           <div className="relative">
             <button 
-              className="h-full px-2 lg:px-3 flex items-center gap-1 lg:gap-2 text-white hover:bg-white/10 touch-manipulation transition-colors"
+              className="h-full px-2 lg:px-3 flex items-center gap-1 lg:gap-2 text-gray-700 hover:bg-gray-100 touch-manipulation transition-colors rounded"
               onClick={() => {
                 setUserMenuOpen(!userMenuOpen);
                 if (notificationsOpen) setNotificationsOpen(false);
               }}
             >
-              <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-white/20 flex items-center justify-center">
-                <User className="w-4 h-4" />
+              <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="w-4 h-4 text-gray-600" />
               </div>
               <span className="text-sm hidden md:inline font-medium">Amanda Chen</span>
               <ChevronDown className="w-4 h-4 hidden lg:inline" />
@@ -642,11 +642,11 @@ export default function ModernLayout({ children }: LayoutProps) {
         </div>
         )}
 
-        {/* Desktop Sidebar */}
-        <div className="hidden lg:block w-64 fiori-sidebar">
+        {/* Desktop Sidebar - Collapsible */}
+        <div className={`hidden lg:block ${sidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 ease-in-out bg-white border-r border-gray-200`}>
           <div className="h-full flex flex-col">
-            <div className="h-12 px-4 border-b flex items-center">
-              <span className="text-sm font-medium text-gray-800">FinSight Spaces</span>
+            <div className="h-12 px-4 border-b flex items-center justify-center">
+              {sidebarOpen && <span className="text-sm font-medium text-gray-800">FinSight Spaces</span>}
             </div>
             <nav className="flex-1 overflow-y-auto py-2">
               {navigation.map((item) => {
@@ -655,10 +655,11 @@ export default function ModernLayout({ children }: LayoutProps) {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`fiori-sidebar-item flex items-center space-x-3 ${isActive ? 'active' : ''}`}
+                    className={`flex items-center ${sidebarOpen ? 'px-4' : 'px-3 justify-center'} py-3 hover:bg-gray-100 transition-colors ${isActive ? 'bg-primary text-white hover:bg-primary' : 'text-gray-700'}`}
+                    title={!sidebarOpen ? item.name : undefined}
                   >
-                    <item.icon className="w-5 h-5" />
-                    <span>{item.name}</span>
+                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    {sidebarOpen && <span className="ml-3">{item.name}</span>}
                   </Link>
                 );
               })}
