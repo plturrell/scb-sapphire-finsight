@@ -315,11 +315,11 @@ export default function ModernLayout({ children }: LayoutProps) {
         <div className="flex items-center h-full">
           <Link href="/" className="flex items-center">
             <Image 
-              src="/images/finsight-logo.svg" 
-              alt="FinSight" 
-              width={150} 
+              src="/images/sc-logo.png" 
+              alt="Standard Chartered" 
+              width={180} 
               height={40} 
-              className="h-8 w-auto lg:h-9" 
+              className="h-8 w-auto lg:h-10" 
               priority
             />
           </Link>
