@@ -1,0 +1,1054 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "JournalEntryItemCodes.v1.PostingKey": {
+      "__abapOriginalName": "I_PostingKey",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "tbsl",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "PostingKey"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bschl"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIPOSTINGKEY",
+      "@EndUserText.label": "Posting Key",
+      "@ObjectModel.compositionRoot": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "PostingKey",
+      "@ObjectModel.sapObjectNodeType.name": "PostingKey",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "PostingKey": {
+          "__abapOriginalName": "PostingKey",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Key",
+          "@EndUserText.label": "Posting Key",
+          "@EndUserText.quickInfo": "Posting Key",
+          "@ObjectModel.text.association": {
+            "=": "_PostingKeyText"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "DebitCreditCode": {
+          "__abapOriginalName": "DebitCreditCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Debit/Credit Code",
+          "@EndUserText.label": "Debit/Credit Code",
+          "@EndUserText.quickInfo": "Debit/Credit Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "FinancialAccountType": {
+          "__abapOriginalName": "FinancialAccountType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Account Type",
+          "@EndUserText.label": "Account Type",
+          "@EndUserText.quickInfo": "Account Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsSalesRelated": {
+          "__abapOriginalName": "IsSalesRelated",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Sl",
+          "@EndUserText.label": "Sales-Related Item",
+          "@EndUserText.quickInfo": "Indicator: Sales-Related Item",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "IsUsedInPaymentTransaction": {
+          "__abapOriginalName": "IsUsedInPaymentTransaction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Payment",
+          "@EndUserText.label": "Payment Transaction",
+          "@EndUserText.quickInfo": "Indicator: Is Posting Key Used in a Payment Transaction?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ReversalPostingKey": {
+          "__abapOriginalName": "ReversalPostingKey",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reverse",
+          "@EndUserText.label": "Reversal Posting Key",
+          "@EndUserText.quickInfo": "Posting Key for Reversal/Reverse Entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "IsSpecialGLTransaction": {
+          "__abapOriginalName": "IsSpecialGLTransaction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Special G/L",
+          "@EndUserText.label": "Special G/L",
+          "@EndUserText.quickInfo": "Indicator: Posting Key for Special G/L Transactions",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_PostingKeyText": {
+          "__abapOriginalName": "_PostingKeyText",
+          "@ObjectModel.association.type": [
+            {
+              "#": "TO_COMPOSITION_CHILD"
+            }
+          ],
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "JournalEntryItemCodes.v1.PostingKeyText",
+          "on": [
+            {
+              "ref": [
+                "PostingKey"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PostingKeyText",
+                "PostingKey"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_PostingKeyText"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "JournalEntryItemCodes.v1.PostingKey_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "JournalEntryItemCodes.v1.PostingKey",
+        "originalEntityName": "journalentryitemcodes.PostingKey"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "JournalEntryItemCodes.v1.PostingKey_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "PostingKey"
+              ]
+            },
+            {
+              "ref": [
+                "DebitCreditCode"
+              ]
+            },
+            {
+              "ref": [
+                "FinancialAccountType"
+              ]
+            },
+            {
+              "ref": [
+                "IsSalesRelated"
+              ]
+            },
+            {
+              "ref": [
+                "IsUsedInPaymentTransaction"
+              ]
+            },
+            {
+              "ref": [
+                "ReversalPostingKey"
+              ]
+            },
+            {
+              "ref": [
+                "IsSpecialGLTransaction"
+              ]
+            },
+            {
+              "ref": [
+                "_PostingKeyText"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_PostingKeyText": {
+              "__abapOriginalName": "_PostingKeyText",
+              "@ObjectModel.association.type": [
+                {
+                  "#": "TO_COMPOSITION_CHILD"
+                }
+              ],
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "JournalEntryItemCodes.v1.PostingKeyText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "PostingKey"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_PostingKeyText",
+                    "PostingKey"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_PostingKeyText"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "JournalEntryItemCodes.v1.PostingKeyText": {
+      "__abapOriginalName": "I_PostingKeyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "tbslt",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "Language"
+            },
+            {
+              "=": "PostingKey"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "spras"
+            },
+            {
+              "=": "bschl"
+            }
+          ],
+          "filter": [
+            {
+              "operator": {
+                "#": "EQ"
+              },
+              "tableElement": "umskz",
+              "value": ""
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Posting Key - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "PostingKey",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "PostingKey": {
+          "__abapOriginalName": "PostingKey",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Key",
+          "@EndUserText.label": "Posting Key",
+          "@EndUserText.quickInfo": "Posting Key",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "PostingKeyName"
+            }
+          ]
+        },
+        "PostingKeyName": {
+          "__abapOriginalName": "PostingKeyName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Key Name",
+          "@EndUserText.label": "Posting Key Name",
+          "@EndUserText.quickInfo": "Posting Key Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_PostingKey": {
+          "__abapOriginalName": "_PostingKey",
+          "@ObjectModel.association.type": [
+            {
+              "#": "TO_COMPOSITION_ROOT"
+            },
+            {
+              "#": "TO_COMPOSITION_PARENT"
+            }
+          ],
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "JournalEntryItemCodes.v1.PostingKey",
+          "on": [
+            {
+              "ref": [
+                "PostingKey"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PostingKey",
+                "PostingKey"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_PostingKey"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "JournalEntryItemCodes.v1.PostingKeyText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "JournalEntryItemCodes.v1.PostingKeyText",
+        "originalEntityName": "journalentryitemcodes.PostingKeyText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "JournalEntryItemCodes.v1.PostingKeyText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "PostingKey"
+              ]
+            },
+            {
+              "ref": [
+                "PostingKeyName"
+              ]
+            },
+            {
+              "ref": [
+                "_PostingKey"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_PostingKey": {
+              "__abapOriginalName": "_PostingKey",
+              "@ObjectModel.association.type": [
+                {
+                  "#": "TO_COMPOSITION_ROOT"
+                },
+                {
+                  "#": "TO_COMPOSITION_PARENT"
+                }
+              ],
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": 1
+              },
+              "target": "JournalEntryItemCodes.v1.PostingKey",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "PostingKey"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_PostingKey",
+                    "PostingKey"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_PostingKey"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "JournalEntryItemCodes.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "JournalEntryItemCodes.v1.PostingKeyWithSpecialGLCode",
+        "originalEntityName": "journalentryitemcodes.PostingKeyWithSpecialGLCode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "JournalEntryItemCodes.v1.PostingKey_Delta": {
+      "__abapOriginalName": "I_PostingKey",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "tbsl",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "PostingKey"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bschl"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIPOSTINGKEY",
+      "@EndUserText.label": "Posting Key",
+      "@ObjectModel.compositionRoot": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "PostingKey",
+      "@ObjectModel.sapObjectNodeType.name": "PostingKey",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "PostingKey": {
+          "__abapOriginalName": "PostingKey",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Key",
+          "@EndUserText.label": "Posting Key",
+          "@EndUserText.quickInfo": "Posting Key",
+          "@ObjectModel.text.association": {
+            "=": "_PostingKeyText"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "DebitCreditCode": {
+          "__abapOriginalName": "DebitCreditCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Debit/Credit Code",
+          "@EndUserText.label": "Debit/Credit Code",
+          "@EndUserText.quickInfo": "Debit/Credit Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "FinancialAccountType": {
+          "__abapOriginalName": "FinancialAccountType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Account Type",
+          "@EndUserText.label": "Account Type",
+          "@EndUserText.quickInfo": "Account Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsSalesRelated": {
+          "__abapOriginalName": "IsSalesRelated",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Sl",
+          "@EndUserText.label": "Sales-Related Item",
+          "@EndUserText.quickInfo": "Indicator: Sales-Related Item",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "IsUsedInPaymentTransaction": {
+          "__abapOriginalName": "IsUsedInPaymentTransaction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Payment",
+          "@EndUserText.label": "Payment Transaction",
+          "@EndUserText.quickInfo": "Indicator: Is Posting Key Used in a Payment Transaction?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ReversalPostingKey": {
+          "__abapOriginalName": "ReversalPostingKey",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reverse",
+          "@EndUserText.label": "Reversal Posting Key",
+          "@EndUserText.quickInfo": "Posting Key for Reversal/Reverse Entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "IsSpecialGLTransaction": {
+          "__abapOriginalName": "IsSpecialGLTransaction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Special G/L",
+          "@EndUserText.label": "Special G/L",
+          "@EndUserText.quickInfo": "Indicator: Posting Key for Special G/L Transactions",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_PostingKeyText": {
+          "__abapOriginalName": "_PostingKeyText",
+          "@ObjectModel.association.type": [
+            {
+              "#": "TO_COMPOSITION_CHILD"
+            }
+          ],
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "JournalEntryItemCodes.v1.PostingKeyText",
+          "on": [
+            {
+              "ref": [
+                "PostingKey"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PostingKeyText",
+                "PostingKey"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_PostingKeyText"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "JournalEntryItemCodes.v1.PostingKey",
+      "import_meta": {
+        "qualifiedName": "JournalEntryItemCodes.v1.PostingKey",
+        "originalEntityName": "journalentryitemcodes.PostingKey"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "JournalEntryItemCodes.v1.PostingKeyText_Delta": {
+      "__abapOriginalName": "I_PostingKeyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "tbslt",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "Language"
+            },
+            {
+              "=": "PostingKey"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "spras"
+            },
+            {
+              "=": "bschl"
+            }
+          ],
+          "filter": [
+            {
+              "operator": {
+                "#": "EQ"
+              },
+              "tableElement": "umskz",
+              "value": ""
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Posting Key - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "PostingKey",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "PostingKey": {
+          "__abapOriginalName": "PostingKey",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Key",
+          "@EndUserText.label": "Posting Key",
+          "@EndUserText.quickInfo": "Posting Key",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "PostingKeyName"
+            }
+          ]
+        },
+        "PostingKeyName": {
+          "__abapOriginalName": "PostingKeyName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Key Name",
+          "@EndUserText.label": "Posting Key Name",
+          "@EndUserText.quickInfo": "Posting Key Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_PostingKey": {
+          "__abapOriginalName": "_PostingKey",
+          "@ObjectModel.association.type": [
+            {
+              "#": "TO_COMPOSITION_ROOT"
+            },
+            {
+              "#": "TO_COMPOSITION_PARENT"
+            }
+          ],
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "JournalEntryItemCodes.v1.PostingKey",
+          "on": [
+            {
+              "ref": [
+                "PostingKey"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PostingKey",
+                "PostingKey"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_PostingKey"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "JournalEntryItemCodes.v1.PostingKeyText",
+      "import_meta": {
+        "qualifiedName": "JournalEntryItemCodes.v1.PostingKeyText",
+        "originalEntityName": "journalentryitemcodes.PostingKeyText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "JournalEntryItemCodes.v1.PostingKey",
+    "all_entities": [
+      "JournalEntryItemCodes.v1.PostingKey",
+      "JournalEntryItemCodes.v1.PostingKey",
+      "JournalEntryItemCodes.v1.PostingKeyText",
+      "JournalEntryItemCodes.v1",
+      "JournalEntryItemCodes.v1.PostingKey_Delta",
+      "JournalEntryItemCodes.v1.PostingKeyText_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "JournalEntryItemCodes.v1.PostingKey",
+        "to": "JournalEntryItemCodes.v1.PostingKeyText"
+      },
+      {
+        "from": "JournalEntryItemCodes.v1.PostingKey",
+        "to": "JournalEntryItemCodes.v1.PostingKeyText"
+      },
+      {
+        "from": "JournalEntryItemCodes.v1.PostingKey",
+        "to": "JournalEntryItemCodes.v1.PostingKey"
+      },
+      {
+        "from": "JournalEntryItemCodes.v1.PostingKey",
+        "to": "JournalEntryItemCodes.v1.PostingKey"
+      },
+      {
+        "from": "JournalEntryItemCodes.v1.PostingKey",
+        "to": "JournalEntryItemCodes.v1.PostingKeyText"
+      },
+      {
+        "from": "JournalEntryItemCodes.v1.PostingKey",
+        "to": "JournalEntryItemCodes.v1.PostingKey"
+      }
+    ],
+    "invalid_references": []
+  }
+}

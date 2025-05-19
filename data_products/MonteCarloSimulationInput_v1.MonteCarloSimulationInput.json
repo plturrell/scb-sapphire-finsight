@@ -1,0 +1,243 @@
+{
+  "$schema": "https://sap.github.io/business-data-cloud-schema/MonteCarloSimulationInput.schema.json",
+  "version": "1.0.0",
+  "metadata": {
+    "description": "Monte Carlo Simulation Input Data Model",
+    "owner": "SCB FinSight Analytics",
+    "createdAt": "2025-04-01T00:00:00Z"
+  },
+  "data": [
+    {
+      "id": "40db2e0a-6fa3-4ee6-9a3f-9d9a5bb0918e",
+      "name": "Vietnam Footwear Tariff - July 2025",
+      "description": "Monte Carlo simulation for Vietnam tariffs on HS Code 6402.99 (Sports Footwear)",
+      "createdBy": "nguyen.t",
+      "createdAt": 1715875349000,
+      "simulationType": "Vietnam_Tariff",
+      "parameters": {
+        "generalParameters": [
+          {
+            "id": "baseTariffRate",
+            "name": "Base Tariff Rate",
+            "value": 25,
+            "minValue": 15,
+            "maxValue": 35,
+            "distributionType": "Normal",
+            "parameterType": "Percentage",
+            "unit": "%",
+            "description": "Baseline tariff rate applied to imported goods"
+          },
+          {
+            "id": "importVolume",
+            "name": "Import Volume",
+            "value": 5.2,
+            "minValue": 4.5,
+            "maxValue": 6.0,
+            "distributionType": "Normal",
+            "parameterType": "Currency",
+            "unit": "M",
+            "description": "Volume of imports in millions of USD"
+          }
+        ],
+        "tariffSpecificParameters": {
+          "hsCodes": ["6402.99"],
+          "countries": ["Vietnam"],
+          "tradeAgreements": ["CPTPP"],
+          "exchangeRates": [
+            {
+              "fromCurrency": "USD",
+              "toCurrency": "VND",
+              "rate": 23500,
+              "minRate": 23000,
+              "maxRate": 24200
+            }
+          ]
+        }
+      },
+      "simulationConfig": {
+        "iterations": 5000,
+        "confidenceInterval": 0.95,
+        "scenarioThresholds": {
+          "pessimistic": 0.05,
+          "realistic": 0.95,
+          "optimistic": 1.0
+        },
+        "precision": "Medium"
+      }
+    },
+    {
+      "id": "bf4e1c2d-83a5-4d27-b6b3-721c5d0f8a9b",
+      "name": "Vietnam Electronics - May 2025 Base Run",
+      "description": "Monte Carlo simulation for Vietnam tariffs on HS Code 8528.72 (Electronics)",
+      "createdBy": "smith.j",
+      "createdAt": 1715195349000,
+      "simulationType": "Vietnam_Tariff",
+      "parameters": {
+        "generalParameters": [
+          {
+            "id": "baseTariffRate",
+            "name": "Base Tariff Rate",
+            "value": 20,
+            "minValue": 15,
+            "maxValue": 25,
+            "distributionType": "Normal",
+            "parameterType": "Percentage",
+            "unit": "%",
+            "description": "Baseline tariff rate applied to imported goods"
+          },
+          {
+            "id": "importVolume",
+            "name": "Import Volume",
+            "value": 4.8,
+            "minValue": 4.0,
+            "maxValue": 5.5,
+            "distributionType": "Normal",
+            "parameterType": "Currency",
+            "unit": "M",
+            "description": "Volume of imports in millions of USD"
+          }
+        ],
+        "tariffSpecificParameters": {
+          "hsCodes": ["8528.72"],
+          "countries": ["Vietnam"],
+          "tradeAgreements": ["CPTPP"],
+          "exchangeRates": [
+            {
+              "fromCurrency": "USD",
+              "toCurrency": "VND",
+              "rate": 23200,
+              "minRate": 22800,
+              "maxRate": 23800
+            }
+          ]
+        }
+      },
+      "simulationConfig": {
+        "iterations": 5000,
+        "confidenceInterval": 0.95,
+        "scenarioThresholds": {
+          "pessimistic": 0.05,
+          "realistic": 0.95,
+          "optimistic": 1.0
+        },
+        "precision": "Medium"
+      }
+    },
+    {
+      "id": "d7a31eb5-c692-4823-a91e-0fe6284b3ca7",
+      "name": "Vietnam Textile - Q2 Projection",
+      "description": "Monte Carlo simulation for Vietnam tariffs on HS Code 6104.43 (Textiles)",
+      "createdBy": "nguyen.t",
+      "createdAt": 1713467349000,
+      "simulationType": "Vietnam_Tariff",
+      "parameters": {
+        "generalParameters": [
+          {
+            "id": "baseTariffRate",
+            "name": "Base Tariff Rate",
+            "value": 18,
+            "minValue": 12,
+            "maxValue": 24,
+            "distributionType": "Normal",
+            "parameterType": "Percentage",
+            "unit": "%",
+            "description": "Baseline tariff rate applied to imported goods"
+          },
+          {
+            "id": "importVolume",
+            "name": "Import Volume",
+            "value": 3.5,
+            "minValue": 3.0,
+            "maxValue": 4.0,
+            "distributionType": "Normal",
+            "parameterType": "Currency",
+            "unit": "M",
+            "description": "Volume of imports in millions of USD"
+          }
+        ],
+        "tariffSpecificParameters": {
+          "hsCodes": ["6104.43"],
+          "countries": ["Vietnam"],
+          "tradeAgreements": ["RCEP"],
+          "exchangeRates": [
+            {
+              "fromCurrency": "USD",
+              "toCurrency": "VND",
+              "rate": 23100,
+              "minRate": 22600,
+              "maxRate": 23700
+            }
+          ]
+        }
+      },
+      "simulationConfig": {
+        "iterations": 10000,
+        "confidenceInterval": 0.95,
+        "scenarioThresholds": {
+          "pessimistic": 0.05,
+          "realistic": 0.95,
+          "optimistic": 1.0
+        },
+        "precision": "High"
+      }
+    },
+    {
+      "id": "f92e8519-7650-4d12-ae18-fd3eb2f1d58e",
+      "name": "Vietnam Agricultural - March Baseline",
+      "description": "Monte Carlo simulation for Vietnam tariffs on HS Code 1006.30 (Rice)",
+      "createdBy": "lee.k",
+      "createdAt": 1711049349000,
+      "simulationType": "Vietnam_Tariff",
+      "parameters": {
+        "generalParameters": [
+          {
+            "id": "baseTariffRate",
+            "name": "Base Tariff Rate",
+            "value": 30,
+            "minValue": 20,
+            "maxValue": 40,
+            "distributionType": "Normal",
+            "parameterType": "Percentage",
+            "unit": "%",
+            "description": "Baseline tariff rate applied to imported goods"
+          },
+          {
+            "id": "importVolume",
+            "name": "Import Volume",
+            "value": 2.8,
+            "minValue": 2.3,
+            "maxValue": 3.3,
+            "distributionType": "Normal",
+            "parameterType": "Currency",
+            "unit": "M",
+            "description": "Volume of imports in millions of USD"
+          }
+        ],
+        "tariffSpecificParameters": {
+          "hsCodes": ["1006.30"],
+          "countries": ["Vietnam"],
+          "tradeAgreements": ["ASEAN"],
+          "exchangeRates": [
+            {
+              "fromCurrency": "USD",
+              "toCurrency": "VND",
+              "rate": 23000,
+              "minRate": 22500,
+              "maxRate": 23500
+            }
+          ]
+        }
+      },
+      "simulationConfig": {
+        "iterations": 5000,
+        "confidenceInterval": 0.95,
+        "scenarioThresholds": {
+          "pessimistic": 0.05,
+          "realistic": 0.95,
+          "optimistic": 1.0
+        },
+        "precision": "Medium"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2883 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "Segment.v1.Segment": {
+      "__abapOriginalName": "I_Segment",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "Segment",
+      "@ObjectModel.sapObjectNodeType.name": "Segment",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.hierarchy.association": "_SegmentHierNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "_SegmentHierNode": {
+          "__abapOriginalName": "_SegmentHierNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_SegmentHierNode",
+                "Segment"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_SegmentHierNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentText",
+          "on": [
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "Segment"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "Segment.v1.Segment_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "Segment.v1.Segment",
+        "originalEntityName": "segment.Segment"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Segment.v1.Segment_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            {
+              "ref": [
+                "_SegmentHierNode"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_SegmentHierNode": {
+              "__abapOriginalName": "_SegmentHierNode",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "Segment.v1.SegmentHierarchyNode",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "Segment"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_SegmentHierNode",
+                    "Segment"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_SegmentHierNode"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "Segment.v1.SegmentText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "Segment"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "Segment"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchyText",
+        "originalEntityName": "segment.SegmentHierarchyText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentText": {
+      "__abapOriginalName": "I_SegmentText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "Segment",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "SegmentName"
+            }
+          ]
+        },
+        "SegmentName": {
+          "__abapOriginalName": "SegmentName",
+          "@EndUserText.heading": "Segment Name",
+          "@EndUserText.label": "Segment Name",
+          "@EndUserText.quickInfo": "Segment Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "Segment.v1.SegmentText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentText",
+        "originalEntityName": "segment.SegmentText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Segment.v1.SegmentText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            {
+              "ref": [
+                "SegmentName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentText_Delta": {
+      "__abapOriginalName": "I_SegmentText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "Segment",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "SegmentName"
+            }
+          ]
+        },
+        "SegmentName": {
+          "__abapOriginalName": "SegmentName",
+          "@EndUserText.heading": "Segment Name",
+          "@EndUserText.label": "Segment Name",
+          "@EndUserText.quickInfo": "Segment Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "Segment.v1.SegmentText",
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentText",
+        "originalEntityName": "segment.SegmentText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchyNode": {
+      "__abapOriginalName": "I_SegmentHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Segment"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "Segment.v1.SegmentHierarchy",
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "SegmentHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Segment": {
+          "__abapOriginalName": "_Segment",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "Segment.v1.Segment",
+          "on": [
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Segment",
+                "Segment"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Segment"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "SegmentHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "Segment.v1.SegmentHierarchyNode_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchyNode",
+        "originalEntityName": "segment.SegmentHierarchyNode"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Segment.v1.SegmentHierarchyNode_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "ParentNode"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyVersion"
+              ]
+            },
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            {
+              "ref": [
+                "SequenceNumber"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeSequence"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeLevel"
+              ]
+            },
+            {
+              "ref": [
+                "NodeType"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "_Segment"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": 1
+              },
+              "target": "Segment.v1.SegmentHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "SegmentHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "SegmentHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            },
+            "_Segment": {
+              "__abapOriginalName": "_Segment",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "Segment.v1.Segment",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "Segment"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Segment",
+                    "Segment"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Segment"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "SegmentHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "SegmentHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "HierarchyNode"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "HierarchyNode"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "Segment"
+                  ]
+                },
+                "=",
+                {
+                  "val": ""
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.Segment_Delta": {
+      "__abapOriginalName": "I_Segment",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "Segment",
+      "@ObjectModel.sapObjectNodeType.name": "Segment",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.hierarchy.association": "_SegmentHierNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "_SegmentHierNode": {
+          "__abapOriginalName": "_SegmentHierNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_SegmentHierNode",
+                "Segment"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_SegmentHierNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentText",
+          "on": [
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "Segment"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "Segment.v1.Segment",
+      "import_meta": {
+        "qualifiedName": "Segment.v1.Segment",
+        "originalEntityName": "segment.Segment"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchyNodeText": {
+      "__abapOriginalName": "I_SegmentHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentHierarchy",
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "SegmentHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "Segment.v1.SegmentHierarchyNodeText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchyNodeText",
+        "originalEntityName": "segment.SegmentHierarchyNodeText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Segment.v1.SegmentHierarchyNodeText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeText"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "Segment.v1.SegmentHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "SegmentHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "SegmentHierarchy"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchy": {
+      "__abapOriginalName": "I_SegmentHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "SegmentHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "SegmentHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "Segment.v1.SegmentHierarchy_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchy",
+        "originalEntityName": "segment.SegmentHierarchy"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Segment.v1.SegmentHierarchy_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeTime"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyShortID"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "Segment.v1.SegmentHierarchyText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "SegmentHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "SegmentHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchyNodeText_Delta": {
+      "__abapOriginalName": "I_SegmentHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentHierarchy",
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "SegmentHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "Segment.v1.SegmentHierarchyNodeText",
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchyNodeText",
+        "originalEntityName": "segment.SegmentHierarchyNodeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchyNode_Delta": {
+      "__abapOriginalName": "I_SegmentHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Segment"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "Segment.v1.SegmentHierarchy",
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "SegmentHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Segment": {
+          "__abapOriginalName": "_Segment",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "Segment.v1.Segment",
+          "on": [
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Segment",
+                "Segment"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Segment"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "SegmentHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "Segment.v1.SegmentHierarchyNode",
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchyNode",
+        "originalEntityName": "segment.SegmentHierarchyNode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchyText": {
+      "__abapOriginalName": "I_SegmentHierarchyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "SegmentHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "SegmentHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "SegmentHierarchyName": {
+          "__abapOriginalName": "SegmentHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Segm Description",
+          "@EndUserText.quickInfo": "Segment Hierarchy Description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "Segment.v1.SegmentHierarchyText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchyText",
+        "originalEntityName": "segment.SegmentHierarchyText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Segment.v1.SegmentHierarchyText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "SegmentHierarchyName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchy_Delta": {
+      "__abapOriginalName": "I_SegmentHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "SegmentHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "Segment.v1.SegmentHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "SegmentHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "SegmentHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "Segment.v1.SegmentHierarchy",
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchy",
+        "originalEntityName": "segment.SegmentHierarchy"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Segment.v1.SegmentHierarchyText_Delta": {
+      "__abapOriginalName": "I_SegmentHierarchyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Segment Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "SegmentHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "SegmentHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "SegmentHierarchy": {
+          "__abapOriginalName": "SegmentHierarchy",
+          "@EndUserText.heading": "segment hierarchy id",
+          "@EndUserText.label": "segm hryid",
+          "@EndUserText.quickInfo": "Segment Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "SegmentHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "SegmentHierarchyName": {
+          "__abapOriginalName": "SegmentHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Segm Description",
+          "@EndUserText.quickInfo": "Segment Hierarchy Description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "Segment.v1.SegmentHierarchyText",
+      "import_meta": {
+        "qualifiedName": "Segment.v1.SegmentHierarchyText",
+        "originalEntityName": "segment.SegmentHierarchyText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "Segment.v1.Segment",
+    "all_entities": [
+      "Segment.v1.Segment",
+      "Segment.v1.Segment",
+      "Segment.v1",
+      "Segment.v1.SegmentText",
+      "Segment.v1.SegmentText_Delta",
+      "Segment.v1.SegmentHierarchyNode",
+      "Segment.v1.Segment_Delta",
+      "Segment.v1.SegmentHierarchyNodeText",
+      "Segment.v1.SegmentHierarchy",
+      "Segment.v1.SegmentHierarchyNodeText_Delta",
+      "Segment.v1.SegmentHierarchyNode_Delta",
+      "Segment.v1.SegmentHierarchyText",
+      "Segment.v1.SegmentHierarchy_Delta",
+      "Segment.v1.SegmentHierarchyText_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchyNode"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentText"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchyNode"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentText"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchy"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.Segment"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchy"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.Segment"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchyNode"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentText"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchy"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchy"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchyText"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchyText"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchy"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchy"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.Segment"
+      },
+      {
+        "from": "Segment.v1.Segment",
+        "to": "Segment.v1.SegmentHierarchyText"
+      }
+    ],
+    "invalid_references": []
+  }
+}

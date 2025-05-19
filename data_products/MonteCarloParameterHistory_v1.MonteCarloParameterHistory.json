@@ -1,0 +1,95 @@
+{
+  "$schema": "https://sap.github.io/business-data-cloud-schema/MonteCarloParameterHistory.schema.json",
+  "version": "1.0.0",
+  "metadata": {
+    "description": "Monte Carlo Simulation Parameter History Data Model",
+    "owner": "SCB FinSight Analytics",
+    "createdAt": "2025-04-01T00:00:00Z"
+  },
+  "data": [
+    {
+      "id": "7b3de591-a45c-4e17-8c29-9f8a7d2b3e4f",
+      "simulationInputId": "40db2e0a-6fa3-4ee6-9a3f-9d9a5bb0918e",
+      "parameterId": "baseTariffRate",
+      "previousValue": 25,
+      "newValue": 27.5,
+      "changeType": "parameter_update",
+      "timestamp": 1716876349000,
+      "changedBy": "nguyen.t",
+      "reason": "Updated based on May 2025 announcement from Vietnam Customs Authority",
+      "confidence": 0.85
+    },
+    {
+      "id": "23a4d7e8-b9c1-4f67-a523-d8e7f6g5h4i3",
+      "simulationInputId": "40db2e0a-6fa3-4ee6-9a3f-9d9a5bb0918e",
+      "parameterId": "exchangeRates",
+      "previousValue": 23500,
+      "newValue": 23800,
+      "changeType": "parameter_update",
+      "timestamp": 1716900349000,
+      "changedBy": "nguyen.t",
+      "reason": "Adjusted to reflect recent currency fluctuations",
+      "confidence": 0.92
+    },
+    {
+      "id": "45b6c7d8-e9f0-4a1b-8c2d-3e4f5g6h7i8j",
+      "simulationInputId": "bf4e1c2d-83a5-4d27-b6b3-721c5d0f8a9b",
+      "parameterId": "baseTariffRate",
+      "previousValue": 20,
+      "newValue": 18.5,
+      "changeType": "parameter_update",
+      "timestamp": 1715295349000,
+      "changedBy": "smith.j",
+      "reason": "Adjusted after CPTPP council meeting outcomes",
+      "confidence": 0.89
+    },
+    {
+      "id": "9a8b7c6d-5e4f-3g2h-1i0j-9k8l7m6n5o4p",
+      "simulationInputId": "bf4e1c2d-83a5-4d27-b6b3-721c5d0f8a9b",
+      "parameterId": "importVolume",
+      "previousValue": 4.8,
+      "newValue": 5.2,
+      "changeType": "parameter_update",
+      "timestamp": 1715372349000,
+      "changedBy": "smith.j",
+      "reason": "Updated based on Q2 projections from supply chain",
+      "confidence": 0.87
+    },
+    {
+      "id": "1q2w3e4r-5t6y-7u8i-9o0p-1a2s3d4f5g6h",
+      "simulationInputId": "d7a31eb5-c692-4823-a91e-0fe6284b3ca7",
+      "parameterId": "baseTariffRate",
+      "previousValue": 18,
+      "newValue": 17.5,
+      "changeType": "parameter_update",
+      "timestamp": 1713567349000,
+      "changedBy": "nguyen.t",
+      "reason": "Recalibrated after review of recent MARD policy announcements",
+      "confidence": 0.91
+    },
+    {
+      "id": "7z6x5c4v-3b2n1m-8l7k6j-5h4g3f2d1s",
+      "simulationInputId": "f92e8519-7650-4d12-ae18-fd3eb2f1d58e",
+      "parameterId": "baseTariffRate",
+      "previousValue": 30,
+      "newValue": 32,
+      "changeType": "parameter_update",
+      "timestamp": 1711149349000,
+      "changedBy": "lee.k",
+      "reason": "Adjusted upward following agricultural policy committee announcement",
+      "confidence": 0.84
+    },
+    {
+      "id": "9p8o7i6u-5y4t3r2e-1w2q3a4z5s6x7d",
+      "simulationInputId": "f92e8519-7650-4d12-ae18-fd3eb2f1d58e",
+      "parameterId": "exchangeRates",
+      "previousValue": 23000,
+      "newValue": 23200,
+      "changeType": "parameter_update",
+      "timestamp": 1711249349000,
+      "changedBy": "system",
+      "reason": "Automatic update from exchange rate feed",
+      "confidence": 0.98
+    }
+  ]
+}

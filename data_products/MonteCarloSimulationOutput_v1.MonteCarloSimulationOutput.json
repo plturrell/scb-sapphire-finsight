@@ -1,0 +1,403 @@
+{
+  "$schema": "https://sap.github.io/business-data-cloud-schema/MonteCarloSimulationOutput.schema.json",
+  "version": "1.0.0",
+  "metadata": {
+    "description": "Monte Carlo Simulation Output Data Model",
+    "owner": "SCB FinSight Analytics",
+    "createdAt": "2025-04-01T00:00:00Z"
+  },
+  "data": [
+    {
+      "id": "a4c72b01-9f53-4e29-b862-d1ca75e6b518",
+      "simulationInputId": "40db2e0a-6fa3-4ee6-9a3f-9d9a5bb0918e",
+      "startTime": 1715875350000,
+      "endTime": 1715875380000,
+      "status": "completed",
+      "progressPercentage": 100,
+      "results": {
+        "statistics": {
+          "mean": 23.74,
+          "median": 23.82,
+          "standardDeviation": 4.12,
+          "min": 13.25,
+          "max": 36.58,
+          "percentiles": {
+            "5": 16.58,
+            "25": 20.87,
+            "50": 23.82,
+            "75": 26.53,
+            "95": 30.31
+          }
+        },
+        "scenarios": {
+          "pessimistic": {
+            "tariffRate": 30.31,
+            "impactValue": -2.34,
+            "confidenceScore": 0.87
+          },
+          "realistic": {
+            "tariffRate": 23.82,
+            "impactValue": -1.51,
+            "confidenceScore": 0.95
+          },
+          "optimistic": {
+            "tariffRate": 16.58,
+            "impactValue": -0.85,
+            "confidenceScore": 0.79
+          }
+        },
+        "sensitivityAnalysis": [
+          {
+            "parameter": "baseTariffRate",
+            "impact": 0.85,
+            "correlation": 0.92,
+            "influenceRank": 1
+          },
+          {
+            "parameter": "exchangeRate",
+            "impact": 0.67,
+            "correlation": 0.78,
+            "influenceRank": 2
+          },
+          {
+            "parameter": "importVolume",
+            "impact": 0.54,
+            "correlation": 0.61,
+            "influenceRank": 3
+          }
+        ],
+        "rawResults": [23.1, 24.3, 19.8, 25.7, 22.0, 27.8, 21.5, 26.3, 18.7, 29.4],
+        "convergenceMetrics": {
+          "iterations": 5000,
+          "convergenceAchieved": true,
+          "confidenceInterval": "±1.23 at 95%",
+          "errorMargin": 0.05
+        }
+      },
+      "llmAnalysis": {
+        "insights": [
+          "The simulation shows a most likely tariff rate of 23.82% for footwear imports (HS 6402.99) from Vietnam",
+          "There is a 90% probability that the tariff will fall between 16.58% and 30.31%",
+          "Currency exchange rate fluctuations contribute significantly to the overall impact"
+        ],
+        "riskAssessment": {
+          "overallRiskLevel": "Medium",
+          "keyRisks": [
+            "Political volatility in trade relations could push tariffs toward the pessimistic scenario",
+            "CPTPP negotiations in Q3 2025 may favorably impact final rates"
+          ],
+          "mitigationStrategies": [
+            "Consider sourcing diversification to include ASEAN countries with preferential rates",
+            "Implement progressive hedging strategy for currency exposure"
+          ]
+        },
+        "recommendations": [
+          "Maintain current import levels but establish contingency plans for 30%+ tariff scenarios",
+          "Explore alternative sourcing from Malaysia where simulation indicates more stable tariff projections",
+          "Consider forward contracts for USD/VND to mitigate exchange rate impact"
+        ]
+      },
+      "computeMetrics": {
+        "computeTimeMs": 30287,
+        "resourcesUsed": {
+          "cpuCoreHours": 0.028,
+          "memoryGB": 2.4
+        }
+      }
+    },
+    {
+      "id": "d6b84f39-5c87-4edd-a761-2f78a0eb9c23",
+      "simulationInputId": "bf4e1c2d-83a5-4d27-b6b3-721c5d0f8a9b",
+      "startTime": 1715195350000,
+      "endTime": 1715195378000,
+      "status": "completed",
+      "progressPercentage": 100,
+      "results": {
+        "statistics": {
+          "mean": 19.37,
+          "median": 19.54,
+          "standardDeviation": 3.46,
+          "min": 11.27,
+          "max": 27.64,
+          "percentiles": {
+            "5": 13.82,
+            "25": 16.93,
+            "50": 19.54,
+            "75": 21.82,
+            "95": 24.91
+          }
+        },
+        "scenarios": {
+          "pessimistic": {
+            "tariffRate": 24.91,
+            "impactValue": -1.86,
+            "confidenceScore": 0.91
+          },
+          "realistic": {
+            "tariffRate": 19.54,
+            "impactValue": -1.27,
+            "confidenceScore": 0.94
+          },
+          "optimistic": {
+            "tariffRate": 13.82,
+            "impactValue": -0.72,
+            "confidenceScore": 0.83
+          }
+        },
+        "sensitivityAnalysis": [
+          {
+            "parameter": "baseTariffRate",
+            "impact": 0.82,
+            "correlation": 0.89,
+            "influenceRank": 1
+          },
+          {
+            "parameter": "importVolume",
+            "impact": 0.71,
+            "correlation": 0.76,
+            "influenceRank": 2
+          },
+          {
+            "parameter": "exchangeRate",
+            "impact": 0.58,
+            "correlation": 0.64,
+            "influenceRank": 3
+          }
+        ],
+        "rawResults": [19.2, 18.7, 21.3, 17.8, 20.1, 19.7, 16.9, 22.4, 18.5, 20.6],
+        "convergenceMetrics": {
+          "iterations": 5000,
+          "convergenceAchieved": true,
+          "confidenceInterval": "±1.12 at 95%",
+          "errorMargin": 0.04
+        }
+      },
+      "llmAnalysis": {
+        "insights": [
+          "Electronics imports (HS 8528.72) face a median tariff rate of 19.54% with the current policy trajectory",
+          "The distribution shows less variance than other product categories, suggesting more stable policy for this sector",
+          "Import volume has a stronger influence compared to other product categories, indicating demand elasticity concerns"
+        ],
+        "riskAssessment": {
+          "overallRiskLevel": "Low-Medium",
+          "keyRisks": [
+            "Competing supplier countries may gain advantage if higher tariff bands are implemented",
+            "Technology transfer requirements could increase as a non-tariff barrier"
+          ],
+          "mitigationStrategies": [
+            "Maintain relationships with multiple suppliers across RCEP countries",
+            "Explore local assembly options to reduce completed goods import volumes"
+          ]
+        },
+        "recommendations": [
+          "Current import strategy remains optimal under the realistic scenario",
+          "Consider advancing orders before Q3 when policy reviews are scheduled",
+          "Monitor developments in the Vietnam-EU FTA which may influence electronics tariff policy"
+        ]
+      },
+      "computeMetrics": {
+        "computeTimeMs": 28231,
+        "resourcesUsed": {
+          "cpuCoreHours": 0.024,
+          "memoryGB": 2.2
+        }
+      }
+    },
+    {
+      "id": "f7a5e142-3ca1-4b69-9a83-7ed48bc23a56",
+      "simulationInputId": "d7a31eb5-c692-4823-a91e-0fe6284b3ca7",
+      "startTime": 1713467350000,
+      "endTime": 1713467396000,
+      "status": "completed",
+      "progressPercentage": 100,
+      "results": {
+        "statistics": {
+          "mean": 17.64,
+          "median": 17.83,
+          "standardDeviation": 3.21,
+          "min": 9.73,
+          "max": 25.12,
+          "percentiles": {
+            "5": 12.38,
+            "25": 15.43,
+            "50": 17.83,
+            "75": 19.87,
+            "95": 22.63
+          }
+        },
+        "scenarios": {
+          "pessimistic": {
+            "tariffRate": 22.63,
+            "impactValue": -1.42,
+            "confidenceScore": 0.88
+          },
+          "realistic": {
+            "tariffRate": 17.83,
+            "impactValue": -0.98,
+            "confidenceScore": 0.96
+          },
+          "optimistic": {
+            "tariffRate": 12.38,
+            "impactValue": -0.65,
+            "confidenceScore": 0.81
+          }
+        },
+        "sensitivityAnalysis": [
+          {
+            "parameter": "baseTariffRate",
+            "impact": 0.83,
+            "correlation": 0.91,
+            "influenceRank": 1
+          },
+          {
+            "parameter": "exchangeRate",
+            "impact": 0.64,
+            "correlation": 0.70,
+            "influenceRank": 2
+          },
+          {
+            "parameter": "importVolume",
+            "impact": 0.57,
+            "correlation": 0.63,
+            "influenceRank": 3
+          }
+        ],
+        "rawResults": [17.4, 18.2, 16.9, 15.8, 19.1, 17.7, 18.4, 16.2, 17.9, 18.5],
+        "convergenceMetrics": {
+          "iterations": 10000,
+          "convergenceAchieved": true,
+          "confidenceInterval": "±0.86 at 95%",
+          "errorMargin": 0.03
+        }
+      },
+      "llmAnalysis": {
+        "insights": [
+          "Textile products (HS 6104.43) show a convergent median tariff rate of 17.83%",
+          "Higher iteration count (10,000) provides improved confidence intervals compared to standard simulations",
+          "RCEP membership shows positive influence on tariff stability for this product category"
+        ],
+        "riskAssessment": {
+          "overallRiskLevel": "Low",
+          "keyRisks": [
+            "Labor standards regulations may introduce non-tariff costs",
+            "Competition from other ASEAN textile producers may influence policy direction"
+          ],
+          "mitigationStrategies": [
+            "Maintain compliance with evolving labor standards to avoid penalties",
+            "Consider dual-sourcing strategy between Vietnam and one alternative RCEP country"
+          ]
+        },
+        "recommendations": [
+          "Current tariff levels support maintaining and potentially increasing import volumes",
+          "Long-term contracts are advisable at current rates with hedging for worst-case scenario",
+          "Monitor sustainability regulations which may influence future tariff policies"
+        ]
+      },
+      "computeMetrics": {
+        "computeTimeMs": 46128,
+        "resourcesUsed": {
+          "cpuCoreHours": 0.046,
+          "memoryGB": 3.1
+        }
+      }
+    },
+    {
+      "id": "912ab7d5-fe83-4c20-b941-9ad54e8b9c37",
+      "simulationInputId": "f92e8519-7650-4d12-ae18-fd3eb2f1d58e",
+      "startTime": 1711049350000,
+      "endTime": 1711049380000,
+      "status": "completed",
+      "progressPercentage": 100,
+      "results": {
+        "statistics": {
+          "mean": 29.46,
+          "median": 29.87,
+          "standardDeviation": 5.23,
+          "min": 17.29,
+          "max": 42.18,
+          "percentiles": {
+            "5": 20.64,
+            "25": 25.87,
+            "50": 29.87,
+            "75": 33.26,
+            "95": 38.15
+          }
+        },
+        "scenarios": {
+          "pessimistic": {
+            "tariffRate": 38.15,
+            "impactValue": -1.92,
+            "confidenceScore": 0.86
+          },
+          "realistic": {
+            "tariffRate": 29.87,
+            "impactValue": -1.37,
+            "confidenceScore": 0.93
+          },
+          "optimistic": {
+            "tariffRate": 20.64,
+            "impactValue": -0.89,
+            "confidenceScore": 0.82
+          }
+        },
+        "sensitivityAnalysis": [
+          {
+            "parameter": "baseTariffRate",
+            "impact": 0.87,
+            "correlation": 0.94,
+            "influenceRank": 1
+          },
+          {
+            "parameter": "importVolume",
+            "impact": 0.65,
+            "correlation": 0.71,
+            "influenceRank": 2
+          },
+          {
+            "parameter": "exchangeRate",
+            "impact": 0.52,
+            "correlation": 0.58,
+            "influenceRank": 3
+          }
+        ],
+        "rawResults": [30.2, 28.7, 31.3, 27.8, 29.1, 30.7, 26.9, 32.4, 28.5, 30.6],
+        "convergenceMetrics": {
+          "iterations": 5000,
+          "convergenceAchieved": true,
+          "confidenceInterval": "±1.54 at 95%",
+          "errorMargin": 0.05
+        }
+      },
+      "llmAnalysis": {
+        "insights": [
+          "Agricultural products (HS 1006.30) show the highest tariff rates among analyzed categories",
+          "Food security policies strongly influence the tariff structure for this category",
+          "Domestic production protection creates the wide variance observed in the simulation"
+        ],
+        "riskAssessment": {
+          "overallRiskLevel": "High",
+          "keyRisks": [
+            "Policy volatility due to food security concerns may push rates toward pessimistic scenario",
+            "Non-tariff barriers like import quotas may be implemented alongside tariff increases"
+          ],
+          "mitigationStrategies": [
+            "Diversify sourcing to include countries with preferential agricultural access",
+            "Consider forward contracts with current suppliers at fixed tariff-inclusive rates"
+          ]
+        },
+        "recommendations": [
+          "Reduce dependency on Vietnamese rice imports due to high and volatile tariff projection",
+          "Explore alternative sources from Thailand and Cambodia with more stable tariff outlooks",
+          "Consider stockpiling strategy for Q3 when seasonal tariff adjustments often occur"
+        ]
+      },
+      "computeMetrics": {
+        "computeTimeMs": 29731,
+        "resourcesUsed": {
+          "cpuCoreHours": 0.027,
+          "memoryGB": 2.3
+        }
+      }
+    }
+  ]
+}

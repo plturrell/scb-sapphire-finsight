@@ -1,0 +1,960 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "CostAnalysisResource.v1.CostAnalysisResource": {
+      "__abapOriginalName": "I_CostAnalysisResource",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFICOANLYSRESRC",
+      "@Consumption.ranked": true,
+      "@EndUserText.label": "Cost Analysis Resource",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CostAnalysisResource",
+      "@ObjectModel.sapObjectNodeType.name": "CostAnalysisResource",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostAnalysisResource": {
+          "__abapOriginalName": "CostAnalysisResource",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Analysis Resource",
+          "@EndUserText.label": "Cost Analysis Resource",
+          "@EndUserText.quickInfo": "Cost Analysis Resource",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostAnalysisResource.v1.CostAnalysisResourceText",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostAnalysisResource"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostAnalysisResource"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostAnalysisResource.v1.CostAnalysisResource_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostAnalysisResource.v1.CostAnalysisResource",
+        "originalEntityName": "costanalysisresource.CostAnalysisResource"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostAnalysisResource.v1.CostAnalysisResource_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostAnalysisResource"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "CostAnalysisResource.v1.CostAnalysisResourceText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "CostAnalysisResource"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "CostAnalysisResource"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostAnalysisResource.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "CostAnalysisResource.v1.CostAnalysisResource",
+        "originalEntityName": "costanalysisresource.CostAnalysisResource"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostAnalysisResource.v1.CostAnalysisResourceText": {
+      "__abapOriginalName": "I_CostAnalysisResourceText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFICOANLYSRESRCT",
+      "@EndUserText.label": "Cost Analysis Resource - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "CostAnalysisResource",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CostAnalysisResource": {
+          "__abapOriginalName": "CostAnalysisResource",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Analysis Resource",
+          "@EndUserText.label": "Cost Analysis Resource",
+          "@EndUserText.quickInfo": "Cost Analysis Resource",
+          "@ObjectModel.text.element": [
+            {
+              "=": "CostAnalysisResourceDesc"
+            },
+            {
+              "=": "CostAnalysisResourceName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostAnalysisResourceName": {
+          "__abapOriginalName": "CostAnalysisResourceName",
+          "@EndUserText.heading": "Resource Name",
+          "@EndUserText.label": "Resource Name",
+          "@EndUserText.quickInfo": "Cost Analysis Resource Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "CostAnalysisResourceDesc": {
+          "__abapOriginalName": "CostAnalysisResourceDesc",
+          "@EndUserText.heading": "Resource Description",
+          "@EndUserText.label": "Resource Description",
+          "@EndUserText.quickInfo": "Cost Analysis Resource Description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 40
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostAnalysisResource.v1.CostAnalysisResourceText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostAnalysisResource.v1.CostAnalysisResourceText",
+        "originalEntityName": "costanalysisresource.CostAnalysisResourceText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostAnalysisResource.v1.CostAnalysisResourceText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "CostAnalysisResource"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "CostAnalysisResourceName"
+              ]
+            },
+            {
+              "ref": [
+                "CostAnalysisResourceDesc"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostAnalysisResource.v1.CostAnalysisResource_Delta": {
+      "__abapOriginalName": "I_CostAnalysisResource",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFICOANLYSRESRC",
+      "@Consumption.ranked": true,
+      "@EndUserText.label": "Cost Analysis Resource",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CostAnalysisResource",
+      "@ObjectModel.sapObjectNodeType.name": "CostAnalysisResource",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostAnalysisResource": {
+          "__abapOriginalName": "CostAnalysisResource",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Analysis Resource",
+          "@EndUserText.label": "Cost Analysis Resource",
+          "@EndUserText.quickInfo": "Cost Analysis Resource",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostAnalysisResource.v1.CostAnalysisResourceText",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostAnalysisResource"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostAnalysisResource"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostAnalysisResource.v1.CostAnalysisResource",
+      "import_meta": {
+        "qualifiedName": "CostAnalysisResource.v1.CostAnalysisResource",
+        "originalEntityName": "costanalysisresource.CostAnalysisResource"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostAnalysisResource.v1.CostAnalysisResourceText_Delta": {
+      "__abapOriginalName": "I_CostAnalysisResourceText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFICOANLYSRESRCT",
+      "@EndUserText.label": "Cost Analysis Resource - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "CostAnalysisResource",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CostAnalysisResource": {
+          "__abapOriginalName": "CostAnalysisResource",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Analysis Resource",
+          "@EndUserText.label": "Cost Analysis Resource",
+          "@EndUserText.quickInfo": "Cost Analysis Resource",
+          "@ObjectModel.text.element": [
+            {
+              "=": "CostAnalysisResourceDesc"
+            },
+            {
+              "=": "CostAnalysisResourceName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostAnalysisResourceName": {
+          "__abapOriginalName": "CostAnalysisResourceName",
+          "@EndUserText.heading": "Resource Name",
+          "@EndUserText.label": "Resource Name",
+          "@EndUserText.quickInfo": "Cost Analysis Resource Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "CostAnalysisResourceDesc": {
+          "__abapOriginalName": "CostAnalysisResourceDesc",
+          "@EndUserText.heading": "Resource Description",
+          "@EndUserText.label": "Resource Description",
+          "@EndUserText.quickInfo": "Cost Analysis Resource Description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostAnalysisResource.v1.CostAnalysisResourceText",
+      "import_meta": {
+        "qualifiedName": "CostAnalysisResource.v1.CostAnalysisResourceText",
+        "originalEntityName": "costanalysisresource.CostAnalysisResourceText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "CostAnalysisResource.v1.CostAnalysisResource",
+    "all_entities": [
+      "CostAnalysisResource.v1.CostAnalysisResource",
+      "CostAnalysisResource.v1.CostAnalysisResource",
+      "CostAnalysisResource.v1",
+      "CostAnalysisResource.v1.CostAnalysisResourceText",
+      "CostAnalysisResource.v1.CostAnalysisResource_Delta",
+      "CostAnalysisResource.v1.CostAnalysisResourceText_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "CostAnalysisResource.v1.CostAnalysisResource",
+        "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+      },
+      {
+        "from": "CostAnalysisResource.v1.CostAnalysisResource",
+        "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+      },
+      {
+        "from": "CostAnalysisResource.v1.CostAnalysisResource",
+        "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+      }
+    ],
+    "invalid_references": []
+  }
+}

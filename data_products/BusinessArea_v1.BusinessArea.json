@@ -1,0 +1,655 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "BusinessArea.v1.BusinessArea": {
+      "__abapOriginalName": "I_BusinessArea",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Business Area",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "BusinessArea",
+      "@ObjectModel.sapObjectNodeType.name": "BusinessArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BusinessArea": {
+          "__abapOriginalName": "BusinessArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BusA",
+          "@EndUserText.label": "Business Area",
+          "@EndUserText.quickInfo": "Business Area",
+          "@ObjectModel.hierarchy.association": "_BusinessAreaHierNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "BusinessArea.v1.BusinessAreaText",
+          "on": [
+            {
+              "ref": [
+                "BusinessArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "BusinessArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "BusinessArea.v1.BusinessArea_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "BusinessArea.v1.BusinessArea",
+        "originalEntityName": "businessarea.BusinessArea"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "BusinessArea.v1.BusinessArea_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "BusinessArea"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "BusinessArea.v1.BusinessAreaText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "BusinessArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "BusinessArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BusinessArea.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "BusinessArea.v1.BusinessAreaText",
+        "originalEntityName": "businessarea.BusinessAreaText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BusinessArea.v1.BusinessAreaText": {
+      "__abapOriginalName": "I_BusinessAreaText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Business Area - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "BusinessArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BusinessArea": {
+          "__abapOriginalName": "BusinessArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BusA",
+          "@EndUserText.label": "Business Area",
+          "@EndUserText.quickInfo": "Business Area",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "BusinessAreaName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "BusinessAreaName": {
+          "__abapOriginalName": "BusinessAreaName",
+          "@EndUserText.heading": "Business Area Name",
+          "@EndUserText.label": "Business Area Name",
+          "@EndUserText.quickInfo": "Business Area Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "BusinessArea.v1.BusinessAreaText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "BusinessArea.v1.BusinessAreaText",
+        "originalEntityName": "businessarea.BusinessAreaText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "BusinessArea.v1.BusinessAreaText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "BusinessArea"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "BusinessAreaName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BusinessArea.v1.BusinessAreaText_Delta": {
+      "__abapOriginalName": "I_BusinessAreaText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Business Area - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "BusinessArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BusinessArea": {
+          "__abapOriginalName": "BusinessArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BusA",
+          "@EndUserText.label": "Business Area",
+          "@EndUserText.quickInfo": "Business Area",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "BusinessAreaName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "BusinessAreaName": {
+          "__abapOriginalName": "BusinessAreaName",
+          "@EndUserText.heading": "Business Area Name",
+          "@EndUserText.label": "Business Area Name",
+          "@EndUserText.quickInfo": "Business Area Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "BusinessArea.v1.BusinessAreaText",
+      "import_meta": {
+        "qualifiedName": "BusinessArea.v1.BusinessAreaText",
+        "originalEntityName": "businessarea.BusinessAreaText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BusinessArea.v1.BusinessArea_Delta": {
+      "__abapOriginalName": "I_BusinessArea",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Business Area",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "BusinessArea",
+      "@ObjectModel.sapObjectNodeType.name": "BusinessArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BusinessArea": {
+          "__abapOriginalName": "BusinessArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BusA",
+          "@EndUserText.label": "Business Area",
+          "@EndUserText.quickInfo": "Business Area",
+          "@ObjectModel.hierarchy.association": "_BusinessAreaHierNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "BusinessArea.v1.BusinessAreaText",
+          "on": [
+            {
+              "ref": [
+                "BusinessArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "BusinessArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "BusinessArea.v1.BusinessArea",
+      "import_meta": {
+        "qualifiedName": "BusinessArea.v1.BusinessArea",
+        "originalEntityName": "businessarea.BusinessArea"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "BusinessArea.v1.BusinessArea",
+    "all_entities": [
+      "BusinessArea.v1.BusinessArea",
+      "BusinessArea.v1.BusinessArea",
+      "BusinessArea.v1",
+      "BusinessArea.v1.BusinessAreaText",
+      "BusinessArea.v1.BusinessAreaText_Delta",
+      "BusinessArea.v1.BusinessArea_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "BusinessArea.v1.BusinessArea",
+        "to": "BusinessArea.v1.BusinessAreaText"
+      },
+      {
+        "from": "BusinessArea.v1.BusinessArea",
+        "to": "BusinessArea.v1.BusinessAreaText"
+      },
+      {
+        "from": "BusinessArea.v1.BusinessArea",
+        "to": "BusinessArea.v1.BusinessAreaText"
+      }
+    ],
+    "invalid_references": []
+  }
+}

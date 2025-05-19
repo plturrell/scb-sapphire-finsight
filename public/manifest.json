@@ -1,0 +1,42 @@
+{
+  "name": "SCB Sapphire FinSight",
+  "short_name": "FinSight",
+  "description": "Advanced Financial Analytics Dashboard",
+  "theme_color": "#0072AA",
+  "background_color": "#F5F7FA",
+  "display": "standalone",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "categories": ["finance", "productivity"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ]
+}

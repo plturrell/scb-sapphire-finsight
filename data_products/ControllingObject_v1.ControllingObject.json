@@ -1,0 +1,493 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "ControllingObject.v1.ControllingObject": {
+      "__abapOriginalName": "I_ControllingObject",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Controlling Object",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ControllingObject",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "TRANSACTIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "C"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingObject": {
+          "__abapOriginalName": "ControllingObject",
+          "@EndUserText.heading": "Object Number",
+          "@EndUserText.label": "Object Number",
+          "@EndUserText.quickInfo": "Object Number",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 22,
+          "notNull": true
+        },
+        "OrderID": {
+          "__abapOriginalName": "OrderID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Order",
+          "@EndUserText.label": "Order",
+          "@EndUserText.quickInfo": "Order Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "BusinessProcess": {
+          "__abapOriginalName": "BusinessProcess",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Bus. Process",
+          "@EndUserText.label": "Business Process",
+          "@EndUserText.quickInfo": "Business Process",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "SalesDocument": {
+          "__abapOriginalName": "SalesDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sales Doc.",
+          "@EndUserText.label": "Sales Document",
+          "@EndUserText.quickInfo": "Sales Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SalesDocumentItem": {
+          "__abapOriginalName": "SalesDocumentItem",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Item",
+          "@EndUserText.label": "Sales Document Item",
+          "@EndUserText.quickInfo": "Sales Document Item",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CostCenter": {
+          "__abapOriginalName": "CostCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Center",
+          "@EndUserText.label": "Cost Center",
+          "@EndUserText.quickInfo": "Cost Center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "WBSElementInternalID": {
+          "__abapOriginalName": "WBSElementInternalID",
+          "@EndUserText.heading": "WBS Element Internal ID",
+          "@EndUserText.label": "WBS Element Internal ID",
+          "@EndUserText.quickInfo": "WBS Element Internal ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "ProjectInternalID": {
+          "__abapOriginalName": "ProjectInternalID",
+          "@EndUserText.heading": "Project Internal ID",
+          "@EndUserText.label": "Project Internal ID",
+          "@EndUserText.quickInfo": "Project Internal ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "ControllingObjectType": {
+          "__abapOriginalName": "ControllingObjectType",
+          "@EndUserText.heading": "OTy",
+          "@EndUserText.label": "Object Type",
+          "@EndUserText.quickInfo": "Object Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ControllingObject.v1.ControllingObject_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ControllingObject.v1.ControllingObject",
+        "originalEntityName": "controllingobject.ControllingObject"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ControllingObject.v1.ControllingObject_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingObject"
+              ]
+            },
+            {
+              "ref": [
+                "OrderID"
+              ]
+            },
+            {
+              "ref": [
+                "BusinessProcess"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            {
+              "ref": [
+                "SalesDocument"
+              ]
+            },
+            {
+              "ref": [
+                "SalesDocumentItem"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostCenter"
+              ]
+            },
+            {
+              "ref": [
+                "WBSElementInternalID"
+              ]
+            },
+            {
+              "ref": [
+                "ProjectInternalID"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingObjectType"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ControllingObject.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "ControllingObject.v1.ControllingObjectClass",
+        "originalEntityName": "controllingobject.ControllingObjectClass"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ControllingObject.v1.ControllingObject_Delta": {
+      "__abapOriginalName": "I_ControllingObject",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Controlling Object",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ControllingObject",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "TRANSACTIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "C"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingObject": {
+          "__abapOriginalName": "ControllingObject",
+          "@EndUserText.heading": "Object Number",
+          "@EndUserText.label": "Object Number",
+          "@EndUserText.quickInfo": "Object Number",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 22,
+          "notNull": true
+        },
+        "OrderID": {
+          "__abapOriginalName": "OrderID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Order",
+          "@EndUserText.label": "Order",
+          "@EndUserText.quickInfo": "Order Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "BusinessProcess": {
+          "__abapOriginalName": "BusinessProcess",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Bus. Process",
+          "@EndUserText.label": "Business Process",
+          "@EndUserText.quickInfo": "Business Process",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "SalesDocument": {
+          "__abapOriginalName": "SalesDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sales Doc.",
+          "@EndUserText.label": "Sales Document",
+          "@EndUserText.quickInfo": "Sales Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SalesDocumentItem": {
+          "__abapOriginalName": "SalesDocumentItem",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Item",
+          "@EndUserText.label": "Sales Document Item",
+          "@EndUserText.quickInfo": "Sales Document Item",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CostCenter": {
+          "__abapOriginalName": "CostCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Center",
+          "@EndUserText.label": "Cost Center",
+          "@EndUserText.quickInfo": "Cost Center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "WBSElementInternalID": {
+          "__abapOriginalName": "WBSElementInternalID",
+          "@EndUserText.heading": "WBS Element Internal ID",
+          "@EndUserText.label": "WBS Element Internal ID",
+          "@EndUserText.quickInfo": "WBS Element Internal ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "ProjectInternalID": {
+          "__abapOriginalName": "ProjectInternalID",
+          "@EndUserText.heading": "Project Internal ID",
+          "@EndUserText.label": "Project Internal ID",
+          "@EndUserText.quickInfo": "Project Internal ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "ControllingObjectType": {
+          "__abapOriginalName": "ControllingObjectType",
+          "@EndUserText.heading": "OTy",
+          "@EndUserText.label": "Object Type",
+          "@EndUserText.quickInfo": "Object Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ControllingObject.v1.ControllingObject",
+      "import_meta": {
+        "qualifiedName": "ControllingObject.v1.ControllingObject",
+        "originalEntityName": "controllingobject.ControllingObject"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "ControllingObject.v1.ControllingObject",
+    "all_entities": [
+      "ControllingObject.v1.ControllingObject",
+      "ControllingObject.v1.ControllingObject",
+      "ControllingObject.v1",
+      "ControllingObject.v1.ControllingObject_Delta"
+    ],
+    "valid": true,
+    "valid_references": [],
+    "invalid_references": []
+  }
+}

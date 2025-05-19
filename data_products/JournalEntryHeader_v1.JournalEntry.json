@@ -1,0 +1,2945 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "JournalEntryHeader.v1.JournalEntry": {
+      "__abapOriginalName": "I_JournalEntry",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_AccountingDocumentTypeText"
+        },
+        {
+          "=": "_BusinessTransactionTypeText"
+        },
+        {
+          "=": "_FinancialManagementAreaText"
+        },
+        {
+          "=": "_LedgerText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "BKPF",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "CompanyCode"
+            },
+            {
+              "=": "FiscalYear"
+            },
+            {
+              "=": "AccountingDocument"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bukrs"
+            },
+            {
+              "=": "gjahr"
+            },
+            {
+              "=": "belnr"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIJOURNALENT",
+      "@EndUserText.label": "Journal Entry",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "AccountingDocument",
+      "@ObjectModel.sapObjectNodeType.name": "JournalEntry",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "TRANSACTIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XXL"
+      },
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Company Code",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "FiscalYear": {
+          "__abapOriginalName": "FiscalYear",
+          "@EndUserText.heading": "Fiscal Year",
+          "@EndUserText.label": "Fiscal Year",
+          "@EndUserText.quickInfo": "Fiscal Year",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalYear"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "AccountingDocument": {
+          "__abapOriginalName": "AccountingDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Journal Entry",
+          "@EndUserText.label": "Journal Entry",
+          "@EndUserText.quickInfo": "Journal Entry",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "AccountingDocumentType": {
+          "__abapOriginalName": "AccountingDocumentType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Journal Entry Type",
+          "@EndUserText.label": "Journal Entry Type",
+          "@EndUserText.quickInfo": "Journal Entry Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_AccountingDocumentType"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_AccountingDocumentTypeText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "DocumentDate": {
+          "__abapOriginalName": "DocumentDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Journal Entry Date",
+          "@EndUserText.label": "Journal Entry Date",
+          "@EndUserText.quickInfo": "Journal Entry Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "PostingDate": {
+          "__abapOriginalName": "PostingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Date",
+          "@EndUserText.label": "Posting Date",
+          "@EndUserText.quickInfo": "Posting Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "FiscalPeriod": {
+          "__abapOriginalName": "FiscalPeriod",
+          "@EndUserText.heading": "Fiscal Period",
+          "@EndUserText.label": "Fiscal Period",
+          "@EndUserText.quickInfo": "Fiscal Period",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalPeriod"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "AccountingDocumentCreationDate": {
+          "__abapOriginalName": "AccountingDocumentCreationDate",
+          "@EndUserText.heading": "Entered On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "Accounting Document Entry Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "CreationTime": {
+          "__abapOriginalName": "CreationTime",
+          "@EndUserText.heading": "Creation Time",
+          "@EndUserText.label": "Creation Time",
+          "@EndUserText.quickInfo": "Creation Time",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "LastManualChangeDate": {
+          "__abapOriginalName": "LastManualChangeDate",
+          "@EndUserText.heading": "Last Manual Change Date",
+          "@EndUserText.label": "Manual Change Date",
+          "@EndUserText.quickInfo": "Calendar date of the last manual change in document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "LastAutomaticChangeDate": {
+          "__abapOriginalName": "LastAutomaticChangeDate",
+          "@EndUserText.heading": "Last Automatic Change Date",
+          "@EndUserText.label": "Autom. Change Date",
+          "@EndUserText.quickInfo": "Calendar date of the last automatic change in document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "LastChangeDate": {
+          "__abapOriginalName": "LastChangeDate",
+          "@EndUserText.heading": "Last Change Date",
+          "@EndUserText.label": "Last Change Date",
+          "@EndUserText.quickInfo": "Last Change Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "ExchangeRateDate": {
+          "__abapOriginalName": "ExchangeRateDate",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Exchange Rate Date",
+          "@EndUserText.quickInfo": "Exchange Rate Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "AccountingDocCreatedByUser": {
+          "__abapOriginalName": "AccountingDocCreatedByUser",
+          "@EndUserText.heading": "Journal Entry Created By",
+          "@EndUserText.label": "Journal Entry Created By",
+          "@EndUserText.quickInfo": "User that created the journal entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "TransactionCode": {
+          "__abapOriginalName": "TransactionCode",
+          "@EndUserText.heading": "Transaction Code",
+          "@EndUserText.label": "Transaction Code",
+          "@EndUserText.quickInfo": "Transaction Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntercompanyTransaction": {
+          "__abapOriginalName": "IntercompanyTransaction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Intercompany Transaction",
+          "@EndUserText.label": "Intercompany Transac",
+          "@EndUserText.quickInfo": "Intercompany Transaction Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "DocumentReferenceID": {
+          "__abapOriginalName": "DocumentReferenceID",
+          "@EndUserText.heading": "Document Reference ID",
+          "@EndUserText.label": "Document Reference ID",
+          "@EndUserText.quickInfo": "Document Reference ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "RecurringAccountingDocument": {
+          "__abapOriginalName": "RecurringAccountingDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Recurring Journal Entry",
+          "@EndUserText.label": "Recurring Journal Entry",
+          "@EndUserText.quickInfo": "Recurring Journal Entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "RecrrgJournalEntryCompanyCode": {
+          "__abapOriginalName": "RecrrgJournalEntryCompanyCode",
+          "@EndUserText.heading": "Recurring Journal Entry Company Code",
+          "@EndUserText.label": "Recurring Journal Entry Company Code",
+          "@EndUserText.quickInfo": "Recurring Journal Entry Company Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "RecrrgJournalEntryFiscalYear": {
+          "__abapOriginalName": "RecrrgJournalEntryFiscalYear",
+          "@EndUserText.heading": "Recurring Journal Entry Fiscal Year",
+          "@EndUserText.label": "Recurring Journal Entry Fiscal Year",
+          "@EndUserText.quickInfo": "Recurring Journal Entry Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ReverseDocument": {
+          "__abapOriginalName": "ReverseDocument",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Reverse Document",
+          "@EndUserText.label": "Reverse Document",
+          "@EndUserText.quickInfo": "Reverse Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ReverseDocumentFiscalYear": {
+          "__abapOriginalName": "ReverseDocumentFiscalYear",
+          "@EndUserText.heading": "Reverse Document Fiscal Year",
+          "@EndUserText.label": "Reverse Document Fiscal Year",
+          "@EndUserText.quickInfo": "Reverse Document Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "AccountingDocumentHeaderText": {
+          "__abapOriginalName": "AccountingDocumentHeaderText",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Document Header Text",
+          "@EndUserText.label": "Document Header Text",
+          "@EndUserText.quickInfo": "Document Header Text",
+          "type": "cds.String",
+          "length": 25
+        },
+        "TransactionCurrency": {
+          "__abapOriginalName": "TransactionCurrency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Crcy",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Currency Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_TransactionCurrency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "AbsoluteExchangeRate": {
+          "__abapOriginalName": "AbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Exchange Rate",
+          "@EndUserText.label": "Absolute Exchange Rate",
+          "@EndUserText.quickInfo": "Absolute Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "ExchangeRate": {
+          "__abapOriginalName": "ExchangeRate",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "AbsoluteExchangeRate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "EXCRT",
+          "@EndUserText.heading": "Exch. Rate",
+          "@EndUserText.label": "Exchange Rate",
+          "@EndUserText.quickInfo": "Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "AbsoluteExchangeRate",
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "ExchRateIsIndirectQuotation": {
+          "__abapOriginalName": "ExchRateIsIndirectQuotation",
+          "@EndUserText.heading": "Exchange Rate Is Indirect Quotation",
+          "@EndUserText.label": "Exchange Rate Is Indirect Quotation",
+          "@EndUserText.quickInfo": "Exchange Rate Is Indirect Quotation",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.booleanIndicator": true,
+          "type": "cds.Boolean"
+        },
+        "EffectiveExchangeRate": {
+          "__abapOriginalName": "EffectiveExchangeRate",
+          "@EndUserText.heading": "Effective Exchange Rate",
+          "@EndUserText.label": "Effective Exch. Rate",
+          "@EndUserText.quickInfo": "Effective Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 12,
+          "scale": 5
+        },
+        "AccountingDocumentCategory": {
+          "__abapOriginalName": "AccountingDocumentCategory",
+          "@EndUserText.heading": "Journal Entry Category",
+          "@EndUserText.label": "Journal Entry Category",
+          "@EndUserText.quickInfo": "Journal Entry Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_AccountingDocumentCategory"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "NetAmountIsPosted": {
+          "__abapOriginalName": "NetAmountIsPosted",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Net Amount Is Posted",
+          "@EndUserText.label": "Net Amount Is Posted",
+          "@EndUserText.quickInfo": "Net Amount Is Posted",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "JrnlEntryIsPostedToPrevPeriod": {
+          "__abapOriginalName": "JrnlEntryIsPostedToPrevPeriod",
+          "@EndUserText.heading": "Journal Entry Is Posted To Previous Period",
+          "@EndUserText.label": "Journal Entry Is Posted To Prev. Period",
+          "@EndUserText.quickInfo": "Journal Entry Is Posted To Previous Period",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "BusinessTransactionType": {
+          "__abapOriginalName": "BusinessTransactionType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BusTranCat",
+          "@EndUserText.label": "Bus. Trans. Category",
+          "@EndUserText.quickInfo": "Business Transaction Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_BusinessTransactionType"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_BusinessTransactionTypeText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "BatchInputSession": {
+          "__abapOriginalName": "BatchInputSession",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Batch Input Session",
+          "@EndUserText.label": "Batch Input Session",
+          "@EndUserText.quickInfo": "Batch Input Session",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ReferenceDocumentType": {
+          "__abapOriginalName": "ReferenceDocumentType",
+          "@EndUserText.heading": "Reference Document Type",
+          "@EndUserText.label": "Reference Document Type",
+          "@EndUserText.quickInfo": "Reference Document Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ReferenceDocumentType"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "OriginalReferenceDocument": {
+          "__abapOriginalName": "OriginalReferenceDocument",
+          "@EndUserText.heading": "Object Key",
+          "@EndUserText.label": "Object Key",
+          "@EndUserText.quickInfo": "Object key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "FinancialManagementArea": {
+          "__abapOriginalName": "FinancialManagementArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FMA",
+          "@EndUserText.label": "FM Area",
+          "@EndUserText.quickInfo": "Financial Management Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FinancialManagementArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_FinancialManagementAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CompanyCodeCurrency": {
+          "__abapOriginalName": "CompanyCodeCurrency",
+          "@EndUserText.heading": "Company Code Currency",
+          "@EndUserText.label": "Company Code Currency",
+          "@EndUserText.quickInfo": "Company Code Currency",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCodeCurrency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "AdditionalCurrency1": {
+          "__abapOriginalName": "AdditionalCurrency1",
+          "@EndUserText.heading": "Additional Currency 1",
+          "@EndUserText.label": "Additional Crcy 1",
+          "@EndUserText.quickInfo": "Additional Currency 1",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "AdditionalCurrency2": {
+          "__abapOriginalName": "AdditionalCurrency2",
+          "@EndUserText.heading": "Additional Currency 2",
+          "@EndUserText.label": "Additional Crcy 2",
+          "@EndUserText.quickInfo": "Additional Currency 2",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "ReversalIsPlanned": {
+          "__abapOriginalName": "ReversalIsPlanned",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reversal Is Planned",
+          "@EndUserText.label": "Reversal Is Planned",
+          "@EndUserText.quickInfo": "Indicator: Reversal Is Planned for Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PlannedReversalDate": {
+          "__abapOriginalName": "PlannedReversalDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Planned Reversal Date",
+          "@EndUserText.label": "Planned Reversal Dte",
+          "@EndUserText.quickInfo": "Planned Date for the Reversal Posting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "TaxIsCalculatedAutomatically": {
+          "__abapOriginalName": "TaxIsCalculatedAutomatically",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Is Automatically Calculated",
+          "@EndUserText.label": "Tax Is Automatically Calculated",
+          "@EndUserText.quickInfo": "Tax Is Automatically Calculated",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AdditionalCurrency1Role": {
+          "__abapOriginalName": "AdditionalCurrency1Role",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "CT",
+          "@EndUserText.label": "LC2 Currency Type",
+          "@EndUserText.quickInfo": "Currency Type of Second Local Currency",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "AdditionalCurrency2Role": {
+          "__abapOriginalName": "AdditionalCurrency2Role",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "CT",
+          "@EndUserText.label": "LC3 Currency Type",
+          "@EndUserText.quickInfo": "Currency Type of Third Local Currency",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "TaxBaseAmountIsNetAmount": {
+          "__abapOriginalName": "TaxBaseAmountIsNetAmount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Base Amount is Net Amount",
+          "@EndUserText.label": "Tax Base Amount is Net Amount",
+          "@EndUserText.quickInfo": "Tax Base Amount is Net Amount",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "SourceCompanyCode": {
+          "__abapOriginalName": "SourceCompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "SCCd",
+          "@EndUserText.label": "Source Company Code",
+          "@EndUserText.quickInfo": "Source Company Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "LogicalSystem": {
+          "__abapOriginalName": "LogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Log.System",
+          "@EndUserText.label": "Logical System",
+          "@EndUserText.quickInfo": "Logical System",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LogicalSystem"
+          },
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "ReferenceDocumentLogicalSystem",
+          "type": "cds.String",
+          "length": 10
+        },
+        "ReferenceDocumentLogicalSystem": {
+          "__abapOriginalName": "ReferenceDocumentLogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "Reference Document Logical System",
+          "@EndUserText.label": "Ref. Doc. Lgcl Syst.",
+          "@EndUserText.quickInfo": "Logical System of Reference Document",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_RefDocumentLogicalSystem"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "TaxAbsoluteExchangeRate": {
+          "__abapOriginalName": "TaxAbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Tax Exchange Rate",
+          "@EndUserText.label": "Absolute Tax Exchange Rate",
+          "@EndUserText.quickInfo": "Absolute Tax Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "TaxExchangeRate": {
+          "__abapOriginalName": "TaxExchangeRate",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "TaxAbsoluteExchangeRate",
+          "@AbapCatalog.typeSpec.conversionExit": "EXCRT",
+          "@EndUserText.heading": "Tax Exchange Rate",
+          "@EndUserText.label": "Tax Exchange Rate",
+          "@EndUserText.quickInfo": "Tax Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "TaxAbsoluteExchangeRate",
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "TaxExchRateIsIndirectQuotation": {
+          "__abapOriginalName": "TaxExchRateIsIndirectQuotation",
+          "@EndUserText.heading": "Tax Exchange Rate Is Indirect Quotation",
+          "@EndUserText.label": "Tax Exchange Rate Is Indirect Quotation",
+          "@EndUserText.quickInfo": "Tax Exchange Rate Is Indirect Quotation",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.booleanIndicator": true,
+          "type": "cds.Boolean"
+        },
+        "TaxEffectiveExchangeRate": {
+          "__abapOriginalName": "TaxEffectiveExchangeRate",
+          "@EndUserText.heading": "Effective Tax Exchange Rate",
+          "@EndUserText.label": "Effective Tax Exchange Rate",
+          "@EndUserText.quickInfo": "Effective Tax Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 12,
+          "scale": 5
+        },
+        "CtryCrcyTxAbsoluteExchangeRate": {
+          "__abapOriginalName": "CtryCrcyTxAbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Tax Exchange Rate in Country/Region Currency",
+          "@EndUserText.label": "Absolute Tax Exch. Rate in C/R Cur.",
+          "@EndUserText.quickInfo": "Absolute Exch. Rate for Tax in Country/Region Cur.",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "CtryCrcyTaxEffctvExchangeRate": {
+          "__abapOriginalName": "CtryCrcyTaxEffctvExchangeRate",
+          "@EndUserText.heading": "Effective Tax Exchange Rate in Country/Region Currency",
+          "@EndUserText.label": "Effective Tax Exch. Rate in C/R Cur.",
+          "@EndUserText.quickInfo": "Effective Exch. Rate for Tax in Country/Region Cur.",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 12,
+          "scale": 5
+        },
+        "ReversalReason": {
+          "__abapOriginalName": "ReversalReason",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rev.Reas.",
+          "@EndUserText.label": "Reversal Reason",
+          "@EndUserText.quickInfo": "Reason for Reversal or Inverse Posting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "ParkedByUser": {
+          "__abapOriginalName": "ParkedByUser",
+          "@EndUserText.heading": "JE Parked By",
+          "@EndUserText.label": "JE Parked By",
+          "@EndUserText.quickInfo": "Name of User Who Parked This Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ParkingDate": {
+          "__abapOriginalName": "ParkingDate",
+          "@EndUserText.heading": "Parking Date",
+          "@EndUserText.label": "Parked On",
+          "@EndUserText.quickInfo": "Day of Parking of Accounting Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "ParkingTime": {
+          "__abapOriginalName": "ParkingTime",
+          "@EndUserText.heading": "Time",
+          "@EndUserText.label": "Time of Parking",
+          "@EndUserText.quickInfo": "Time of Parking",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "ParkingTransactionCode": {
+          "__abapOriginalName": "ParkingTransactionCode",
+          "@EndUserText.heading": "Parking Transaction Code",
+          "@EndUserText.label": "Parking Transaction Code",
+          "@EndUserText.quickInfo": "Parking Transaction Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "Branch": {
+          "__abapOriginalName": "Branch",
+          "@EndUserText.heading": "Branch",
+          "@EndUserText.label": "Branch",
+          "@EndUserText.quickInfo": "Branch",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "NmbrOfPages": {
+          "__abapOriginalName": "NmbrOfPages",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Pages",
+          "@EndUserText.label": "Number of Pages",
+          "@EndUserText.quickInfo": "Number of pages of invoice",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "IsDiscountDocument": {
+          "__abapOriginalName": "IsDiscountDocument",
+          "@EndUserText.heading": "dis. doc.",
+          "@EndUserText.label": "discount document",
+          "@EndUserText.quickInfo": "Indicator: entry represents a discount document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "Reference1InDocumentHeader": {
+          "__abapOriginalName": "Reference1InDocumentHeader",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reference 1 in Document Header",
+          "@EndUserText.label": "Reference 1",
+          "@EndUserText.quickInfo": "Internal ID of Reference Key 1 in Document Header",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "Reference2InDocumentHeader": {
+          "__abapOriginalName": "Reference2InDocumentHeader",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reference 2 in Document Header",
+          "@EndUserText.label": "Reference 2",
+          "@EndUserText.quickInfo": "Internal ID of Reference Key 2 in Document Header",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "InvoiceReceiptDate": {
+          "__abapOriginalName": "InvoiceReceiptDate",
+          "@EndUserText.heading": "Invoice Receipt Date",
+          "@EndUserText.label": "Invoice Receipt Date",
+          "@EndUserText.quickInfo": "Invoice Receipt Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "Ledger": {
+          "__abapOriginalName": "Ledger",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Ledger",
+          "@EndUserText.label": "Ledger",
+          "@EndUserText.quickInfo": "Ledger",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Ledger"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_LedgerText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "LedgerGroup": {
+          "__abapOriginalName": "LedgerGroup",
+          "@EndUserText.heading": "Ledger Group",
+          "@EndUserText.label": "Ledger Group",
+          "@EndUserText.quickInfo": "Ledger Group",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "AlternativeReferenceDocument": {
+          "__abapOriginalName": "AlternativeReferenceDocument",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Alternative Reference Document",
+          "@EndUserText.label": "Alternative Reference Document",
+          "@EndUserText.quickInfo": "Alternative Reference Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 26
+        },
+        "TaxReportingDate": {
+          "__abapOriginalName": "TaxReportingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Reporting Date",
+          "@EndUserText.label": "Tax Reporting Date",
+          "@EndUserText.quickInfo": "Tax Reporting Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "TaxFulfillmentDate": {
+          "__abapOriginalName": "TaxFulfillmentDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "TxFulfDte",
+          "@EndUserText.label": "Tax Fulfill. Date",
+          "@EndUserText.quickInfo": "Tax Fulfillment Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "AccountingDocumentClass": {
+          "__abapOriginalName": "AccountingDocumentClass",
+          "@EndUserText.heading": "Accounting Document Class",
+          "@EndUserText.label": "Acctg Document Class",
+          "@EndUserText.quickInfo": "Accounting Document Class",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "ExchangeRateType": {
+          "__abapOriginalName": "ExchangeRateType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Exchange Rate Type",
+          "@EndUserText.label": "Exchange Rate Type",
+          "@EndUserText.quickInfo": "Exchange Rate Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "MarketDataAbsoluteExchangeRate": {
+          "__abapOriginalName": "MarketDataAbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Market Data Exchange Rate",
+          "@EndUserText.label": "Absolute Market Data Exch. Rate",
+          "@EndUserText.quickInfo": "Absolute Market Data Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 28,
+          "scale": 14
+        },
+        "MktDataEffectiveExchangeRate": {
+          "__abapOriginalName": "MktDataEffectiveExchangeRate",
+          "@EndUserText.heading": "Effective Market Data Exchange Rate",
+          "@EndUserText.label": "Effective Market Data Exch. Rate",
+          "@EndUserText.quickInfo": "Effective Market Data Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 31,
+          "scale": 14
+        },
+        "SenderLogicalSystem": {
+          "__abapOriginalName": "SenderLogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sender Logical System",
+          "@EndUserText.label": "Sender Logical System",
+          "@EndUserText.quickInfo": "Sender Logical System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SenderCompanyCode": {
+          "__abapOriginalName": "SenderCompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "SenderCCde",
+          "@EndUserText.label": "Sender CoCode",
+          "@EndUserText.quickInfo": "Company Code in Sender System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "SenderAccountingDocument": {
+          "__abapOriginalName": "SenderAccountingDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sender Journal Entry",
+          "@EndUserText.label": "Sender Journal Entry",
+          "@EndUserText.quickInfo": "Sender Journal Entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SenderFiscalYear": {
+          "__abapOriginalName": "SenderFiscalYear",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year in Sender System",
+          "@EndUserText.label": "Fiscal Year in Sender System",
+          "@EndUserText.quickInfo": "Fiscal Year in Sender System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ReversalReferenceDocumentCntxt": {
+          "__abapOriginalName": "ReversalReferenceDocumentCntxt",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rev. Org.",
+          "@EndUserText.label": "Reversal Organizatns",
+          "@EndUserText.quickInfo": "Reversal: Reference Organizations of Document to Be Reversed",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ReversalReferenceDocument": {
+          "__abapOriginalName": "ReversalReferenceDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Rev. Ref.",
+          "@EndUserText.label": "Reversal Ref. No.",
+          "@EndUserText.quickInfo": "Reversal: Reference Document No. of Document to Be Reversed",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "LatePaymentReason": {
+          "__abapOriginalName": "LatePaymentReason",
+          "@EndUserText.heading": "Late Payment Reason",
+          "@EndUserText.label": "Late Payment Reason",
+          "@EndUserText.quickInfo": "Late Payment Reason",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "SalesDocumentCondition": {
+          "__abapOriginalName": "SalesDocumentCondition",
+          "@EndUserText.heading": "Sales Document Condition",
+          "@EndUserText.label": "Sales Document Condition",
+          "@EndUserText.quickInfo": "Sales Document Condition",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "IsReversal": {
+          "__abapOriginalName": "IsReversal",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rvrsng",
+          "@EndUserText.label": "Is Reversing",
+          "@EndUserText.quickInfo": "Indicator: Item is Reversing Another Item",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "IsReversed": {
+          "__abapOriginalName": "IsReversed",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rvrsd",
+          "@EndUserText.label": "Is Reversed",
+          "@EndUserText.quickInfo": "Indicator: Item is Reversed",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "GLBusinessTransactionGroup": {
+          "__abapOriginalName": "GLBusinessTransactionGroup",
+          "@EndUserText.heading": "GL Business Transaction Group",
+          "@EndUserText.label": "GL Business Transaction Group",
+          "@EndUserText.quickInfo": "General Ledger Business Transaction Group",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "CostAccountingValuationDate": {
+          "__abapOriginalName": "CostAccountingValuationDate",
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "Val. Date",
+          "@EndUserText.label": "Valuation Date",
+          "@EndUserText.quickInfo": "Special Valuation Date for Cost  Accounting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "TaxCountry": {
+          "__abapOriginalName": "TaxCountry",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Country/Region",
+          "@EndUserText.label": "Tax Country/Region",
+          "@EndUserText.quickInfo": "Tax Country/Region",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "JournalEntryLastChangeDateTime": {
+          "__abapOriginalName": "JournalEntryLastChangeDateTime",
+          "@EndUserText.heading": "Journal Entry Last Change Date Time",
+          "@EndUserText.label": "Journal Entry Last Change Date Time",
+          "@EndUserText.quickInfo": "Journal Entry Last Change Date Time",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Timestamp"
+        },
+        "JournalEntryReprocessingStatus": {
+          "__abapOriginalName": "JournalEntryReprocessingStatus",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Journal Entry Reprocessing Status",
+          "@EndUserText.label": "Journal Entry Reprocessing Status",
+          "@EndUserText.quickInfo": "Journal Entry Reprocessing Status",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "JrnlEntryCntrySpecificRef1": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 1",
+          "@EndUserText.label": "Country/Region Specific Reference 1",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 1 in the Document",
+          "type": "cds.String",
+          "length": 80
+        },
+        "JrnlEntryCntrySpecificDate1": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 1",
+          "@EndUserText.label": "Country/Region Specific Date 1",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 1 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef2": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 2",
+          "@EndUserText.label": "Country/Region Specific Reference 2",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 2 in the Document",
+          "type": "cds.String",
+          "length": 25
+        },
+        "JrnlEntryCntrySpecificDate2": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 2",
+          "@EndUserText.label": "Country/Region Specific Date 2",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 2 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef3": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef3",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 3",
+          "@EndUserText.label": "Country/Region Specific Reference 3",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 3 in the Document",
+          "type": "cds.String",
+          "length": 25
+        },
+        "JrnlEntryCntrySpecificDate3": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate3",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 3",
+          "@EndUserText.label": "Country/Region Specific Date 3",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 3 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef4": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef4",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 4",
+          "@EndUserText.label": "Country/Region Specific Reference 4",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 4 in the Document",
+          "type": "cds.String",
+          "length": 50
+        },
+        "JrnlEntryCntrySpecificDate4": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate4",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 4",
+          "@EndUserText.label": "Country/Region Specific Date 4",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 4 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef5": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef5",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 5",
+          "@EndUserText.label": "Country/Region Specific Reference 5",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 5 in the Document",
+          "type": "cds.String",
+          "length": 50
+        },
+        "JrnlEntryCntrySpecificDate5": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate5",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 5",
+          "@EndUserText.label": "Country/Region Specific Date 5",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 5 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificBP1": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificBP1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Ctry/Reg. Specific Business Partner 1",
+          "@EndUserText.label": "Ctry/Reg. Specific Business Partner 1",
+          "@EndUserText.quickInfo": "Country/Region specific Business Partner 1 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "JrnlEntryCntrySpecificBP2": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificBP2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Ctry/Reg. Specific Business Partner 2",
+          "@EndUserText.label": "Ctry/Reg. Specific Business Partner 2",
+          "@EndUserText.quickInfo": "Country/Region Specific Business Partner 2 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "WithholdingTaxReportingDate": {
+          "__abapOriginalName": "WithholdingTaxReportingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Withholding Tax Reporting Date",
+          "@EndUserText.label": "Wtax Reporting Date",
+          "@EndUserText.quickInfo": "Withholding Tax Reporting Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IsBudgetaryLedgerDoc": {
+          "@EndUserText.heading": "{i18n>I_JOURNALENTRY.ISBUDGETARYLEDGERDOC@ENDUSERTEXT.HEADING}",
+          "@EndUserText.label": "IsBudgetaryLedgerDoc",
+          "@EndUserText.quickInfo": "{i18n>I_JOURNALENTRY.ISBUDGETARYLEDGERDOC@ENDUSERTEXT.QUICKINFO}",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 128
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "JournalEntryHeader.v1.JournalEntry_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "JournalEntryHeader.v1.JournalEntry",
+        "originalEntityName": "journalentryheader.JournalEntry"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "JournalEntryHeader.v1.JournalEntry_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYear"
+              ]
+            },
+            {
+              "ref": [
+                "AccountingDocument"
+              ]
+            },
+            {
+              "ref": [
+                "AccountingDocumentType"
+              ]
+            },
+            {
+              "ref": [
+                "DocumentDate"
+              ]
+            },
+            {
+              "ref": [
+                "PostingDate"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalPeriod"
+              ]
+            },
+            {
+              "ref": [
+                "AccountingDocumentCreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "CreationTime"
+              ]
+            },
+            {
+              "ref": [
+                "LastManualChangeDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastAutomaticChangeDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDate"
+              ]
+            },
+            {
+              "ref": [
+                "ExchangeRateDate"
+              ]
+            },
+            {
+              "ref": [
+                "AccountingDocCreatedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "TransactionCode"
+              ]
+            },
+            {
+              "ref": [
+                "IntercompanyTransaction"
+              ]
+            },
+            {
+              "ref": [
+                "DocumentReferenceID"
+              ]
+            },
+            {
+              "ref": [
+                "RecurringAccountingDocument"
+              ]
+            },
+            {
+              "ref": [
+                "RecrrgJournalEntryCompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "RecrrgJournalEntryFiscalYear"
+              ]
+            },
+            {
+              "ref": [
+                "ReverseDocument"
+              ]
+            },
+            {
+              "ref": [
+                "ReverseDocumentFiscalYear"
+              ]
+            },
+            {
+              "ref": [
+                "AccountingDocumentHeaderText"
+              ]
+            },
+            {
+              "ref": [
+                "TransactionCurrency"
+              ]
+            },
+            {
+              "ref": [
+                "AbsoluteExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "ExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "ExchRateIsIndirectQuotation"
+              ]
+            },
+            {
+              "ref": [
+                "EffectiveExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "AccountingDocumentCategory"
+              ]
+            },
+            {
+              "ref": [
+                "NetAmountIsPosted"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryIsPostedToPrevPeriod"
+              ]
+            },
+            {
+              "ref": [
+                "BusinessTransactionType"
+              ]
+            },
+            {
+              "ref": [
+                "BatchInputSession"
+              ]
+            },
+            {
+              "ref": [
+                "ReferenceDocumentType"
+              ]
+            },
+            {
+              "ref": [
+                "OriginalReferenceDocument"
+              ]
+            },
+            {
+              "ref": [
+                "FinancialManagementArea"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCodeCurrency"
+              ]
+            },
+            {
+              "ref": [
+                "AdditionalCurrency1"
+              ]
+            },
+            {
+              "ref": [
+                "AdditionalCurrency2"
+              ]
+            },
+            {
+              "ref": [
+                "ReversalIsPlanned"
+              ]
+            },
+            {
+              "ref": [
+                "PlannedReversalDate"
+              ]
+            },
+            {
+              "ref": [
+                "TaxIsCalculatedAutomatically"
+              ]
+            },
+            {
+              "ref": [
+                "AdditionalCurrency1Role"
+              ]
+            },
+            {
+              "ref": [
+                "AdditionalCurrency2Role"
+              ]
+            },
+            {
+              "ref": [
+                "TaxBaseAmountIsNetAmount"
+              ]
+            },
+            {
+              "ref": [
+                "SourceCompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "LogicalSystem"
+              ]
+            },
+            {
+              "ref": [
+                "ReferenceDocumentLogicalSystem"
+              ]
+            },
+            {
+              "ref": [
+                "TaxAbsoluteExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "TaxExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "TaxExchRateIsIndirectQuotation"
+              ]
+            },
+            {
+              "ref": [
+                "TaxEffectiveExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "CtryCrcyTxAbsoluteExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "CtryCrcyTaxEffctvExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "ReversalReason"
+              ]
+            },
+            {
+              "ref": [
+                "ParkedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "ParkingDate"
+              ]
+            },
+            {
+              "ref": [
+                "ParkingTime"
+              ]
+            },
+            {
+              "ref": [
+                "ParkingTransactionCode"
+              ]
+            },
+            {
+              "ref": [
+                "Branch"
+              ]
+            },
+            {
+              "ref": [
+                "NmbrOfPages"
+              ]
+            },
+            {
+              "ref": [
+                "IsDiscountDocument"
+              ]
+            },
+            {
+              "ref": [
+                "Reference1InDocumentHeader"
+              ]
+            },
+            {
+              "ref": [
+                "Reference2InDocumentHeader"
+              ]
+            },
+            {
+              "ref": [
+                "InvoiceReceiptDate"
+              ]
+            },
+            {
+              "ref": [
+                "Ledger"
+              ]
+            },
+            {
+              "ref": [
+                "LedgerGroup"
+              ]
+            },
+            {
+              "ref": [
+                "AlternativeReferenceDocument"
+              ]
+            },
+            {
+              "ref": [
+                "TaxReportingDate"
+              ]
+            },
+            {
+              "ref": [
+                "TaxFulfillmentDate"
+              ]
+            },
+            {
+              "ref": [
+                "AccountingDocumentClass"
+              ]
+            },
+            {
+              "ref": [
+                "ExchangeRateType"
+              ]
+            },
+            {
+              "ref": [
+                "MarketDataAbsoluteExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "MktDataEffectiveExchangeRate"
+              ]
+            },
+            {
+              "ref": [
+                "SenderLogicalSystem"
+              ]
+            },
+            {
+              "ref": [
+                "SenderCompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "SenderAccountingDocument"
+              ]
+            },
+            {
+              "ref": [
+                "SenderFiscalYear"
+              ]
+            },
+            {
+              "ref": [
+                "ReversalReferenceDocumentCntxt"
+              ]
+            },
+            {
+              "ref": [
+                "ReversalReferenceDocument"
+              ]
+            },
+            {
+              "ref": [
+                "LatePaymentReason"
+              ]
+            },
+            {
+              "ref": [
+                "SalesDocumentCondition"
+              ]
+            },
+            {
+              "ref": [
+                "IsReversal"
+              ]
+            },
+            {
+              "ref": [
+                "IsReversed"
+              ]
+            },
+            {
+              "ref": [
+                "GLBusinessTransactionGroup"
+              ]
+            },
+            {
+              "ref": [
+                "CostAccountingValuationDate"
+              ]
+            },
+            {
+              "ref": [
+                "TaxCountry"
+              ]
+            },
+            {
+              "ref": [
+                "JournalEntryLastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "JournalEntryReprocessingStatus"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificRef1"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificDate1"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificRef2"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificDate2"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificRef3"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificDate3"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificRef4"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificDate4"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificRef5"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificDate5"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificBP1"
+              ]
+            },
+            {
+              "ref": [
+                "JrnlEntryCntrySpecificBP2"
+              ]
+            },
+            {
+              "ref": [
+                "WithholdingTaxReportingDate"
+              ]
+            },
+            {
+              "ref": [
+                "IsBudgetaryLedgerDoc"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "JournalEntryHeader.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "JournalEntryHeader.v1.JournalEntry",
+        "originalEntityName": "journalentryheader.JournalEntry"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "JournalEntryHeader.v1.JournalEntry_Delta": {
+      "__abapOriginalName": "I_JournalEntry",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_AccountingDocumentTypeText"
+        },
+        {
+          "=": "_BusinessTransactionTypeText"
+        },
+        {
+          "=": "_FinancialManagementAreaText"
+        },
+        {
+          "=": "_LedgerText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "BKPF",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "CompanyCode"
+            },
+            {
+              "=": "FiscalYear"
+            },
+            {
+              "=": "AccountingDocument"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bukrs"
+            },
+            {
+              "=": "gjahr"
+            },
+            {
+              "=": "belnr"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIJOURNALENT",
+      "@EndUserText.label": "Journal Entry",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "AccountingDocument",
+      "@ObjectModel.sapObjectNodeType.name": "JournalEntry",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "TRANSACTIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XXL"
+      },
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Company Code",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "FiscalYear": {
+          "__abapOriginalName": "FiscalYear",
+          "@EndUserText.heading": "Fiscal Year",
+          "@EndUserText.label": "Fiscal Year",
+          "@EndUserText.quickInfo": "Fiscal Year",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalYear"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "AccountingDocument": {
+          "__abapOriginalName": "AccountingDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Journal Entry",
+          "@EndUserText.label": "Journal Entry",
+          "@EndUserText.quickInfo": "Journal Entry",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "AccountingDocumentType": {
+          "__abapOriginalName": "AccountingDocumentType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Journal Entry Type",
+          "@EndUserText.label": "Journal Entry Type",
+          "@EndUserText.quickInfo": "Journal Entry Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_AccountingDocumentType"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_AccountingDocumentTypeText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "DocumentDate": {
+          "__abapOriginalName": "DocumentDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Journal Entry Date",
+          "@EndUserText.label": "Journal Entry Date",
+          "@EndUserText.quickInfo": "Journal Entry Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "PostingDate": {
+          "__abapOriginalName": "PostingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Date",
+          "@EndUserText.label": "Posting Date",
+          "@EndUserText.quickInfo": "Posting Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "FiscalPeriod": {
+          "__abapOriginalName": "FiscalPeriod",
+          "@EndUserText.heading": "Fiscal Period",
+          "@EndUserText.label": "Fiscal Period",
+          "@EndUserText.quickInfo": "Fiscal Period",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalPeriod"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "AccountingDocumentCreationDate": {
+          "__abapOriginalName": "AccountingDocumentCreationDate",
+          "@EndUserText.heading": "Entered On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "Accounting Document Entry Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "CreationTime": {
+          "__abapOriginalName": "CreationTime",
+          "@EndUserText.heading": "Creation Time",
+          "@EndUserText.label": "Creation Time",
+          "@EndUserText.quickInfo": "Creation Time",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "LastManualChangeDate": {
+          "__abapOriginalName": "LastManualChangeDate",
+          "@EndUserText.heading": "Last Manual Change Date",
+          "@EndUserText.label": "Manual Change Date",
+          "@EndUserText.quickInfo": "Calendar date of the last manual change in document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "LastAutomaticChangeDate": {
+          "__abapOriginalName": "LastAutomaticChangeDate",
+          "@EndUserText.heading": "Last Automatic Change Date",
+          "@EndUserText.label": "Autom. Change Date",
+          "@EndUserText.quickInfo": "Calendar date of the last automatic change in document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "LastChangeDate": {
+          "__abapOriginalName": "LastChangeDate",
+          "@EndUserText.heading": "Last Change Date",
+          "@EndUserText.label": "Last Change Date",
+          "@EndUserText.quickInfo": "Last Change Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "ExchangeRateDate": {
+          "__abapOriginalName": "ExchangeRateDate",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Exchange Rate Date",
+          "@EndUserText.quickInfo": "Exchange Rate Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "AccountingDocCreatedByUser": {
+          "__abapOriginalName": "AccountingDocCreatedByUser",
+          "@EndUserText.heading": "Journal Entry Created By",
+          "@EndUserText.label": "Journal Entry Created By",
+          "@EndUserText.quickInfo": "User that created the journal entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "TransactionCode": {
+          "__abapOriginalName": "TransactionCode",
+          "@EndUserText.heading": "Transaction Code",
+          "@EndUserText.label": "Transaction Code",
+          "@EndUserText.quickInfo": "Transaction Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntercompanyTransaction": {
+          "__abapOriginalName": "IntercompanyTransaction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Intercompany Transaction",
+          "@EndUserText.label": "Intercompany Transac",
+          "@EndUserText.quickInfo": "Intercompany Transaction Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "DocumentReferenceID": {
+          "__abapOriginalName": "DocumentReferenceID",
+          "@EndUserText.heading": "Document Reference ID",
+          "@EndUserText.label": "Document Reference ID",
+          "@EndUserText.quickInfo": "Document Reference ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "RecurringAccountingDocument": {
+          "__abapOriginalName": "RecurringAccountingDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Recurring Journal Entry",
+          "@EndUserText.label": "Recurring Journal Entry",
+          "@EndUserText.quickInfo": "Recurring Journal Entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "RecrrgJournalEntryCompanyCode": {
+          "__abapOriginalName": "RecrrgJournalEntryCompanyCode",
+          "@EndUserText.heading": "Recurring Journal Entry Company Code",
+          "@EndUserText.label": "Recurring Journal Entry Company Code",
+          "@EndUserText.quickInfo": "Recurring Journal Entry Company Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "RecrrgJournalEntryFiscalYear": {
+          "__abapOriginalName": "RecrrgJournalEntryFiscalYear",
+          "@EndUserText.heading": "Recurring Journal Entry Fiscal Year",
+          "@EndUserText.label": "Recurring Journal Entry Fiscal Year",
+          "@EndUserText.quickInfo": "Recurring Journal Entry Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ReverseDocument": {
+          "__abapOriginalName": "ReverseDocument",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Reverse Document",
+          "@EndUserText.label": "Reverse Document",
+          "@EndUserText.quickInfo": "Reverse Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ReverseDocumentFiscalYear": {
+          "__abapOriginalName": "ReverseDocumentFiscalYear",
+          "@EndUserText.heading": "Reverse Document Fiscal Year",
+          "@EndUserText.label": "Reverse Document Fiscal Year",
+          "@EndUserText.quickInfo": "Reverse Document Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "AccountingDocumentHeaderText": {
+          "__abapOriginalName": "AccountingDocumentHeaderText",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Document Header Text",
+          "@EndUserText.label": "Document Header Text",
+          "@EndUserText.quickInfo": "Document Header Text",
+          "type": "cds.String",
+          "length": 25
+        },
+        "TransactionCurrency": {
+          "__abapOriginalName": "TransactionCurrency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Crcy",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Currency Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_TransactionCurrency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "AbsoluteExchangeRate": {
+          "__abapOriginalName": "AbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Exchange Rate",
+          "@EndUserText.label": "Absolute Exchange Rate",
+          "@EndUserText.quickInfo": "Absolute Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "ExchangeRate": {
+          "__abapOriginalName": "ExchangeRate",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "AbsoluteExchangeRate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "EXCRT",
+          "@EndUserText.heading": "Exch. Rate",
+          "@EndUserText.label": "Exchange Rate",
+          "@EndUserText.quickInfo": "Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "AbsoluteExchangeRate",
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "ExchRateIsIndirectQuotation": {
+          "__abapOriginalName": "ExchRateIsIndirectQuotation",
+          "@EndUserText.heading": "Exchange Rate Is Indirect Quotation",
+          "@EndUserText.label": "Exchange Rate Is Indirect Quotation",
+          "@EndUserText.quickInfo": "Exchange Rate Is Indirect Quotation",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.booleanIndicator": true,
+          "type": "cds.Boolean"
+        },
+        "EffectiveExchangeRate": {
+          "__abapOriginalName": "EffectiveExchangeRate",
+          "@EndUserText.heading": "Effective Exchange Rate",
+          "@EndUserText.label": "Effective Exch. Rate",
+          "@EndUserText.quickInfo": "Effective Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 12,
+          "scale": 5
+        },
+        "AccountingDocumentCategory": {
+          "__abapOriginalName": "AccountingDocumentCategory",
+          "@EndUserText.heading": "Journal Entry Category",
+          "@EndUserText.label": "Journal Entry Category",
+          "@EndUserText.quickInfo": "Journal Entry Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_AccountingDocumentCategory"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "NetAmountIsPosted": {
+          "__abapOriginalName": "NetAmountIsPosted",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Net Amount Is Posted",
+          "@EndUserText.label": "Net Amount Is Posted",
+          "@EndUserText.quickInfo": "Net Amount Is Posted",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "JrnlEntryIsPostedToPrevPeriod": {
+          "__abapOriginalName": "JrnlEntryIsPostedToPrevPeriod",
+          "@EndUserText.heading": "Journal Entry Is Posted To Previous Period",
+          "@EndUserText.label": "Journal Entry Is Posted To Prev. Period",
+          "@EndUserText.quickInfo": "Journal Entry Is Posted To Previous Period",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "BusinessTransactionType": {
+          "__abapOriginalName": "BusinessTransactionType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BusTranCat",
+          "@EndUserText.label": "Bus. Trans. Category",
+          "@EndUserText.quickInfo": "Business Transaction Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_BusinessTransactionType"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_BusinessTransactionTypeText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "BatchInputSession": {
+          "__abapOriginalName": "BatchInputSession",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Batch Input Session",
+          "@EndUserText.label": "Batch Input Session",
+          "@EndUserText.quickInfo": "Batch Input Session",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ReferenceDocumentType": {
+          "__abapOriginalName": "ReferenceDocumentType",
+          "@EndUserText.heading": "Reference Document Type",
+          "@EndUserText.label": "Reference Document Type",
+          "@EndUserText.quickInfo": "Reference Document Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ReferenceDocumentType"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "OriginalReferenceDocument": {
+          "__abapOriginalName": "OriginalReferenceDocument",
+          "@EndUserText.heading": "Object Key",
+          "@EndUserText.label": "Object Key",
+          "@EndUserText.quickInfo": "Object key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "FinancialManagementArea": {
+          "__abapOriginalName": "FinancialManagementArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FMA",
+          "@EndUserText.label": "FM Area",
+          "@EndUserText.quickInfo": "Financial Management Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FinancialManagementArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_FinancialManagementAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CompanyCodeCurrency": {
+          "__abapOriginalName": "CompanyCodeCurrency",
+          "@EndUserText.heading": "Company Code Currency",
+          "@EndUserText.label": "Company Code Currency",
+          "@EndUserText.quickInfo": "Company Code Currency",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCodeCurrency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "AdditionalCurrency1": {
+          "__abapOriginalName": "AdditionalCurrency1",
+          "@EndUserText.heading": "Additional Currency 1",
+          "@EndUserText.label": "Additional Crcy 1",
+          "@EndUserText.quickInfo": "Additional Currency 1",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "AdditionalCurrency2": {
+          "__abapOriginalName": "AdditionalCurrency2",
+          "@EndUserText.heading": "Additional Currency 2",
+          "@EndUserText.label": "Additional Crcy 2",
+          "@EndUserText.quickInfo": "Additional Currency 2",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "ReversalIsPlanned": {
+          "__abapOriginalName": "ReversalIsPlanned",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reversal Is Planned",
+          "@EndUserText.label": "Reversal Is Planned",
+          "@EndUserText.quickInfo": "Indicator: Reversal Is Planned for Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PlannedReversalDate": {
+          "__abapOriginalName": "PlannedReversalDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Planned Reversal Date",
+          "@EndUserText.label": "Planned Reversal Dte",
+          "@EndUserText.quickInfo": "Planned Date for the Reversal Posting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "TaxIsCalculatedAutomatically": {
+          "__abapOriginalName": "TaxIsCalculatedAutomatically",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Is Automatically Calculated",
+          "@EndUserText.label": "Tax Is Automatically Calculated",
+          "@EndUserText.quickInfo": "Tax Is Automatically Calculated",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AdditionalCurrency1Role": {
+          "__abapOriginalName": "AdditionalCurrency1Role",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "CT",
+          "@EndUserText.label": "LC2 Currency Type",
+          "@EndUserText.quickInfo": "Currency Type of Second Local Currency",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "AdditionalCurrency2Role": {
+          "__abapOriginalName": "AdditionalCurrency2Role",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "CT",
+          "@EndUserText.label": "LC3 Currency Type",
+          "@EndUserText.quickInfo": "Currency Type of Third Local Currency",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "TaxBaseAmountIsNetAmount": {
+          "__abapOriginalName": "TaxBaseAmountIsNetAmount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Base Amount is Net Amount",
+          "@EndUserText.label": "Tax Base Amount is Net Amount",
+          "@EndUserText.quickInfo": "Tax Base Amount is Net Amount",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "SourceCompanyCode": {
+          "__abapOriginalName": "SourceCompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "SCCd",
+          "@EndUserText.label": "Source Company Code",
+          "@EndUserText.quickInfo": "Source Company Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "LogicalSystem": {
+          "__abapOriginalName": "LogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Log.System",
+          "@EndUserText.label": "Logical System",
+          "@EndUserText.quickInfo": "Logical System",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LogicalSystem"
+          },
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "ReferenceDocumentLogicalSystem",
+          "type": "cds.String",
+          "length": 10
+        },
+        "ReferenceDocumentLogicalSystem": {
+          "__abapOriginalName": "ReferenceDocumentLogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "Reference Document Logical System",
+          "@EndUserText.label": "Ref. Doc. Lgcl Syst.",
+          "@EndUserText.quickInfo": "Logical System of Reference Document",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_RefDocumentLogicalSystem"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "TaxAbsoluteExchangeRate": {
+          "__abapOriginalName": "TaxAbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Tax Exchange Rate",
+          "@EndUserText.label": "Absolute Tax Exchange Rate",
+          "@EndUserText.quickInfo": "Absolute Tax Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "TaxExchangeRate": {
+          "__abapOriginalName": "TaxExchangeRate",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "TaxAbsoluteExchangeRate",
+          "@AbapCatalog.typeSpec.conversionExit": "EXCRT",
+          "@EndUserText.heading": "Tax Exchange Rate",
+          "@EndUserText.label": "Tax Exchange Rate",
+          "@EndUserText.quickInfo": "Tax Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "TaxAbsoluteExchangeRate",
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "TaxExchRateIsIndirectQuotation": {
+          "__abapOriginalName": "TaxExchRateIsIndirectQuotation",
+          "@EndUserText.heading": "Tax Exchange Rate Is Indirect Quotation",
+          "@EndUserText.label": "Tax Exchange Rate Is Indirect Quotation",
+          "@EndUserText.quickInfo": "Tax Exchange Rate Is Indirect Quotation",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.booleanIndicator": true,
+          "type": "cds.Boolean"
+        },
+        "TaxEffectiveExchangeRate": {
+          "__abapOriginalName": "TaxEffectiveExchangeRate",
+          "@EndUserText.heading": "Effective Tax Exchange Rate",
+          "@EndUserText.label": "Effective Tax Exchange Rate",
+          "@EndUserText.quickInfo": "Effective Tax Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 12,
+          "scale": 5
+        },
+        "CtryCrcyTxAbsoluteExchangeRate": {
+          "__abapOriginalName": "CtryCrcyTxAbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Tax Exchange Rate in Country/Region Currency",
+          "@EndUserText.label": "Absolute Tax Exch. Rate in C/R Cur.",
+          "@EndUserText.quickInfo": "Absolute Exch. Rate for Tax in Country/Region Cur.",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 9,
+          "scale": 5
+        },
+        "CtryCrcyTaxEffctvExchangeRate": {
+          "__abapOriginalName": "CtryCrcyTaxEffctvExchangeRate",
+          "@EndUserText.heading": "Effective Tax Exchange Rate in Country/Region Currency",
+          "@EndUserText.label": "Effective Tax Exch. Rate in C/R Cur.",
+          "@EndUserText.quickInfo": "Effective Exch. Rate for Tax in Country/Region Cur.",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 12,
+          "scale": 5
+        },
+        "ReversalReason": {
+          "__abapOriginalName": "ReversalReason",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rev.Reas.",
+          "@EndUserText.label": "Reversal Reason",
+          "@EndUserText.quickInfo": "Reason for Reversal or Inverse Posting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "ParkedByUser": {
+          "__abapOriginalName": "ParkedByUser",
+          "@EndUserText.heading": "JE Parked By",
+          "@EndUserText.label": "JE Parked By",
+          "@EndUserText.quickInfo": "Name of User Who Parked This Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ParkingDate": {
+          "__abapOriginalName": "ParkingDate",
+          "@EndUserText.heading": "Parking Date",
+          "@EndUserText.label": "Parked On",
+          "@EndUserText.quickInfo": "Day of Parking of Accounting Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "ParkingTime": {
+          "__abapOriginalName": "ParkingTime",
+          "@EndUserText.heading": "Time",
+          "@EndUserText.label": "Time of Parking",
+          "@EndUserText.quickInfo": "Time of Parking",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "ParkingTransactionCode": {
+          "__abapOriginalName": "ParkingTransactionCode",
+          "@EndUserText.heading": "Parking Transaction Code",
+          "@EndUserText.label": "Parking Transaction Code",
+          "@EndUserText.quickInfo": "Parking Transaction Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "Branch": {
+          "__abapOriginalName": "Branch",
+          "@EndUserText.heading": "Branch",
+          "@EndUserText.label": "Branch",
+          "@EndUserText.quickInfo": "Branch",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "NmbrOfPages": {
+          "__abapOriginalName": "NmbrOfPages",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Pages",
+          "@EndUserText.label": "Number of Pages",
+          "@EndUserText.quickInfo": "Number of pages of invoice",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "IsDiscountDocument": {
+          "__abapOriginalName": "IsDiscountDocument",
+          "@EndUserText.heading": "dis. doc.",
+          "@EndUserText.label": "discount document",
+          "@EndUserText.quickInfo": "Indicator: entry represents a discount document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "Reference1InDocumentHeader": {
+          "__abapOriginalName": "Reference1InDocumentHeader",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reference 1 in Document Header",
+          "@EndUserText.label": "Reference 1",
+          "@EndUserText.quickInfo": "Internal ID of Reference Key 1 in Document Header",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "Reference2InDocumentHeader": {
+          "__abapOriginalName": "Reference2InDocumentHeader",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Reference 2 in Document Header",
+          "@EndUserText.label": "Reference 2",
+          "@EndUserText.quickInfo": "Internal ID of Reference Key 2 in Document Header",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "InvoiceReceiptDate": {
+          "__abapOriginalName": "InvoiceReceiptDate",
+          "@EndUserText.heading": "Invoice Receipt Date",
+          "@EndUserText.label": "Invoice Receipt Date",
+          "@EndUserText.quickInfo": "Invoice Receipt Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "Ledger": {
+          "__abapOriginalName": "Ledger",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Ledger",
+          "@EndUserText.label": "Ledger",
+          "@EndUserText.quickInfo": "Ledger",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Ledger"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_LedgerText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "LedgerGroup": {
+          "__abapOriginalName": "LedgerGroup",
+          "@EndUserText.heading": "Ledger Group",
+          "@EndUserText.label": "Ledger Group",
+          "@EndUserText.quickInfo": "Ledger Group",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "AlternativeReferenceDocument": {
+          "__abapOriginalName": "AlternativeReferenceDocument",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Alternative Reference Document",
+          "@EndUserText.label": "Alternative Reference Document",
+          "@EndUserText.quickInfo": "Alternative Reference Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 26
+        },
+        "TaxReportingDate": {
+          "__abapOriginalName": "TaxReportingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Reporting Date",
+          "@EndUserText.label": "Tax Reporting Date",
+          "@EndUserText.quickInfo": "Tax Reporting Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "TaxFulfillmentDate": {
+          "__abapOriginalName": "TaxFulfillmentDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "TxFulfDte",
+          "@EndUserText.label": "Tax Fulfill. Date",
+          "@EndUserText.quickInfo": "Tax Fulfillment Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "AccountingDocumentClass": {
+          "__abapOriginalName": "AccountingDocumentClass",
+          "@EndUserText.heading": "Accounting Document Class",
+          "@EndUserText.label": "Acctg Document Class",
+          "@EndUserText.quickInfo": "Accounting Document Class",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "ExchangeRateType": {
+          "__abapOriginalName": "ExchangeRateType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Exchange Rate Type",
+          "@EndUserText.label": "Exchange Rate Type",
+          "@EndUserText.quickInfo": "Exchange Rate Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "MarketDataAbsoluteExchangeRate": {
+          "__abapOriginalName": "MarketDataAbsoluteExchangeRate",
+          "@EndUserText.heading": "Absolute Market Data Exchange Rate",
+          "@EndUserText.label": "Absolute Market Data Exch. Rate",
+          "@EndUserText.quickInfo": "Absolute Market Data Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 28,
+          "scale": 14
+        },
+        "MktDataEffectiveExchangeRate": {
+          "__abapOriginalName": "MktDataEffectiveExchangeRate",
+          "@EndUserText.heading": "Effective Market Data Exchange Rate",
+          "@EndUserText.label": "Effective Market Data Exch. Rate",
+          "@EndUserText.quickInfo": "Effective Market Data Exchange Rate",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 31,
+          "scale": 14
+        },
+        "SenderLogicalSystem": {
+          "__abapOriginalName": "SenderLogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sender Logical System",
+          "@EndUserText.label": "Sender Logical System",
+          "@EndUserText.quickInfo": "Sender Logical System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SenderCompanyCode": {
+          "__abapOriginalName": "SenderCompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "SenderCCde",
+          "@EndUserText.label": "Sender CoCode",
+          "@EndUserText.quickInfo": "Company Code in Sender System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "SenderAccountingDocument": {
+          "__abapOriginalName": "SenderAccountingDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sender Journal Entry",
+          "@EndUserText.label": "Sender Journal Entry",
+          "@EndUserText.quickInfo": "Sender Journal Entry",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SenderFiscalYear": {
+          "__abapOriginalName": "SenderFiscalYear",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year in Sender System",
+          "@EndUserText.label": "Fiscal Year in Sender System",
+          "@EndUserText.quickInfo": "Fiscal Year in Sender System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ReversalReferenceDocumentCntxt": {
+          "__abapOriginalName": "ReversalReferenceDocumentCntxt",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rev. Org.",
+          "@EndUserText.label": "Reversal Organizatns",
+          "@EndUserText.quickInfo": "Reversal: Reference Organizations of Document to Be Reversed",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ReversalReferenceDocument": {
+          "__abapOriginalName": "ReversalReferenceDocument",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Rev. Ref.",
+          "@EndUserText.label": "Reversal Ref. No.",
+          "@EndUserText.quickInfo": "Reversal: Reference Document No. of Document to Be Reversed",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "LatePaymentReason": {
+          "__abapOriginalName": "LatePaymentReason",
+          "@EndUserText.heading": "Late Payment Reason",
+          "@EndUserText.label": "Late Payment Reason",
+          "@EndUserText.quickInfo": "Late Payment Reason",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "SalesDocumentCondition": {
+          "__abapOriginalName": "SalesDocumentCondition",
+          "@EndUserText.heading": "Sales Document Condition",
+          "@EndUserText.label": "Sales Document Condition",
+          "@EndUserText.quickInfo": "Sales Document Condition",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "IsReversal": {
+          "__abapOriginalName": "IsReversal",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rvrsng",
+          "@EndUserText.label": "Is Reversing",
+          "@EndUserText.quickInfo": "Indicator: Item is Reversing Another Item",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "IsReversed": {
+          "__abapOriginalName": "IsReversed",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rvrsd",
+          "@EndUserText.label": "Is Reversed",
+          "@EndUserText.quickInfo": "Indicator: Item is Reversed",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "GLBusinessTransactionGroup": {
+          "__abapOriginalName": "GLBusinessTransactionGroup",
+          "@EndUserText.heading": "GL Business Transaction Group",
+          "@EndUserText.label": "GL Business Transaction Group",
+          "@EndUserText.quickInfo": "General Ledger Business Transaction Group",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "CostAccountingValuationDate": {
+          "__abapOriginalName": "CostAccountingValuationDate",
+          "@Analytics.internalName": {
+            "#": "LOCAL"
+          },
+          "@EndUserText.heading": "Val. Date",
+          "@EndUserText.label": "Valuation Date",
+          "@EndUserText.quickInfo": "Special Valuation Date for Cost  Accounting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "TaxCountry": {
+          "__abapOriginalName": "TaxCountry",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Country/Region",
+          "@EndUserText.label": "Tax Country/Region",
+          "@EndUserText.quickInfo": "Tax Country/Region",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "JournalEntryLastChangeDateTime": {
+          "__abapOriginalName": "JournalEntryLastChangeDateTime",
+          "@EndUserText.heading": "Journal Entry Last Change Date Time",
+          "@EndUserText.label": "Journal Entry Last Change Date Time",
+          "@EndUserText.quickInfo": "Journal Entry Last Change Date Time",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Timestamp"
+        },
+        "JournalEntryReprocessingStatus": {
+          "__abapOriginalName": "JournalEntryReprocessingStatus",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Journal Entry Reprocessing Status",
+          "@EndUserText.label": "Journal Entry Reprocessing Status",
+          "@EndUserText.quickInfo": "Journal Entry Reprocessing Status",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "JrnlEntryCntrySpecificRef1": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 1",
+          "@EndUserText.label": "Country/Region Specific Reference 1",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 1 in the Document",
+          "type": "cds.String",
+          "length": 80
+        },
+        "JrnlEntryCntrySpecificDate1": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 1",
+          "@EndUserText.label": "Country/Region Specific Date 1",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 1 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef2": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 2",
+          "@EndUserText.label": "Country/Region Specific Reference 2",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 2 in the Document",
+          "type": "cds.String",
+          "length": 25
+        },
+        "JrnlEntryCntrySpecificDate2": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 2",
+          "@EndUserText.label": "Country/Region Specific Date 2",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 2 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef3": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef3",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 3",
+          "@EndUserText.label": "Country/Region Specific Reference 3",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 3 in the Document",
+          "type": "cds.String",
+          "length": 25
+        },
+        "JrnlEntryCntrySpecificDate3": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate3",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 3",
+          "@EndUserText.label": "Country/Region Specific Date 3",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 3 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef4": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef4",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 4",
+          "@EndUserText.label": "Country/Region Specific Reference 4",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 4 in the Document",
+          "type": "cds.String",
+          "length": 50
+        },
+        "JrnlEntryCntrySpecificDate4": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate4",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 4",
+          "@EndUserText.label": "Country/Region Specific Date 4",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 4 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificRef5": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificRef5",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Reference 5",
+          "@EndUserText.label": "Country/Region Specific Reference 5",
+          "@EndUserText.quickInfo": "Country/Region Specific Reference 5 in the Document",
+          "type": "cds.String",
+          "length": 50
+        },
+        "JrnlEntryCntrySpecificDate5": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificDate5",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Country/Region Specific Date 5",
+          "@EndUserText.label": "Country/Region Specific Date 5",
+          "@EndUserText.quickInfo": "Country/Region Specific Date 5 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "JrnlEntryCntrySpecificBP1": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificBP1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Ctry/Reg. Specific Business Partner 1",
+          "@EndUserText.label": "Ctry/Reg. Specific Business Partner 1",
+          "@EndUserText.quickInfo": "Country/Region specific Business Partner 1 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "JrnlEntryCntrySpecificBP2": {
+          "__abapOriginalName": "JrnlEntryCntrySpecificBP2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Ctry/Reg. Specific Business Partner 2",
+          "@EndUserText.label": "Ctry/Reg. Specific Business Partner 2",
+          "@EndUserText.quickInfo": "Country/Region Specific Business Partner 2 in the Document",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "WithholdingTaxReportingDate": {
+          "__abapOriginalName": "WithholdingTaxReportingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Withholding Tax Reporting Date",
+          "@EndUserText.label": "Wtax Reporting Date",
+          "@EndUserText.quickInfo": "Withholding Tax Reporting Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IsBudgetaryLedgerDoc": {
+          "@EndUserText.heading": "{i18n>I_JOURNALENTRY.ISBUDGETARYLEDGERDOC@ENDUSERTEXT.HEADING}",
+          "@EndUserText.label": "IsBudgetaryLedgerDoc",
+          "@EndUserText.quickInfo": "{i18n>I_JOURNALENTRY.ISBUDGETARYLEDGERDOC@ENDUSERTEXT.QUICKINFO}",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 128
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "JournalEntryHeader.v1.JournalEntry",
+      "import_meta": {
+        "qualifiedName": "JournalEntryHeader.v1.JournalEntry",
+        "originalEntityName": "journalentryheader.JournalEntry"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "JournalEntryHeader.v1.JournalEntry",
+    "all_entities": [
+      "JournalEntryHeader.v1.JournalEntry",
+      "JournalEntryHeader.v1.JournalEntry",
+      "JournalEntryHeader.v1",
+      "JournalEntryHeader.v1.JournalEntry_Delta"
+    ],
+    "valid": true,
+    "valid_references": [],
+    "invalid_references": []
+  }
+}

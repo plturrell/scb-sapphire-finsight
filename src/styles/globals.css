@@ -1,0 +1,707 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Standard Chartered Bank Colors - 2021 Brand Refresh */
+  --scb-honolulu-blue: 0 114 170; /* #0072AA - Primary Blue */
+  --scb-american-green: 33 170 71; /* #21AA47 - Secondary Green */
+  --scb-white: 255 255 255; /* #FFFFFF */
+  --scb-light-gray: 245 247 250; /* #F5F7FA - Background color */
+  --scb-dark-gray: 82 83 85; /* #525355 - Secondary text */
+  --scb-muted-red: 211 55 50; /* #D33732 - For negative values */
+  --scb-border: 229 231 235; /* #E5E7EB - Subtle dividers */
+  
+  /* Financial Data Color Logic */
+  --scb-neutral: 0 114 170; /* #0072AA - Neutral or positive values */
+  --scb-positive: 33 170 71; /* #21AA47 - Significant positive changes */
+  --scb-negative: 211 55 50; /* #D33732 - Negative values */
+  
+  /* SAP Fiori Horizon Integration */
+  --horizon-blue: 0 114 170; /* #0072AA - Aligned with SCB Honolulu Blue */
+  --horizon-green: 33 170 71; /* #21AA47 - Aligned with SCB American Green */
+  --horizon-red: 211 55 50; /* #D33732 - Negative indicators */
+  --horizon-neutral-gray: 82 83 85; /* #525355 - SCB Dark Gray */
+  --horizon-focus-color: 0 94 150; /* #005E96 - Focus state color */
+  
+  /* SAP Fiori Theming - SCB Brand Integration */
+  --fiori-shell-header-bg: var(--scb-honolulu-blue);
+  --fiori-shell-header-text: 255 255 255;
+  --fiori-sidebar-bg: var(--scb-white);
+  --fiori-sidebar-text: var(--scb-dark-gray);
+  --fiori-sidebar-active-bg: var(--scb-honolulu-blue);
+  --fiori-sidebar-active-text: 255 255 255;
+  --fiori-content-bg: var(--scb-light-gray);
+  --fiori-tile-bg: 255 255 255;
+  --fiori-action-color: var(--scb-american-green);
+  --fiori-button-primary-bg: var(--scb-honolulu-blue);
+  --fiori-button-primary-text: 255 255 255;
+  --fiori-button-secondary-bg: 255 255 255;
+  --fiori-button-secondary-text: var(--scb-honolulu-blue);
+  --fiori-notification-bg: var(--scb-honolulu-blue);
+  --fiori-horizon-focus-outline: 0 0 0 0.125rem rgb(var(--horizon-focus-color));
+  
+  /* Financial Data Presentation Variables */
+  --fiori-positive-text: var(--scb-american-green);
+  --fiori-negative-text: var(--scb-muted-red);
+  --fiori-neutral-text: var(--scb-honolulu-blue);
+  --fiori-positive-bg: rgba(var(--scb-american-green), 0.1);
+  --fiori-negative-bg: rgba(var(--scb-muted-red), 0.1);
+  --fiori-neutral-bg: rgba(var(--scb-honolulu-blue), 0.1);
+}
+
+/* SAP Horizon Shell Header */
+.fiori-shell-header {
+  background-color: rgb(var(--fiori-shell-header-bg));
+  color: rgb(var(--fiori-shell-header-text));
+  height: 3rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* SAP Fiori Sidebar */
+.fiori-sidebar {
+  background-color: rgb(var(--fiori-sidebar-bg));
+  border-right: 1px solid rgb(var(--scb-border));
+  width: 16rem;
+}
+
+.fiori-sidebar-item {
+  color: rgb(var(--fiori-sidebar-text));
+  padding: 0.75rem 1rem;
+  transition: background-color 0.2s;
+  border-left: 4px solid transparent;
+}
+
+.fiori-sidebar-item:hover {
+  background-color: rgba(var(--scb-light-blue), 0.1);
+}
+
+.fiori-sidebar-item.active {
+  background-color: rgb(var(--fiori-sidebar-active-bg));
+  color: rgb(var(--fiori-sidebar-active-text));
+  border-left-color: rgb(var(--scb-accent));
+}
+
+/* Fiori Tile Component */
+.fiori-tile {
+  background-color: rgb(var(--fiori-tile-bg));
+  border: 1px solid rgb(var(--scb-border));
+  border-radius: 0.25rem;
+  padding: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fiori-tile:hover {
+  box-shadow: 0 4px 6px rgba(var(--scb-primary), 0.1);
+  transform: translateY(-2px);
+}
+
+.fiori-tile-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: rgb(var(--scb-primary));
+}
+
+.fiori-tile-subtitle {
+  font-size: 0.875rem;
+  color: rgb(var(--scb-dark-text), 0.7);
+  margin-bottom: 1rem;
+}
+
+.fiori-tile-content {
+  flex: 1;
+}
+
+.fiori-tile-footer {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: 0.75rem;
+  color: rgb(var(--scb-dark-text), 0.6);
+}
+
+/* Horizon Buttons - more rounded, cleaner look */
+.fiori-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem; /* More rounded corners */
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Primary button with Horizon styling */
+.fiori-btn-primary {
+  background-color: rgb(var(--fiori-button-primary-bg));
+  color: rgb(var(--fiori-button-primary-text));
+  border: 1px solid rgb(var(--fiori-button-primary-bg));
+}
+
+.fiori-btn-primary:hover {
+  background-color: rgba(var(--fiori-button-primary-bg), 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(var(--fiori-button-primary-bg), 0.2);
+}
+
+.fiori-btn-primary:focus {
+  outline: none;
+  box-shadow: var(--fiori-horizon-focus-outline);
+}
+
+/* Secondary button with Horizon styling */
+.fiori-btn-secondary {
+  background-color: rgb(var(--fiori-button-secondary-bg));
+  color: rgb(var(--fiori-button-primary-bg));
+  border: 1px solid rgb(var(--fiori-button-primary-bg));
+}
+
+.fiori-btn-secondary:hover {
+  background-color: rgba(var(--fiori-button-primary-bg), 0.05);
+  transform: translateY(-1px);
+}
+
+.fiori-btn-secondary:focus {
+  outline: none;
+  box-shadow: var(--fiori-horizon-focus-outline);
+}
+
+/* Ghost button - new in Horizon */
+.fiori-btn-ghost {
+  background-color: transparent;
+  color: rgb(var(--fiori-button-primary-bg));
+  border: none;
+  padding: 0.5rem 0.75rem;
+}
+
+.fiori-btn-ghost:hover {
+  background-color: rgba(var(--fiori-button-primary-bg), 0.05);
+}
+
+.fiori-btn-ghost:focus {
+  outline: none;
+  box-shadow: var(--fiori-horizon-focus-outline);
+}
+
+/* Horizon Input Fields - cleaner, more modern */
+.fiori-input {
+  border: 1px solid rgb(var(--scb-border));
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.375rem; /* More rounded corners */
+  width: 100%;
+  transition: all 0.2s ease;
+  font-size: 0.9375rem;
+  background-color: white;
+}
+
+.fiori-input:hover {
+  border-color: rgba(var(--horizon-blue), 0.5);
+}
+
+.fiori-input:focus {
+  outline: none;
+  border-color: rgb(var(--horizon-blue));
+  box-shadow: var(--fiori-horizon-focus-outline);
+}
+
+.fiori-input::placeholder {
+  color: rgba(var(--scb-dark-text), 0.5);
+  font-size: 0.875rem;
+}
+
+/* Horizon AI Assistant Styles - Following Horizon & Fiori Gen AI Design Principles */
+.ai-assistant-container {
+  border: 1px solid rgb(var(--scb-border));
+  border-radius: 0.75rem; /* More rounded for Horizon */
+  background-color: rgb(var(--fiori-tile-bg));
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.ai-assistant-header {
+  background-color: rgba(var(--horizon-blue), 0.08);
+  padding: 0.875rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgb(var(--scb-border));
+}
+
+.ai-assistant-content {
+  padding: 1.25rem;
+}
+
+.ai-assistant-message {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border-radius: 0.75rem; /* More rounded for Horizon */
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(var(--scb-border), 0.5);
+}
+
+.ai-assistant-message.user {
+  background-color: rgba(var(--horizon-blue), 0.06);
+  margin-left: 2rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.ai-assistant-message.assistant {
+  background-color: white;
+  margin-right: 2rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.ai-assistant-message.assistant::before {
+  content: 'AI';
+  position: absolute;
+  top: -0.5rem;
+  left: 0.75rem;
+  background-color: rgb(var(--scb-accent));
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(var(--scb-accent), 0.3);
+}
+
+/* AI Control buttons - specific to Horizon design for tiny action buttons */
+.ai-control-btn {
+  background-color: transparent;
+  border: 1px solid rgba(var(--scb-border), 0.7);
+  color: rgba(var(--scb-dark-text), 0.6);
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.ai-control-btn:hover {
+  background-color: rgba(var(--horizon-blue), 0.06);
+  color: rgb(var(--horizon-blue));
+  border-color: rgba(var(--horizon-blue), 0.2);
+}
+
+.ai-control-btn:focus {
+  outline: none;
+  box-shadow: var(--fiori-horizon-focus-outline);
+}
+
+/* Source citation styling */
+.ai-assistant-source {
+  background-color: rgba(var(--horizon-blue), 0.04);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px dashed rgba(var(--horizon-blue), 0.2);
+}
+
+/* AI generated content annotation - subtle indication of AI content */
+.ai-generated-content {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.ai-generated-content::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, rgb(var(--scb-accent)), rgba(var(--horizon-blue), 0.7));
+  border-radius: 1px;
+}
+
+/* Horizon Dialog - more modern dialog/modal style */
+.horizon-dialog {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(var(--scb-border), 0.5);
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.horizon-dialog-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Chips and tags - commonly used in Horizon */
+.horizon-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgb(var(--horizon-neutral-gray));
+  background-color: rgba(var(--horizon-neutral-gray), 0.1);
+  border: 1px solid rgba(var(--horizon-neutral-gray), 0.2);
+  gap: 0.375rem;
+}
+
+.horizon-chip-blue {
+  color: rgb(var(--horizon-blue));
+  background-color: rgba(var(--horizon-blue), 0.1);
+  border-color: rgba(var(--horizon-blue), 0.2);
+}
+
+.horizon-chip-green {
+  color: rgb(var(--horizon-green));
+  background-color: rgba(var(--horizon-green), 0.1);
+  border-color: rgba(var(--horizon-green), 0.2);
+}
+
+.horizon-chip-teal {
+  color: rgb(var(--horizon-teal));
+  background-color: rgba(var(--horizon-teal), 0.1);
+  border-color: rgba(var(--horizon-teal), 0.2);
+}
+
+.horizon-chip-purple {
+  color: rgb(var(--horizon-purple));
+  background-color: rgba(var(--horizon-purple), 0.1);
+  border-color: rgba(var(--horizon-purple), 0.2);
+}
+
+/* Additional AI assistant styles */
+.ai-assistant-source {
+  font-size: 0.75rem;
+  color: rgb(var(--scb-dark-text), 0.6);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(var(--scb-border), 0.7);
+}
+
+.ai-assistant-input {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid rgb(var(--scb-border));
+}
+
+.ai-controls {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(var(--scb-light-blue), 0.05);
+  border-top: 1px solid rgb(var(--scb-border));
+}
+
+.ai-control-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 0.25rem;
+  background-color: white;
+  border: 1px solid rgb(var(--scb-border));
+  color: rgb(var(--scb-dark-text));
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ai-control-btn:hover {
+  background-color: rgba(var(--scb-light-blue), 0.1);
+}
+
+@layer base {
+  :root {
+    /* Standard Chartered Bank color palette */
+    --background: 0 0% 100%;
+    --foreground: 200 50% 20%;
+    
+    /* SCB Honolulu Blue - Primary Color */
+    --primary: 200 100% 33%; /* #0072AA */
+    --primary-foreground: 0 0% 100%;
+    
+    /* SCB Iceberg - Light Blue */
+    --secondary: 205 50% 65%; /* #78ADD2 */
+    --secondary-foreground: 0 0% 20%;
+    
+    /* SCB Shell header color - Honolulu Blue for brand consistency */
+    --shell-header: 200 100% 33%; /* #0072AA */
+    
+    /* Content background area - Subtle off-white */
+    --content-bg: 0 0% 98%;
+    
+    /* Muted elements with brand-compatible tones */
+    --muted: 205 20% 92%;
+    --muted-foreground: 200 30% 40%;
+    
+    /* SCB Iceberg - Light blue for accents */
+    --accent: 205 50% 75%; /* Lighter version of #78ADD2 */
+    --accent-foreground: 200 60% 20%;
+    
+    /* Standard alert colors with SCB compatibility */
+    --destructive: 0 80% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* SCB American Green - Success Color */
+    --success: 137 67% 40%; /* #21AA47 */
+    --success-foreground: 0 0% 100%;
+    
+    /* SCB Eton Blue - Light Green For Subtle Emphasis */
+    --subtle-success: 115 34% 72%; /* #A4D0A0 */
+    --subtle-success-foreground: 120 50% 20%;
+    
+    /* Warning with SCB compatibility */
+    --warning: 35 90% 55%;
+    --warning-foreground: 0 0% 20%;
+    
+    /* Information with SCB branding */
+    --information: 200 80% 40%; /* Based on Honolulu Blue */
+    --information-foreground: 0 0% 100%;
+    
+    /* Subtle borders and inputs */
+    --border: 200 15% 85%;
+    --input: 200 15% 85%;
+    --ring: 200 100% 33%; /* #0072AA */
+    
+    /* SAP UI5 uses minimal border radius */
+    --radius: 0.25rem;
+  }
+
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    font-family: '72', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  body {
+    background-color: hsl(var(--content-bg));
+    color: hsl(var(--foreground));
+  }
+  
+  /* SCB button styles */
+  .btn-sapui5 {
+    font-family: '72', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: normal;
+    border-radius: var(--radius);
+    padding: 0.25rem 0.75rem;
+    transition: all 0.2s;
+    height: 2.25rem;
+    min-width: 2.5rem;
+    cursor: pointer;
+  }
+  
+  .btn-sapui5-primary {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    border: 1px solid hsl(var(--primary));
+  }
+  
+  .btn-sapui5-primary:hover {
+    background-color: hsl(206, 100%, 35%);
+  }
+  
+  .btn-sapui5-secondary {
+    background-color: transparent;
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+  }
+  
+  .btn-sapui5-secondary:hover {
+    background-color: hsla(210, 10%, 90%, 0.5);
+  }
+  
+  /* SCB input styles */
+  .input-sapui5 {
+    height: 2.25rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    padding: 0 0.5rem;
+    font-family: '72', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    transition: all 0.2s;
+  }
+  
+  .input-sapui5:focus {
+    border-color: hsl(var(--primary));
+    outline: none;
+  }
+  
+  /* SCB shell header */
+  .sapui5-shell-header {
+    background-color: hsl(var(--shell-header));
+    color: white;
+    height: 2.75rem;
+  }
+  
+  /* SCB sidebar */
+  .sapui5-sidebar {
+    background-color: #fff;
+    border-right: 1px solid hsl(var(--border));
+  }
+  
+  .sapui5-sidebar-item {
+    padding: 0.75rem 1rem;
+    color: hsl(var(--foreground));
+    border-left: 0.25rem solid transparent;
+    transition: all 0.2s;
+  }
+  
+  .sapui5-sidebar-item:hover {
+    background-color: hsla(210, 10%, 90%, 0.5);
+  }
+  
+  .sapui5-sidebar-item.active {
+    border-left-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+  }
+  
+  /* SCB table */
+  .sapui5-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .sapui5-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid hsl(var(--border));
+    background-color: hsl(var(--muted));
+  }
+  
+  .sapui5-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  
+  .sapui5-table tr:hover {
+    background-color: hsla(210, 10%, 90%, 0.3);
+  }
+}
+
+/* Responsive Typography Scale */
+.text-responsive {
+  font-size: clamp(0.875rem, 2vw + 0.5rem, 1rem);
+  line-height: 1.5;
+}
+
+.heading-responsive {
+  font-size: clamp(1.5rem, 4vw + 0.5rem, 2.5rem);
+  line-height: 1.2;
+}
+
+/* Touch-friendly utilities */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+.touch-min-h {
+  min-height: 44px;
+}
+
+/* Safe area utilities for iOS */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Prevent zoom on input focus for iOS */
+@supports (-webkit-touch-callout: none) {
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="url"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Responsive Grid Utilities */
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+@media (min-width: 768px) {
+  .grid-responsive {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    gap: 2rem;
+  }
+}
+
+/* Mobile-first utilities */
+.mobile-hidden {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-hidden {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Animation utilities */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Responsive spacing system */
+.space-responsive {
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+/* Card shadow for elevation */
+.card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.card-shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}

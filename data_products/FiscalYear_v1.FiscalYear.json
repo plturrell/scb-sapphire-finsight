@@ -1,0 +1,1195 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "FiscalYear.v1.FiscalYear": {
+      "__abapOriginalName": "I_FiscalYearForVariant",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIFYEARFYV",
+      "@EndUserText.label": "Fiscal Year For Fiscal Year Variant",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FiscalYear",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalYearVariant"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FiscalYear": {
+          "__abapOriginalName": "FiscalYear",
+          "@EndUserText.heading": "Fiscal Year",
+          "@EndUserText.label": "Fiscal Year",
+          "@EndUserText.quickInfo": "Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "FiscalYearStartDate": {
+          "__abapOriginalName": "FiscalYearStartDate",
+          "@EndUserText.heading": "Start Date of Fiscal Year",
+          "@EndUserText.label": "Start of Fiscal Year",
+          "@EndUserText.quickInfo": "Start Date of Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "FiscalYearEndDate": {
+          "__abapOriginalName": "FiscalYearEndDate",
+          "@EndUserText.heading": "End Date of Fiscal Year",
+          "@EndUserText.label": "End of Fiscal Year",
+          "@EndUserText.quickInfo": "End Date of Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "_FiscalYearVariant": {
+          "__abapOriginalName": "_FiscalYearVariant",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "FiscalYear.v1.FiscalYearVariant",
+          "on": [
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_FiscalYearVariant",
+                "FiscalYearVariant"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_FiscalYearVariant"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FiscalYear.v1.FiscalYear_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FiscalYear.v1.FiscalYear",
+        "originalEntityName": "fiscalyear.FiscalYear"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FiscalYear.v1.FiscalYear_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYear"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYearStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYearEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "_FiscalYearVariant"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_FiscalYearVariant": {
+              "__abapOriginalName": "_FiscalYearVariant",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "FiscalYear.v1.FiscalYearVariant",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FiscalYearVariant"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_FiscalYearVariant",
+                    "FiscalYearVariant"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_FiscalYearVariant"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FiscalYear.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "FiscalYear.v1.FiscalYearVariantText",
+        "originalEntityName": "fiscalyear.FiscalYearVariantText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FiscalYear.v1.FiscalYearVariantText": {
+      "__abapOriginalName": "I_FiscalYearVariantText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIFYEARVARTXT",
+      "@EndUserText.label": "Fiscal Year Variant Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "FiscalYearVariant",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "FiscalYearVariantDescription"
+            }
+          ]
+        },
+        "FiscalYearVariantDescription": {
+          "__abapOriginalName": "FiscalYearVariantDescription",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Fiscal Year Variant Name",
+          "@EndUserText.quickInfo": "Description of Fiscal Year Variant",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FiscalYear.v1.FiscalYearVariantText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FiscalYear.v1.FiscalYearVariantText",
+        "originalEntityName": "fiscalyear.FiscalYearVariantText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FiscalYear.v1.FiscalYearVariantText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYearVariantDescription"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FiscalYear.v1.FiscalYearVariantText_Delta": {
+      "__abapOriginalName": "I_FiscalYearVariantText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIFYEARVARTXT",
+      "@EndUserText.label": "Fiscal Year Variant Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "FiscalYearVariant",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "FiscalYearVariantDescription"
+            }
+          ]
+        },
+        "FiscalYearVariantDescription": {
+          "__abapOriginalName": "FiscalYearVariantDescription",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Fiscal Year Variant Name",
+          "@EndUserText.quickInfo": "Description of Fiscal Year Variant",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FiscalYear.v1.FiscalYearVariantText",
+      "import_meta": {
+        "qualifiedName": "FiscalYear.v1.FiscalYearVariantText",
+        "originalEntityName": "fiscalyear.FiscalYearVariantText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FiscalYear.v1.FiscalYearVariant": {
+      "__abapOriginalName": "I_FiscalYearVariant",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIFISCYEARVAR",
+      "@Consumption.ranked": true,
+      "@EndUserText.label": "Fiscal Year Variant",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FiscalYearVariant",
+      "@ObjectModel.sapObjectNodeType.name": "FiscalYearVariant",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "@Semantics.fiscal.yearVariant": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FiscalPeriodIsEqualMonth": {
+          "__abapOriginalName": "FiscalPeriodIsEqualMonth",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Period Is Equal Month",
+          "@EndUserText.label": "Fscl Perd Equal Mnth",
+          "@EndUserText.quickInfo": "Indicator: Fiscal Period Is Equal Calendar Month",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "IsYearDependent": {
+          "__abapOriginalName": "IsYearDependent",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Year-dep.",
+          "@EndUserText.label": "Year-dependent",
+          "@EndUserText.quickInfo": "Indicator: Fiscal year variants year-dependent ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PostingPeriodsNumberVal": {
+          "__abapOriginalName": "PostingPeriodsNumberVal",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Posting Period",
+          "@EndUserText.quickInfo": "Number of Posting Periods",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "NumberOfSpecialPeriods": {
+          "__abapOriginalName": "NumberOfSpecialPeriods",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "No. Special Periods",
+          "@EndUserText.quickInfo": "Number of Special Periods",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "FsclWeekStartIsFsclYearStart": {
+          "__abapOriginalName": "FsclWeekStartIsFsclYearStart",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Weeks from Start of Fiscal Year",
+          "@EndUserText.label": "Fiscal Week Start",
+          "@EndUserText.quickInfo": "Flag: Fiscal Weeks Calculated from Start of Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "FiscalCalendarIsWeekBased": {
+          "__abapOriginalName": "FiscalCalendarIsWeekBased",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Weekly Calendar",
+          "@EndUserText.label": "Weekly Calendar",
+          "@EndUserText.quickInfo": "Flag: Fiscal Year Variant as Week Calendar",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "FiscalYear.v1.FiscalYearVariantText",
+          "on": [
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FiscalYearVariant"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FiscalYear.v1.FiscalYearVariant_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FiscalYear.v1.FiscalYearVariant",
+        "originalEntityName": "fiscalyear.FiscalYearVariant"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FiscalYear.v1.FiscalYearVariant_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalPeriodIsEqualMonth"
+              ]
+            },
+            {
+              "ref": [
+                "IsYearDependent"
+              ]
+            },
+            {
+              "ref": [
+                "PostingPeriodsNumberVal"
+              ]
+            },
+            {
+              "ref": [
+                "NumberOfSpecialPeriods"
+              ]
+            },
+            {
+              "ref": [
+                "FsclWeekStartIsFsclYearStart"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalCalendarIsWeekBased"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "FiscalYear.v1.FiscalYearVariantText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FiscalYearVariant"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "FiscalYearVariant"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FiscalYear.v1.FiscalYearVariant_Delta": {
+      "__abapOriginalName": "I_FiscalYearVariant",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIFISCYEARVAR",
+      "@Consumption.ranked": true,
+      "@EndUserText.label": "Fiscal Year Variant",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FiscalYearVariant",
+      "@ObjectModel.sapObjectNodeType.name": "FiscalYearVariant",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.lifecycle.contract.type": {
+        "#": "PUBLIC_LOCAL_API"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "@Semantics.fiscal.yearVariant": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FiscalPeriodIsEqualMonth": {
+          "__abapOriginalName": "FiscalPeriodIsEqualMonth",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Period Is Equal Month",
+          "@EndUserText.label": "Fscl Perd Equal Mnth",
+          "@EndUserText.quickInfo": "Indicator: Fiscal Period Is Equal Calendar Month",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "IsYearDependent": {
+          "__abapOriginalName": "IsYearDependent",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Year-dep.",
+          "@EndUserText.label": "Year-dependent",
+          "@EndUserText.quickInfo": "Indicator: Fiscal year variants year-dependent ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PostingPeriodsNumberVal": {
+          "__abapOriginalName": "PostingPeriodsNumberVal",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Posting Period",
+          "@EndUserText.quickInfo": "Number of Posting Periods",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "NumberOfSpecialPeriods": {
+          "__abapOriginalName": "NumberOfSpecialPeriods",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "No. Special Periods",
+          "@EndUserText.quickInfo": "Number of Special Periods",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "FsclWeekStartIsFsclYearStart": {
+          "__abapOriginalName": "FsclWeekStartIsFsclYearStart",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Weeks from Start of Fiscal Year",
+          "@EndUserText.label": "Fiscal Week Start",
+          "@EndUserText.quickInfo": "Flag: Fiscal Weeks Calculated from Start of Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "FiscalCalendarIsWeekBased": {
+          "__abapOriginalName": "FiscalCalendarIsWeekBased",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Weekly Calendar",
+          "@EndUserText.label": "Weekly Calendar",
+          "@EndUserText.quickInfo": "Flag: Fiscal Year Variant as Week Calendar",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "FiscalYear.v1.FiscalYearVariantText",
+          "on": [
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FiscalYearVariant"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FiscalYear.v1.FiscalYearVariant",
+      "import_meta": {
+        "qualifiedName": "FiscalYear.v1.FiscalYearVariant",
+        "originalEntityName": "fiscalyear.FiscalYearVariant"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FiscalYear.v1.FiscalYear_Delta": {
+      "__abapOriginalName": "I_FiscalYearForVariant",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFIFYEARFYV",
+      "@EndUserText.label": "Fiscal Year For Fiscal Year Variant",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FiscalYear",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalYearVariant"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FiscalYear": {
+          "__abapOriginalName": "FiscalYear",
+          "@EndUserText.heading": "Fiscal Year",
+          "@EndUserText.label": "Fiscal Year",
+          "@EndUserText.quickInfo": "Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "FiscalYearStartDate": {
+          "__abapOriginalName": "FiscalYearStartDate",
+          "@EndUserText.heading": "Start Date of Fiscal Year",
+          "@EndUserText.label": "Start of Fiscal Year",
+          "@EndUserText.quickInfo": "Start Date of Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "FiscalYearEndDate": {
+          "__abapOriginalName": "FiscalYearEndDate",
+          "@EndUserText.heading": "End Date of Fiscal Year",
+          "@EndUserText.label": "End of Fiscal Year",
+          "@EndUserText.quickInfo": "End Date of Fiscal Year",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "_FiscalYearVariant": {
+          "__abapOriginalName": "_FiscalYearVariant",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "FiscalYear.v1.FiscalYearVariant",
+          "on": [
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_FiscalYearVariant",
+                "FiscalYearVariant"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_FiscalYearVariant"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FiscalYear.v1.FiscalYear",
+      "import_meta": {
+        "qualifiedName": "FiscalYear.v1.FiscalYear",
+        "originalEntityName": "fiscalyear.FiscalYear"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "FiscalYear.v1.FiscalYear",
+    "all_entities": [
+      "FiscalYear.v1.FiscalYear",
+      "FiscalYear.v1.FiscalYear",
+      "FiscalYear.v1",
+      "FiscalYear.v1.FiscalYearVariantText",
+      "FiscalYear.v1.FiscalYearVariantText_Delta",
+      "FiscalYear.v1.FiscalYearVariant",
+      "FiscalYear.v1.FiscalYearVariant_Delta",
+      "FiscalYear.v1.FiscalYear_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "FiscalYear.v1.FiscalYear",
+        "to": "FiscalYear.v1.FiscalYearVariant"
+      },
+      {
+        "from": "FiscalYear.v1.FiscalYear",
+        "to": "FiscalYear.v1.FiscalYearVariant"
+      },
+      {
+        "from": "FiscalYear.v1.FiscalYear",
+        "to": "FiscalYear.v1.FiscalYearVariantText"
+      },
+      {
+        "from": "FiscalYear.v1.FiscalYear",
+        "to": "FiscalYear.v1.FiscalYearVariantText"
+      },
+      {
+        "from": "FiscalYear.v1.FiscalYear",
+        "to": "FiscalYear.v1.FiscalYearVariantText"
+      },
+      {
+        "from": "FiscalYear.v1.FiscalYear",
+        "to": "FiscalYear.v1.FiscalYearVariant"
+      }
+    ],
+    "invalid_references": []
+  }
+}

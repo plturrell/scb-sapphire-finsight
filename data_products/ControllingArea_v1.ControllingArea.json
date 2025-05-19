@@ -1,0 +1,681 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "ControllingArea.v1.ControllingArea": {
+      "__abapOriginalName": "I_ControllingArea",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFICONTAREA",
+      "@EndUserText.label": "Controlling Area",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ControllingArea",
+      "@ObjectModel.sapObjectNodeType.name": "ControllingArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.text.element": [
+            {
+              "=": "ControllingAreaName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "ControllingAreaName": {
+          "__abapOriginalName": "ControllingAreaName",
+          "@EndUserText.heading": "Controlling Area Name",
+          "@EndUserText.label": "Controlling Area Name",
+          "@EndUserText.quickInfo": "Controlling Area Name",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        },
+        "ControllingAreaCurrency": {
+          "__abapOriginalName": "ControllingAreaCurrency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area Currency",
+          "@EndUserText.label": "Controlling Area Currency",
+          "@EndUserText.quickInfo": "Controlling Area Currency",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Currency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CostCenterStandardHierarchy": {
+          "__abapOriginalName": "CostCenterStandardHierarchy",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Cost Center Standard Hierarchy",
+          "@EndUserText.label": "Cost Center Standard Hierarchy",
+          "@EndUserText.quickInfo": "Cost Center Standard Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "OperatingConcern": {
+          "__abapOriginalName": "OperatingConcern",
+          "@EndUserText.heading": "OpCo",
+          "@EndUserText.label": "Operating Concern",
+          "@EndUserText.quickInfo": "Operating Concern",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenterStandardHierarchy": {
+          "__abapOriginalName": "ProfitCenterStandardHierarchy",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Profit Center Standard Hierarchy",
+          "@EndUserText.label": "Profit Center Standard Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Standard Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "BusinessProcessStandardHier": {
+          "__abapOriginalName": "BusinessProcessStandardHier",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Business Process Standard Hierarchy Area",
+          "@EndUserText.label": "Business Process Standard Hierarchy Area",
+          "@EndUserText.quickInfo": "Business Process Standard Hierarchy Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "CreditDownPaymentDefaultGLAcct": {
+          "__abapOriginalName": "CreditDownPaymentDefaultGLAcct",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Default G/L Account for Supplier Down Payments",
+          "@EndUserText.label": "G/L Account for Supplier Down Payments",
+          "@EndUserText.quickInfo": "Default General Ledger Account for Supplier Down Payments",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "DebitDownPaymentDefaultGLAcct": {
+          "__abapOriginalName": "DebitDownPaymentDefaultGLAcct",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Default G/L Account for Customer Down Payments",
+          "@EndUserText.label": "G/L Account for Customer Down Payments",
+          "@EndUserText.quickInfo": "Default General Ledger Account for Customer Down Payments",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ControllingAreaCurrencyRole": {
+          "__abapOriginalName": "ControllingAreaCurrencyRole",
+          "@EndUserText.heading": "Currency Type for Controlling Area",
+          "@EndUserText.label": "Currency Type for Controlling Area",
+          "@EndUserText.quickInfo": "Currency Type for Controlling Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "FinancialManagementArea": {
+          "__abapOriginalName": "FinancialManagementArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FMA",
+          "@EndUserText.label": "FM Area",
+          "@EndUserText.quickInfo": "Financial Management Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ControllingAreaResponsibleUser": {
+          "__abapOriginalName": "ControllingAreaResponsibleUser",
+          "@EndUserText.heading": "Responsible User of Controlling Area",
+          "@EndUserText.label": "Responsible User of Controlling Area",
+          "@EndUserText.quickInfo": "Responsible User of Controlling Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "DefaultProfitCenter": {
+          "__abapOriginalName": "DefaultProfitCenter",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Default Profit Center",
+          "@EndUserText.label": "Default Profit Center",
+          "@EndUserText.quickInfo": "Default Profit Center for Nonassigned Processes",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "CtrlgStdFinStatementVersion": {
+          "__abapOriginalName": "CtrlgStdFinStatementVersion",
+          "@EndUserText.heading": "Leading Controlling Financial Statement Version",
+          "@EndUserText.label": "Leading Ctrlg Financial Stmnt Version",
+          "@EndUserText.quickInfo": "Leading Controlling Financial Statement Version",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FinancialStatementVersion"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_FinancialStatementVersionText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 42
+        },
+        "ProfitCenterAccountingCurrency": {
+          "__abapOriginalName": "ProfitCenterAccountingCurrency",
+          "@EndUserText.heading": "Profit Center Local Currency",
+          "@EndUserText.label": "Profit Center Local Currency",
+          "@EndUserText.quickInfo": "Local Currency for Profit Center Accounting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ControllingArea.v1.ControllingArea_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ControllingArea.v1.ControllingArea",
+        "originalEntityName": "controllingarea.ControllingArea"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ControllingArea.v1.ControllingArea_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingAreaName"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingAreaCurrency"
+              ]
+            },
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "CostCenterStandardHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "OperatingConcern"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterStandardHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "BusinessProcessStandardHier"
+              ]
+            },
+            {
+              "ref": [
+                "CreditDownPaymentDefaultGLAcct"
+              ]
+            },
+            {
+              "ref": [
+                "DebitDownPaymentDefaultGLAcct"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingAreaCurrencyRole"
+              ]
+            },
+            {
+              "ref": [
+                "FinancialManagementArea"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingAreaResponsibleUser"
+              ]
+            },
+            {
+              "ref": [
+                "DefaultProfitCenter"
+              ]
+            },
+            {
+              "ref": [
+                "CtrlgStdFinStatementVersion"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterAccountingCurrency"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ControllingArea.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "ControllingArea.v1.ControllingArea",
+        "originalEntityName": "controllingarea.ControllingArea"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ControllingArea.v1.ControllingArea_Delta": {
+      "__abapOriginalName": "I_ControllingArea",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.technicalName": "IFICONTAREA",
+      "@EndUserText.label": "Controlling Area",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ControllingArea",
+      "@ObjectModel.sapObjectNodeType.name": "ControllingArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.text.element": [
+            {
+              "=": "ControllingAreaName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fiscal Year Variant",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "ControllingAreaName": {
+          "__abapOriginalName": "ControllingAreaName",
+          "@EndUserText.heading": "Controlling Area Name",
+          "@EndUserText.label": "Controlling Area Name",
+          "@EndUserText.quickInfo": "Controlling Area Name",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        },
+        "ControllingAreaCurrency": {
+          "__abapOriginalName": "ControllingAreaCurrency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area Currency",
+          "@EndUserText.label": "Controlling Area Currency",
+          "@EndUserText.quickInfo": "Controlling Area Currency",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Currency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CostCenterStandardHierarchy": {
+          "__abapOriginalName": "CostCenterStandardHierarchy",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Cost Center Standard Hierarchy",
+          "@EndUserText.label": "Cost Center Standard Hierarchy",
+          "@EndUserText.quickInfo": "Cost Center Standard Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "OperatingConcern": {
+          "__abapOriginalName": "OperatingConcern",
+          "@EndUserText.heading": "OpCo",
+          "@EndUserText.label": "Operating Concern",
+          "@EndUserText.quickInfo": "Operating Concern",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenterStandardHierarchy": {
+          "__abapOriginalName": "ProfitCenterStandardHierarchy",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Profit Center Standard Hierarchy",
+          "@EndUserText.label": "Profit Center Standard Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Standard Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "BusinessProcessStandardHier": {
+          "__abapOriginalName": "BusinessProcessStandardHier",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Business Process Standard Hierarchy Area",
+          "@EndUserText.label": "Business Process Standard Hierarchy Area",
+          "@EndUserText.quickInfo": "Business Process Standard Hierarchy Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "CreditDownPaymentDefaultGLAcct": {
+          "__abapOriginalName": "CreditDownPaymentDefaultGLAcct",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Default G/L Account for Supplier Down Payments",
+          "@EndUserText.label": "G/L Account for Supplier Down Payments",
+          "@EndUserText.quickInfo": "Default General Ledger Account for Supplier Down Payments",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "DebitDownPaymentDefaultGLAcct": {
+          "__abapOriginalName": "DebitDownPaymentDefaultGLAcct",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Default G/L Account for Customer Down Payments",
+          "@EndUserText.label": "G/L Account for Customer Down Payments",
+          "@EndUserText.quickInfo": "Default General Ledger Account for Customer Down Payments",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ControllingAreaCurrencyRole": {
+          "__abapOriginalName": "ControllingAreaCurrencyRole",
+          "@EndUserText.heading": "Currency Type for Controlling Area",
+          "@EndUserText.label": "Currency Type for Controlling Area",
+          "@EndUserText.quickInfo": "Currency Type for Controlling Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "FinancialManagementArea": {
+          "__abapOriginalName": "FinancialManagementArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FMA",
+          "@EndUserText.label": "FM Area",
+          "@EndUserText.quickInfo": "Financial Management Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ControllingAreaResponsibleUser": {
+          "__abapOriginalName": "ControllingAreaResponsibleUser",
+          "@EndUserText.heading": "Responsible User of Controlling Area",
+          "@EndUserText.label": "Responsible User of Controlling Area",
+          "@EndUserText.quickInfo": "Responsible User of Controlling Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "DefaultProfitCenter": {
+          "__abapOriginalName": "DefaultProfitCenter",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Default Profit Center",
+          "@EndUserText.label": "Default Profit Center",
+          "@EndUserText.quickInfo": "Default Profit Center for Nonassigned Processes",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "CtrlgStdFinStatementVersion": {
+          "__abapOriginalName": "CtrlgStdFinStatementVersion",
+          "@EndUserText.heading": "Leading Controlling Financial Statement Version",
+          "@EndUserText.label": "Leading Ctrlg Financial Stmnt Version",
+          "@EndUserText.quickInfo": "Leading Controlling Financial Statement Version",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FinancialStatementVersion"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_FinancialStatementVersionText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 42
+        },
+        "ProfitCenterAccountingCurrency": {
+          "__abapOriginalName": "ProfitCenterAccountingCurrency",
+          "@EndUserText.heading": "Profit Center Local Currency",
+          "@EndUserText.label": "Profit Center Local Currency",
+          "@EndUserText.quickInfo": "Local Currency for Profit Center Accounting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ControllingArea.v1.ControllingArea",
+      "import_meta": {
+        "qualifiedName": "ControllingArea.v1.ControllingArea",
+        "originalEntityName": "controllingarea.ControllingArea"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "ControllingArea.v1.ControllingArea",
+    "all_entities": [
+      "ControllingArea.v1.ControllingArea",
+      "ControllingArea.v1.ControllingArea",
+      "ControllingArea.v1",
+      "ControllingArea.v1.ControllingArea_Delta"
+    ],
+    "valid": true,
+    "valid_references": [],
+    "invalid_references": []
+  }
+}

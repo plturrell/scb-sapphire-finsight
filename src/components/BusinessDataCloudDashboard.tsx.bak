@@ -1,0 +1,2400 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Paper,
+  CircularProgress,
+  Card,
+  CardContent,
+  Grid as MuiGrid,
+  Tabs,
+  Tab,
+  Button,
+  Alert,
+  Chip,
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
+} from '@mui/material';
+import { Database as DatabaseIcon, BarChart as BarChartIcon, History as HistoryIcon, RefreshCw as RefreshIcon, FileText as FileTextIcon, Globe as GlobeIcon } from 'lucide-react';
+import { SankeyData, SankeyNode, SankeyLink, TariffAlert } from '../types';
+import AnimatedSankeyChart from './AnimatedSankeyChart';
+import { styled } from '@mui/material/styles';
+import { format } from 'date-fns';
+
+
+
+// Define types for dashboard that are not already in ../types
+interface LlmAnalysis {
+  summary: string;
+  confidence: number;
+  keyFindings?: Array<{
+    finding: string;
+    confidence: number;
+    impact: string;
+  }>;
+  recommendations?: string[];
+  sources?: string[];
+}
+
+interface SimulationOutput {
+  id: string;
+  endTime?: number;
+  status?: 'running' | 'completed' | 'failed' | 'queued';
+  results: {
+    outcome: number;
+    confidence: number;
+    factors: Record<string, number>;
+    statistics?: {
+      mean: number;
+      median: number;
+      min: number;
+      max: number;
+      variance: number;
+    }
+  };
+}
+
+interface SimulationResults {
+  id: string;
+  timestamp: string;
+  parameters: {
+    iterations: number;
+    variables: Record<string, { min: number; max: number; mean: number; }>
+  };
+  results: {
+    outcome: number;
+    confidence: number;
+    factors: Record<string, number>;
+  };
+}
+
+interface BusinessDataStatistics {
+  totalSimulations: number;
+  activeModels: number;
+  dataPoints: number;
+  lastUpdated: string;
+  inputCount: number;
+  outputCount: number;
+  parameterChangeCount: number;
+  comparisonCount: number;
+}
+
+interface SimulationConfig {
+  name: string;
+  description: string;
+  iterations?: number;
+  confidenceInterval?: number;
+}
+
+interface TariffSpecificParameters {
+  country: string;
+  sector: string;
+  timeframeMonths: number;
+  confidenceLevel: number;
+  hsCodes?: string[];
+  countries?: string[];
+}
+
+interface SimulationInput {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  simulationType?: string;
+  createdBy?: string;
+  simulationConfig?: SimulationConfig;
+  parameters: {
+    iterations: number;
+    variables: Record<string, { min: number; max: number; mean: number; }>;
+    generalParameters?: Record<string, any>;
+    tariffSpecificParameters?: TariffSpecificParameters;
+  };
+}
+
+interface ComparisonOutcome {
+  baseline: number;
+  alternate: number;
+  percentChange: number;
+}
+
+interface SimulationComparison {
+  id: string;
+  name: string;
+  baselineId: string;
+  alternateId: string;
+  improvementPercent: number;
+  createdAt: string;
+  simulationIds?: string[];
+  comparisonResults?: {
+    differencePercent: number;
+    details: string;
+    outcomeComparison?: ComparisonOutcome;
+  };
+}
+
+interface TariffPrediction {
+  sector: string;
+  probabilityOfTariffReduction: number;
+  estimatedImpact: string;
+  timeframe: string;
+}
+
+// Sample data for the demo with proper types
+const mockSankeyData: SankeyData = {
+  nodes: [
+    { name: 'Revenue', group: 'income', value: 100, id: 'node-0' },
+    { name: 'Operating Costs', group: 'expense', value: 50, id: 'node-1' },
+    { name: 'Gross Profit', group: 'finance', value: 50, id: 'node-2' },
+    { name: 'Taxes', group: 'expense', value: 15, id: 'node-3' },
+    { name: 'Net Profit', group: 'finance', value: 35, id: 'node-4' },
+    { name: 'Investments', group: 'investment', value: 20, id: 'node-5' },
+    { name: 'Dividends', group: 'finance', value: 10, id: 'node-6' },
+    { name: 'Retained Earnings', group: 'equity', value: 5, id: 'node-7' }
+  ],
+  links: [
+    { source: 0, target: 1, value: 50, type: 'flow', uiColor: '#1f77b4', aiEnhanced: true },
+    { source: 0, target: 2, value: 50, type: 'flow', uiColor: '#2ca02c', aiEnhanced: false },
+    { source: 2, target: 3, value: 15, type: 'flow', uiColor: '#d62728', aiEnhanced: false },
+    { source: 2, target: 4, value: 35, type: 'flow', uiColor: '#9467bd', aiEnhanced: true },
+    { source: 4, target: 5, value: 20, type: 'flow', uiColor: '#8c564b', aiEnhanced: true },
+    { source: 4, target: 6, value: 10, type: 'flow', uiColor: '#e377c2', aiEnhanced: false },
+    { source: 4, target: 7, value: 5, type: 'flow', uiColor: '#7f7f7f', aiEnhanced: false }
+  ],
+  aiInsights: {
+    summary: 'Financial flow analysis shows healthy profit margins with strategic investments.',
+    recommendations: [
+      'Consider increasing investment allocation for higher long-term growth',
+      'Review operating costs for potential optimization'
+    ],
+    confidence: 0.85,
+    updatedAt: new Date('2025-05-01')
+  }
+};
+
+// Sample simulation data
+const mockSimulationResults: SimulationResults = {
+  id: 'sim-2025-05-01',
+  timestamp: '2025-05-01T09:00:00Z',
+  parameters: {
+    iterations: 10000,
+    variables: {
+      revenue: { min: 80, max: 120, mean: 100 },
+      costs: { min: 40, max: 60, mean: 50 }
+    }
+  },
+  results: {
+    outcome: 35.5,
+    confidence: 0.92,
+    factors: {
+      marketGrowth: 0.6,
+      costOptimization: 0.3,
+      taxReduction: 0.1
+    }
+  }
+};
+
+// Mock data
+const mockVietnamTariffAlerts: TariffAlert[] = [
+  {
+    id: 'vt-1',
+    title: 'Vietnam Textile Tariff Reduction',
+    description: 'New trade agreement expected to reduce import duties by 15%',
+    priority: 'high',
+    createdAt: new Date('2025-04-25'),
+    confidence: 0.82,
+    impactSeverity: 8,
+    sourceName: 'Ministry of Finance'
+  },
+  {
+    id: 'vt-2',
+    title: 'Electronics Sector Volatility',
+    description: 'Potential tariff changes in electronics components',
+    priority: 'medium',
+    createdAt: new Date('2025-04-22'),
+    confidence: 0.71,
+    impactSeverity: 6,
+    sourceName: 'Trade Commission'
+  }
+];
+
+const vietnamAiPredictions: TariffPrediction[] = [
+  {
+    sector: 'Textiles',
+    probabilityOfTariffReduction: 0.68,
+    estimatedImpact: '+5.2% export volume',
+    timeframe: 'Q3 2025'
+  },
+  {
+    sector: 'Electronics',
+    probabilityOfTariffReduction: 0.42,
+    estimatedImpact: '+2.1% export volume',
+    timeframe: 'Q1 2026'
+  },
+  {
+    sector: 'Agriculture',
+    probabilityOfTariffReduction: 0.23,
+    estimatedImpact: '+0.8% export volume',
+    timeframe: 'Q2 2026'
+  }
+];
+
+// Mock business data cloud connector
+const businessDataCloudConnector = {
+  initialize: async () => Promise.resolve(true),
+  getStatistics: async (): Promise<BusinessDataStatistics> => Promise.resolve({
+    totalSimulations: 145,
+    activeModels: 12,
+    dataPoints: 1250000,
+    lastUpdated: new Date().toISOString(),
+    inputCount: 12,
+    outputCount: 45,
+    parameterChangeCount: 87,
+    comparisonCount: 22
+  }),
+  getSimulationInputs: async (): Promise<SimulationInput[]> => Promise.resolve([
+    {
+      id: 'sim-input-1',
+      name: 'Vietnam Tariff Baseline',
+      description: 'Standard model for tariff impact on exports',
+      createdAt: new Date().toISOString(),
+      simulationType: 'tariff-impact',
+      createdBy: 'system',
+      simulationConfig: {
+        name: 'Vietnam Tariff Standard',
+        description: 'Basic simulation for Vietnam tariff changes',
+        iterations: 10000,
+        confidenceInterval: 0.95
+      },
+      parameters: {
+        iterations: 10000,
+        variables: {
+          revenue: { min: 80, max: 120, mean: 100 },
+          costs: { min: 40, max: 60, mean: 50 }
+        },
+        generalParameters: {
+          scenario: 'baseline',
+          riskLevel: 'medium',
+          timeHorizon: 24
+        },
+        tariffSpecificParameters: {
+          country: 'Vietnam',
+          sector: 'Textiles',
+          timeframeMonths: 12,
+          confidenceLevel: 0.95,
+          hsCodes: ['50', '51', '52', '53'],
+          countries: ['Vietnam', 'Thailand', 'Malaysia']
+        }
+      }
+    }
+  ]),
+  getSimulationComparisons: async (): Promise<SimulationComparison[]> => Promise.resolve([
+    {
+      id: 'comp-1',
+      name: 'Baseline vs Optimistic',
+      baselineId: 'sim-input-1',
+      alternateId: 'sim-input-2',
+      improvementPercent: 15.3,
+      createdAt: new Date().toISOString(),
+      simulationIds: ['output-1', 'output-2'],
+      comparisonResults: {
+        differencePercent: 15.3,
+        details: 'Optimistic scenario shows substantial improvement',
+        outcomeComparison: {
+          baseline: 35.5,
+          alternate: 40.9,
+          percentChange: 15.3
+        }
+      }
+    }
+  ]),
+  getSimulationInput: async (id: string): Promise<SimulationInput | null> => {
+    if (id === 'sim-input-1') {
+      return {
+        id: 'sim-input-1',
+        name: 'Vietnam Tariff Baseline',
+        description: 'Standard model for tariff impact on exports',
+        createdAt: new Date().toISOString(),
+        simulationType: 'tariff-impact',
+        createdBy: 'system',
+        simulationConfig: {
+          name: 'Vietnam Tariff Standard',
+          description: 'Basic simulation for Vietnam tariff changes',
+          iterations: 10000,
+          confidenceInterval: 0.95
+        },
+        parameters: {
+          iterations: 10000,
+          variables: {
+            revenue: { min: 80, max: 120, mean: 100 },
+            costs: { min: 40, max: 60, mean: 50 }
+          },
+          generalParameters: {
+            scenario: 'baseline',
+            riskLevel: 'medium',
+            timeHorizon: 24
+          },
+          tariffSpecificParameters: {
+            country: 'Vietnam',
+            sector: 'Textiles',
+            timeframeMonths: 12,
+            confidenceLevel: 0.95,
+            hsCodes: ['50', '51', '52', '53'],
+            countries: ['Vietnam', 'Thailand', 'Malaysia']
+          }
+        }
+      };
+    }
+    return null;
+  },
+  getSimulationOutputs: async (inputId: string): Promise<SimulationOutput[]> => {
+    if (inputId === 'sim-input-1') {
+      return [
+        {
+          id: 'output-1',
+          endTime: Date.now() - 24 * 60 * 60 * 1000,
+          status: 'completed',
+          results: {
+            outcome: 35.5,
+            confidence: 0.92,
+            factors: {
+              marketGrowth: 0.6,
+              costOptimization: 0.3,
+              taxReduction: 0.1
+            },
+            statistics: {
+              mean: 35.5,
+              median: 34.8,
+              min: 28.2,
+              max: 42.1,
+              variance: 4.2
+            }
+          }
+        }
+      ];
+    }
+    return [];
+  }
+};
+
+// Create a styled Grid component that supports 'item' property
+const StyledGrid = styled(MuiGrid)({});
+
+/**
+ * Business Data Cloud Dashboard Component
+ * Visualizes financial data with Sankey diagrams and simulation results
+ */
+
+// Define types for dashboard data
+interface LlmAnalysis {
+  summary: string;
+  confidence: number;
+  keyFindings?: Array<{
+    finding: string;
+    confidence: number;
+    impact: string;
+  }>;
+  recommendations?: string[];
+  sources?: string[];
+}
+
+interface SimulationOutput {
+  id: string;
+  endTime?: number;
+  status?: 'running' | 'completed' | 'failed' | 'queued';
+  results: {
+    outcome: number;
+    confidence: number;
+    factors: Record<string, number>;
+    statistics?: {
+      mean: number;
+      median: number;
+      min: number;
+      max: number;
+      variance: number;
+    }
+  };
+}
+
+interface SimulationResults {
+  id: string;
+  timestamp: string;
+  parameters: {
+    iterations: number;
+    variables: Record<string, { min: number; max: number; mean: number; }>
+  };
+  results: {
+    outcome: number;
+    confidence: number;
+    factors: Record<string, number>;
+  };
+}
+
+// Sample data for the demo with proper types
+const mockSankeyData: SankeyData = {
+  nodes: [
+    { name: 'Revenue', group: 'income', value: 100, id: 'node-0' },
+    { name: 'Operating Costs', group: 'expense', value: 50, id: 'node-1' },
+    { name: 'Gross Profit', group: 'finance', value: 50, id: 'node-2' },
+    { name: 'Taxes', group: 'expense', value: 15, id: 'node-3' },
+    { name: 'Net Profit', group: 'finance', value: 35, id: 'node-4' },
+    { name: 'Investments', group: 'investment', value: 20, id: 'node-5' },
+    { name: 'Dividends', group: 'finance', value: 10, id: 'node-6' },
+    { name: 'Retained Earnings', group: 'equity', value: 5, id: 'node-7' }
+  ],
+  links: [
+    { source: 0, target: 1, value: 50, type: 'flow', uiColor: '#1f77b4', aiEnhanced: true },
+    { source: 0, target: 2, value: 50, type: 'flow', uiColor: '#2ca02c', aiEnhanced: false },
+    { source: 2, target: 3, value: 15, type: 'flow', uiColor: '#d62728', aiEnhanced: false },
+    { source: 2, target: 4, value: 35, type: 'flow', uiColor: '#9467bd', aiEnhanced: true },
+    { source: 4, target: 5, value: 20, type: 'flow', uiColor: '#8c564b', aiEnhanced: true },
+    { source: 4, target: 6, value: 10, type: 'flow', uiColor: '#e377c2', aiEnhanced: false },
+    { source: 4, target: 7, value: 5, type: 'flow', uiColor: '#7f7f7f', aiEnhanced: false }
+  ],
+  aiInsights: {
+    summary: 'Financial flow analysis shows healthy profit margins with strategic investments.',
+    recommendations: [
+      'Consider increasing investment allocation for higher long-term growth',
+      'Review operating costs for potential optimization'
+    ],
+    confidence: 0.85,
+    updatedAt: new Date('2025-05-01')
+  }
+};
+
+// Sample simulation data
+const mockSimulationResults: SimulationResults = {
+  id: 'sim-2025-05-01',
+  timestamp: '2025-05-01T09:00:00Z',
+  parameters: {
+    iterations: 10000,
+    variables: {
+      revenue: { min: 80, max: 120, mean: 100 },
+      costs: { min: 40, max: 60, mean: 50 }
+    }
+  },
+  results: {
+    outcome: 35.5,
+    confidence: 0.92,
+    factors: {
+      marketGrowth: 0.6,
+      costOptimization: 0.3,
+      taxReduction: 0.1
+    }
+  }
+};
+
+/**
+ * Business Data Cloud Dashboard Component
+ * Visualizes financial data with Sankey diagrams and simulation results
+ */
+interface BusinessDataStatistics {
+  totalSimulations: number;
+  activeModels: number;
+  dataPoints: number;
+  lastUpdated: string;
+  inputCount: number;
+  outputCount: number;
+  parameterChangeCount: number;
+  comparisonCount: number;
+}
+
+interface SimulationInput {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  simulationType?: string;
+  createdBy?: string;
+  simulationConfig?: {
+    name: string;
+    description: string;
+  };
+  parameters: {
+    iterations: number;
+    variables: Record<string, { min: number; max: number; mean: number; }>;
+    generalParameters?: Record<string, any>;
+    tariffSpecificParameters?: {
+      country: string;
+      sector: string;
+      timeframeMonths: number;
+      confidenceLevel: number;
+    };
+  };
+}
+
+interface SimulationComparison {
+  id: string;
+  name: string;
+  baselineId: string;
+  alternateId: string;
+  improvementPercent: number;
+  createdAt: string;
+  simulationIds?: string[];
+  comparisonResults?: {
+    differencePercent: number;
+    details: string;
+  };
+}
+
+// Mock business data cloud connector
+const businessDataCloudConnector = {
+  initialize: async () => Promise.resolve(true),
+  getStatistics: async (): Promise<BusinessDataStatistics> => Promise.resolve({
+    totalSimulations: 145,
+    activeModels: 12,
+    dataPoints: 1250000,
+    lastUpdated: new Date().toISOString(),
+    inputCount: 12,
+    outputCount: 45,
+    parameterChangeCount: 87,
+    comparisonCount: 22
+  }),
+  getSimulationInputs: async (): Promise<SimulationInput[]> => Promise.resolve([
+    {
+      id: 'sim-input-1',
+      name: 'Vietnam Tariff Baseline',
+      description: 'Standard model for tariff impact on exports',
+      createdAt: new Date().toISOString(),
+      simulationType: 'tariff-impact',
+      createdBy: 'system',
+      simulationConfig: {
+        name: 'Vietnam Tariff Standard',
+        description: 'Basic simulation for Vietnam tariff changes'
+      },
+      parameters: {
+        iterations: 10000,
+        variables: {
+          revenue: { min: 80, max: 120, mean: 100 },
+          costs: { min: 40, max: 60, mean: 50 }
+        },
+        generalParameters: {
+          scenario: 'baseline',
+          riskLevel: 'medium',
+          timeHorizon: 24
+        },
+        tariffSpecificParameters: {
+          country: 'Vietnam',
+          sector: 'Textiles',
+          timeframeMonths: 12,
+          confidenceLevel: 0.95,
+          hsCodes: ['50', '51', '52', '53'],
+          countries: ['Vietnam', 'Thailand', 'Malaysia']
+        }
+      }
+    }
+  ]),
+  getSimulationComparisons: async (): Promise<SimulationComparison[]> => Promise.resolve([
+    {
+      id: 'comp-1',
+      name: 'Baseline vs Optimistic',
+      baselineId: 'sim-input-1',
+      alternateId: 'sim-input-2',
+      improvementPercent: 15.3,
+      createdAt: new Date().toISOString(),
+      simulationIds: ['output-1', 'output-2'],
+      comparisonResults: {
+        differencePercent: 15.3,
+        details: 'Optimistic scenario shows substantial improvement',
+        outcomeComparison: {
+          baseline: 35.5,
+          alternate: 40.9,
+          percentChange: 15.3
+        }
+      }
+    }
+  ]),
+  getSimulationInput: async (id: string): Promise<SimulationInput | null> => {
+    if (id === 'sim-input-1') {
+      return {
+        id: 'sim-input-1',
+        name: 'Vietnam Tariff Baseline',
+        description: 'Standard model for tariff impact on exports',
+        createdAt: new Date().toISOString(),
+        simulationType: 'tariff-impact',
+        createdBy: 'system',
+        simulationConfig: {
+          name: 'Vietnam Tariff Standard',
+          description: 'Basic simulation for Vietnam tariff changes',
+          iterations: 10000,
+          confidenceInterval: 0.95
+        },
+        parameters: {
+          iterations: 10000,
+          variables: {
+            revenue: { min: 80, max: 120, mean: 100 },
+            costs: { min: 40, max: 60, mean: 50 }
+          },
+          generalParameters: {
+            scenario: 'baseline',
+            riskLevel: 'medium',
+            timeHorizon: 24
+          },
+          tariffSpecificParameters: {
+            country: 'Vietnam',
+            sector: 'Textiles',
+            timeframeMonths: 12,
+            confidenceLevel: 0.95,
+            hsCodes: ['50', '51', '52', '53'],
+            countries: ['Vietnam', 'Thailand', 'Malaysia']
+          }
+        }
+      };
+    }
+    return null;
+  },
+  getSimulationOutputs: async (inputId: string): Promise<SimulationOutput[]> => {
+    if (inputId === 'sim-input-1') {
+      return [
+        {
+          id: 'output-1',
+          endTime: Date.now() - 24 * 60 * 60 * 1000,
+          status: 'completed',
+          results: {
+            outcome: 35.5,
+            confidence: 0.92,
+            factors: {
+              marketGrowth: 0.6,
+              costOptimization: 0.3,
+              taxReduction: 0.1
+            },
+            statistics: {
+              mean: 35.5,
+              median: 34.8,
+              min: 28.2,
+              max: 42.1,
+              variance: 4.2
+            }
+          }
+        }
+      ];
+    }
+    return [];
+  }
+};
+
+const BusinessDataCloudDashboard: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const [sankeyData, setSankeyData] = useState<SankeyData>(mockSankeyData);
+  const [simulationResults, setSimulationResults] = useState<SimulationResults>(mockSimulationResults);
+  const [selectedOutput, setSelectedOutput] = useState<SimulationOutput | null>(null);
+  const [statistics, setStatistics] = useState<BusinessDataStatistics | null>(null);
+  const [inputs, setInputs] = useState<SimulationInput[]>([]);
+  const [comparisons, setComparisons] = useState<SimulationComparison[]>([]);
+  const [selectedInput, setSelectedInput] = useState<SimulationInput | null>(null);
+  const [llmAnalysis, setLlmAnalysis] = useState<LlmAnalysis>({
+    summary: "Based on Monte Carlo simulations, Vietnam's tariff structure shows a 68% probability of reduction in the textile sector by Q3 2025, with potential estimated impact of +5.2% on export volume.",
+    confidence: 0.78,
+    keyFindings: [
+      {
+        finding: "Textile tariffs highly likely to decrease due to new trade agreements",
+        confidence: 0.82,
+        impact: "High"
+      },
+      {
+        finding: "Electronics sector facing increased tariff volatility",
+        confidence: 0.71,
+        impact: "Medium"
+      },
+      {
+        finding: "Agricultural tariffs steady with minimal projected changes",
+        confidence: 0.89,
+        impact: "Low"
+      }
+    ],
+    recommendations: [
+      "Increase textile export preparation for Q3 2025",
+      "Monitor electronics supply chain for tariff impacts",
+      "Consider hedging strategies for high-volatility sectors"
+    ]
+  });
+
+  // Load dashboard data
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  // Handle tab change
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
+  
+  // Mock Vietnam analysis data for demo
+  const mockVietnamTariffAlerts = [
+    {
+      id: 'vt-1',
+      title: 'Vietnam Textile Tariff Reduction',
+      description: 'New trade agreement expected to reduce import duties by 15%',
+      priority: 'high',
+      createdAt: new Date('2025-04-25'),
+      confidence: 0.82
+    },
+    {
+      id: 'vt-2',
+      title: 'Electronics Sector Volatility',
+      description: 'Potential tariff changes in electronics components',
+      priority: 'medium',
+      createdAt: new Date('2025-04-22'),
+      confidence: 0.71
+    }
+  ];
+  
+  const vietnamAiPredictions = [
+    {
+      sector: 'Textiles',
+      probabilityOfTariffReduction: 0.68,
+      estimatedImpact: '+5.2% export volume',
+      timeframe: 'Q3 2025'
+    },
+    {
+      sector: 'Electronics',
+      probabilityOfTariffReduction: 0.42,
+      estimatedImpact: '+2.1% export volume',
+      timeframe: 'Q1 2026'
+    },
+    {
+      sector: 'Agriculture',
+      probabilityOfTariffReduction: 0.23,
+      estimatedImpact: '+0.8% export volume',
+      timeframe: 'Q2 2026'
+    }
+  ];
+  
+  // Handle simulation actions
+  const handleViewVietnamSimulation = (inputId: string) => {
+    handleViewSimulation(inputId);
+  };
+  
+  const handleCompareVietnamSimulations = () => {
+    console.log('Comparing Vietnam simulations');
+  };
+  
+  const handleNewVietnamSimulation = () => {
+    console.log('Creating new Vietnam simulation');
+  };
+
+  // Load dashboard data
+  const loadDashboardData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Initialize Business Data Cloud connector
+      await businessDataCloudConnector.initialize();
+      
+      // Get statistics
+      const stats = await businessDataCloudConnector.getStatistics();
+      setStatistics(stats);
+      
+      // Get simulation inputs
+      const simulationInputs = await businessDataCloudConnector.getSimulationInputs();
+      setInputs(simulationInputs);
+      
+      // Get comparisons
+      const simulationComparisons = await businessDataCloudConnector.getSimulationComparisons();
+      setComparisons(simulationComparisons);
+    } catch (error) {
+      console.error('Error loading dashboard data', error);
+      setError('Failed to load Business Data Cloud data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // View simulation details
+  const handleViewSimulation = async (inputId: string) => {
+    try {
+      // Get simulation input
+      const input = await businessDataCloudConnector.getSimulationInput(inputId);
+      setSelectedInput(input);
+      
+      // Get simulation outputs
+      if (input) {
+        const outputs = await businessDataCloudConnector.getSimulationOutputs(inputId);
+        if (outputs && outputs.length > 0) {
+          // Sort by end time and get the most recent
+          outputs.sort((a, b) => (b.endTime || 0) - (a.endTime || 0));
+          setSelectedOutput(outputs[0]);
+        } else {
+          setSelectedOutput(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading simulation details', error);
+      setError('Failed to load simulation details. Please try again.');
+    }
+  };
+
+  // Handle Vietnam simulation view
+  const handleViewVietnamSimulation = (inputId: string) => {
+    handleViewSimulation(inputId);
+    setActiveTab('analysis');
+  };
+
+  // Handle new Vietnam simulation
+  const handleNewVietnamSimulation = () => {
+    console.log('Creating new Vietnam tariff simulation');
+    // Implementation for creating a new simulation would go here
+  };
+
+  // Handle comparing Vietnam simulations
+  const handleCompareVietnamSimulations = (ids: string[]) => {
+    console.log('Comparing Vietnam simulations:', ids);
+    // Implementation for comparing simulations would go here
+  };
+
+  // Format date
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString();
+  };
+
+  // Render loading state
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+        <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          Loading Business Data Cloud integration...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+        <Button 
+          variant="outlined" 
+          size="small"
+          onClick={loadDashboardData}
+          sx={{ ml: 2 }}
+        >
+          Retry
+        </Button>
+      </Alert>
+    );
+  }
+
+  return (
+    <Box>
+      <Typography variant="h5" component="h2" gutterBottom>
+        <Database size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+        Business Data Cloud Integration
+      </Typography>
+      
+      <Typography variant="body1" sx={{ mb: 3 }}>
+        Visualization of Monte Carlo simulation data stored in SAP Business Data Cloud
+      </Typography>
+      
+      {/* Tabs Navigation */}
+      <Tabs 
+        value={activeTab}
+        onChange={handleTabChange}
+        sx={{ mb: 3 }}
+        textColor="primary"
+        indicatorColor="primary"
+      >
+        <Tab value="overview" label="Overview" />
+        <Tab value="vietnam" label="Vietnam Tariffs" />
+        <Tab value="analysis" label="AI Insights" />
+      </Tabs>
+      
+      {/* Statistics Cards - Only show on Overview tab */}
+      {activeTab === 'overview' && (
+        <Box sx={{ flexGrow: 1, mb: 4 }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={3}>
+              <Card variant="outlined">
+                <CardContent>
+                  <Typography variant="h6" color="primary.main">
+                    <FileText size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                    Simulation Inputs
+                  </Typography>
+                  <Typography variant="h3">{statistics?.inputCount || 0}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          
+            <Grid item xs={12} md={3}>
+              <Card variant="outlined">
+                <CardContent>
+                <Typography variant="h6" color="secondary.main">
+                  <BarChart size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Simulation Outputs
+                </Typography>
+                <Typography variant="h3">{statistics?.outputCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" color="info.main">
+                  <History size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Parameter Changes
+                </Typography>
+                <Typography variant="h3">{statistics?.parameterChangeCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" color="success.main">
+                  <RefreshCw size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Comparisons
+                </Typography>
+                <Typography variant="h3">{statistics?.comparisonCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+        </Box>
+      )}
+      
+      {/* Vietnam Tariff Analysis Tab */}
+      {activeTab === 'vietnam' && (
+        <Box>
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Globe size={18} style={{ marginRight: '8px' }} />
+                    Vietnam Tariff Impact Analysis
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 2 }}>
+                    Comprehensive analysis of tariff impacts on Vietnamese trade with Monte Carlo simulations and AI-enhanced predictions.
+                  </Typography>
+                  
+                  <Divider sx={{ mb: 3 }} />
+                  
+                  {/* Recent Alerts */}
+                  <Typography variant="subtitle1" gutterBottom>
+                    Recent Tariff Alerts
+                  </Typography>
+                  
+                  <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Alert</TableCell>
+                          <TableCell>Impact</TableCell>
+                          <TableCell>Date</TableCell>
+                          <TableCell>Confidence</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {mockVietnamTariffAlerts.slice(0, 3).map((alert) => (
+                          <TableRow key={alert.id}>
+                            <TableCell>
+                              <Typography variant="body2">{alert.title}</Typography>
+                              <Typography variant="caption" color="text.secondary">{alert.sourceName}</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Chip 
+                                size="small" 
+                                label={`${alert.impactSeverity}/10`}
+                                color={alert.impactSeverity > 7 ? 'error' : alert.impactSeverity > 5 ? 'warning' : 'success'}
+                              />
+                            </TableCell>
+                            <TableCell>{new Date(alert.publishDate).toLocaleDateString()}</TableCell>
+                            <TableCell>{Math.round(alert.confidence * 100)}%</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  
+                  {/* AI Predictions Summary */}
+                  <Typography variant="subtitle1" gutterBottom>
+                    AI-Enhanced Tariff Predictions
+                  </Typography>
+                  
+                  <Grid container spacing={2} sx={{ mb: 3 }}>
+                    {vietnamAiPredictions.predictions.slice(0, 3).map((prediction, idx) => (
+                      <Grid item xs={12} md={4} key={idx}>
+                        <Paper 
+                          elevation={0} 
+                          sx={{ 
+                            p: 2, 
+                            border: '1px solid', 
+                            borderColor: 'divider',
+                            height: '100%'
+                          }}
+                        >
+                          <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            {prediction.category}
+                            <Chip 
+                              size="small" 
+                              label={`${Math.round(prediction.confidence * 100)}%`}
+                              color="primary"
+                              variant="outlined"
+                            />
+                          </Typography>
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                            <Typography variant="body2">
+                              Current: <strong>{prediction.currentTariff}%</strong>
+                            </Typography>
+                            <Typography variant="body2" sx={{ mx: 1 }}>
+                              → 
+                            </Typography>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                fontWeight: 'bold', 
+                                color: prediction.predictedTariff < prediction.currentTariff ? 'success.main' : 'error.main'
+                              }}
+                            >
+                              {prediction.predictedTariff}%
+                            </Typography>
+                          </Box>
+                          <Typography variant="caption" color="text.secondary">
+                            {prediction.timeframe} | {prediction.impactLevel} impact
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+          
+          {/* Vietnam Monte Carlo History */}
+          <VietnamMonteCarloHistory 
+            onViewSimulation={handleViewVietnamSimulation}
+            onCompare={handleCompareVietnamSimulations}
+            onNewSimulation={handleNewVietnamSimulation}
+          />
+        </Box>
+      )}
+      
+      {/* AI Insights Tab */}
+      {activeTab === 'analysis' && (
+        <Box>
+          <VietnamMonteCarloLlmAnalysis 
+            analysis={llmAnalysis}
+            onGenerateReport={() => console.log('Generating report')}
+            onViewDetailedAnalysis={() => console.log('Viewing detailed analysis')}
+          />
+          
+          <Card sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Selected Simulation Details
+              </Typography>
+              {selectedInput && (
+                <Box>
+                  <Typography variant="subtitle1">{selectedInput.name}</Typography>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    {selectedInput.description}
+                  </Typography>
+                  
+                  <Divider sx={{ my: 2 }} />
+                  
+                  <Typography variant="subtitle2" gutterBottom>Parameters:</Typography>
+                  <TableContainer component={Paper} variant="outlined" sx={{ mb: 2 }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Parameter</TableCell>
+                          <TableCell>Value</TableCell>
+                          <TableCell>Distribution</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {selectedInput.parameters.generalParameters.slice(0, 5).map((param) => (
+                          <TableRow key={param.id}>
+                            <TableCell>{param.name}</TableCell>
+                            <TableCell>{param.value}{param.unit ? ` ${param.unit}` : ''}</TableCell>
+                            <TableCell>{param.distributionType}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        </Box>
+      )}
+      
+      {/* Main content - Only show on Overview tab */}
+      {activeTab === 'overview' && (
+        <Grid container spacing={3}>
+          {/* Simulation Inputs Table */}
+          <Grid item xs={12} md={selectedInput ? 6 : 12}>
+            <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Simulation Inputs
+              </Typography>
+              
+              <TableContainer sx={{ maxHeight: 400 }}>
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Type</TableCell>
+                      <TableCell>Created By</TableCell>
+                      <TableCell>Created At</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {inputs.length > 0 ? (
+                      inputs.map((input) => (
+                        <TableRow 
+                          key={input.id}
+                          sx={{ 
+                            '&:hover': { bgcolor: 'action.hover' },
+                            bgcolor: selectedInput?.id === input.id ? 'action.selected' : 'inherit'
+                          }}
+                        >
+                          <TableCell>{input.name}</TableCell>
+                          <TableCell>
+                            <Chip 
+                              label={input.simulationType} 
+                              size="small"
+                              color={input.simulationType === 'Vietnam_Tariff' ? 'primary' : 'secondary'}
+                            />
+                          </TableCell>
+                          <TableCell>{input.createdBy}</TableCell>
+                          <TableCell>{formatDate(input.createdAt)}</TableCell>
+                          <TableCell>
+                            <Button 
+                              size="small" 
+                              variant="outlined"
+                              onClick={() => handleViewSimulation(input.id)}
+                            >
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} align="center">No simulation inputs found</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Grid>
+          
+          {/* Simulation Details */}
+          {selectedInput && (
+            <Grid item xs={12} md={6}>
+              <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Simulation Details
+                </Typography>
+                
+                <Typography variant="subtitle1" gutterBottom>
+                  {selectedInput.name}
+                </Typography>
+                
+                <Typography variant="body2" color="text.secondary" paragraph>
+                  {selectedInput.description || 'No description provided'}
+                </Typography>
+                
+                <Divider sx={{ my: 2 }} />
+                
+                <Typography variant="subtitle2" gutterBottom>
+                  Configuration
+                </Typography>
+                
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                  <Grid item xs={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      Iterations: <strong>{selectedInput.simulationConfig.iterations}</strong>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      Confidence: <strong>{selectedInput.simulationConfig.confidenceInterval * 100}%</strong>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      HS Codes: <strong>{selectedInput.parameters.tariffSpecificParameters.hsCodes.join(', ')}</strong>
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      Countries: <strong>{selectedInput.parameters.tariffSpecificParameters.countries.join(', ')}</strong>
+                    </Typography>
+                  </Grid>
+                </Grid>
+                
+                <Divider sx={{ my: 2 }} />
+                
+                <Typography variant="subtitle2" gutterBottom>
+                  Parameters
+                </Typography>
+                
+                <TableContainer sx={{ maxHeight: 200 }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Parameter</TableCell>
+                        <TableCell>Value</TableCell>
+                        <TableCell>Range</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {selectedInput.parameters.generalParameters.map((param) => (
+                        <TableRow key={param.id}>
+                          <TableCell>{param.name}</TableCell>
+                          <TableCell>{param.value} {param.unit}</TableCell>
+                          <TableCell>
+                            {param.minValue !== undefined && param.maxValue !== undefined 
+                              ? `${param.minValue} - ${param.maxValue} ${param.unit || ''}`
+                              : 'N/A'
+                            }
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                
+                {/* Output Results */}
+                {selectedOutput && (
+                  <>
+                    <Divider sx={{ my: 2 }} />
+                    
+                    <Typography variant="subtitle2" gutterBottom>
+                      Results
+                    </Typography>
+                    
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Typography variant="body2" color="text.secondary">
+                          Status: 
+                          <Chip 
+                            label={selectedOutput.status} 
+                            size="small"
+                            color={selectedOutput.status === 'completed' ? 'success' : 
+                                  selectedOutput.status === 'running' ? 'info' : 
+                                  selectedOutput.status === 'failed' ? 'error' : 'default'}
+                            sx={{ ml: 1 }}
+                          />
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography variant="body2" color="text.secondary">
+                          Completion: {selectedOutput.endTime ? formatDate(selectedOutput.endTime) : 'N/A'}
+                        </Typography>
+                      </Grid>
+                      
+                      {selectedOutput.results && selectedOutput.results.statistics && (
+                        <>
+                          <Grid item xs={6}>
+                            <Typography variant="body2" color="text.secondary">
+                              Mean: <strong>{selectedOutput.results.statistics.mean.toFixed(2)}</strong>
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography variant="body2" color="text.secondary">
+                              Median: <strong>{selectedOutput.results.statistics.median.toFixed(2)}</strong>
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography variant="body2" color="text.secondary">
+                              Min: <strong>{selectedOutput.results.statistics.min.toFixed(2)}</strong>
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Typography variant="body2" color="text.secondary">
+                              Max: <strong>{selectedOutput.results.statistics.max.toFixed(2)}</strong>
+                            </Typography>
+                          </Grid>
+                        </>
+                      )}
+                    </Grid>
+                  </>
+                )}
+              </Paper>
+            </Grid>
+          )}
+          
+          {/* Comparisons Table */}
+          <Grid item xs={12}>
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Simulation Comparisons
+              </Typography>
+              
+              <TableContainer sx={{ maxHeight: 300 }}>
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Created At</TableCell>
+                      <TableCell>Compared Simulations</TableCell>
+                      <TableCell>Key Findings</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {comparisons.length > 0 ? (
+                      comparisons.map((comparison) => (
+                        <TableRow key={comparison.id}>
+                          <TableCell>{comparison.name}</TableCell>
+                          <TableCell>{formatDate(comparison.createdAt)}</TableCell>
+                          <TableCell>{comparison.simulationIds.length}</TableCell>
+                          <TableCell>
+                            {comparison.comparisonResults.outcomeComparison.riskProfileDifferences.length > 0 
+                              ? `${comparison.comparisonResults.outcomeComparison.riskProfileDifferences[0].pessimisticDifference.toFixed(2)}% difference in pessimistic scenario`
+                              : 'No significant differences'
+                            }
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} align="center">No comparisons found</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Grid>
+        </Grid>
+      )}
+    </Box>
+  );
+};
+
+const BusinessDataCloudDashboard = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [statistics, setStatistics] = useState<{
+    inputCount: number;
+    outputCount: number;
+    parameterChangeCount: number;
+    comparisonCount: number;
+  } | null>(null);
+  const [inputs, setInputs] = useState<SimulationInput[]>([]);
+  const [comparisons, setComparisons] = useState<SimulationComparison[]>([]);
+  const [selectedInput, setSelectedInput] = useState<SimulationInput | null>(null);
+  const [selectedOutput, setSelectedOutput] = useState<SimulationOutput | null>(null);
+
+  // Load dashboard data
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  // Load dashboard data
+  const loadDashboardData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Initialize Business Data Cloud connector
+      await businessDataCloudConnector.initialize();
+      
+      // Get statistics
+      const stats = await businessDataCloudConnector.getStatistics();
+      setStatistics(stats);
+      
+      // Get simulation inputs
+      const simulationInputs = await businessDataCloudConnector.getSimulationInputs();
+      setInputs(simulationInputs);
+      
+      // Get comparisons
+      const simulationComparisons = await businessDataCloudConnector.getSimulationComparisons();
+      setComparisons(simulationComparisons);
+    } catch (error) {
+      console.error('Error loading dashboard data', error);
+      setError('Failed to load Business Data Cloud data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // View simulation details
+  const handleViewSimulation = async (inputId: string) => {
+    try {
+      // Get simulation input
+      const input = await businessDataCloudConnector.getSimulationInput(inputId);
+      setSelectedInput(input);
+      
+      // Get simulation outputs
+      if (input) {
+        const outputs = await businessDataCloudConnector.getSimulationOutputs(inputId);
+        if (outputs && outputs.length > 0) {
+          // Sort by end time and get the most recent
+          outputs.sort((a, b) => (b.endTime || 0) - (a.endTime || 0));
+          setSelectedOutput(outputs[0]);
+        } else {
+          setSelectedOutput(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading simulation details', error);
+      setError('Failed to load simulation details. Please try again.');
+    }
+  };
+
+  // Format date
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString();
+  };
+
+  // Render loading state
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+        <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          Loading Business Data Cloud integration...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+        <Button 
+          variant="outlined" 
+          size="small"
+          onClick={loadDashboardData}
+          sx={{ ml: 2 }}
+        >
+          Retry
+        </Button>
+      </Alert>
+    );
+  }
+
+  return (
+    <Box>
+      <Typography variant="h5" component="h2" gutterBottom>
+        <Database size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+        Business Data Cloud Integration
+      </Typography>
+      
+      <Typography variant="body1" sx={{ mb: 3 }}>
+        Visualization of Monte Carlo simulation data stored in SAP Business Data Cloud
+      </Typography>
+      
+      {/* Statistics Cards - Only show on Overview tab */}
+      {activeTab === 'overview' && (
+        <Box sx={{ flexGrow: 1, mb: 4 }}>
+          <Grid container spacing={3}>
+          <Grid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" color="primary.main">
+                  <FileText size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Simulation Inputs
+                </Typography>
+                <Typography variant="h3">{statistics?.inputCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        
+          <Grid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+              <Typography variant="h6" color="secondary.main">
+                <BarChart size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                Simulation Outputs
+              </Typography>
+              <Typography variant="h3">{statistics?.outputCount || 0}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} md={3}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6" color="info.main">
+                <History size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                Parameter Changes
+              </Typography>
+              <Typography variant="h3">{statistics?.parameterChangeCount || 0}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} md={3}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="h6" color="success.main">
+                <RefreshCw size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                Comparisons
+              </Typography>
+              <Typography variant="h3">{statistics?.comparisonCount || 0}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+        </Box>
+      )}
+      
+      {/* Vietnam Tariff Analysis Tab */}
+      {activeTab === 'vietnam' && (
+        <Box>
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Globe size={18} style={{ marginRight: '8px' }} />
+                    Vietnam Tariff Impact Analysis
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 2 }}>
+                    Comprehensive analysis of tariff impacts on Vietnamese trade with Monte Carlo simulations and AI-enhanced predictions.
+                  </Typography>
+                  
+                  <Divider sx={{ mb: 3 }} />
+                  
+                  {/* Recent Alerts */}
+                  <Typography variant="subtitle1" gutterBottom>
+                    Recent Tariff Alerts
+                  </Typography>
+                  
+                  <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Alert</TableCell>
+                          <TableCell>Impact</TableCell>
+                          <TableCell>Date</TableCell>
+                          <TableCell>Confidence</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {mockVietnamTariffAlerts.slice(0, 3).map((alert) => (
+                          <TableRow key={alert.id}>
+                            <TableCell>
+                              <Typography variant="body2">{alert.title}</Typography>
+                              <Typography variant="caption" color="text.secondary">{alert.sourceName}</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Chip 
+                                size="small" 
+                                label={`${alert.impactSeverity}/10`}
+                                color={alert.impactSeverity > 7 ? 'error' : alert.impactSeverity > 5 ? 'warning' : 'success'}
+                              />
+                            </TableCell>
+                            <TableCell>{new Date(alert.publishDate).toLocaleDateString()}</TableCell>
+                            <TableCell>{Math.round(alert.confidence * 100)}%</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  
+                  {/* AI Predictions Summary */}
+                  <Typography variant="subtitle1" gutterBottom>
+                    AI-Enhanced Tariff Predictions
+                  </Typography>
+                  
+                  <Grid container spacing={2} sx={{ mb: 3 }}>
+                    {vietnamAiPredictions.predictions.slice(0, 3).map((prediction, idx) => (
+                      <Grid item xs={12} md={4} key={idx}>
+                        <Paper 
+                          elevation={0} 
+                          sx={{ 
+                            p: 2, 
+                            border: '1px solid', 
+                            borderColor: 'divider',
+                            height: '100%'
+                          }}
+                        >
+                          <Typography variant="subtitle2" gutterBottom sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            {prediction.category}
+                            <Chip 
+                              size="small" 
+                              label={`${Math.round(prediction.confidence * 100)}%`}
+                              color="primary"
+                              variant="outlined"
+                            />
+                          </Typography>
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                            <Typography variant="body2">
+                              Current: <strong>{prediction.currentTariff}%</strong>
+                            </Typography>
+                            <Typography variant="body2" sx={{ mx: 1 }}>
+                              → 
+                            </Typography>
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                fontWeight: 'bold', 
+                                color: prediction.predictedTariff < prediction.currentTariff ? 'success.main' : 'error.main'
+                              }}
+                            >
+                              {prediction.predictedTariff}%
+                            </Typography>
+                          </Box>
+                          <Typography variant="caption" color="text.secondary">
+                            {prediction.timeframe} | {prediction.impactLevel} impact
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+          
+          {/* Vietnam Monte Carlo History */}
+          <VietnamMonteCarloHistory 
+            onViewSimulation={handleViewVietnamSimulation}
+            onCompare={handleCompareVietnamSimulations}
+            onNewSimulation={handleNewVietnamSimulation}
+          />
+        </Box>
+      )}
+      
+      {/* AI Insights Tab */}
+      {activeTab === 'analysis' && (
+        <Box>
+          <VietnamMonteCarloLlmAnalysis 
+            analysis={llmAnalysis}
+            onGenerateReport={() => console.log('Generating report')}
+            onViewDetailedAnalysis={() => console.log('Viewing detailed analysis')}
+          />
+          
+          <Card sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Selected Simulation Details
+              </Typography>
+              {selectedInput && (
+                <Box>
+                  <Typography variant="subtitle1">{selectedInput.name}</Typography>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
+                    {selectedInput.description}
+                  </Typography>
+                  
+                  <Divider sx={{ my: 2 }} />
+                  
+                  <Typography variant="subtitle2" gutterBottom>Parameters:</Typography>
+                  <TableContainer component={Paper} variant="outlined" sx={{ mb: 2 }}>
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Parameter</TableCell>
+                          <TableCell>Value</TableCell>
+                          <TableCell>Distribution</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {selectedInput.parameters.generalParameters.slice(0, 5).map((param) => (
+                          <TableRow key={param.id}>
+                            <TableCell>{param.name}</TableCell>
+                            <TableCell>{param.value}{param.unit ? ` ${param.unit}` : ''}</TableCell>
+                            <TableCell>{param.distributionType}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        </Box>
+      )}
+      
+      {/* Main content - Only show on Overview tab */}
+      {activeTab === 'overview' && (
+        <Grid container spacing={3}>
+        {/* Simulation Inputs Table */}
+        <Grid item xs={12} md={selectedInput ? 6 : 12}>
+          <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Simulation Inputs
+            </Typography>
+            
+            <TableContainer sx={{ maxHeight: 400 }}>
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Created By</TableCell>
+                    <TableCell>Created At</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {inputs.length > 0 ? (
+                    inputs.map((input) => (
+                      <TableRow 
+                        key={input.id}
+                        sx={{ 
+                          '&:hover': { bgcolor: 'action.hover' },
+                          bgcolor: selectedInput?.id === input.id ? 'action.selected' : 'inherit'
+                        }}
+                      >
+                        <TableCell>{input.name}</TableCell>
+                        <TableCell>
+                          <Chip 
+                            label={input.simulationType} 
+                            size="small"
+                            color={input.simulationType === 'Vietnam_Tariff' ? 'primary' : 'secondary'}
+                          />
+                        </TableCell>
+                        <TableCell>{input.createdBy}</TableCell>
+                        <TableCell>{formatDate(input.createdAt)}</TableCell>
+                        <TableCell>
+                          <Button 
+                            size="small" 
+                            variant="outlined"
+                            onClick={() => handleViewSimulation(input.id)}
+                          >
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">No simulation inputs found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Grid>
+        
+        {/* Simulation Details */}
+        {selectedInput && (
+          <Grid item xs={12} md={6}>
+            <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Simulation Details
+              </Typography>
+              
+              <Typography variant="subtitle1" gutterBottom>
+                {selectedInput.name}
+              </Typography>
+              
+              <Typography variant="body2" color="text.secondary" paragraph>
+                {selectedInput.description || 'No description provided'}
+              </Typography>
+              
+              <Divider sx={{ my: 2 }} />
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Configuration
+              </Typography>
+              
+              <Grid container spacing={2} sx={{ mb: 2 }}>
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Iterations: <strong>{selectedInput.simulationConfig.iterations}</strong>
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Confidence: <strong>{selectedInput.simulationConfig.confidenceInterval * 100}%</strong>
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    HS Codes: <strong>{selectedInput.parameters.tariffSpecificParameters.hsCodes.join(', ')}</strong>
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Countries: <strong>{selectedInput.parameters.tariffSpecificParameters.countries.join(', ')}</strong>
+                  </Typography>
+                </Grid>
+              </Grid>
+              
+              <Divider sx={{ my: 2 }} />
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Parameters
+              </Typography>
+              
+              <TableContainer sx={{ maxHeight: 200 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Parameter</TableCell>
+                      <TableCell>Value</TableCell>
+                      <TableCell>Range</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedInput.parameters.generalParameters.map((param) => (
+                      <TableRow key={param.id}>
+                        <TableCell>{param.name}</TableCell>
+                        <TableCell>{param.value} {param.unit}</TableCell>
+                        <TableCell>
+                          {param.minValue !== undefined && param.maxValue !== undefined 
+                            ? `${param.minValue} - ${param.maxValue} ${param.unit || ''}`
+                            : 'N/A'
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              
+              {/* Output Results */}
+              {selectedOutput && (
+                <>
+                  <Divider sx={{ my: 2 }} />
+                  
+                  <Typography variant="subtitle2" gutterBottom>
+                    Results
+                  </Typography>
+                  
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Typography variant="body2" color="text.secondary">
+                        Status: 
+                        <Chip 
+                          label={selectedOutput.status} 
+                          size="small"
+                          color={selectedOutput.status === 'completed' ? 'success' : 
+                                 selectedOutput.status === 'running' ? 'info' : 
+                                 selectedOutput.status === 'failed' ? 'error' : 'default'}
+                          sx={{ ml: 1 }}
+                        />
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="body2" color="text.secondary">
+                        Completion: {selectedOutput.endTime ? formatDate(selectedOutput.endTime) : 'N/A'}
+                      </Typography>
+                    </Grid>
+                    
+                    {selectedOutput.results && (
+                      <>
+                        <Grid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Mean: <strong>{selectedOutput.results.statistics?.mean.toFixed(2)}</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Median: <strong>{selectedOutput.results.statistics?.median.toFixed(2)}</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Min: <strong>{selectedOutput.results.statistics?.min.toFixed(2)}</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Max: <strong>{selectedOutput.results.statistics?.max.toFixed(2)}</strong>
+                          </Typography>
+                        </Grid>
+                      </>
+                    )}
+                  </Grid>
+                </>
+              )}
+            </Paper>
+          </Grid>
+        )}
+        
+        {/* Comparisons Table */}
+        <Grid item xs={12}>
+          <Paper variant="outlined" sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Simulation Comparisons
+            </Typography>
+            
+            <TableContainer sx={{ maxHeight: 300 }}>
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Created At</TableCell>
+                    <TableCell>Compared Simulations</TableCell>
+                    <TableCell>Key Findings</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {comparisons.length > 0 ? (
+                    comparisons.map((comparison) => (
+                      <TableRow key={comparison.id}>
+                        <TableCell>{comparison.name}</TableCell>
+                        <TableCell>{formatDate(comparison.createdAt)}</TableCell>
+                        <TableCell>{comparison.simulationIds.length}</TableCell>
+                        <TableCell>
+                          {comparison.comparisonResults.outcomeComparison.riskProfileDifferences.length > 0 
+                            ? `${comparison.comparisonResults.outcomeComparison.riskProfileDifferences[0].pessimisticDifference.toFixed(2)}% difference in pessimistic scenario`
+                            : 'No significant differences'
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} align="center">No comparisons found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+export default BusinessDataCloudDashboard;
+  Chip,
+  Divider,
+  Grid as MuiGrid
+} from '@mui/material';
+import { Database, BarChart, History, RefreshCw, FileText } from 'lucide-react';
+import businessDataCloudConnector from '../services/BusinessDataCloudConnector';
+import { SimulationInput, SimulationOutput, SimulationComparison } from '../types/MonteCarloTypes';
+
+/**
+ * Business Data Cloud Dashboard Component
+ * Visualizes the Business Data Cloud integration for Monte Carlo simulations
+ */
+const BusinessDataCloudDashboard: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [statistics, setStatistics] = useState<{
+    inputCount: number;
+    outputCount: number;
+    parameterChangeCount: number;
+    comparisonCount: number;
+  } | null>(null);
+  const [inputs, setInputs] = useState<SimulationInput[]>([]);
+  const [comparisons, setComparisons] = useState<SimulationComparison[]>([]);
+  const [selectedInput, setSelectedInput] = useState<SimulationInput | null>(null);
+  const [selectedOutput, setSelectedOutput] = useState<SimulationOutput | null>(null);
+
+  // Load dashboard data
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  // Load dashboard data
+  const loadDashboardData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Initialize Business Data Cloud connector
+      await businessDataCloudConnector.initialize();
+      
+      // Get statistics
+      const stats = await businessDataCloudConnector.getStatistics();
+      setStatistics(stats);
+      
+      // Get simulation inputs
+      const simulationInputs = await businessDataCloudConnector.getSimulationInputs();
+      setInputs(simulationInputs);
+      
+      // Get comparisons
+      const simulationComparisons = await businessDataCloudConnector.getSimulationComparisons();
+      setComparisons(simulationComparisons);
+    } catch (error) {
+      console.error('Error loading dashboard data', error);
+      setError('Failed to load Business Data Cloud data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // View simulation details
+  const handleViewSimulation = async (inputId: string) => {
+    try {
+      // Get simulation input
+      const input = await businessDataCloudConnector.getSimulationInput(inputId);
+      setSelectedInput(input);
+      
+      // Get simulation outputs
+      if (input) {
+        const outputs = await businessDataCloudConnector.getSimulationOutputs(inputId);
+        if (outputs && outputs.length > 0) {
+          // Sort by end time and get the most recent
+          outputs.sort((a, b) => (b.endTime || 0) - (a.endTime || 0));
+          setSelectedOutput(outputs[0]);
+        } else {
+          setSelectedOutput(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading simulation details', error);
+      setError('Failed to load simulation details. Please try again.');
+    }
+  };
+
+  // Format date
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString();
+  };
+
+  // Render loading state
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+        <CircularProgress />
+        <Typography variant="body1" sx={{ ml: 2 }}>
+          Loading Business Data Cloud integration...
+        </Typography>
+      </Box>
+    );
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <Alert severity="error" sx={{ mb: 3 }}>
+        {error}
+        <Button 
+          variant="outlined" 
+          size="small"
+          onClick={loadDashboardData}
+          sx={{ ml: 2 }}
+        >
+          Retry
+        </Button>
+      </Alert>
+    );
+  }
+
+  return (
+    <Box>
+      <Typography variant="h5" component="h2" gutterBottom>
+        <Database size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+        Business Data Cloud Integration
+      </Typography>
+      
+      <Typography variant="body1" sx={{ mb: 3 }}>
+        Visualization of Monte Carlo simulation data stored in SAP Business Data Cloud
+      </Typography>
+      
+      {/* Statistics Cards */}
+      <Box sx={{ flexGrow: 1, mb: 4 }}>
+        <MuiGrid container spacing={3}>
+          <MuiGrid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" color="primary.main">
+                  <FileText size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Simulation Inputs
+                </Typography>
+                <Typography variant="h3">{statistics?.inputCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </MuiGrid>
+          
+          <MuiGrid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" color="secondary.main">
+                  <BarChart size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Simulation Outputs
+                </Typography>
+                <Typography variant="h3">{statistics?.outputCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </MuiGrid>
+          
+          <MuiGrid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" color="info.main">
+                  <History size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Parameter Changes
+                </Typography>
+                <Typography variant="h3">{statistics?.parameterChangeCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </MuiGrid>
+          
+          <MuiGrid item xs={12} md={3}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography variant="h6" color="success.main">
+                  <RefreshCw size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                  Comparisons
+                </Typography>
+                <Typography variant="h3">{statistics?.comparisonCount || 0}</Typography>
+              </CardContent>
+            </Card>
+          </MuiGrid>
+        </MuiGrid>
+      </Box>
+      
+      <MuiGrid container spacing={3}>
+        {/* Simulation Inputs Table */}
+        <MuiGrid item xs={12} md={selectedInput ? 6 : 12}>
+          <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Simulation Inputs
+            </Typography>
+            
+            <TableContainer sx={{ maxHeight: 400 }}>
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Created By</TableCell>
+                    <TableCell>Created At</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {inputs.length > 0 ? (
+                    inputs.map((input) => (
+                      <TableRow 
+                        key={input.id}
+                        sx={{ 
+                          '&:hover': { bgcolor: 'action.hover' },
+                          bgcolor: selectedInput?.id === input.id ? 'action.selected' : 'inherit'
+                        }}
+                      >
+                        <TableCell>{input.name}</TableCell>
+                        <TableCell>
+                          <Chip 
+                            label={input.simulationType} 
+                            size="small"
+                            color={input.simulationType === 'Vietnam_Tariff' ? 'primary' : 'secondary'}
+                          />
+                        </TableCell>
+                        <TableCell>{input.createdBy}</TableCell>
+                        <TableCell>{formatDate(input.createdAt)}</TableCell>
+                        <TableCell>
+                          <Button 
+                            size="small" 
+                            variant="outlined"
+                            onClick={() => handleViewSimulation(input.id)}
+                          >
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">No simulation inputs found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </MuiGrid>
+        
+        {/* Simulation Details */}
+        {selectedInput && (
+          <MuiGrid item xs={12} md={6}>
+            <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Simulation Details
+              </Typography>
+              
+              <Typography variant="subtitle1" gutterBottom>
+                {selectedInput.name}
+              </Typography>
+              
+              <Typography variant="body2" color="text.secondary" paragraph>
+                {selectedInput.description || 'No description provided'}
+              </Typography>
+              
+              <Divider sx={{ my: 2 }} />
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Configuration
+              </Typography>
+              
+              <MuiGrid container spacing={2} sx={{ mb: 2 }}>
+                <MuiGrid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Iterations: <strong>{selectedInput.simulationConfig.iterations}</strong>
+                  </Typography>
+                </MuiGrid>
+                <MuiGrid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Confidence: <strong>{selectedInput.simulationConfig.confidenceInterval * 100}%</strong>
+                  </Typography>
+                </MuiGrid>
+                <MuiGrid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    HS Codes: <strong>{selectedInput.parameters.tariffSpecificParameters.hsCodes.join(', ')}</strong>
+                  </Typography>
+                </MuiGrid>
+                <MuiGrid item xs={6}>
+                  <Typography variant="body2" color="text.secondary">
+                    Countries: <strong>{selectedInput.parameters.tariffSpecificParameters.countries.join(', ')}</strong>
+                  </Typography>
+                </MuiGrid>
+              </MuiGrid>
+              
+              <Divider sx={{ my: 2 }} />
+              
+              <Typography variant="subtitle2" gutterBottom>
+                Parameters
+              </Typography>
+              
+              <TableContainer sx={{ maxHeight: 200 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Parameter</TableCell>
+                      <TableCell>Value</TableCell>
+                      <TableCell>Range</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedInput.parameters.generalParameters.map((param) => (
+                      <TableRow key={param.id}>
+                        <TableCell>{param.name}</TableCell>
+                        <TableCell>{param.value} {param.unit}</TableCell>
+                        <TableCell>
+                          {param.minValue !== undefined && param.maxValue !== undefined 
+                            ? `${param.minValue} - ${param.maxValue} ${param.unit || ''}`
+                            : 'N/A'
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              
+              {/* Output Results */}
+              {selectedOutput && (
+                <>
+                  <Divider sx={{ my: 2 }} />
+                  
+                  <Typography variant="subtitle2" gutterBottom>
+                    Results
+                  </Typography>
+                  
+                  <MuiGrid container spacing={2}>
+                    <MuiGrid item xs={6}>
+                      <Typography variant="body2" color="text.secondary">
+                        Status: 
+                        <Chip 
+                          label={selectedOutput.status} 
+                          size="small"
+                          color={selectedOutput.status === 'completed' ? 'success' : 
+                                 selectedOutput.status === 'running' ? 'info' : 
+                                 selectedOutput.status === 'failed' ? 'error' : 'default'}
+                          sx={{ ml: 1 }}
+                        />
+                      </Typography>
+                    </MuiGrid>
+                    <MuiGrid item xs={6}>
+                      <Typography variant="body2" color="text.secondary">
+                        Completion: {selectedOutput.endTime ? formatDate(selectedOutput.endTime) : 'N/A'}
+                      </Typography>
+                    </MuiGrid>
+                    
+                    {selectedOutput.results && selectedOutput.results.statistics && (
+                      <>
+                        <MuiGrid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Mean: <strong>{selectedOutput.results.statistics.mean.toFixed(2)}</strong>
+                          </Typography>
+                        </MuiGrid>
+                        <MuiGrid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Median: <strong>{selectedOutput.results.statistics.median.toFixed(2)}</strong>
+                          </Typography>
+                        </MuiGrid>
+                        <MuiGrid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Min: <strong>{selectedOutput.results.statistics.min.toFixed(2)}</strong>
+                          </Typography>
+                        </MuiGrid>
+                        <MuiGrid item xs={6}>
+                          <Typography variant="body2" color="text.secondary">
+                            Max: <strong>{selectedOutput.results.statistics.max.toFixed(2)}</strong>
+                          </Typography>
+                        </MuiGrid>
+                      </>
+                    )}
+                  </MuiGrid>
+                </>
+              )}
+            </Paper>
+          </MuiGrid>
+        )}
+        
+        {/* Comparisons Table */}
+        <MuiGrid item xs={12}>
+          <Paper variant="outlined" sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Simulation Comparisons
+            </Typography>
+            
+            <TableContainer sx={{ maxHeight: 300 }}>
+              <Table stickyHeader size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Base Simulation</TableCell>
+                    <TableCell>Compared Simulation</TableCell>
+                    <TableCell>Created At</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {comparisons.length > 0 ? (
+                    comparisons.map((comparison) => (
+                      <TableRow key={comparison.id}>
+                        <TableCell>{comparison.name}</TableCell>
+                        <TableCell>{comparison.baseSimulationName}</TableCell>
+                        <TableCell>{comparison.comparedSimulationName}</TableCell>
+                        <TableCell>{formatDate(comparison.createdAt)}</TableCell>
+                        <TableCell>
+                          <Button 
+                            size="small" 
+                            variant="outlined"
+                          >
+                            View
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">No comparisons found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </MuiGrid>
+      </MuiGrid>
+    </Box>
+  );
+};
+
+export default BusinessDataCloudDashboard;

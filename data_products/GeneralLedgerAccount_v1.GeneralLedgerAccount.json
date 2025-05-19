@@ -1,0 +1,4895 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "GeneralLedgerAccount.v1.GeneralLedgerAccount": {
+      "__abapOriginalName": "I_GLAccountInChartOfAccounts",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ChartOfAccountsText"
+        },
+        {
+          "=": "_GLAccountGroupText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "SKA1",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "ChartOfAccounts"
+            },
+            {
+              "=": "GLAccount"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "ktopl"
+            },
+            {
+              "=": "saknr"
+            }
+          ]
+        },
+        {
+          "table": "T004",
+          "role": {
+            "#": "LEFT_OUTER_TO_ONE_JOIN"
+          },
+          "viewElement": [
+            {
+              "=": "CorporateGroupChartOfAccounts"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "ktopl"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "G/L Account In Chart Of Accounts",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.entityChangeStateId": "LastChangeDateTime",
+      "@ObjectModel.representativeKey": "GLAccount",
+      "@ObjectModel.sapObjectNodeType.name": "GeneralLedgerAccount",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "GLAccount": {
+          "__abapOriginalName": "GLAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "G/L Acct",
+          "@EndUserText.label": "G/L Account",
+          "@EndUserText.quickInfo": "G/L Account Number",
+          "@ObjectModel.hierarchy.association": "_GLAccountHierarchyNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "IsBalanceSheetAccount": {
+          "__abapOriginalName": "IsBalanceSheetAccount",
+          "@EndUserText.heading": "Balance Sheet Account",
+          "@EndUserText.label": "Balance Sheet Acct",
+          "@EndUserText.quickInfo": "Is Balance Sheet Account",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "GLAccountGroup": {
+          "__abapOriginalName": "GLAccountGroup",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "AcGp",
+          "@EndUserText.label": "Account Group",
+          "@EndUserText.quickInfo": "G/L Account Group",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountGroup"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_GLAccountGroupText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CorporateGroupChartOfAccounts": {
+          "__abapOriginalName": "CorporateGroupChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Group",
+          "@EndUserText.label": "Group Chart of Accts",
+          "@EndUserText.quickInfo": "Group Chart of Accts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CorporateGroupChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CorporateGroupAccount": {
+          "__abapOriginalName": "CorporateGroupAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Group Acct",
+          "@EndUserText.label": "Group Account Number",
+          "@EndUserText.quickInfo": "Group Account Number",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CorporateGroupAccount"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ProfitLossAccountType": {
+          "__abapOriginalName": "ProfitLossAccountType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "AT",
+          "@EndUserText.label": "P&L state. acct",
+          "@EndUserText.quickInfo": "P&L statement account type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "SampleGLAccount": {
+          "__abapOriginalName": "SampleGLAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Samp. Acct",
+          "@EndUserText.label": "Sample Account",
+          "@EndUserText.quickInfo": "Number of the Sample Account",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "AccountIsMarkedForDeletion": {
+          "__abapOriginalName": "AccountIsMarkedForDeletion",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "DelFl",
+          "@EndUserText.label": "Deletion Flag",
+          "@EndUserText.quickInfo": "Indicator: Account Marked for Deletion?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForCreation": {
+          "__abapOriginalName": "AccountIsBlockedForCreation",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Creation Block",
+          "@EndUserText.label": "Creation Block",
+          "@EndUserText.quickInfo": "Indicator: Account Is Blocked for Creation ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForPosting": {
+          "__abapOriginalName": "AccountIsBlockedForPosting",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Block",
+          "@EndUserText.label": "Posting Block",
+          "@EndUserText.quickInfo": "Indicator: Is Account Blocked for Posting?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForPlanning": {
+          "__abapOriginalName": "AccountIsBlockedForPlanning",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Planning Block",
+          "@EndUserText.label": "Planning Block",
+          "@EndUserText.quickInfo": "Indicator: Account Blocked for Planning ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PartnerCompany": {
+          "__abapOriginalName": "PartnerCompany",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Tr.Prt",
+          "@EndUserText.label": "Trading Partner No.",
+          "@EndUserText.quickInfo": "Company ID of Trading Partner",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GlobalCompany"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FunctionalArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@EndUserText.heading": "Date",
+          "@EndUserText.label": "Created On",
+          "@EndUserText.quickInfo": "Record Created On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "CreatedByUser": {
+          "__abapOriginalName": "CreatedByUser",
+          "@EndUserText.heading": "Created by",
+          "@EndUserText.label": "Created by",
+          "@EndUserText.quickInfo": "Name of Person who Created the Object",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Time Stamp",
+          "@EndUserText.label": "Time Stamp",
+          "@EndUserText.quickInfo": "UTC Time Stamp in Short Form (YYYYMMDDhhmmss)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "GLAccountType": {
+          "__abapOriginalName": "GLAccountType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "G/L Account Type",
+          "@EndUserText.label": "G/L Account Type",
+          "@EndUserText.quickInfo": "Type of a General Ledger Account",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountType"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "GLAccountSubtype": {
+          "__abapOriginalName": "GLAccountSubtype",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "G/L Account Subtype",
+          "@EndUserText.label": "G/L Account Subtype",
+          "@EndUserText.quickInfo": "Subtype of a GL Account",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountSubtype"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "GLAccountExternal": {
+          "__abapOriginalName": "GLAccountExternal",
+          "@EndUserText.heading": "G/L Account External ID",
+          "@EndUserText.label": "G/L Acct External ID",
+          "@EndUserText.quickInfo": "G/L Account Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "BankReconciliationAccount": {
+          "__abapOriginalName": "BankReconciliationAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Reconciliation Acct",
+          "@EndUserText.quickInfo": "Bank Reconciliation Account",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "IsProfitLossAccount": {
+          "__abapOriginalName": "IsProfitLossAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "B/S acct",
+          "@EndUserText.label": "Profit Loss Account",
+          "@EndUserText.quickInfo": "Indicator: Account is a balance sheet account?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_ChartOfAccountsText": {
+          "__abapOriginalName": "_ChartOfAccountsText",
+          "@Consumption.hidden": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccountsText",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccountsText"
+        },
+        "_CorporateGroupChartOfAccounts": {
+          "__abapOriginalName": "_CorporateGroupChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "CorporateGroupChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CorporateGroupChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CorporateGroupChartOfAccounts"
+        },
+        "_GLAccountHierarchyNode": {
+          "__abapOriginalName": "_GLAccountHierarchyNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountHierarchyNode",
+                "GLAccount"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountHierarchyNode",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_GLAccountHierarchyNode"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "GeneralLedgerAccount.v1.GeneralLedgerAccount_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "originalEntityName": "generalledgeraccount.GeneralLedgerAccount"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "GeneralLedgerAccount.v1.GeneralLedgerAccount_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            {
+              "ref": [
+                "IsBalanceSheetAccount"
+              ]
+            },
+            {
+              "ref": [
+                "GLAccountGroup"
+              ]
+            },
+            {
+              "ref": [
+                "CorporateGroupChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "CorporateGroupAccount"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitLossAccountType"
+              ]
+            },
+            {
+              "ref": [
+                "SampleGLAccount"
+              ]
+            },
+            {
+              "ref": [
+                "AccountIsMarkedForDeletion"
+              ]
+            },
+            {
+              "ref": [
+                "AccountIsBlockedForCreation"
+              ]
+            },
+            {
+              "ref": [
+                "AccountIsBlockedForPosting"
+              ]
+            },
+            {
+              "ref": [
+                "AccountIsBlockedForPlanning"
+              ]
+            },
+            {
+              "ref": [
+                "PartnerCompany"
+              ]
+            },
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            {
+              "ref": [
+                "CreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "CreatedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "GLAccountType"
+              ]
+            },
+            {
+              "ref": [
+                "GLAccountSubtype"
+              ]
+            },
+            {
+              "ref": [
+                "GLAccountExternal"
+              ]
+            },
+            {
+              "ref": [
+                "BankReconciliationAccount"
+              ]
+            },
+            {
+              "ref": [
+                "IsProfitLossAccount"
+              ]
+            },
+            {
+              "ref": [
+                "_ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "_ChartOfAccountsText"
+              ]
+            },
+            {
+              "ref": [
+                "_CorporateGroupChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "_GLAccountHierarchyNode"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_ChartOfAccounts": {
+              "__abapOriginalName": "_ChartOfAccounts",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ChartOfAccounts",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ChartOfAccounts"
+            },
+            "_ChartOfAccountsText": {
+              "__abapOriginalName": "_ChartOfAccountsText",
+              "@Consumption.hidden": true,
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ChartOfAccountsText",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ChartOfAccountsText"
+            },
+            "_CorporateGroupChartOfAccounts": {
+              "__abapOriginalName": "_CorporateGroupChartOfAccounts",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CorporateGroupChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CorporateGroupChartOfAccounts",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_CorporateGroupChartOfAccounts"
+            },
+            "_GLAccountHierarchyNode": {
+              "__abapOriginalName": "_GLAccountHierarchyNode",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "GLAccount"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_GLAccountHierarchyNode",
+                    "GLAccount"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_GLAccountHierarchyNode",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_GLAccountHierarchyNode"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.ChartOfAccountsText": {
+      "__abapOriginalName": "I_ChartOfAccountsText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ChartOfAccountsText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Chart Of Accounts - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "ChartOfAccounts",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "ChartOfAccountsName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ChartOfAccountsName": {
+          "__abapOriginalName": "ChartOfAccountsName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts Description",
+          "@EndUserText.label": "Chart of Accounts Description",
+          "@EndUserText.quickInfo": "Chart of Accounts Description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_ChartOfAccountsText": {
+          "__abapOriginalName": "_ChartOfAccountsText",
+          "@Consumption.hidden": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccountsText",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccountsText"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "GeneralLedgerAccount.v1.ChartOfAccountsText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+        "originalEntityName": "generalledgeraccount.ChartOfAccountsText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "GeneralLedgerAccount.v1.ChartOfAccountsText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ChartOfAccountsName"
+              ]
+            },
+            {
+              "ref": [
+                "_ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "_ChartOfAccountsText"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_ChartOfAccounts": {
+              "__abapOriginalName": "_ChartOfAccounts",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ChartOfAccounts",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ChartOfAccounts"
+            },
+            "_ChartOfAccountsText": {
+              "__abapOriginalName": "_ChartOfAccountsText",
+              "@Consumption.hidden": true,
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ChartOfAccountsText",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ChartOfAccountsText"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.ChartOfAccounts": {
+      "__abapOriginalName": "I_ChartOfAccounts",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_CorpGroupChartOfAccountsText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Chart Of Accounts",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "ChartOfAccounts",
+      "@ObjectModel.sapObjectNodeType.name": "ChartOfAccounts",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CorporateGroupChartOfAccounts": {
+          "__abapOriginalName": "CorporateGroupChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Group",
+          "@EndUserText.label": "Group Chart of Accts",
+          "@EndUserText.quickInfo": "Group Chart of Accts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CorpGroupChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_CorpGroupChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ChartOfAcctsIsBlocked": {
+          "__abapOriginalName": "ChartOfAcctsIsBlocked",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "B",
+          "@EndUserText.label": "Blocked",
+          "@EndUserText.quickInfo": "Indicator: Is the Chart of Accounts Blocked ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "MaintenanceLanguage": {
+          "__abapOriginalName": "MaintenanceLanguage",
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Maintenance Language",
+          "@EndUserText.label": "Maint.Language",
+          "@EndUserText.quickInfo": "Maintenance Language for the Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "type": "cds.String",
+          "length": 2
+        },
+        "_CorpGroupChartOfAccountsText": {
+          "__abapOriginalName": "_CorpGroupChartOfAccountsText",
+          "@Consumption.hidden": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "CorporateGroupChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CorpGroupChartOfAccountsText",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CorpGroupChartOfAccountsText"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "GeneralLedgerAccount.v1.ChartOfAccounts_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.ChartOfAccounts",
+        "originalEntityName": "generalledgeraccount.ChartOfAccounts"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "GeneralLedgerAccount.v1.ChartOfAccounts_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "CorporateGroupChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "ChartOfAcctsIsBlocked"
+              ]
+            },
+            {
+              "ref": [
+                "MaintenanceLanguage"
+              ]
+            },
+            {
+              "ref": [
+                "_CorpGroupChartOfAccountsText"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_CorpGroupChartOfAccountsText": {
+              "__abapOriginalName": "_CorpGroupChartOfAccountsText",
+              "@Consumption.hidden": true,
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CorporateGroupChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CorpGroupChartOfAccountsText",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_CorpGroupChartOfAccountsText"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.SemanticTagFunctionalArea",
+        "originalEntityName": "generalledgeraccount.SemanticTagFunctionalArea"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.ChartOfAccountsText_Delta": {
+      "__abapOriginalName": "I_ChartOfAccountsText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ChartOfAccountsText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Chart Of Accounts - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "ChartOfAccounts",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "ChartOfAccountsName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ChartOfAccountsName": {
+          "__abapOriginalName": "ChartOfAccountsName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts Description",
+          "@EndUserText.label": "Chart of Accounts Description",
+          "@EndUserText.quickInfo": "Chart of Accounts Description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_ChartOfAccountsText": {
+          "__abapOriginalName": "_ChartOfAccountsText",
+          "@Consumption.hidden": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccountsText",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccountsText"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+        "originalEntityName": "generalledgeraccount.ChartOfAccountsText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.ChartOfAccounts_Delta": {
+      "__abapOriginalName": "I_ChartOfAccounts",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_CorpGroupChartOfAccountsText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Chart Of Accounts",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "ChartOfAccounts",
+      "@ObjectModel.sapObjectNodeType.name": "ChartOfAccounts",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CorporateGroupChartOfAccounts": {
+          "__abapOriginalName": "CorporateGroupChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Group",
+          "@EndUserText.label": "Group Chart of Accts",
+          "@EndUserText.quickInfo": "Group Chart of Accts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CorpGroupChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_CorpGroupChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ChartOfAcctsIsBlocked": {
+          "__abapOriginalName": "ChartOfAcctsIsBlocked",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "B",
+          "@EndUserText.label": "Blocked",
+          "@EndUserText.quickInfo": "Indicator: Is the Chart of Accounts Blocked ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "MaintenanceLanguage": {
+          "__abapOriginalName": "MaintenanceLanguage",
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Maintenance Language",
+          "@EndUserText.label": "Maint.Language",
+          "@EndUserText.quickInfo": "Maintenance Language for the Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "type": "cds.String",
+          "length": 2
+        },
+        "_CorpGroupChartOfAccountsText": {
+          "__abapOriginalName": "_CorpGroupChartOfAccountsText",
+          "@Consumption.hidden": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "CorporateGroupChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CorpGroupChartOfAccountsText",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CorpGroupChartOfAccountsText"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "GeneralLedgerAccount.v1.ChartOfAccounts",
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.ChartOfAccounts",
+        "originalEntityName": "generalledgeraccount.ChartOfAccounts"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GLAccountHierarchyNode": {
+      "__abapOriginalName": "I_GLAccountHierarchyNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "G/L Account Hierarchy Node",
+      "@Hierarchy.parentChild": [
+        {
+          "recurse": {
+            "parent": [
+              {
+                "=": "ParentNode"
+              }
+            ],
+            "child": [
+              {
+                "=": "HierarchyNode"
+              }
+            ]
+          },
+          "siblingsOrder": [
+            {
+              "by": "HierarchyNodeSequence",
+              "direction": "ASC"
+            }
+          ],
+          "directory": "_Hierarchy"
+        }
+      ],
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "GLAccountHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "GLAccount": {
+          "__abapOriginalName": "GLAccount",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "G/L Account",
+          "@EndUserText.label": "G/L Account",
+          "@EndUserText.quickInfo": "General Ledger Account",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountInChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "SignIsInverted": {
+          "__abapOriginalName": "SignIsInverted",
+          "@EndUserText.heading": "Attribute Value",
+          "@EndUserText.label": "Attribute Value",
+          "@EndUserText.quickInfo": "Hierarchy Attribute Value",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.signReversalIndicator": true,
+          "type": "cds.Boolean"
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_GLAccountInChartOfAccounts": {
+          "__abapOriginalName": "_GLAccountInChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountInChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountInChartOfAccounts",
+                "GLAccount"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_GLAccountInChartOfAccounts"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "GLAccountHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "GLAccountHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "GeneralLedgerAccount.v1.GLAccountHierarchyNode_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+        "originalEntityName": "generalledgeraccount.GLAccountHierarchyNode"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "GeneralLedgerAccount.v1.GLAccountHierarchyNode_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ParentNode"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyVersion"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            {
+              "ref": [
+                "SequenceNumber"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeSequence"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeLevel"
+              ]
+            },
+            {
+              "ref": [
+                "NodeType"
+              ]
+            },
+            {
+              "ref": [
+                "SignIsInverted"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeVal"
+              ]
+            },
+            {
+              "ref": [
+                "_ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "_GLAccountInChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_ChartOfAccounts": {
+              "__abapOriginalName": "_ChartOfAccounts",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ChartOfAccounts",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ChartOfAccounts"
+            },
+            "_GLAccountInChartOfAccounts": {
+              "__abapOriginalName": "_GLAccountInChartOfAccounts",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_GLAccountInChartOfAccounts",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "GLAccount"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_GLAccountInChartOfAccounts",
+                    "GLAccount"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_GLAccountInChartOfAccounts"
+            },
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "GLAccountHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "GLAccountHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "GLAccountHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "GLAccountHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "HierarchyNode"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "HierarchyNode"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "GLAccount"
+                  ]
+                },
+                "=",
+                {
+                  "val": ""
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GeneralLedgerAccount_Delta": {
+      "__abapOriginalName": "I_GLAccountInChartOfAccounts",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ChartOfAccountsText"
+        },
+        {
+          "=": "_GLAccountGroupText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "SKA1",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "ChartOfAccounts"
+            },
+            {
+              "=": "GLAccount"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "ktopl"
+            },
+            {
+              "=": "saknr"
+            }
+          ]
+        },
+        {
+          "table": "T004",
+          "role": {
+            "#": "LEFT_OUTER_TO_ONE_JOIN"
+          },
+          "viewElement": [
+            {
+              "=": "CorporateGroupChartOfAccounts"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "ktopl"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "G/L Account In Chart Of Accounts",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.entityChangeStateId": "LastChangeDateTime",
+      "@ObjectModel.representativeKey": "GLAccount",
+      "@ObjectModel.sapObjectNodeType.name": "GeneralLedgerAccount",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ChartOfAccountsText"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "GLAccount": {
+          "__abapOriginalName": "GLAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "G/L Acct",
+          "@EndUserText.label": "G/L Account",
+          "@EndUserText.quickInfo": "G/L Account Number",
+          "@ObjectModel.hierarchy.association": "_GLAccountHierarchyNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "IsBalanceSheetAccount": {
+          "__abapOriginalName": "IsBalanceSheetAccount",
+          "@EndUserText.heading": "Balance Sheet Account",
+          "@EndUserText.label": "Balance Sheet Acct",
+          "@EndUserText.quickInfo": "Is Balance Sheet Account",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "GLAccountGroup": {
+          "__abapOriginalName": "GLAccountGroup",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "AcGp",
+          "@EndUserText.label": "Account Group",
+          "@EndUserText.quickInfo": "G/L Account Group",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountGroup"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_GLAccountGroupText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CorporateGroupChartOfAccounts": {
+          "__abapOriginalName": "CorporateGroupChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Group",
+          "@EndUserText.label": "Group Chart of Accts",
+          "@EndUserText.quickInfo": "Group Chart of Accts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CorporateGroupChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CorporateGroupAccount": {
+          "__abapOriginalName": "CorporateGroupAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Group Acct",
+          "@EndUserText.label": "Group Account Number",
+          "@EndUserText.quickInfo": "Group Account Number",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CorporateGroupAccount"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ProfitLossAccountType": {
+          "__abapOriginalName": "ProfitLossAccountType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "AT",
+          "@EndUserText.label": "P&L state. acct",
+          "@EndUserText.quickInfo": "P&L statement account type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "SampleGLAccount": {
+          "__abapOriginalName": "SampleGLAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Samp. Acct",
+          "@EndUserText.label": "Sample Account",
+          "@EndUserText.quickInfo": "Number of the Sample Account",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "AccountIsMarkedForDeletion": {
+          "__abapOriginalName": "AccountIsMarkedForDeletion",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "DelFl",
+          "@EndUserText.label": "Deletion Flag",
+          "@EndUserText.quickInfo": "Indicator: Account Marked for Deletion?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForCreation": {
+          "__abapOriginalName": "AccountIsBlockedForCreation",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Creation Block",
+          "@EndUserText.label": "Creation Block",
+          "@EndUserText.quickInfo": "Indicator: Account Is Blocked for Creation ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForPosting": {
+          "__abapOriginalName": "AccountIsBlockedForPosting",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Posting Block",
+          "@EndUserText.label": "Posting Block",
+          "@EndUserText.quickInfo": "Indicator: Is Account Blocked for Posting?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForPlanning": {
+          "__abapOriginalName": "AccountIsBlockedForPlanning",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Planning Block",
+          "@EndUserText.label": "Planning Block",
+          "@EndUserText.quickInfo": "Indicator: Account Blocked for Planning ?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PartnerCompany": {
+          "__abapOriginalName": "PartnerCompany",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Tr.Prt",
+          "@EndUserText.label": "Trading Partner No.",
+          "@EndUserText.quickInfo": "Company ID of Trading Partner",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GlobalCompany"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FunctionalArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@EndUserText.heading": "Date",
+          "@EndUserText.label": "Created On",
+          "@EndUserText.quickInfo": "Record Created On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "CreatedByUser": {
+          "__abapOriginalName": "CreatedByUser",
+          "@EndUserText.heading": "Created by",
+          "@EndUserText.label": "Created by",
+          "@EndUserText.quickInfo": "Name of Person who Created the Object",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Time Stamp",
+          "@EndUserText.label": "Time Stamp",
+          "@EndUserText.quickInfo": "UTC Time Stamp in Short Form (YYYYMMDDhhmmss)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "GLAccountType": {
+          "__abapOriginalName": "GLAccountType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "G/L Account Type",
+          "@EndUserText.label": "G/L Account Type",
+          "@EndUserText.quickInfo": "Type of a General Ledger Account",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountType"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "GLAccountSubtype": {
+          "__abapOriginalName": "GLAccountSubtype",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "G/L Account Subtype",
+          "@EndUserText.label": "G/L Account Subtype",
+          "@EndUserText.quickInfo": "Subtype of a GL Account",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountSubtype"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "GLAccountExternal": {
+          "__abapOriginalName": "GLAccountExternal",
+          "@EndUserText.heading": "G/L Account External ID",
+          "@EndUserText.label": "G/L Acct External ID",
+          "@EndUserText.quickInfo": "G/L Account Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "BankReconciliationAccount": {
+          "__abapOriginalName": "BankReconciliationAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Reconciliation Acct",
+          "@EndUserText.quickInfo": "Bank Reconciliation Account",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "IsProfitLossAccount": {
+          "__abapOriginalName": "IsProfitLossAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "B/S acct",
+          "@EndUserText.label": "Profit Loss Account",
+          "@EndUserText.quickInfo": "Indicator: Account is a balance sheet account?",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_ChartOfAccountsText": {
+          "__abapOriginalName": "_ChartOfAccountsText",
+          "@Consumption.hidden": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccountsText",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccountsText",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccountsText"
+        },
+        "_CorporateGroupChartOfAccounts": {
+          "__abapOriginalName": "_CorporateGroupChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "CorporateGroupChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CorporateGroupChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CorporateGroupChartOfAccounts"
+        },
+        "_GLAccountHierarchyNode": {
+          "__abapOriginalName": "_GLAccountHierarchyNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountHierarchyNode",
+                "GLAccount"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountHierarchyNode",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_GLAccountHierarchyNode"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "originalEntityName": "generalledgeraccount.GeneralLedgerAccount"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy": {
+      "__abapOriginalName": "I_GLAccountHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "General Ledger Account Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "GLAccountHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "GeneralLedgerAccountHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "HierarchyType": {
+          "__abapOriginalName": "HierarchyType",
+          "@EndUserText.heading": "Hierarchy Type",
+          "@EndUserText.label": "Hierarchy Type",
+          "@EndUserText.quickInfo": "Hierarchy Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "FunctionalAreaIsUsed": {
+          "__abapOriginalName": "FunctionalAreaIsUsed",
+          "@EndUserText.heading": "Functional Area Enabled",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Indicator: Functional Area Enabled",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "SemanticTagIsUsed": {
+          "__abapOriginalName": "SemanticTagIsUsed",
+          "@EndUserText.heading": "Semantic Tag Assigned",
+          "@EndUserText.label": "Sem. Tag Assigned",
+          "@EndUserText.quickInfo": "Indicator: Semantic Tag Assigned",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@Hierarchy.notAssignedNode.filter": true,
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "GLAccountHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+        "originalEntityName": "generalledgeraccount.GeneralLedgerAccountHierarchy"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyType"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeTime"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyShortID"
+              ]
+            },
+            {
+              "ref": [
+                "FunctionalAreaIsUsed"
+              ]
+            },
+            {
+              "ref": [
+                "SemanticTagIsUsed"
+              ]
+            },
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "_ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_ChartOfAccounts": {
+              "__abapOriginalName": "_ChartOfAccounts",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ChartOfAccounts"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ChartOfAccounts",
+                    "ChartOfAccounts"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ChartOfAccounts"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "GLAccountHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "GLAccountHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GLAccountHierarchyText": {
+      "__abapOriginalName": "I_GLAccountHierarchyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "G/L Account Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "GLAccountHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "GLAccountHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "GLAccountHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "GLAccountHierarchyName": {
+          "__abapOriginalName": "GLAccountHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "GeneralLedgerAccount.v1.GLAccountHierarchyText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+        "originalEntityName": "generalledgeraccount.GLAccountHierarchyText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "GeneralLedgerAccount.v1.GLAccountHierarchyText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "GLAccountHierarchyName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy_Delta": {
+      "__abapOriginalName": "I_GLAccountHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "General Ledger Account Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "GLAccountHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "GeneralLedgerAccountHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "HierarchyType": {
+          "__abapOriginalName": "HierarchyType",
+          "@EndUserText.heading": "Hierarchy Type",
+          "@EndUserText.label": "Hierarchy Type",
+          "@EndUserText.quickInfo": "Hierarchy Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "FunctionalAreaIsUsed": {
+          "__abapOriginalName": "FunctionalAreaIsUsed",
+          "@EndUserText.heading": "Functional Area Enabled",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Indicator: Functional Area Enabled",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "SemanticTagIsUsed": {
+          "__abapOriginalName": "SemanticTagIsUsed",
+          "@EndUserText.heading": "Semantic Tag Assigned",
+          "@EndUserText.label": "Sem. Tag Assigned",
+          "@EndUserText.quickInfo": "Indicator: Semantic Tag Assigned",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@Hierarchy.notAssignedNode.filter": true,
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "GLAccountHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+        "originalEntityName": "generalledgeraccount.GeneralLedgerAccountHierarchy"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GLAccountHierarchyText_Delta": {
+      "__abapOriginalName": "I_GLAccountHierarchyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "G/L Account Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "GLAccountHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "GLAccountHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "GLAccountHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "GLAccountHierarchyName": {
+          "__abapOriginalName": "GLAccountHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+        "originalEntityName": "generalledgeraccount.GLAccountHierarchyText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText": {
+      "__abapOriginalName": "I_GLAccountHierarchyNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "G/L Account Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "GLAccountHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyNodeShortText": {
+          "__abapOriginalName": "HierarchyNodeShortText",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20,
+          "@EndUserText.label": "HierarchyNodeShortText"
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "GLAccountHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText",
+        "originalEntityName": "generalledgeraccount.GLAccountHierarchyNodeText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeText"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeShortText"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "GLAccountHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "GLAccountHierarchy"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GLAccountHierarchyNode_Delta": {
+      "__abapOriginalName": "I_GLAccountHierarchyNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "G/L Account Hierarchy Node",
+      "@Hierarchy.parentChild": [
+        {
+          "recurse": {
+            "parent": [
+              {
+                "=": "ParentNode"
+              }
+            ],
+            "child": [
+              {
+                "=": "HierarchyNode"
+              }
+            ]
+          },
+          "siblingsOrder": [
+            {
+              "by": "HierarchyNodeSequence",
+              "direction": "ASC"
+            }
+          ],
+          "directory": "_Hierarchy"
+        }
+      ],
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "GLAccountHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "GLAccount": {
+          "__abapOriginalName": "GLAccount",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "G/L Account",
+          "@EndUserText.label": "G/L Account",
+          "@EndUserText.quickInfo": "General Ledger Account",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_GLAccountInChartOfAccounts"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "SignIsInverted": {
+          "__abapOriginalName": "SignIsInverted",
+          "@EndUserText.heading": "Attribute Value",
+          "@EndUserText.label": "Attribute Value",
+          "@EndUserText.quickInfo": "Hierarchy Attribute Value",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.signReversalIndicator": true,
+          "type": "cds.Boolean"
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_ChartOfAccounts": {
+          "__abapOriginalName": "_ChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.ChartOfAccounts",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ChartOfAccounts"
+        },
+        "_GLAccountInChartOfAccounts": {
+          "__abapOriginalName": "_GLAccountInChartOfAccounts",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "on": [
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountInChartOfAccounts",
+                "ChartOfAccounts"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_GLAccountInChartOfAccounts",
+                "GLAccount"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_GLAccountInChartOfAccounts"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "GLAccountHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "GLAccountHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "GLAccount"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+        "originalEntityName": "generalledgeraccount.GLAccountHierarchyNode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText_Delta": {
+      "__abapOriginalName": "I_GLAccountHierarchyNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "G/L Account Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "GLAccountHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "GLAccountHierarchy": {
+          "__abapOriginalName": "GLAccountHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "G/L Account Hierarchy",
+          "@EndUserText.quickInfo": "G/L Account Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyNodeShortText": {
+          "__abapOriginalName": "HierarchyNodeShortText",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20,
+          "@EndUserText.label": "HierarchyNodeShortText"
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+          "on": [
+            {
+              "ref": [
+                "GLAccountHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "GLAccountHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText",
+      "import_meta": {
+        "qualifiedName": "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText",
+        "originalEntityName": "generalledgeraccount.GLAccountHierarchyNodeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+    "all_entities": [
+      "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "GeneralLedgerAccount.v1.ChartOfAccountsText",
+      "GeneralLedgerAccount.v1.ChartOfAccounts",
+      "GeneralLedgerAccount.v1",
+      "GeneralLedgerAccount.v1.ChartOfAccountsText_Delta",
+      "GeneralLedgerAccount.v1.ChartOfAccounts_Delta",
+      "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+      "GeneralLedgerAccount.v1.GeneralLedgerAccount_Delta",
+      "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+      "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+      "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy_Delta",
+      "GeneralLedgerAccount.v1.GLAccountHierarchyText_Delta",
+      "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText",
+      "GeneralLedgerAccount.v1.GLAccountHierarchyNode_Delta",
+      "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+      },
+      {
+        "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+      }
+    ],
+    "invalid_references": []
+  }
+}

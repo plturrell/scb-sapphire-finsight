@@ -1,0 +1,372 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "Company.v1.Company": {
+      "__abapOriginalName": "I_Globalcompany",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.ranked": true,
+      "@EndUserText.label": "Global Company",
+      "@ObjectModel.dataCategory": {
+        "#": "VALUE_HELP"
+      },
+      "@ObjectModel.representativeKey": "Company",
+      "@ObjectModel.sapObjectNodeType.name": "Company",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        },
+        {
+          "#": "VALUE_HELP_PROVIDER"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Company": {
+          "__abapOriginalName": "Company",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Co.",
+          "@EndUserText.label": "Company",
+          "@EndUserText.quickInfo": "Company",
+          "@ObjectModel.text.element": [
+            {
+              "=": "CompanyName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 6,
+          "notNull": true
+        },
+        "CompanyName": {
+          "__abapOriginalName": "CompanyName",
+          "@EndUserText.heading": "Company Name",
+          "@EndUserText.label": "Name of the Company",
+          "@EndUserText.quickInfo": "Company Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "MEDIUM"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        },
+        "CompanyCurrency": {
+          "__abapOriginalName": "CompanyCurrency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Curr.",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Local Currency",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "CompanyLanguage": {
+          "__abapOriginalName": "CompanyLanguage",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "type": "cds.String",
+          "length": 2
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "Company.v1.Company_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "Company.v1.Company",
+        "originalEntityName": "company.Company"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "Company.v1.Company_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Company"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyName"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCurrency"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyLanguage"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Company.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "Company.v1.Company",
+        "originalEntityName": "company.Company"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "Company.v1.Company_Delta": {
+      "__abapOriginalName": "I_Globalcompany",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.ranked": true,
+      "@EndUserText.label": "Global Company",
+      "@ObjectModel.dataCategory": {
+        "#": "VALUE_HELP"
+      },
+      "@ObjectModel.representativeKey": "Company",
+      "@ObjectModel.sapObjectNodeType.name": "Company",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        },
+        {
+          "#": "VALUE_HELP_PROVIDER"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Company": {
+          "__abapOriginalName": "Company",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Co.",
+          "@EndUserText.label": "Company",
+          "@EndUserText.quickInfo": "Company",
+          "@ObjectModel.text.element": [
+            {
+              "=": "CompanyName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 6,
+          "notNull": true
+        },
+        "CompanyName": {
+          "__abapOriginalName": "CompanyName",
+          "@EndUserText.heading": "Company Name",
+          "@EndUserText.label": "Name of the Company",
+          "@EndUserText.quickInfo": "Company Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "MEDIUM"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        },
+        "CompanyCurrency": {
+          "__abapOriginalName": "CompanyCurrency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Curr.",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Local Currency",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "CompanyLanguage": {
+          "__abapOriginalName": "CompanyLanguage",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "type": "cds.String",
+          "length": 2
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "Company.v1.Company",
+      "import_meta": {
+        "qualifiedName": "Company.v1.Company",
+        "originalEntityName": "company.Company"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "Company.v1.Company",
+    "all_entities": [
+      "Company.v1.Company",
+      "Company.v1.Company",
+      "Company.v1",
+      "Company.v1.Company_Delta"
+    ],
+    "valid": true,
+    "valid_references": [],
+    "invalid_references": []
+  }
+}

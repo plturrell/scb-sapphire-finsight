@@ -1,0 +1,2037 @@
+{
+  "valid_references": [
+    {
+      "from": "JournalEntryItemCodes.v1.PostingKey",
+      "to": "JournalEntryItemCodes.v1.PostingKeyText"
+    },
+    {
+      "from": "JournalEntryItemCodes.v1.PostingKey",
+      "to": "JournalEntryItemCodes.v1.PostingKeyText"
+    },
+    {
+      "from": "JournalEntryItemCodes.v1.PostingKey",
+      "to": "JournalEntryItemCodes.v1.PostingKey"
+    },
+    {
+      "from": "JournalEntryItemCodes.v1.PostingKey",
+      "to": "JournalEntryItemCodes.v1.PostingKey"
+    },
+    {
+      "from": "JournalEntryItemCodes.v1.PostingKey",
+      "to": "JournalEntryItemCodes.v1.PostingKeyText"
+    },
+    {
+      "from": "JournalEntryItemCodes.v1.PostingKey",
+      "to": "JournalEntryItemCodes.v1.PostingKey"
+    },
+    {
+      "from": "FiscalYear.v1.FiscalYear",
+      "to": "FiscalYear.v1.FiscalYearVariant"
+    },
+    {
+      "from": "FiscalYear.v1.FiscalYear",
+      "to": "FiscalYear.v1.FiscalYearVariant"
+    },
+    {
+      "from": "FiscalYear.v1.FiscalYear",
+      "to": "FiscalYear.v1.FiscalYearVariantText"
+    },
+    {
+      "from": "FiscalYear.v1.FiscalYear",
+      "to": "FiscalYear.v1.FiscalYearVariantText"
+    },
+    {
+      "from": "FiscalYear.v1.FiscalYear",
+      "to": "FiscalYear.v1.FiscalYearVariantText"
+    },
+    {
+      "from": "FiscalYear.v1.FiscalYear",
+      "to": "FiscalYear.v1.FiscalYearVariant"
+    },
+    {
+      "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+      "to": "FinancialPlanningEntryItem.v1.PlanningCategory"
+    },
+    {
+      "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+      "to": "FinancialPlanningEntryItem.v1.PlanningCategory"
+    },
+    {
+      "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+      "to": "FinancialPlanningEntryItem.v1.PlanningCategoryText"
+    },
+    {
+      "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+      "to": "FinancialPlanningEntryItem.v1.PlanningCategoryText"
+    },
+    {
+      "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+      "to": "FinancialPlanningEntryItem.v1.PlanningCategoryText"
+    },
+    {
+      "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+      "to": "FinancialPlanningEntryItem.v1.PlanningCategory"
+    },
+    {
+      "from": "SalesTaxType.v1.SalesTaxType",
+      "to": "SalesTaxType.v1.SalesTaxTypeText"
+    },
+    {
+      "from": "SalesTaxType.v1.SalesTaxType",
+      "to": "SalesTaxType.v1.SalesTaxTypeText"
+    },
+    {
+      "from": "SalesTaxType.v1.SalesTaxType",
+      "to": "SalesTaxType.v1.SalesTaxTypeText"
+    },
+    {
+      "from": "BusinessArea.v1.BusinessArea",
+      "to": "BusinessArea.v1.BusinessAreaText"
+    },
+    {
+      "from": "BusinessArea.v1.BusinessArea",
+      "to": "BusinessArea.v1.BusinessAreaText"
+    },
+    {
+      "from": "BusinessArea.v1.BusinessArea",
+      "to": "BusinessArea.v1.BusinessAreaText"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaText"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaText"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalArea"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalArea"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaText"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalArea"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+    },
+    {
+      "from": "FunctionalArea.v1.FunctionalArea",
+      "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+    },
+    {
+      "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+    },
+    {
+      "from": "BDC.v1.BillableControl",
+      "to": "BDC.v1.BillableControlText"
+    },
+    {
+      "from": "BDC.v1.BillableControl",
+      "to": "BDC.v1.BillableControlText"
+    },
+    {
+      "from": "BDC.v1.BillableControl",
+      "to": "BDC.v1.BillableControlText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCode"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchy"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCode"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchy"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchy"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchy"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCode"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchy"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+    },
+    {
+      "from": "CompanyCode.v1.CompanyCode",
+      "to": "CompanyCode.v1.CompanyCodeHierarchy"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCenterActivityType"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCenterActivityType"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCenterActivityType"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+    },
+    {
+      "from": "CostCenterActivityType.v1.CostCenterActivityType",
+      "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterCategory"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchyNode"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterCategory"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchyNode"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterCategoryText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterCategoryText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterCategoryText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenter"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchy"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenter"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchy"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterCategory"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchyNode"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchy"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchy"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchyText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchyText"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenter"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchy"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchy"
+    },
+    {
+      "from": "CostCenter.v1.CostCenter",
+      "to": "CostCenter.v1.CostCenterHierarchyText"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchyNode"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentText"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchyNode"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentText"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchy"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.Segment"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchy"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.Segment"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchyNode"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentText"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchy"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchy"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchyText"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchyText"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchy"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchy"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.Segment"
+    },
+    {
+      "from": "Segment.v1.Segment",
+      "to": "Segment.v1.SegmentHierarchyText"
+    },
+    {
+      "from": "OperatingConcern.v1.OperatingConcern",
+      "to": "OperatingConcern.v1.OperatingConcernText"
+    },
+    {
+      "from": "OperatingConcern.v1.OperatingConcern",
+      "to": "OperatingConcern.v1.OperatingConcernText"
+    },
+    {
+      "from": "OperatingConcern.v1.OperatingConcern",
+      "to": "OperatingConcern.v1.OperatingConcernText"
+    },
+    {
+      "from": "CostAnalysisResource.v1.CostAnalysisResource",
+      "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+    },
+    {
+      "from": "CostAnalysisResource.v1.CostAnalysisResource",
+      "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+    },
+    {
+      "from": "CostAnalysisResource.v1.CostAnalysisResource",
+      "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenter"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenter"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenter"
+    },
+    {
+      "from": "ProfitCenter.v1.ProfitCenter",
+      "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+    },
+    {
+      "from": "JournalEntryCodes.v1.JournalEntryType",
+      "to": "JournalEntryCodes.v1.JournalEntryTypeText"
+    },
+    {
+      "from": "JournalEntryCodes.v1.JournalEntryType",
+      "to": "JournalEntryCodes.v1.JournalEntryTypeText"
+    },
+    {
+      "from": "JournalEntryCodes.v1.JournalEntryType",
+      "to": "JournalEntryCodes.v1.JournalEntryType"
+    },
+    {
+      "from": "JournalEntryCodes.v1.JournalEntryType",
+      "to": "JournalEntryCodes.v1.JournalEntryType"
+    },
+    {
+      "from": "JournalEntryCodes.v1.JournalEntryType",
+      "to": "JournalEntryCodes.v1.JournalEntryType"
+    },
+    {
+      "from": "JournalEntryCodes.v1.JournalEntryType",
+      "to": "JournalEntryCodes.v1.JournalEntryTypeText"
+    },
+    {
+      "from": "Ledger.v1.Ledger",
+      "to": "Ledger.v1.LedgerText"
+    },
+    {
+      "from": "Ledger.v1.Ledger",
+      "to": "Ledger.v1.LedgerText"
+    },
+    {
+      "from": "Ledger.v1.Ledger",
+      "to": "Ledger.v1.LedgerText"
+    }
+  ],
+  "invalid_references": [],
+  "entity_relationships": {
+    "JournalEntryItemCodes_v1.PostingKey.json": {
+      "primary_entity": "JournalEntryItemCodes.v1.PostingKey",
+      "all_entities": [
+        "JournalEntryItemCodes.v1.PostingKey",
+        "JournalEntryItemCodes.v1.PostingKey",
+        "JournalEntryItemCodes.v1.PostingKeyText",
+        "JournalEntryItemCodes.v1",
+        "JournalEntryItemCodes.v1.PostingKey_Delta",
+        "JournalEntryItemCodes.v1.PostingKeyText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "JournalEntryItemCodes.v1.PostingKey",
+          "to": "JournalEntryItemCodes.v1.PostingKeyText"
+        },
+        {
+          "from": "JournalEntryItemCodes.v1.PostingKey",
+          "to": "JournalEntryItemCodes.v1.PostingKeyText"
+        },
+        {
+          "from": "JournalEntryItemCodes.v1.PostingKey",
+          "to": "JournalEntryItemCodes.v1.PostingKey"
+        },
+        {
+          "from": "JournalEntryItemCodes.v1.PostingKey",
+          "to": "JournalEntryItemCodes.v1.PostingKey"
+        },
+        {
+          "from": "JournalEntryItemCodes.v1.PostingKey",
+          "to": "JournalEntryItemCodes.v1.PostingKeyText"
+        },
+        {
+          "from": "JournalEntryItemCodes.v1.PostingKey",
+          "to": "JournalEntryItemCodes.v1.PostingKey"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "FiscalYear_v1.FiscalYear.json": {
+      "primary_entity": "FiscalYear.v1.FiscalYear",
+      "all_entities": [
+        "FiscalYear.v1.FiscalYear",
+        "FiscalYear.v1.FiscalYear",
+        "FiscalYear.v1",
+        "FiscalYear.v1.FiscalYearVariantText",
+        "FiscalYear.v1.FiscalYearVariantText_Delta",
+        "FiscalYear.v1.FiscalYearVariant",
+        "FiscalYear.v1.FiscalYearVariant_Delta",
+        "FiscalYear.v1.FiscalYear_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "FiscalYear.v1.FiscalYear",
+          "to": "FiscalYear.v1.FiscalYearVariant"
+        },
+        {
+          "from": "FiscalYear.v1.FiscalYear",
+          "to": "FiscalYear.v1.FiscalYearVariant"
+        },
+        {
+          "from": "FiscalYear.v1.FiscalYear",
+          "to": "FiscalYear.v1.FiscalYearVariantText"
+        },
+        {
+          "from": "FiscalYear.v1.FiscalYear",
+          "to": "FiscalYear.v1.FiscalYearVariantText"
+        },
+        {
+          "from": "FiscalYear.v1.FiscalYear",
+          "to": "FiscalYear.v1.FiscalYearVariantText"
+        },
+        {
+          "from": "FiscalYear.v1.FiscalYear",
+          "to": "FiscalYear.v1.FiscalYearVariant"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "FinancialPlanningEntryItem_v1.FinancialPlanningEntryItem.json": {
+      "primary_entity": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+      "all_entities": [
+        "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+        "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+        "FinancialPlanningEntryItem.v1",
+        "FinancialPlanningEntryItem.v1.PlanningCategoryText",
+        "FinancialPlanningEntryItem.v1.PlanningCategoryText_Delta",
+        "FinancialPlanningEntryItem.v1.PlanningCategory",
+        "FinancialPlanningEntryItem.v1.PlanningCategory_Delta",
+        "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+          "to": "FinancialPlanningEntryItem.v1.PlanningCategory"
+        },
+        {
+          "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+          "to": "FinancialPlanningEntryItem.v1.PlanningCategory"
+        },
+        {
+          "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+          "to": "FinancialPlanningEntryItem.v1.PlanningCategoryText"
+        },
+        {
+          "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+          "to": "FinancialPlanningEntryItem.v1.PlanningCategoryText"
+        },
+        {
+          "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+          "to": "FinancialPlanningEntryItem.v1.PlanningCategoryText"
+        },
+        {
+          "from": "FinancialPlanningEntryItem.v1.FinancialPlanningEntryItem",
+          "to": "FinancialPlanningEntryItem.v1.PlanningCategory"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "SalesTaxType_v1.SalesTaxType.json": {
+      "primary_entity": "SalesTaxType.v1.SalesTaxType",
+      "all_entities": [
+        "SalesTaxType.v1.SalesTaxType",
+        "SalesTaxType.v1.SalesTaxType",
+        "SalesTaxType.v1.SalesTaxTypeText",
+        "SalesTaxType.v1",
+        "SalesTaxType.v1.SalesTaxType_Delta",
+        "SalesTaxType.v1.SalesTaxTypeText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "SalesTaxType.v1.SalesTaxType",
+          "to": "SalesTaxType.v1.SalesTaxTypeText"
+        },
+        {
+          "from": "SalesTaxType.v1.SalesTaxType",
+          "to": "SalesTaxType.v1.SalesTaxTypeText"
+        },
+        {
+          "from": "SalesTaxType.v1.SalesTaxType",
+          "to": "SalesTaxType.v1.SalesTaxTypeText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "BusinessArea_v1.BusinessArea.json": {
+      "primary_entity": "BusinessArea.v1.BusinessArea",
+      "all_entities": [
+        "BusinessArea.v1.BusinessArea",
+        "BusinessArea.v1.BusinessArea",
+        "BusinessArea.v1",
+        "BusinessArea.v1.BusinessAreaText",
+        "BusinessArea.v1.BusinessAreaText_Delta",
+        "BusinessArea.v1.BusinessArea_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "BusinessArea.v1.BusinessArea",
+          "to": "BusinessArea.v1.BusinessAreaText"
+        },
+        {
+          "from": "BusinessArea.v1.BusinessArea",
+          "to": "BusinessArea.v1.BusinessAreaText"
+        },
+        {
+          "from": "BusinessArea.v1.BusinessArea",
+          "to": "BusinessArea.v1.BusinessAreaText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "FunctionalArea_v1.FunctionalArea.json": {
+      "primary_entity": "FunctionalArea.v1.FunctionalArea",
+      "all_entities": [
+        "FunctionalArea.v1.FunctionalArea",
+        "FunctionalArea.v1.FunctionalArea",
+        "FunctionalArea.v1",
+        "FunctionalArea.v1.FunctionalAreaText",
+        "FunctionalArea.v1.FunctionalAreaText_Delta",
+        "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+        "FunctionalArea.v1.FunctionalArea_Delta",
+        "FunctionalArea.v1.FunctionalAreaHierNodeText",
+        "FunctionalArea.v1.FunctionalAreaHierarchy",
+        "FunctionalArea.v1.FunctionalAreaHierarchyNode_Delta",
+        "FunctionalArea.v1.FunctionalAreaHierNodeText_Delta",
+        "FunctionalArea.v1.FunctionalAreaHierarchyText",
+        "FunctionalArea.v1.FunctionalAreaHierarchyText_Delta",
+        "FunctionalArea.v1.FunctionalAreaHierarchy_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaText"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaText"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalArea"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalArea"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaText"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalArea"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+        },
+        {
+          "from": "FunctionalArea.v1.FunctionalArea",
+          "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "JournalEntryHeader_v1.JournalEntry.json": {
+      "primary_entity": "JournalEntryHeader.v1.JournalEntry",
+      "all_entities": [
+        "JournalEntryHeader.v1.JournalEntry",
+        "JournalEntryHeader.v1.JournalEntry",
+        "JournalEntryHeader.v1",
+        "JournalEntryHeader.v1.JournalEntry_Delta"
+      ],
+      "valid_references": [],
+      "invalid_references": [],
+      "valid": true
+    },
+    "GeneralLedgerAccount_v1.GeneralLedgerAccount.json": {
+      "primary_entity": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+      "all_entities": [
+        "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+        "GeneralLedgerAccount.v1.ChartOfAccountsText",
+        "GeneralLedgerAccount.v1.ChartOfAccounts",
+        "GeneralLedgerAccount.v1",
+        "GeneralLedgerAccount.v1.ChartOfAccountsText_Delta",
+        "GeneralLedgerAccount.v1.ChartOfAccounts_Delta",
+        "GeneralLedgerAccount.v1.GLAccountHierarchyNode",
+        "GeneralLedgerAccount.v1.GeneralLedgerAccount_Delta",
+        "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy",
+        "GeneralLedgerAccount.v1.GLAccountHierarchyText",
+        "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy_Delta",
+        "GeneralLedgerAccount.v1.GLAccountHierarchyText_Delta",
+        "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText",
+        "GeneralLedgerAccount.v1.GLAccountHierarchyNode_Delta",
+        "GeneralLedgerAccount.v1.GLAccountHierarchyNodeText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccountsText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GLAccountHierarchyNode"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GLAccountHierarchyText"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.ChartOfAccounts"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccount"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+        },
+        {
+          "from": "GeneralLedgerAccount.v1.GeneralLedgerAccount",
+          "to": "GeneralLedgerAccount.v1.GeneralLedgerAccountHierarchy"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "ControllingArea_v1.ControllingArea.json": {
+      "primary_entity": "ControllingArea.v1.ControllingArea",
+      "all_entities": [
+        "ControllingArea.v1.ControllingArea",
+        "ControllingArea.v1.ControllingArea",
+        "ControllingArea.v1",
+        "ControllingArea.v1.ControllingArea_Delta"
+      ],
+      "valid_references": [],
+      "invalid_references": [],
+      "valid": true
+    },
+    "BillableControl_v1.BillableControl.json": {
+      "primary_entity": "BDC.v1.BillableControl",
+      "all_entities": [
+        "BDC.v1.BillableControl",
+        "BDC.v1.BillableControl",
+        "BDC.v1",
+        "BDC.v1.BillableControlText",
+        "BDC.v1.BillableControlText_Delta",
+        "BDC.v1.BillableControl_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "BDC.v1.BillableControl",
+          "to": "BDC.v1.BillableControlText"
+        },
+        {
+          "from": "BDC.v1.BillableControl",
+          "to": "BDC.v1.BillableControlText"
+        },
+        {
+          "from": "BDC.v1.BillableControl",
+          "to": "BDC.v1.BillableControlText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "InternalOrder_v1.InternalOrder.json": {
+      "primary_entity": "InternalOrder.v1.InternalOrder",
+      "all_entities": [
+        "InternalOrder.v1.InternalOrder",
+        "InternalOrder.v1.InternalOrder",
+        "InternalOrder.v1",
+        "InternalOrder.v1.InternalOrder_Delta"
+      ],
+      "valid_references": [],
+      "invalid_references": [],
+      "valid": true
+    },
+    "ControllingObject_v1.ControllingObject.json": {
+      "primary_entity": "ControllingObject.v1.ControllingObject",
+      "all_entities": [
+        "ControllingObject.v1.ControllingObject",
+        "ControllingObject.v1.ControllingObject",
+        "ControllingObject.v1",
+        "ControllingObject.v1.ControllingObject_Delta"
+      ],
+      "valid_references": [],
+      "invalid_references": [],
+      "valid": true
+    },
+    "ProfitCenter_v1.ProfitCenterHierarchyNodeText.json": {
+      "primary_entity": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "all_entities": [
+        "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+        "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+        "ProfitCenter.v1.ProfitCenterHierarchy",
+        "ProfitCenter.v1.ProfitCenterHierarchyText",
+        "ProfitCenter.v1",
+        "ProfitCenter.v1.ProfitCenterHierarchy_Delta",
+        "ProfitCenter.v1.ProfitCenterHierarchyText_Delta",
+        "ProfitCenter.v1.ProfitCenterHierarchyNodeText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "CompanyCode_v1.CompanyCode.json": {
+      "primary_entity": "CompanyCode.v1.CompanyCode",
+      "all_entities": [
+        "CompanyCode.v1.CompanyCode",
+        "CompanyCode.v1.CompanyCode",
+        "CompanyCode.v1.CompanyCodeHierarchyNode",
+        "CompanyCode.v1",
+        "CompanyCode.v1.CompanyCode_Delta",
+        "CompanyCode.v1.CompanyCodeHierarchy",
+        "CompanyCode.v1.CompanyCodeHierarchyNodeText",
+        "CompanyCode.v1.CompanyCodeHierarchyNode_Delta",
+        "CompanyCode.v1.CompanyCodeHierarchyText",
+        "CompanyCode.v1.CompanyCodeHierarchy_Delta",
+        "CompanyCode.v1.CompanyCodeHierarchyText_Delta",
+        "CompanyCode.v1.CompanyCodeHierarchyNodeText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCode"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchy"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCode"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchy"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchy"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchy"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCode"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchy"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+        },
+        {
+          "from": "CompanyCode.v1.CompanyCode",
+          "to": "CompanyCode.v1.CompanyCodeHierarchy"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "CostCenterActivityType_v1.CostCenterActivityType.json": {
+      "primary_entity": "CostCenterActivityType.v1.CostCenterActivityType",
+      "all_entities": [
+        "CostCenterActivityType.v1.CostCenterActivityType",
+        "CostCenterActivityType.v1.CostCenterActivityType",
+        "CostCenterActivityType.v1.CostCenterActivityTypeText",
+        "CostCenterActivityType.v1",
+        "CostCenterActivityType.v1.CostCenterActivityTypeText_Delta",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText_Delta",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierText_Delta",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy_Delta",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+        "CostCenterActivityType.v1.CostCtrActivityTypeHierNode_Delta",
+        "CostCenterActivityType.v1.CostCenterActivityType_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCenterActivityType"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCenterActivityType"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCenterActivityType"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+        },
+        {
+          "from": "CostCenterActivityType.v1.CostCenterActivityType",
+          "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "CostCenter_v1.CostCenter.json": {
+      "primary_entity": "CostCenter.v1.CostCenter",
+      "all_entities": [
+        "CostCenter.v1.CostCenter",
+        "CostCenter.v1.CostCenter",
+        "CostCenter.v1",
+        "CostCenter.v1.CostCenterCategoryText",
+        "CostCenter.v1.CostCenterCategoryText_Delta",
+        "CostCenter.v1.CostCenterCategory",
+        "CostCenter.v1.CostCenterCategory_Delta",
+        "CostCenter.v1.CostCenterHierarchyNode",
+        "CostCenter.v1.CostCenterText",
+        "CostCenter.v1.CostCenter_Delta",
+        "CostCenter.v1.CostCenterText_Delta",
+        "CostCenter.v1.CostCenterHierarchyNodeText",
+        "CostCenter.v1.CostCenterHierarchy",
+        "CostCenter.v1.CostCenterHierarchyNode_Delta",
+        "CostCenter.v1.CostCenterHierarchyNodeText_Delta",
+        "CostCenter.v1.CostCenterHierarchyText",
+        "CostCenter.v1.CostCenterHierarchyText_Delta",
+        "CostCenter.v1.CostCenterHierarchy_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterCategory"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchyNode"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterCategory"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchyNode"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterCategoryText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterCategoryText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterCategoryText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenter"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchy"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenter"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchy"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterCategory"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchyNode"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchy"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchy"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchyText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchyText"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenter"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchy"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchy"
+        },
+        {
+          "from": "CostCenter.v1.CostCenter",
+          "to": "CostCenter.v1.CostCenterHierarchyText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "Segment_v1.Segment.json": {
+      "primary_entity": "Segment.v1.Segment",
+      "all_entities": [
+        "Segment.v1.Segment",
+        "Segment.v1.Segment",
+        "Segment.v1",
+        "Segment.v1.SegmentText",
+        "Segment.v1.SegmentText_Delta",
+        "Segment.v1.SegmentHierarchyNode",
+        "Segment.v1.Segment_Delta",
+        "Segment.v1.SegmentHierarchyNodeText",
+        "Segment.v1.SegmentHierarchy",
+        "Segment.v1.SegmentHierarchyNodeText_Delta",
+        "Segment.v1.SegmentHierarchyNode_Delta",
+        "Segment.v1.SegmentHierarchyText",
+        "Segment.v1.SegmentHierarchy_Delta",
+        "Segment.v1.SegmentHierarchyText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchyNode"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentText"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchyNode"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentText"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchy"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.Segment"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchy"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.Segment"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchyNode"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentText"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchy"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchy"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchyText"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchyText"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchy"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchy"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.Segment"
+        },
+        {
+          "from": "Segment.v1.Segment",
+          "to": "Segment.v1.SegmentHierarchyText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "OperatingConcern_v1.OperatingConcern.json": {
+      "primary_entity": "OperatingConcern.v1.OperatingConcern",
+      "all_entities": [
+        "OperatingConcern.v1.OperatingConcern",
+        "OperatingConcern.v1.OperatingConcern",
+        "OperatingConcern.v1",
+        "OperatingConcern.v1.OperatingConcernText",
+        "OperatingConcern.v1.OperatingConcernText_Delta",
+        "OperatingConcern.v1.OperatingConcern_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "OperatingConcern.v1.OperatingConcern",
+          "to": "OperatingConcern.v1.OperatingConcernText"
+        },
+        {
+          "from": "OperatingConcern.v1.OperatingConcern",
+          "to": "OperatingConcern.v1.OperatingConcernText"
+        },
+        {
+          "from": "OperatingConcern.v1.OperatingConcern",
+          "to": "OperatingConcern.v1.OperatingConcernText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "CostAnalysisResource_v1.CostAnalysisResource.json": {
+      "primary_entity": "CostAnalysisResource.v1.CostAnalysisResource",
+      "all_entities": [
+        "CostAnalysisResource.v1.CostAnalysisResource",
+        "CostAnalysisResource.v1.CostAnalysisResource",
+        "CostAnalysisResource.v1",
+        "CostAnalysisResource.v1.CostAnalysisResourceText",
+        "CostAnalysisResource.v1.CostAnalysisResource_Delta",
+        "CostAnalysisResource.v1.CostAnalysisResourceText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "CostAnalysisResource.v1.CostAnalysisResource",
+          "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+        },
+        {
+          "from": "CostAnalysisResource.v1.CostAnalysisResource",
+          "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+        },
+        {
+          "from": "CostAnalysisResource.v1.CostAnalysisResource",
+          "to": "CostAnalysisResource.v1.CostAnalysisResourceText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "ProfitCenter_v1.ProfitCenter.json": {
+      "primary_entity": "ProfitCenter.v1.ProfitCenter",
+      "all_entities": [
+        "ProfitCenter.v1.ProfitCenter",
+        "ProfitCenter.v1.ProfitCenter",
+        "ProfitCenter.v1",
+        "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+        "ProfitCenter.v1.PrftCtrCompanyCodeAssignment_Delta",
+        "ProfitCenter.v1.ProfitCenterHierarchyNode",
+        "ProfitCenter.v1.ProfitCenterText",
+        "ProfitCenter.v1.ProfitCenter_Delta",
+        "ProfitCenter.v1.ProfitCenterText_Delta",
+        "ProfitCenter.v1.ProfitCenterHierarchy",
+        "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+        "ProfitCenter.v1.ProfitCenterHierarchyNodeText_Delta",
+        "ProfitCenter.v1.ProfitCenterHierarchyNode_Delta",
+        "ProfitCenter.v1.ProfitCenterHierarchyText",
+        "ProfitCenter.v1.ProfitCenterHierarchy_Delta",
+        "ProfitCenter.v1.ProfitCenterHierarchyText_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenter"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenter"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenter"
+        },
+        {
+          "from": "ProfitCenter.v1.ProfitCenter",
+          "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "Company_v1.Company.json": {
+      "primary_entity": "Company.v1.Company",
+      "all_entities": [
+        "Company.v1.Company",
+        "Company.v1.Company",
+        "Company.v1",
+        "Company.v1.Company_Delta"
+      ],
+      "valid_references": [],
+      "invalid_references": [],
+      "valid": true
+    },
+    "JournalEntryCodes_v1.JournalEntryType.json": {
+      "primary_entity": "JournalEntryCodes.v1.JournalEntryType",
+      "all_entities": [
+        "JournalEntryCodes.v1.JournalEntryType",
+        "JournalEntryCodes.v1.JournalEntryType",
+        "JournalEntryCodes.v1",
+        "JournalEntryCodes.v1.JournalEntryTypeText",
+        "JournalEntryCodes.v1.JournalEntryTypeText_Delta",
+        "JournalEntryCodes.v1.JournalEntryType_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "JournalEntryCodes.v1.JournalEntryType",
+          "to": "JournalEntryCodes.v1.JournalEntryTypeText"
+        },
+        {
+          "from": "JournalEntryCodes.v1.JournalEntryType",
+          "to": "JournalEntryCodes.v1.JournalEntryTypeText"
+        },
+        {
+          "from": "JournalEntryCodes.v1.JournalEntryType",
+          "to": "JournalEntryCodes.v1.JournalEntryType"
+        },
+        {
+          "from": "JournalEntryCodes.v1.JournalEntryType",
+          "to": "JournalEntryCodes.v1.JournalEntryType"
+        },
+        {
+          "from": "JournalEntryCodes.v1.JournalEntryType",
+          "to": "JournalEntryCodes.v1.JournalEntryType"
+        },
+        {
+          "from": "JournalEntryCodes.v1.JournalEntryType",
+          "to": "JournalEntryCodes.v1.JournalEntryTypeText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    },
+    "Ledger_v1.Ledger.json": {
+      "primary_entity": "Ledger.v1.Ledger",
+      "all_entities": [
+        "Ledger.v1.Ledger",
+        "Ledger.v1.Ledger",
+        "Ledger.v1",
+        "Ledger.v1.LedgerText",
+        "Ledger.v1.LedgerText_Delta",
+        "Ledger.v1.Ledger_Delta"
+      ],
+      "valid_references": [
+        {
+          "from": "Ledger.v1.Ledger",
+          "to": "Ledger.v1.LedgerText"
+        },
+        {
+          "from": "Ledger.v1.Ledger",
+          "to": "Ledger.v1.LedgerText"
+        },
+        {
+          "from": "Ledger.v1.Ledger",
+          "to": "Ledger.v1.LedgerText"
+        }
+      ],
+      "invalid_references": [],
+      "valid": true
+    }
+  }
+}

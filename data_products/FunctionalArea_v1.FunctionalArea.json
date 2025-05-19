@@ -1,0 +1,2924 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "FunctionalArea.v1.FunctionalArea": {
+      "__abapOriginalName": "I_FunctionalArea",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FunctionalArea",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.hierarchy.association": "_FunctionalAreaHierarchyNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 16,
+          "notNull": true
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Entered On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "FIFM: Entry Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "LastChangeDate": {
+          "__abapOriginalName": "LastChangeDate",
+          "@EndUserText.heading": "Changed On",
+          "@EndUserText.label": "Changed On",
+          "@EndUserText.quickInfo": "FIFM: Changed On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.lastChangedAt": true,
+          "type": "cds.Date"
+        },
+        "_FunctionalAreaHierarchyNode": {
+          "__abapOriginalName": "_FunctionalAreaHierarchyNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_FunctionalAreaHierarchyNode",
+                "FunctionalArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_FunctionalAreaHierarchyNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaText",
+          "on": [
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FunctionalArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FunctionalArea.v1.FunctionalArea_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalArea",
+        "originalEntityName": "functionalarea.FunctionalArea"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FunctionalArea.v1.FunctionalArea_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            {
+              "ref": [
+                "CreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDate"
+              ]
+            },
+            {
+              "ref": [
+                "_FunctionalAreaHierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_FunctionalAreaHierarchyNode": {
+              "__abapOriginalName": "_FunctionalAreaHierarchyNode",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_FunctionalAreaHierarchyNode",
+                    "FunctionalArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_FunctionalAreaHierarchyNode"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "FunctionalArea.v1.FunctionalAreaText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "FunctionalArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalArea",
+        "originalEntityName": "functionalarea.FunctionalArea"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaText": {
+      "__abapOriginalName": "I_FunctionalAreaText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "FunctionalArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 16,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "FunctionalAreaName"
+            }
+          ]
+        },
+        "FunctionalAreaName": {
+          "__abapOriginalName": "FunctionalAreaName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area Name",
+          "@EndUserText.label": "Functional Area Name",
+          "@EndUserText.quickInfo": "Name of the Functional Area",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FunctionalArea.v1.FunctionalAreaText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaText",
+        "originalEntityName": "functionalarea.FunctionalAreaText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FunctionalArea.v1.FunctionalAreaText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            {
+              "ref": [
+                "FunctionalAreaName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaText_Delta": {
+      "__abapOriginalName": "I_FunctionalAreaText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "FunctionalArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 16,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "FunctionalAreaName"
+            }
+          ]
+        },
+        "FunctionalAreaName": {
+          "__abapOriginalName": "FunctionalAreaName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area Name",
+          "@EndUserText.label": "Functional Area Name",
+          "@EndUserText.quickInfo": "Name of the Functional Area",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FunctionalArea.v1.FunctionalAreaText",
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaText",
+        "originalEntityName": "functionalarea.FunctionalAreaText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierarchyNode": {
+      "__abapOriginalName": "I_FunctionalAreaHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FunctionalArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_FunctionalArea": {
+          "__abapOriginalName": "_FunctionalArea",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "FunctionalArea.v1.FunctionalArea",
+          "on": [
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_FunctionalArea",
+                "FunctionalArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_FunctionalArea"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchy",
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FunctionalArea.v1.FunctionalAreaHierarchyNode_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+        "originalEntityName": "functionalarea.FunctionalAreaHierarchyNode"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FunctionalArea.v1.FunctionalAreaHierarchyNode_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "ParentNode"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyVersion"
+              ]
+            },
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            {
+              "ref": [
+                "SequenceNumber"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeSequence"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeLevel"
+              ]
+            },
+            {
+              "ref": [
+                "NodeType"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeVal"
+              ]
+            },
+            {
+              "ref": [
+                "_FunctionalArea"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_FunctionalArea": {
+              "__abapOriginalName": "_FunctionalArea",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "FunctionalArea.v1.FunctionalArea",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_FunctionalArea",
+                    "FunctionalArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_FunctionalArea"
+            },
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": 1
+              },
+              "target": "FunctionalArea.v1.FunctionalAreaHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalAreaHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "FunctionalAreaHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalAreaHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "FunctionalAreaHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "HierarchyNode"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "HierarchyNode"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalArea"
+                  ]
+                },
+                "=",
+                {
+                  "val": ""
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalArea_Delta": {
+      "__abapOriginalName": "I_FunctionalArea",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FunctionalArea",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalArea",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.hierarchy.association": "_FunctionalAreaHierarchyNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 16,
+          "notNull": true
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Entered On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "FIFM: Entry Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "LastChangeDate": {
+          "__abapOriginalName": "LastChangeDate",
+          "@EndUserText.heading": "Changed On",
+          "@EndUserText.label": "Changed On",
+          "@EndUserText.quickInfo": "FIFM: Changed On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.lastChangedAt": true,
+          "type": "cds.Date"
+        },
+        "_FunctionalAreaHierarchyNode": {
+          "__abapOriginalName": "_FunctionalAreaHierarchyNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_FunctionalAreaHierarchyNode",
+                "FunctionalArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_FunctionalAreaHierarchyNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaText",
+          "on": [
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FunctionalArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FunctionalArea.v1.FunctionalArea",
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalArea",
+        "originalEntityName": "functionalarea.FunctionalArea"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierNodeText": {
+      "__abapOriginalName": "I_FunctionalAreaHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchy",
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "FunctionalAreaHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FunctionalArea.v1.FunctionalAreaHierNodeText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierNodeText",
+        "originalEntityName": "functionalarea.FunctionalAreaHierNodeText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FunctionalArea.v1.FunctionalAreaHierNodeText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeText"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "FunctionalArea.v1.FunctionalAreaHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalAreaHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "FunctionalAreaHierarchy"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierarchy": {
+      "__abapOriginalName": "I_FunctionalAreaHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FunctionalAreaHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FunctionalArea.v1.FunctionalAreaHierarchy_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierarchy",
+        "originalEntityName": "functionalarea.FunctionalAreaHierarchy"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FunctionalArea.v1.FunctionalAreaHierarchy_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeTime"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyShortID"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "FunctionalArea.v1.FunctionalAreaHierarchyText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "FunctionalAreaHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "FunctionalAreaHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierarchyNode_Delta": {
+      "__abapOriginalName": "I_FunctionalAreaHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Functional Area",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FunctionalArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_FunctionalArea": {
+          "__abapOriginalName": "_FunctionalArea",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "FunctionalArea.v1.FunctionalArea",
+          "on": [
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_FunctionalArea",
+                "FunctionalArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_FunctionalArea"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchy",
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+        "originalEntityName": "functionalarea.FunctionalAreaHierarchyNode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierNodeText_Delta": {
+      "__abapOriginalName": "I_FunctionalAreaHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchy",
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "FunctionalAreaHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FunctionalArea.v1.FunctionalAreaHierNodeText",
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierNodeText",
+        "originalEntityName": "functionalarea.FunctionalAreaHierNodeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierarchyText": {
+      "__abapOriginalName": "I_FunctionalAreaHierarchyT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "FunctionalAreaHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "FunctionalAreaHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "FunctionalAreaHierarchyName": {
+          "__abapOriginalName": "FunctionalAreaHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "FunctionalArea.v1.FunctionalAreaHierarchyText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierarchyText",
+        "originalEntityName": "functionalarea.FunctionalAreaHierarchyText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "FunctionalArea.v1.FunctionalAreaHierarchyText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "FunctionalAreaHierarchyName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierarchyText_Delta": {
+      "__abapOriginalName": "I_FunctionalAreaHierarchyT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "FunctionalAreaHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "FunctionalAreaHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "FunctionalAreaHierarchyName": {
+          "__abapOriginalName": "FunctionalAreaHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FunctionalArea.v1.FunctionalAreaHierarchyText",
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierarchyText",
+        "originalEntityName": "functionalarea.FunctionalAreaHierarchyText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "FunctionalArea.v1.FunctionalAreaHierarchy_Delta": {
+      "__abapOriginalName": "I_FunctionalAreaHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Functional Area Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "FunctionalAreaHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "FunctionalAreaHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "FunctionalAreaHierarchy": {
+          "__abapOriginalName": "FunctionalAreaHierarchy",
+          "@EndUserText.heading": "Functional Area Hierarchy",
+          "@EndUserText.label": "Func. Area Hierarchy",
+          "@EndUserText.quickInfo": "Functional Area Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "FunctionalArea.v1.FunctionalAreaHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "FunctionalAreaHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "FunctionalArea.v1.FunctionalAreaHierarchy",
+      "import_meta": {
+        "qualifiedName": "FunctionalArea.v1.FunctionalAreaHierarchy",
+        "originalEntityName": "functionalarea.FunctionalAreaHierarchy"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "FunctionalArea.v1.FunctionalArea",
+    "all_entities": [
+      "FunctionalArea.v1.FunctionalArea",
+      "FunctionalArea.v1.FunctionalArea",
+      "FunctionalArea.v1",
+      "FunctionalArea.v1.FunctionalAreaText",
+      "FunctionalArea.v1.FunctionalAreaText_Delta",
+      "FunctionalArea.v1.FunctionalAreaHierarchyNode",
+      "FunctionalArea.v1.FunctionalArea_Delta",
+      "FunctionalArea.v1.FunctionalAreaHierNodeText",
+      "FunctionalArea.v1.FunctionalAreaHierarchy",
+      "FunctionalArea.v1.FunctionalAreaHierarchyNode_Delta",
+      "FunctionalArea.v1.FunctionalAreaHierNodeText_Delta",
+      "FunctionalArea.v1.FunctionalAreaHierarchyText",
+      "FunctionalArea.v1.FunctionalAreaHierarchyText_Delta",
+      "FunctionalArea.v1.FunctionalAreaHierarchy_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaText"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaText"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalArea"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalArea"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchyNode"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaText"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalArea"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchy"
+      },
+      {
+        "from": "FunctionalArea.v1.FunctionalArea",
+        "to": "FunctionalArea.v1.FunctionalAreaHierarchyText"
+      }
+    ],
+    "invalid_references": []
+  }
+}

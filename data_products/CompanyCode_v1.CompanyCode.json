@@ -1,0 +1,3250 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "CompanyCode.v1.CompanyCode": {
+      "__abapOriginalName": "I_CompanyCode",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_Address"
+        },
+        {
+          "=": "_OrgAddressDefaultRprstn"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "T001",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "CompanyCode"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bukrs"
+            }
+          ]
+        },
+        {
+          "table": "tka02",
+          "role": {
+            "#": "LEFT_OUTER_TO_ONE_JOIN"
+          },
+          "viewElement": [
+            {
+              "=": "CompanyCode"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bukrs"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CompanyCode",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "ORGANIZATIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CoCd",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.hierarchy.association": "_CompanyCodeHierNode",
+          "@ObjectModel.text.element": [
+            {
+              "=": "CompanyCodeName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CompanyCodeName": {
+          "__abapOriginalName": "CompanyCodeName",
+          "@EndUserText.heading": "Name of Company",
+          "@EndUserText.label": "Company Name",
+          "@EndUserText.quickInfo": "Name of Company Code or Company",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        },
+        "CityName": {
+          "__abapOriginalName": "CityName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "City",
+          "@EndUserText.label": "City",
+          "@EndUserText.quickInfo": "City",
+          "type": "cds.String",
+          "length": 25
+        },
+        "Country": {
+          "__abapOriginalName": "Country",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "C/R",
+          "@EndUserText.label": "Country/Region Key",
+          "@EndUserText.quickInfo": "Country/Region Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Country"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "Currency": {
+          "__abapOriginalName": "Currency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Crcy",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Currency Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Currency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "type": "cds.String",
+          "length": 2
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FV",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalYearVariant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Company": {
+          "__abapOriginalName": "Company",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Co.",
+          "@EndUserText.label": "Company",
+          "@EndUserText.quickInfo": "Company",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "CreditControlArea": {
+          "__abapOriginalName": "CreditControlArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CCAr",
+          "@EndUserText.label": "Credit Control Area",
+          "@EndUserText.quickInfo": "Credit Control Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CreditControlArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_CreditControlAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CountryChartOfAccounts": {
+          "__abapOriginalName": "CountryChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ChA2",
+          "@EndUserText.label": "Alternative COA",
+          "@EndUserText.quickInfo": "Alternative Chart of Accounts",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "FinancialManagementArea": {
+          "__abapOriginalName": "FinancialManagementArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FMA",
+          "@EndUserText.label": "FM Area",
+          "@EndUserText.quickInfo": "Financial Management Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "AddressID": {
+          "__abapOriginalName": "AddressID",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Address",
+          "@EndUserText.label": "Address",
+          "@EndUserText.quickInfo": "Address",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_OrgAddressDefaultRprstn"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "TaxableEntity": {
+          "__abapOriginalName": "TaxableEntity",
+          "@EndUserText.heading": "Tx Grp",
+          "@EndUserText.label": "Taxes on Sls/Purc.",
+          "@EndUserText.quickInfo": "Taxes on Sales/Purchases Group",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "VATRegistration": {
+          "__abapOriginalName": "VATRegistration",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "VAT Registration No.",
+          "@EndUserText.label": "VAT Registration No.",
+          "@EndUserText.quickInfo": "VAT Registration Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "ExtendedWhldgTaxIsActive": {
+          "__abapOriginalName": "ExtendedWhldgTaxIsActive",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Extended WTax Active",
+          "@EndUserText.quickInfo": "Indicator: Extended Withholding Tax Active",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "FieldStatusVariant": {
+          "__abapOriginalName": "FieldStatusVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FStV",
+          "@EndUserText.label": "Field Status Variant",
+          "@EndUserText.quickInfo": "Field Status Variant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FieldStatusVariant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "NonTaxableTransactionTaxCode": {
+          "__abapOriginalName": "NonTaxableTransactionTaxCode",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Output Tax Code",
+          "@EndUserText.quickInfo": "Output Tax Code for Non-Taxable Transactions",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "DocDateIsUsedForTaxDetn": {
+          "__abapOriginalName": "DocDateIsUsedForTaxDetn",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "D",
+          "@EndUserText.label": "Tax Determ.with Doc.Date",
+          "@EndUserText.quickInfo": "Indicator: Document Date As the Basis for Tax Determination",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "TaxRptgDateIsActive": {
+          "__abapOriginalName": "TaxRptgDateIsActive",
+          "@EndUserText.heading": "Tax Date",
+          "@EndUserText.label": "Tax Date",
+          "@EndUserText.quickInfo": "Tax Reporting Date Active in Documents",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CashDiscountBaseAmtIsNetAmt": {
+          "__abapOriginalName": "CashDiscountBaseAmtIsNetAmt",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "DiN",
+          "@EndUserText.label": "Net Discount Base",
+          "@EndUserText.quickInfo": "Indicator: Discount base amount is the net value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_CompanyCodeHierNode": {
+          "__abapOriginalName": "_CompanyCodeHierNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CompanyCodeHierNode",
+                "CompanyCode"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CompanyCodeHierNode"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CompanyCode.v1.CompanyCode_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCode",
+        "originalEntityName": "companycode.CompanyCode"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CompanyCode.v1.CompanyCode_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCodeName"
+              ]
+            },
+            {
+              "ref": [
+                "CityName"
+              ]
+            },
+            {
+              "ref": [
+                "Country"
+              ]
+            },
+            {
+              "ref": [
+                "Currency"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "FiscalYearVariant"
+              ]
+            },
+            {
+              "ref": [
+                "Company"
+              ]
+            },
+            {
+              "ref": [
+                "CreditControlArea"
+              ]
+            },
+            {
+              "ref": [
+                "CountryChartOfAccounts"
+              ]
+            },
+            {
+              "ref": [
+                "FinancialManagementArea"
+              ]
+            },
+            {
+              "ref": [
+                "AddressID"
+              ]
+            },
+            {
+              "ref": [
+                "TaxableEntity"
+              ]
+            },
+            {
+              "ref": [
+                "VATRegistration"
+              ]
+            },
+            {
+              "ref": [
+                "ExtendedWhldgTaxIsActive"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "FieldStatusVariant"
+              ]
+            },
+            {
+              "ref": [
+                "NonTaxableTransactionTaxCode"
+              ]
+            },
+            {
+              "ref": [
+                "DocDateIsUsedForTaxDetn"
+              ]
+            },
+            {
+              "ref": [
+                "TaxRptgDateIsActive"
+              ]
+            },
+            {
+              "ref": [
+                "CashDiscountBaseAmtIsNetAmt"
+              ]
+            },
+            {
+              "ref": [
+                "_CompanyCodeHierNode"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_CompanyCodeHierNode": {
+              "__abapOriginalName": "_CompanyCodeHierNode",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "CompanyCode.v1.CompanyCodeHierarchyNode",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CompanyCode"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CompanyCodeHierNode",
+                    "CompanyCode"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_CompanyCodeHierNode"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchyNode": {
+      "__abapOriginalName": "I_CompanyCodeHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy Node",
+      "@Hierarchy.parentChild": [
+        {
+          "recurse": {
+            "parent": [
+              {
+                "=": "ParentNode"
+              }
+            ],
+            "child": [
+              {
+                "=": "HierarchyNode"
+              }
+            ]
+          },
+          "siblingsOrder": [
+            {
+              "by": "HierarchyNodeSequence",
+              "direction": "ASC"
+            }
+          ],
+          "directory": "_Hierarchy"
+        }
+      ],
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CoCd",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchySequenceNumber",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_CompanyCode": {
+          "__abapOriginalName": "_CompanyCode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CompanyCode.v1.CompanyCode",
+          "on": [
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CompanyCode",
+                "CompanyCode"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CompanyCode"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CompanyCode.v1.CompanyCodeHierarchyNode_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchyNode",
+        "originalEntityName": "companycode.CompanyCodeHierarchyNode"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CompanyCode.v1.CompanyCodeHierarchyNode_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "ParentNode"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyVersion"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "SequenceNumber"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeSequence"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeLevel"
+              ]
+            },
+            {
+              "ref": [
+                "NodeType"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeVal"
+              ]
+            },
+            {
+              "ref": [
+                "_CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_CompanyCode": {
+              "__abapOriginalName": "_CompanyCode",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": 1
+              },
+              "target": "CompanyCode.v1.CompanyCode",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CompanyCode"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CompanyCode",
+                    "CompanyCode"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_CompanyCode"
+            },
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": 1
+              },
+              "target": "CompanyCode.v1.CompanyCodeHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CompanyCodeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "CompanyCodeHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CompanyCodeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "CompanyCodeHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "HierarchyNode"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "HierarchyNode"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "CompanyCode"
+                  ]
+                },
+                "=",
+                {
+                  "val": ""
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CurrencyRoleText",
+        "originalEntityName": "companycode.CurrencyRoleText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCode_Delta": {
+      "__abapOriginalName": "I_CompanyCode",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_Address"
+        },
+        {
+          "=": "_OrgAddressDefaultRprstn"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.mapping": [
+        {
+          "table": "T001",
+          "role": {
+            "#": "MAIN"
+          },
+          "viewElement": [
+            {
+              "=": "CompanyCode"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bukrs"
+            }
+          ]
+        },
+        {
+          "table": "tka02",
+          "role": {
+            "#": "LEFT_OUTER_TO_ONE_JOIN"
+          },
+          "viewElement": [
+            {
+              "=": "CompanyCode"
+            }
+          ],
+          "tableElement": [
+            {
+              "=": "bukrs"
+            }
+          ]
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CompanyCode",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "ORGANIZATIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CoCd",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.hierarchy.association": "_CompanyCodeHierNode",
+          "@ObjectModel.text.element": [
+            {
+              "=": "CompanyCodeName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CompanyCodeName": {
+          "__abapOriginalName": "CompanyCodeName",
+          "@EndUserText.heading": "Name of Company",
+          "@EndUserText.label": "Company Name",
+          "@EndUserText.quickInfo": "Name of Company Code or Company",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        },
+        "CityName": {
+          "__abapOriginalName": "CityName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "City",
+          "@EndUserText.label": "City",
+          "@EndUserText.quickInfo": "City",
+          "type": "cds.String",
+          "length": 25
+        },
+        "Country": {
+          "__abapOriginalName": "Country",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "C/R",
+          "@EndUserText.label": "Country/Region Key",
+          "@EndUserText.quickInfo": "Country/Region Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Country"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "Currency": {
+          "__abapOriginalName": "Currency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Crcy",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Currency Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Currency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "type": "cds.String",
+          "length": 2
+        },
+        "ChartOfAccounts": {
+          "__abapOriginalName": "ChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Chart of Accounts",
+          "@EndUserText.label": "Chart of Accounts",
+          "@EndUserText.quickInfo": "Chart of Accounts",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "FiscalYearVariant": {
+          "__abapOriginalName": "FiscalYearVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FV",
+          "@EndUserText.label": "Fiscal Year Variant",
+          "@EndUserText.quickInfo": "Fiscal Year Variant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FiscalYearVariant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "Company": {
+          "__abapOriginalName": "Company",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Co.",
+          "@EndUserText.label": "Company",
+          "@EndUserText.quickInfo": "Company",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "CreditControlArea": {
+          "__abapOriginalName": "CreditControlArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CCAr",
+          "@EndUserText.label": "Credit Control Area",
+          "@EndUserText.quickInfo": "Credit Control Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CreditControlArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_CreditControlAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CountryChartOfAccounts": {
+          "__abapOriginalName": "CountryChartOfAccounts",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ChA2",
+          "@EndUserText.label": "Alternative COA",
+          "@EndUserText.quickInfo": "Alternative Chart of Accounts",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "FinancialManagementArea": {
+          "__abapOriginalName": "FinancialManagementArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FMA",
+          "@EndUserText.label": "FM Area",
+          "@EndUserText.quickInfo": "Financial Management Area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "AddressID": {
+          "__abapOriginalName": "AddressID",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Address",
+          "@EndUserText.label": "Address",
+          "@EndUserText.quickInfo": "Address",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_OrgAddressDefaultRprstn"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "TaxableEntity": {
+          "__abapOriginalName": "TaxableEntity",
+          "@EndUserText.heading": "Tx Grp",
+          "@EndUserText.label": "Taxes on Sls/Purc.",
+          "@EndUserText.quickInfo": "Taxes on Sales/Purchases Group",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "VATRegistration": {
+          "__abapOriginalName": "VATRegistration",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "VAT Registration No.",
+          "@EndUserText.label": "VAT Registration No.",
+          "@EndUserText.quickInfo": "VAT Registration Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "ExtendedWhldgTaxIsActive": {
+          "__abapOriginalName": "ExtendedWhldgTaxIsActive",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Extended WTax Active",
+          "@EndUserText.quickInfo": "Indicator: Extended Withholding Tax Active",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "FieldStatusVariant": {
+          "__abapOriginalName": "FieldStatusVariant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "FStV",
+          "@EndUserText.label": "Field Status Variant",
+          "@EndUserText.quickInfo": "Field Status Variant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FieldStatusVariant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "NonTaxableTransactionTaxCode": {
+          "__abapOriginalName": "NonTaxableTransactionTaxCode",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Output Tax Code",
+          "@EndUserText.quickInfo": "Output Tax Code for Non-Taxable Transactions",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "DocDateIsUsedForTaxDetn": {
+          "__abapOriginalName": "DocDateIsUsedForTaxDetn",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "D",
+          "@EndUserText.label": "Tax Determ.with Doc.Date",
+          "@EndUserText.quickInfo": "Indicator: Document Date As the Basis for Tax Determination",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "TaxRptgDateIsActive": {
+          "__abapOriginalName": "TaxRptgDateIsActive",
+          "@EndUserText.heading": "Tax Date",
+          "@EndUserText.label": "Tax Date",
+          "@EndUserText.quickInfo": "Tax Reporting Date Active in Documents",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CashDiscountBaseAmtIsNetAmt": {
+          "__abapOriginalName": "CashDiscountBaseAmtIsNetAmt",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "DiN",
+          "@EndUserText.label": "Net Discount Base",
+          "@EndUserText.quickInfo": "Indicator: Discount base amount is the net value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_CompanyCodeHierNode": {
+          "__abapOriginalName": "_CompanyCodeHierNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CompanyCodeHierNode",
+                "CompanyCode"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CompanyCodeHierNode"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CompanyCode.v1.CompanyCode",
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCode",
+        "originalEntityName": "companycode.CompanyCode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchy": {
+      "__abapOriginalName": "I_CompanyCodeHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CompanyCodeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CompanyCode.v1.CompanyCodeHierarchy_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchy",
+        "originalEntityName": "companycode.CompanyCodeHierarchy"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CompanyCode.v1.CompanyCodeHierarchy_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeTime"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyShortID"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "CompanyCode.v1.CompanyCodeHierarchyText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CompanyCodeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "CompanyCodeHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchyNodeText": {
+      "__abapOriginalName": "I_CompanyCodeHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CompanyCodeHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CompanyCode.v1.CompanyCodeHierarchyNodeText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchyNodeText",
+        "originalEntityName": "companycode.CompanyCodeHierarchyNodeText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CompanyCode.v1.CompanyCodeHierarchyNodeText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeText"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "CompanyCode.v1.CompanyCodeHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CompanyCodeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "CompanyCodeHierarchy"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchyNode_Delta": {
+      "__abapOriginalName": "I_CompanyCodeHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy Node",
+      "@Hierarchy.parentChild": [
+        {
+          "recurse": {
+            "parent": [
+              {
+                "=": "ParentNode"
+              }
+            ],
+            "child": [
+              {
+                "=": "HierarchyNode"
+              }
+            ]
+          },
+          "siblingsOrder": [
+            {
+              "by": "HierarchyNodeSequence",
+              "direction": "ASC"
+            }
+          ],
+          "directory": "_Hierarchy"
+        }
+      ],
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CoCd",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchySequenceNumber",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_CompanyCode": {
+          "__abapOriginalName": "_CompanyCode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": 1
+          },
+          "target": "CompanyCode.v1.CompanyCode",
+          "on": [
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CompanyCode",
+                "CompanyCode"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CompanyCode"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CompanyCode.v1.CompanyCodeHierarchyNode",
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchyNode",
+        "originalEntityName": "companycode.CompanyCodeHierarchyNode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchyText": {
+      "__abapOriginalName": "I_CompanyCodeHierarchyT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "CompanyCodeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "CompanyCodeHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CompanyCodeHierarchyName": {
+          "__abapOriginalName": "CompanyCodeHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CompanyCode.v1.CompanyCodeHierarchyText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchyText",
+        "originalEntityName": "companycode.CompanyCodeHierarchyText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CompanyCode.v1.CompanyCodeHierarchyText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCodeHierarchyName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchy_Delta": {
+      "__abapOriginalName": "I_CompanyCodeHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CompanyCodeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CompanyCode.v1.CompanyCodeHierarchy",
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchy",
+        "originalEntityName": "companycode.CompanyCodeHierarchy"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchyText_Delta": {
+      "__abapOriginalName": "I_CompanyCodeHierarchyT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "CompanyCodeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "CompanyCodeHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CompanyCodeHierarchyName": {
+          "__abapOriginalName": "CompanyCodeHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CompanyCode.v1.CompanyCodeHierarchyText",
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchyText",
+        "originalEntityName": "companycode.CompanyCodeHierarchyText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CompanyCode.v1.CompanyCodeHierarchyNodeText_Delta": {
+      "__abapOriginalName": "I_CompanyCodeHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company Code Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CompanyCodeHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "CompanyCodeHierarchy": {
+          "__abapOriginalName": "CompanyCodeHierarchy",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Company Code Hierarchy",
+          "@EndUserText.quickInfo": "Company Code Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 42,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CompanyCode.v1.CompanyCodeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CompanyCodeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CompanyCodeHierarchy"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CompanyCode.v1.CompanyCodeHierarchyNodeText",
+      "import_meta": {
+        "qualifiedName": "CompanyCode.v1.CompanyCodeHierarchyNodeText",
+        "originalEntityName": "companycode.CompanyCodeHierarchyNodeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "CompanyCode.v1.CompanyCode",
+    "all_entities": [
+      "CompanyCode.v1.CompanyCode",
+      "CompanyCode.v1.CompanyCode",
+      "CompanyCode.v1.CompanyCodeHierarchyNode",
+      "CompanyCode.v1",
+      "CompanyCode.v1.CompanyCode_Delta",
+      "CompanyCode.v1.CompanyCodeHierarchy",
+      "CompanyCode.v1.CompanyCodeHierarchyNodeText",
+      "CompanyCode.v1.CompanyCodeHierarchyNode_Delta",
+      "CompanyCode.v1.CompanyCodeHierarchyText",
+      "CompanyCode.v1.CompanyCodeHierarchy_Delta",
+      "CompanyCode.v1.CompanyCodeHierarchyText_Delta",
+      "CompanyCode.v1.CompanyCodeHierarchyNodeText_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCode"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchy"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCode"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchy"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchyNode"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchy"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchy"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCode"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchy"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchyText"
+      },
+      {
+        "from": "CompanyCode.v1.CompanyCode",
+        "to": "CompanyCode.v1.CompanyCodeHierarchy"
+      }
+    ],
+    "invalid_references": []
+  }
+}

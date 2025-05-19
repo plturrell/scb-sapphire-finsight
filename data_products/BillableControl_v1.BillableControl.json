@@ -1,0 +1,623 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "BDC.v1.BillableControl": {
+      "__abapOriginalName": "I_BillableControl",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Billable Control",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "BillableControl",
+      "@ObjectModel.sapObjectNodeType.name": "BillableControl",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BillableControl": {
+          "__abapOriginalName": "BillableControl",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BCon",
+          "@EndUserText.label": "Billable Control",
+          "@EndUserText.quickInfo": "Billable Control",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "BDC.v1.BillableControlText",
+          "on": [
+            {
+              "ref": [
+                "BillableControl"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "BillableControl"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "BDC.v1.BillableControl_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "BDC.v1.BillableControl",
+        "originalEntityName": "billablecontrol.BillableControl"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "BDC.v1.BillableControl_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "BillableControl"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "BDC.v1.BillableControlText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "BillableControl"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "BillableControl"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BDC.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "BDC.v1.BillableControl",
+        "originalEntityName": "billablecontrol.BillableControl"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BDC.v1.BillableControlText": {
+      "__abapOriginalName": "I_BillableControlText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Billable Control - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "BillableControl",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BillableControl": {
+          "__abapOriginalName": "BillableControl",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BCon",
+          "@EndUserText.label": "Billable Control",
+          "@EndUserText.quickInfo": "Billable Control",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "BillableControlName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "BillableControlName": {
+          "__abapOriginalName": "BillableControlName",
+          "@EndUserText.heading": "Billable Control Name",
+          "@EndUserText.label": "BillableControl Name",
+          "@EndUserText.quickInfo": "Billable Control Name",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "BDC.v1.BillableControlText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "BDC.v1.BillableControlText",
+        "originalEntityName": "billablecontrol.BillableControlText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "BDC.v1.BillableControlText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "BillableControl"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "BillableControlName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BDC.v1.BillableControlText_Delta": {
+      "__abapOriginalName": "I_BillableControlText",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Billable Control - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "BillableControl",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BillableControl": {
+          "__abapOriginalName": "BillableControl",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BCon",
+          "@EndUserText.label": "Billable Control",
+          "@EndUserText.quickInfo": "Billable Control",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "BillableControlName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "BillableControlName": {
+          "__abapOriginalName": "BillableControlName",
+          "@EndUserText.heading": "Billable Control Name",
+          "@EndUserText.label": "BillableControl Name",
+          "@EndUserText.quickInfo": "Billable Control Name",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 25
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "BDC.v1.BillableControlText",
+      "import_meta": {
+        "qualifiedName": "BDC.v1.BillableControlText",
+        "originalEntityName": "billablecontrol.BillableControlText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "BDC.v1.BillableControl_Delta": {
+      "__abapOriginalName": "I_BillableControl",
+      "@AccessControl.authorizationCheck": {
+        "#": "NOT_REQUIRED"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Billable Control",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "BillableControl",
+      "@ObjectModel.sapObjectNodeType.name": "BillableControl",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "S"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "BillableControl": {
+          "__abapOriginalName": "BillableControl",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "BCon",
+          "@EndUserText.label": "Billable Control",
+          "@EndUserText.quickInfo": "Billable Control",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "BDC.v1.BillableControlText",
+          "on": [
+            {
+              "ref": [
+                "BillableControl"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "BillableControl"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "BDC.v1.BillableControl",
+      "import_meta": {
+        "qualifiedName": "BDC.v1.BillableControl",
+        "originalEntityName": "billablecontrol.BillableControl"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "BDC.v1.BillableControl",
+    "all_entities": [
+      "BDC.v1.BillableControl",
+      "BDC.v1.BillableControl",
+      "BDC.v1",
+      "BDC.v1.BillableControlText",
+      "BDC.v1.BillableControlText_Delta",
+      "BDC.v1.BillableControl_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "BDC.v1.BillableControl",
+        "to": "BDC.v1.BillableControlText"
+      },
+      {
+        "from": "BDC.v1.BillableControl",
+        "to": "BDC.v1.BillableControlText"
+      },
+      {
+        "from": "BDC.v1.BillableControl",
+        "to": "BDC.v1.BillableControlText"
+      }
+    ],
+    "invalid_references": []
+  }
+}

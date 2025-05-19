@@ -1,0 +1,4732 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "ProfitCenter.v1.ProfitCenter": {
+      "__abapOriginalName": "I_ProfitCenter",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ProfitCenterHierarchyNode"
+        },
+        {
+          "=": "_ControllingAreaText"
+        },
+        {
+          "=": "_SegmentText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Profit Center",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenter",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenter",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Ctr",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.hierarchy.association": "_ProfitCenterHierarchyNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ProfitCtrResponsiblePersonName": {
+          "__abapOriginalName": "ProfitCtrResponsiblePersonName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Person Responsible for Profit Center",
+          "@EndUserText.label": "Person Resp. for PC",
+          "@EndUserText.quickInfo": "Person Responsible for Profit Center",
+          "type": "cds.String",
+          "length": 20
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CoCd",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCtrResponsibleUser": {
+          "__abapOriginalName": "ProfitCtrResponsibleUser",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "User Resp.",
+          "@EndUserText.label": "User Responsible",
+          "@EndUserText.quickInfo": "User Responsible for the Profit Center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "Department": {
+          "__abapOriginalName": "Department",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Department",
+          "@EndUserText.label": "Department",
+          "@EndUserText.quickInfo": "Department",
+          "type": "cds.String",
+          "length": 12
+        },
+        "ProfitCenterStandardHierarchy": {
+          "__abapOriginalName": "ProfitCenterStandardHierarchy",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Area",
+          "@EndUserText.label": "Hierarchy Area",
+          "@EndUserText.quickInfo": "Profit center area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Segment"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_SegmentText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ProfitCenterIsBlocked": {
+          "__abapOriginalName": "ProfitCenterIsBlocked",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Lock indic",
+          "@EndUserText.label": "Lock indicator",
+          "@EndUserText.quickInfo": "Lock indicator",
+          "type": "cds.Boolean"
+        },
+        "FormulaPlanningTemplate": {
+          "__abapOriginalName": "FormulaPlanningTemplate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Template",
+          "@EndUserText.label": "Form. Planning Temp.",
+          "@EndUserText.quickInfo": "Template for Formula Planning in Profit Centers",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "FormOfAddress": {
+          "__abapOriginalName": "FormOfAddress",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Title",
+          "@EndUserText.label": "Title",
+          "@EndUserText.quickInfo": "Title",
+          "type": "cds.String",
+          "length": 15
+        },
+        "AddressName": {
+          "__abapOriginalName": "AddressName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name",
+          "@EndUserText.label": "Name",
+          "@EndUserText.quickInfo": "Name",
+          "type": "cds.String",
+          "length": 35
+        },
+        "AdditionalName": {
+          "__abapOriginalName": "AdditionalName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name 2",
+          "@EndUserText.label": "Name 2",
+          "@EndUserText.quickInfo": "Name 2",
+          "type": "cds.String",
+          "length": 35
+        },
+        "ProfitCenterAddrName3": {
+          "__abapOriginalName": "ProfitCenterAddrName3",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name 3",
+          "@EndUserText.label": "Name 3",
+          "@EndUserText.quickInfo": "Name 3",
+          "type": "cds.String",
+          "length": 35
+        },
+        "ProfitCenterAddrName4": {
+          "__abapOriginalName": "ProfitCenterAddrName4",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name 4",
+          "@EndUserText.label": "Name 4",
+          "@EndUserText.quickInfo": "Name 4",
+          "type": "cds.String",
+          "length": 35
+        },
+        "StreetAddressName": {
+          "__abapOriginalName": "StreetAddressName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Street",
+          "@EndUserText.label": "Street",
+          "@EndUserText.quickInfo": "Street and House Number",
+          "type": "cds.String",
+          "length": 35
+        },
+        "POBox": {
+          "__abapOriginalName": "POBox",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PO Box",
+          "@EndUserText.label": "PO Box",
+          "@EndUserText.quickInfo": "PO Box",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "CityName": {
+          "__abapOriginalName": "CityName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "City",
+          "@EndUserText.label": "City",
+          "@EndUserText.quickInfo": "City",
+          "type": "cds.String",
+          "length": 35
+        },
+        "PostalCode": {
+          "__abapOriginalName": "PostalCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PostalCode",
+          "@EndUserText.label": "Postal Code",
+          "@EndUserText.quickInfo": "Postal Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "POBoxPostalCode": {
+          "__abapOriginalName": "POBoxPostalCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PO Box pcd",
+          "@EndUserText.label": "P.O. Box Postal Code",
+          "@EndUserText.quickInfo": "P.O. Box Postal Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "District": {
+          "__abapOriginalName": "District",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "District",
+          "@EndUserText.label": "District",
+          "@EndUserText.quickInfo": "District",
+          "type": "cds.String",
+          "length": 35
+        },
+        "Country": {
+          "__abapOriginalName": "Country",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "C/R",
+          "@EndUserText.label": "Country/Region Key",
+          "@EndUserText.quickInfo": "Country/Region Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Country"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "Region": {
+          "__abapOriginalName": "Region",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rg",
+          "@EndUserText.label": "Region",
+          "@EndUserText.quickInfo": "Region (State, Province, County)",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Region"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "TaxJurisdiction": {
+          "__abapOriginalName": "TaxJurisdiction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Jur.",
+          "@EndUserText.label": "Tax Jurisdiction",
+          "@EndUserText.quickInfo": "Tax Jurisdiction",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 15
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "PhoneNumber1": {
+          "__abapOriginalName": "PhoneNumber1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone 1",
+          "@EndUserText.label": "Telephone 1",
+          "@EndUserText.quickInfo": "First telephone number",
+          "type": "cds.String",
+          "length": 16
+        },
+        "PhoneNumber2": {
+          "__abapOriginalName": "PhoneNumber2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone 2",
+          "@EndUserText.label": "Telephone 2",
+          "@EndUserText.quickInfo": "Second telephone number",
+          "type": "cds.String",
+          "length": 16
+        },
+        "TeleboxNumber": {
+          "__abapOriginalName": "TeleboxNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telebox",
+          "@EndUserText.label": "Telebox Number",
+          "@EndUserText.quickInfo": "Telebox Number",
+          "type": "cds.String",
+          "length": 15
+        },
+        "TelexNumber": {
+          "__abapOriginalName": "TelexNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telex Number",
+          "@EndUserText.label": "Telex Number",
+          "@EndUserText.quickInfo": "Telex Number",
+          "type": "cds.String",
+          "length": 30
+        },
+        "FaxNumber": {
+          "__abapOriginalName": "FaxNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fax Number",
+          "@EndUserText.label": "Fax Number",
+          "@EndUserText.quickInfo": "Fax Number",
+          "type": "cds.String",
+          "length": 31
+        },
+        "TeletexNumber": {
+          "__abapOriginalName": "TeletexNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Teletex Number",
+          "@EndUserText.label": "Teletex Number",
+          "@EndUserText.quickInfo": "Teletex Number",
+          "type": "cds.String",
+          "length": 30
+        },
+        "DataCommunicationPhoneNumber": {
+          "__abapOriginalName": "DataCommunicationPhoneNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Data line",
+          "@EndUserText.label": "Data line",
+          "@EndUserText.quickInfo": "Data communication line no.",
+          "type": "cds.String",
+          "length": 14
+        },
+        "ProfitCenterPrinterName": {
+          "__abapOriginalName": "ProfitCenterPrinterName",
+          "@EndUserText.heading": "Printer name",
+          "@EndUserText.label": "Printer name",
+          "@EndUserText.quickInfo": "Printer name for profit center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenterCreatedByUser": {
+          "__abapOriginalName": "ProfitCenterCreatedByUser",
+          "@EndUserText.heading": "Created By",
+          "@EndUserText.label": "Created By",
+          "@EndUserText.quickInfo": "Entered By",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ProfitCenterCreationDate": {
+          "__abapOriginalName": "ProfitCenterCreationDate",
+          "@EndUserText.heading": "Ent. On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "Entered On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "LogicalSystem": {
+          "__abapOriginalName": "LogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Log.System",
+          "@EndUserText.label": "Logical System",
+          "@EndUserText.quickInfo": "Logical System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "_PrftCtrCompanyCodeAssignment": {
+          "__abapOriginalName": "_PrftCtrCompanyCodeAssignment",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PrftCtrCompanyCodeAssignment",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PrftCtrCompanyCodeAssignment",
+                "ProfitCenter"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_PrftCtrCompanyCodeAssignment"
+        },
+        "_ProfitCenterHierarchyNode": {
+          "__abapOriginalName": "_ProfitCenterHierarchyNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenterHierarchyNode",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenterHierarchyNode",
+                "ProfitCenter"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ProfitCenterHierarchyNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterText",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ProfitCenter"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ProfitCenter.v1.ProfitCenter_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenter",
+        "originalEntityName": "profitcenter.ProfitCenter"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ProfitCenter.v1.ProfitCenter_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCtrResponsiblePersonName"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCtrResponsibleUser"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "Department"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterStandardHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "Segment"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterIsBlocked"
+              ]
+            },
+            {
+              "ref": [
+                "FormulaPlanningTemplate"
+              ]
+            },
+            {
+              "ref": [
+                "FormOfAddress"
+              ]
+            },
+            {
+              "ref": [
+                "AddressName"
+              ]
+            },
+            {
+              "ref": [
+                "AdditionalName"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterAddrName3"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterAddrName4"
+              ]
+            },
+            {
+              "ref": [
+                "StreetAddressName"
+              ]
+            },
+            {
+              "ref": [
+                "POBox"
+              ]
+            },
+            {
+              "ref": [
+                "CityName"
+              ]
+            },
+            {
+              "ref": [
+                "PostalCode"
+              ]
+            },
+            {
+              "ref": [
+                "POBoxPostalCode"
+              ]
+            },
+            {
+              "ref": [
+                "District"
+              ]
+            },
+            {
+              "ref": [
+                "Country"
+              ]
+            },
+            {
+              "ref": [
+                "Region"
+              ]
+            },
+            {
+              "ref": [
+                "TaxJurisdiction"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "PhoneNumber1"
+              ]
+            },
+            {
+              "ref": [
+                "PhoneNumber2"
+              ]
+            },
+            {
+              "ref": [
+                "TeleboxNumber"
+              ]
+            },
+            {
+              "ref": [
+                "TelexNumber"
+              ]
+            },
+            {
+              "ref": [
+                "FaxNumber"
+              ]
+            },
+            {
+              "ref": [
+                "TeletexNumber"
+              ]
+            },
+            {
+              "ref": [
+                "DataCommunicationPhoneNumber"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterPrinterName"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterCreatedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterCreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "LogicalSystem"
+              ]
+            },
+            {
+              "ref": [
+                "_PrftCtrCompanyCodeAssignment"
+              ]
+            },
+            {
+              "ref": [
+                "_ProfitCenterHierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_PrftCtrCompanyCodeAssignment": {
+              "__abapOriginalName": "_PrftCtrCompanyCodeAssignment",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_PrftCtrCompanyCodeAssignment",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ProfitCenter"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_PrftCtrCompanyCodeAssignment",
+                    "ProfitCenter"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_PrftCtrCompanyCodeAssignment"
+            },
+            "_ProfitCenterHierarchyNode": {
+              "__abapOriginalName": "_ProfitCenterHierarchyNode",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "ProfitCenter.v1.ProfitCenterHierarchyNode",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ProfitCenterHierarchyNode",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ProfitCenter"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ProfitCenterHierarchyNode",
+                    "ProfitCenter"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ProfitCenterHierarchyNode"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "ProfitCenter.v1.ProfitCenterText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ProfitCenter"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ProfitCenter"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchy",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchy"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.PrftCtrCompanyCodeAssignment": {
+      "__abapOriginalName": "I_PrftCtrCompanyCodeAssignment",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": false,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company code assignment to profit center",
+      "@ObjectModel.modelingPattern": {
+        "#": "NONE"
+      },
+      "@ObjectModel.sapObjectNodeType.name": "PrftCtrCompanyCodeAssignment",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "COMPOSITE"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Ctr",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@EndUserText.label": "CompanyCode"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ProfitCenter.v1.PrftCtrCompanyCodeAssignment_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+        "originalEntityName": "profitcenter.PrftCtrCompanyCodeAssignment"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ProfitCenter.v1.PrftCtrCompanyCodeAssignment_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.PrftCtrCompanyCodeAssignment_Delta": {
+      "__abapOriginalName": "I_PrftCtrCompanyCodeAssignment",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": false,
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Company code assignment to profit center",
+      "@ObjectModel.modelingPattern": {
+        "#": "NONE"
+      },
+      "@ObjectModel.sapObjectNodeType.name": "PrftCtrCompanyCodeAssignment",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "COMPOSITE"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Ctr",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@EndUserText.label": "CompanyCode"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+        "originalEntityName": "profitcenter.PrftCtrCompanyCodeAssignment"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchyNode": {
+      "__abapOriginalName": "I_ProfitCenterHierarchyNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Center",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ProfitCenter"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchy",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_ProfitCenter": {
+          "__abapOriginalName": "_ProfitCenter",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenter",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenter",
+                "ProfitCenter"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenter",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ProfitCenter"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ProfitCenter.v1.ProfitCenterHierarchyNode_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchyNode",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchyNode"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ProfitCenter.v1.ProfitCenterHierarchyNode_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ParentNode"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyVersion"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            {
+              "ref": [
+                "SequenceNumber"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeSequence"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeLevel"
+              ]
+            },
+            {
+              "ref": [
+                "NodeType"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeVal"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "_ProfitCenter"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": 1
+              },
+              "target": "ProfitCenter.v1.ProfitCenterHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ProfitCenterHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ProfitCenterHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            },
+            "_ProfitCenter": {
+              "__abapOriginalName": "_ProfitCenter",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "ProfitCenter.v1.ProfitCenter",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ProfitCenter"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ProfitCenter",
+                    "ProfitCenter"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_ProfitCenter",
+                    "ControllingArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_ProfitCenter"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterText": {
+      "__abapOriginalName": "I_ProfitCenterText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Profit Center - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenter",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Ctr",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.text.element": [
+            {
+              "=": "ProfitCenterLongName"
+            },
+            {
+              "=": "ProfitCenterName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ProfitCenterName": {
+          "__abapOriginalName": "ProfitCenterName",
+          "@EndUserText.heading": "Profit Center Name",
+          "@EndUserText.label": "Profit Center Name",
+          "@EndUserText.quickInfo": "Description of Profit Center",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "ProfitCenterLongName": {
+          "__abapOriginalName": "ProfitCenterLongName",
+          "@EndUserText.heading": "Profit Center Description",
+          "@EndUserText.label": "Profit Center Description",
+          "@EndUserText.quickInfo": "Description of Profit Center",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 40
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ProfitCenter.v1.ProfitCenterText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterText",
+        "originalEntityName": "profitcenter.ProfitCenterText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ProfitCenter.v1.ProfitCenterText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterName"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterLongName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenter_Delta": {
+      "__abapOriginalName": "I_ProfitCenter",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ProfitCenterHierarchyNode"
+        },
+        {
+          "=": "_ControllingAreaText"
+        },
+        {
+          "=": "_SegmentText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Profit Center",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenter",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenter",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Ctr",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.hierarchy.association": "_ProfitCenterHierarchyNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ProfitCtrResponsiblePersonName": {
+          "__abapOriginalName": "ProfitCtrResponsiblePersonName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Person Responsible for Profit Center",
+          "@EndUserText.label": "Person Resp. for PC",
+          "@EndUserText.quickInfo": "Person Responsible for Profit Center",
+          "type": "cds.String",
+          "length": 20
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CoCd",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCtrResponsibleUser": {
+          "__abapOriginalName": "ProfitCtrResponsibleUser",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "User Resp.",
+          "@EndUserText.label": "User Responsible",
+          "@EndUserText.quickInfo": "User Responsible for the Profit Center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "Department": {
+          "__abapOriginalName": "Department",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Department",
+          "@EndUserText.label": "Department",
+          "@EndUserText.quickInfo": "Department",
+          "type": "cds.String",
+          "length": 12
+        },
+        "ProfitCenterStandardHierarchy": {
+          "__abapOriginalName": "ProfitCenterStandardHierarchy",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Area",
+          "@EndUserText.label": "Hierarchy Area",
+          "@EndUserText.quickInfo": "Profit center area",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "Segment": {
+          "__abapOriginalName": "Segment",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Segment",
+          "@EndUserText.label": "Segment",
+          "@EndUserText.quickInfo": "Segment for Segmental Reporting",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Segment"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_SegmentText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ProfitCenterIsBlocked": {
+          "__abapOriginalName": "ProfitCenterIsBlocked",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Lock indic",
+          "@EndUserText.label": "Lock indicator",
+          "@EndUserText.quickInfo": "Lock indicator",
+          "type": "cds.Boolean"
+        },
+        "FormulaPlanningTemplate": {
+          "__abapOriginalName": "FormulaPlanningTemplate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Template",
+          "@EndUserText.label": "Form. Planning Temp.",
+          "@EndUserText.quickInfo": "Template for Formula Planning in Profit Centers",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "FormOfAddress": {
+          "__abapOriginalName": "FormOfAddress",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Title",
+          "@EndUserText.label": "Title",
+          "@EndUserText.quickInfo": "Title",
+          "type": "cds.String",
+          "length": 15
+        },
+        "AddressName": {
+          "__abapOriginalName": "AddressName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name",
+          "@EndUserText.label": "Name",
+          "@EndUserText.quickInfo": "Name",
+          "type": "cds.String",
+          "length": 35
+        },
+        "AdditionalName": {
+          "__abapOriginalName": "AdditionalName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name 2",
+          "@EndUserText.label": "Name 2",
+          "@EndUserText.quickInfo": "Name 2",
+          "type": "cds.String",
+          "length": 35
+        },
+        "ProfitCenterAddrName3": {
+          "__abapOriginalName": "ProfitCenterAddrName3",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name 3",
+          "@EndUserText.label": "Name 3",
+          "@EndUserText.quickInfo": "Name 3",
+          "type": "cds.String",
+          "length": 35
+        },
+        "ProfitCenterAddrName4": {
+          "__abapOriginalName": "ProfitCenterAddrName4",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Name 4",
+          "@EndUserText.label": "Name 4",
+          "@EndUserText.quickInfo": "Name 4",
+          "type": "cds.String",
+          "length": 35
+        },
+        "StreetAddressName": {
+          "__abapOriginalName": "StreetAddressName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Street",
+          "@EndUserText.label": "Street",
+          "@EndUserText.quickInfo": "Street and House Number",
+          "type": "cds.String",
+          "length": 35
+        },
+        "POBox": {
+          "__abapOriginalName": "POBox",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PO Box",
+          "@EndUserText.label": "PO Box",
+          "@EndUserText.quickInfo": "PO Box",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "CityName": {
+          "__abapOriginalName": "CityName",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "City",
+          "@EndUserText.label": "City",
+          "@EndUserText.quickInfo": "City",
+          "type": "cds.String",
+          "length": 35
+        },
+        "PostalCode": {
+          "__abapOriginalName": "PostalCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PostalCode",
+          "@EndUserText.label": "Postal Code",
+          "@EndUserText.quickInfo": "Postal Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "POBoxPostalCode": {
+          "__abapOriginalName": "POBoxPostalCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PO Box pcd",
+          "@EndUserText.label": "P.O. Box Postal Code",
+          "@EndUserText.quickInfo": "P.O. Box Postal Code",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "District": {
+          "__abapOriginalName": "District",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "District",
+          "@EndUserText.label": "District",
+          "@EndUserText.quickInfo": "District",
+          "type": "cds.String",
+          "length": 35
+        },
+        "Country": {
+          "__abapOriginalName": "Country",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "C/R",
+          "@EndUserText.label": "Country/Region Key",
+          "@EndUserText.quickInfo": "Country/Region Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Country"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "Region": {
+          "__abapOriginalName": "Region",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Rg",
+          "@EndUserText.label": "Region",
+          "@EndUserText.quickInfo": "Region (State, Province, County)",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Region"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "TaxJurisdiction": {
+          "__abapOriginalName": "TaxJurisdiction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Jur.",
+          "@EndUserText.label": "Tax Jurisdiction",
+          "@EndUserText.quickInfo": "Tax Jurisdiction",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 15
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "PhoneNumber1": {
+          "__abapOriginalName": "PhoneNumber1",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone 1",
+          "@EndUserText.label": "Telephone 1",
+          "@EndUserText.quickInfo": "First telephone number",
+          "type": "cds.String",
+          "length": 16
+        },
+        "PhoneNumber2": {
+          "__abapOriginalName": "PhoneNumber2",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone 2",
+          "@EndUserText.label": "Telephone 2",
+          "@EndUserText.quickInfo": "Second telephone number",
+          "type": "cds.String",
+          "length": 16
+        },
+        "TeleboxNumber": {
+          "__abapOriginalName": "TeleboxNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telebox",
+          "@EndUserText.label": "Telebox Number",
+          "@EndUserText.quickInfo": "Telebox Number",
+          "type": "cds.String",
+          "length": 15
+        },
+        "TelexNumber": {
+          "__abapOriginalName": "TelexNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telex Number",
+          "@EndUserText.label": "Telex Number",
+          "@EndUserText.quickInfo": "Telex Number",
+          "type": "cds.String",
+          "length": 30
+        },
+        "FaxNumber": {
+          "__abapOriginalName": "FaxNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fax Number",
+          "@EndUserText.label": "Fax Number",
+          "@EndUserText.quickInfo": "Fax Number",
+          "type": "cds.String",
+          "length": 31
+        },
+        "TeletexNumber": {
+          "__abapOriginalName": "TeletexNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Teletex Number",
+          "@EndUserText.label": "Teletex Number",
+          "@EndUserText.quickInfo": "Teletex Number",
+          "type": "cds.String",
+          "length": 30
+        },
+        "DataCommunicationPhoneNumber": {
+          "__abapOriginalName": "DataCommunicationPhoneNumber",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Data line",
+          "@EndUserText.label": "Data line",
+          "@EndUserText.quickInfo": "Data communication line no.",
+          "type": "cds.String",
+          "length": 14
+        },
+        "ProfitCenterPrinterName": {
+          "__abapOriginalName": "ProfitCenterPrinterName",
+          "@EndUserText.heading": "Printer name",
+          "@EndUserText.label": "Printer name",
+          "@EndUserText.quickInfo": "Printer name for profit center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenterCreatedByUser": {
+          "__abapOriginalName": "ProfitCenterCreatedByUser",
+          "@EndUserText.heading": "Created By",
+          "@EndUserText.label": "Created By",
+          "@EndUserText.quickInfo": "Entered By",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "ProfitCenterCreationDate": {
+          "__abapOriginalName": "ProfitCenterCreationDate",
+          "@EndUserText.heading": "Ent. On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "Entered On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "LogicalSystem": {
+          "__abapOriginalName": "LogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Log.System",
+          "@EndUserText.label": "Logical System",
+          "@EndUserText.quickInfo": "Logical System",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "_PrftCtrCompanyCodeAssignment": {
+          "__abapOriginalName": "_PrftCtrCompanyCodeAssignment",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PrftCtrCompanyCodeAssignment",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_PrftCtrCompanyCodeAssignment",
+                "ProfitCenter"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_PrftCtrCompanyCodeAssignment"
+        },
+        "_ProfitCenterHierarchyNode": {
+          "__abapOriginalName": "_ProfitCenterHierarchyNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchyNode",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenterHierarchyNode",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenterHierarchyNode",
+                "ProfitCenter"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ProfitCenterHierarchyNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterText",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ProfitCenter"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ProfitCenter.v1.ProfitCenter",
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenter",
+        "originalEntityName": "profitcenter.ProfitCenter"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterText_Delta": {
+      "__abapOriginalName": "I_ProfitCenterText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Profit Center - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenter",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "COAr",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Ctr",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.text.element": [
+            {
+              "=": "ProfitCenterLongName"
+            },
+            {
+              "=": "ProfitCenterName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ProfitCenterName": {
+          "__abapOriginalName": "ProfitCenterName",
+          "@EndUserText.heading": "Profit Center Name",
+          "@EndUserText.label": "Profit Center Name",
+          "@EndUserText.quickInfo": "Description of Profit Center",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "ProfitCenterLongName": {
+          "__abapOriginalName": "ProfitCenterLongName",
+          "@EndUserText.heading": "Profit Center Description",
+          "@EndUserText.label": "Profit Center Description",
+          "@EndUserText.quickInfo": "Description of Profit Center",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ProfitCenter.v1.ProfitCenterText",
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterText",
+        "originalEntityName": "profitcenter.ProfitCenterText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchy": {
+      "__abapOriginalName": "I_ProfitCenterHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenterHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@Hierarchy.notAssignedNode.filter": true,
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "@ObjectModel.association.boundFields.dataMatchesSourceAndTargetTypes": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ProfitCenter.v1.ProfitCenterHierarchy_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchy",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchy"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ProfitCenter.v1.ProfitCenterHierarchy_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeTime"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyShortID"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "@ObjectModel.association.boundFields.dataMatchesSourceAndTargetTypes": true,
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "ProfitCenter.v1.ProfitCenterHierarchyText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ProfitCenterHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ProfitCenterHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ControllingArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchyNodeText": {
+      "__abapOriginalName": "I_ProfitCenterHierarchyNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyNodeShortText": {
+          "__abapOriginalName": "HierarchyNodeShortText",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20,
+          "@EndUserText.label": "HierarchyNodeShortText"
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchy",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ProfitCenter.v1.ProfitCenterHierarchyNodeText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchyNodeText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ProfitCenter.v1.ProfitCenterHierarchyNodeText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeText"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeShortText"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "ProfitCenter.v1.ProfitCenterHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ProfitCenterHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ProfitCenterHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ControllingArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchyNodeText_Delta": {
+      "__abapOriginalName": "I_ProfitCenterHierarchyNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchyNodeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyNodeShortText": {
+          "__abapOriginalName": "HierarchyNodeShortText",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20,
+          "@EndUserText.label": "HierarchyNodeShortText"
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchy",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchyNodeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchyNode_Delta": {
+      "__abapOriginalName": "I_ProfitCenterHierarchyNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchyNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Center",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ProfitCenter"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchy",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_ProfitCenter": {
+          "__abapOriginalName": "_ProfitCenter",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenter",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenter",
+                "ProfitCenter"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_ProfitCenter",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_ProfitCenter"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ProfitCenter.v1.ProfitCenterHierarchyNode",
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchyNode",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchyNode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchyText": {
+      "__abapOriginalName": "I_ProfitCenterHierarchyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenterHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@EndUserText.heading": "Hierarchy Class",
+          "@EndUserText.label": "Hierarchy Class",
+          "@EndUserText.quickInfo": "Hierarchy Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 12,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "ProfitCenterHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ProfitCenterHierarchyName": {
+          "__abapOriginalName": "ProfitCenterHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "ProfitCenter.v1.ProfitCenterHierarchyText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchyText",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchyText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "ProfitCenter.v1.ProfitCenterHierarchyText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenterHierarchyName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchy_Delta": {
+      "__abapOriginalName": "I_ProfitCenterHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenterHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "B"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@Hierarchy.notAssignedNode.filter": true,
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "@ObjectModel.association.boundFields.dataMatchesSourceAndTargetTypes": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "ProfitCenter.v1.ProfitCenterHierarchyText",
+          "on": [
+            {
+              "ref": [
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ProfitCenterHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ProfitCenter.v1.ProfitCenterHierarchy",
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchy",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchy"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "ProfitCenter.v1.ProfitCenterHierarchyText_Delta": {
+      "__abapOriginalName": "I_ProfitCenterHierarchyText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Profit Center Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "ProfitCenterHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "ProfitCenterHierarchyText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@EndUserText.heading": "Hierarchy Class",
+          "@EndUserText.label": "Hierarchy Class",
+          "@EndUserText.quickInfo": "Hierarchy Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 12,
+          "notNull": true
+        },
+        "ProfitCenterHierarchy": {
+          "__abapOriginalName": "ProfitCenterHierarchy",
+          "@EndUserText.heading": "Profit Center Hierarchy",
+          "@EndUserText.label": "Profit Center Hierarchy",
+          "@EndUserText.quickInfo": "Profit Center Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "ProfitCenterHierarchyName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "ProfitCenterHierarchyName": {
+          "__abapOriginalName": "ProfitCenterHierarchyName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "ProfitCenter.v1.ProfitCenterHierarchyText",
+      "import_meta": {
+        "qualifiedName": "ProfitCenter.v1.ProfitCenterHierarchyText",
+        "originalEntityName": "profitcenter.ProfitCenterHierarchyText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "ProfitCenter.v1.ProfitCenter",
+    "all_entities": [
+      "ProfitCenter.v1.ProfitCenter",
+      "ProfitCenter.v1.ProfitCenter",
+      "ProfitCenter.v1",
+      "ProfitCenter.v1.PrftCtrCompanyCodeAssignment",
+      "ProfitCenter.v1.PrftCtrCompanyCodeAssignment_Delta",
+      "ProfitCenter.v1.ProfitCenterHierarchyNode",
+      "ProfitCenter.v1.ProfitCenterText",
+      "ProfitCenter.v1.ProfitCenter_Delta",
+      "ProfitCenter.v1.ProfitCenterText_Delta",
+      "ProfitCenter.v1.ProfitCenterHierarchy",
+      "ProfitCenter.v1.ProfitCenterHierarchyNodeText",
+      "ProfitCenter.v1.ProfitCenterHierarchyNodeText_Delta",
+      "ProfitCenter.v1.ProfitCenterHierarchyNode_Delta",
+      "ProfitCenter.v1.ProfitCenterHierarchyText",
+      "ProfitCenter.v1.ProfitCenterHierarchy_Delta",
+      "ProfitCenter.v1.ProfitCenterHierarchyText_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterText"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterText"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenter"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenter"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.PrftCtrCompanyCodeAssignment"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchyNode"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterText"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchy"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenter"
+      },
+      {
+        "from": "ProfitCenter.v1.ProfitCenter",
+        "to": "ProfitCenter.v1.ProfitCenterHierarchyText"
+      }
+    ],
+    "invalid_references": []
+  }
+}

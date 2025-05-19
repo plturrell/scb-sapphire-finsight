@@ -1,0 +1,339 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "VietnamCompany.v1.VietnamCompany": {
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.ranked": true,
+      "@EndUserText.label": "Vietnam Company",
+      "@ObjectModel.dataCategory": {
+        "#": "VALUE_HELP"
+      },
+      "@ObjectModel.representativeKey": "VietnamCompanyCode",
+      "@ObjectModel.sapObjectNodeType.name": "VietnamCompany",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "SEARCHABLE_ENTITY"
+        },
+        {
+          "#": "VALUE_HELP_PROVIDER"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "VietnamCompanyCode": {
+          "@EndUserText.label": "Vietnam Company Code",
+          "@ObjectModel.text.element": [
+            "CompanyName"
+          ],
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": 0.8,
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "CompanyName": {
+          "@EndUserText.label": "Company Name",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": 0.8,
+          "@Search.ranking": {
+            "#": "HIGH"
+          },
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "CompanyNameLocal": {
+          "@EndUserText.label": "Company Name (Vietnamese)",
+          "@Search.defaultSearchElement": true,
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "TaxCode": {
+          "@EndUserText.label": "Tax Code",
+          "@Search.defaultSearchElement": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "BusinessRegistrationNumber": {
+          "@EndUserText.label": "Business Registration Number",
+          "type": "cds.String",
+          "length": 20
+        },
+        "IndustryCode": {
+          "@EndUserText.label": "Industry Code",
+          "@ObjectModel.foreignKey.association": {
+            "$Target": "_Industry"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "CompanyType": {
+          "@EndUserText.label": "Company Type",
+          "@ObjectModel.text.element": [
+            "CompanyTypeText"
+          ],
+          "type": "cds.String",
+          "length": 10
+        },
+        "CompanyTypeText": {
+          "@EndUserText.label": "Company Type Description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Province": {
+          "@EndUserText.label": "Province",
+          "@ObjectModel.foreignKey.association": {
+            "$Target": "_Province"
+          },
+          "type": "cds.String",
+          "length": 30
+        },
+        "District": {
+          "@EndUserText.label": "District",
+          "type": "cds.String",
+          "length": 50
+        },
+        "Address": {
+          "@EndUserText.label": "Address",
+          "type": "cds.String",
+          "length": 255
+        },
+        "PhoneNumber": {
+          "@EndUserText.label": "Phone Number",
+          "type": "cds.String",
+          "length": 20
+        },
+        "Email": {
+          "@EndUserText.label": "Email",
+          "@Semantics.eMail": {
+            "type": { "#": "WORK" }
+          },
+          "type": "cds.String",
+          "length": 100
+        },
+        "Website": {
+          "@EndUserText.label": "Website",
+          "@Semantics.url": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "EstablishedDate": {
+          "@EndUserText.label": "Established Date",
+          "type": "cds.Date"
+        },
+        "RegisteredCapital": {
+          "@EndUserText.label": "Registered Capital",
+          "@Semantics.amount.currencyCode": "RegisteredCapitalCurrency",
+          "type": "cds.Decimal",
+          "precision": 20,
+          "scale": 2
+        },
+        "RegisteredCapitalCurrency": {
+          "@EndUserText.label": "Registered Capital Currency",
+          "@ObjectModel.foreignKey.association": {
+            "$Target": "_Currency"
+          },
+          "type": "cds.String",
+          "length": 3
+        },
+        "EmployeeCount": {
+          "@EndUserText.label": "Employee Count",
+          "type": "cds.Integer"
+        },
+        "AnnualRevenue": {
+          "@EndUserText.label": "Annual Revenue",
+          "@Semantics.amount.currencyCode": "AnnualRevenueCurrency",
+          "type": "cds.Decimal",
+          "precision": 20,
+          "scale": 2
+        },
+        "AnnualRevenueCurrency": {
+          "@EndUserText.label": "Annual Revenue Currency",
+          "@ObjectModel.foreignKey.association": {
+            "$Target": "_Currency"
+          },
+          "type": "cds.String",
+          "length": 3
+        },
+        "ExportValue": {
+          "@EndUserText.label": "Export Value",
+          "@Semantics.amount.currencyCode": "ExportValueCurrency",
+          "type": "cds.Decimal",
+          "precision": 20,
+          "scale": 2
+        },
+        "ExportValueCurrency": {
+          "@EndUserText.label": "Export Value Currency",
+          "@ObjectModel.foreignKey.association": {
+            "$Target": "_Currency"
+          },
+          "type": "cds.String",
+          "length": 3
+        },
+        "ImportValue": {
+          "@EndUserText.label": "Import Value",
+          "@Semantics.amount.currencyCode": "ImportValueCurrency",
+          "type": "cds.Decimal",
+          "precision": 20,
+          "scale": 2
+        },
+        "ImportValueCurrency": {
+          "@EndUserText.label": "Import Value Currency",
+          "@ObjectModel.foreignKey.association": {
+            "$Target": "_Currency"
+          },
+          "type": "cds.String",
+          "length": 3
+        },
+        "MainExportProducts": {
+          "@EndUserText.label": "Main Export Products",
+          "type": "cds.String",
+          "length": 500
+        },
+        "MainImportProducts": {
+          "@EndUserText.label": "Main Import Products",
+          "type": "cds.String",
+          "length": 500
+        },
+        "TradingPartners": {
+          "@EndUserText.label": "Trading Partners",
+          "type": "cds.String",
+          "length": 500
+        },
+        "CreditRating": {
+          "@EndUserText.label": "Credit Rating",
+          "type": "cds.String",
+          "length": 10
+        },
+        "ListingStatus": {
+          "@EndUserText.label": "Listing Status",
+          "type": "cds.String",
+          "length": 20
+        },
+        "StockSymbol": {
+          "@EndUserText.label": "Stock Symbol",
+          "type": "cds.String",
+          "length": 10
+        },
+        "ParentCompany": {
+          "@EndUserText.label": "Parent Company",
+          "@ObjectModel.foreignKey.association": {
+            "$Target": "_ParentCompany"
+          },
+          "type": "cds.String",
+          "length": 12
+        },
+        "Status": {
+          "@EndUserText.label": "Status",
+          "type": "cds.String",
+          "length": 20
+        },
+        "LastUpdated": {
+          "@EndUserText.label": "Last Updated",
+          "type": "cds.Timestamp"
+        },
+        "DataSource": {
+          "@EndUserText.label": "Data Source",
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "associations": {
+        "_Province": {
+          "type": "Association",
+          "target": "VietnamProvince.v1.VietnamProvince",
+          "cardinality": {
+            "src": "*",
+            "tgt": "0..1"
+          },
+          "on": [
+            {
+              "$Kind": "Property",
+              "ref": ["_Province", "ProvinceCode"]
+            },
+            "=",
+            {
+              "$Kind": "Property",
+              "ref": ["Province"]
+            }
+          ]
+        },
+        "_Industry": {
+          "type": "Association",
+          "target": "VietnamIndustry.v1.VietnamIndustry",
+          "cardinality": {
+            "src": "*",
+            "tgt": "0..1"
+          },
+          "on": [
+            {
+              "$Kind": "Property",
+              "ref": ["_Industry", "IndustryCode"]
+            },
+            "=",
+            {
+              "$Kind": "Property",
+              "ref": ["IndustryCode"]
+            }
+          ]
+        },
+        "_Currency": {
+          "type": "Association",
+          "target": "Currency.v1.Currency",
+          "cardinality": {
+            "src": "*",
+            "tgt": "0..1"
+          }
+        },
+        "_ParentCompany": {
+          "type": "Association",
+          "target": "VietnamCompany.v1.VietnamCompany",
+          "cardinality": {
+            "src": "*",
+            "tgt": "0..1"
+          },
+          "on": [
+            {
+              "$Kind": "Property",
+              "ref": ["_ParentCompany", "VietnamCompanyCode"]
+            },
+            "=",
+            {
+              "$Kind": "Property",
+              "ref": ["ParentCompany"]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

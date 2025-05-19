@@ -1,0 +1,4133 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "CostCenterActivityType.v1.CostCenterActivityType": {
+      "__abapOriginalName": "I_CostCenterActivityType",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Cost Center Activity Type",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityType",
+      "@ObjectModel.sapObjectNodeType.name": "CostCenterActivityType",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.hierarchy.association": "_CostCtrActivityTypeHierNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 6,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActivityTypeQtyUnit": {
+          "__abapOriginalName": "CostCtrActivityTypeQtyUnit",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "CUNIT",
+          "@EndUserText.heading": "AUn",
+          "@EndUserText.label": "Activity Unit",
+          "@EndUserText.quickInfo": "Activity Unit",
+          "@Semantics.unitOfMeasure": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "CostCtrActivityTypeCategory": {
+          "__abapOriginalName": "CostCtrActivityTypeCategory",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ATC",
+          "@EndUserText.label": "ATyp category",
+          "@EndUserText.quickInfo": "Activity Type Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CostCtrActivityTypeCategory"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "AllocationCostElement": {
+          "__abapOriginalName": "AllocationCostElement",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "AllocCElem",
+          "@EndUserText.label": "Allocation cost elem",
+          "@EndUserText.quickInfo": "Allocation Cost Element",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "CostCtrActivityTypeOutpQtyUnit": {
+          "__abapOriginalName": "CostCtrActivityTypeOutpQtyUnit",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "CUNIT",
+          "@EndUserText.heading": "OU",
+          "@EndUserText.label": "Output Unit",
+          "@EndUserText.quickInfo": "Output Unit",
+          "type": "cds.String",
+          "length": 3
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@EndUserText.heading": "Ent. On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "Entered On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "EnteredByUser": {
+          "__abapOriginalName": "EnteredByUser",
+          "@EndUserText.heading": "Created By",
+          "@EndUserText.label": "Created By",
+          "@EndUserText.quickInfo": "Entered By",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostOriginGroup": {
+          "__abapOriginalName": "CostOriginGroup",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "OrGp",
+          "@EndUserText.label": "Origin Group",
+          "@EndUserText.quickInfo": "Origin Group as Subdivision of Cost Element",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ActlPostgCostCenterActyTypeCat": {
+          "__abapOriginalName": "ActlPostgCostCenterActyTypeCat",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Actl Acty Type Cat.",
+          "@EndUserText.quickInfo": "Variant Activity Type Category for Actual Postings",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "OutputQuantityFactor": {
+          "__abapOriginalName": "OutputQuantityFactor",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Output factor",
+          "@EndUserText.quickInfo": "Output factor",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 5,
+          "scale": 2,
+          "@Aggregation.default": {
+            "#": "SUM"
+          },
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          }
+        },
+        "ActivityTypeIsBlocked": {
+          "__abapOriginalName": "ActivityTypeIsBlocked",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Lock indicator",
+          "@EndUserText.quickInfo": "Lock Indicator",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "FixedCostIsPredistributed": {
+          "__abapOriginalName": "FixedCostIsPredistributed",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fx",
+          "@EndUserText.label": "PreDistFixCosts",
+          "@EndUserText.quickInfo": "Predistribution of fixed costs for acty type/bus. process",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PriceAllocationMethod": {
+          "__abapOriginalName": "PriceAllocationMethod",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "PrI",
+          "@EndUserText.label": "Price indicator",
+          "@EndUserText.quickInfo": "Price Indicator: Calculate Allocation Price",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "PeriodPriceIsAverage": {
+          "__abapOriginalName": "PeriodPriceIsAverage",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Avg.",
+          "@EndUserText.label": "Average price",
+          "@EndUserText.quickInfo": "Price Calculation with Period-Based Average Prices",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ActualPriceAllocationMethod": {
+          "__abapOriginalName": "ActualPriceAllocationMethod",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "AP",
+          "@EndUserText.label": "Act. price indicator",
+          "@EndUserText.quickInfo": "Indicator: Actual Allocation Price",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "ActualQuantityIsSetManually": {
+          "__abapOriginalName": "ActualQuantityIsSetManually",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Quantity set",
+          "@EndUserText.label": "Actual qty set",
+          "@EndUserText.quickInfo": "Indicator: Confirm quantity manually in actual",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PlanQuantityIsSetManually": {
+          "__abapOriginalName": "PlanQuantityIsSetManually",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Quantity set",
+          "@EndUserText.label": "Plan qty set",
+          "@EndUserText.quickInfo": "Indicator: Plan quantity manually set.",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CostCtrActivityTypeValidCat": {
+          "__abapOriginalName": "CostCtrActivityTypeValidCat",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CCtr Cat",
+          "@EndUserText.label": "CCtr Categories",
+          "@EndUserText.quickInfo": "Valid Cost Center Categories",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "CostCtrActyTypeIsCtrlgRlvtComp": {
+          "__abapOriginalName": "CostCtrActyTypeIsCtrlgRlvtComp",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CR CO",
+          "@EndUserText.label": "Comp.RelevanceCO",
+          "@EndUserText.quickInfo": "Indicator for component relevancy CO",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CostCtrActyTypeIsHumRsceRlvt": {
+          "__abapOriginalName": "CostCtrActyTypeIsHumRsceRlvt",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CR HR",
+          "@EndUserText.label": "Comp. relevance, HR",
+          "@EndUserText.quickInfo": "Indicator: Component Relevance, HR",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_CostCtrActivityTypeHierNode": {
+          "__abapOriginalName": "_CostCtrActivityTypeHierNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCtrActivityTypeHierNode",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCtrActivityTypeHierNode",
+                "CostCtrActivityType"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CostCtrActivityTypeHierNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCenterActivityTypeText",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostCtrActivityType"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostCenterActivityType.v1.CostCenterActivityType_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCenterActivityType",
+        "originalEntityName": "costcenteractivitytype.CostCenterActivityType"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostCenterActivityType.v1.CostCenterActivityType_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeQtyUnit"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeCategory"
+              ]
+            },
+            {
+              "ref": [
+                "AllocationCostElement"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeOutpQtyUnit"
+              ]
+            },
+            {
+              "ref": [
+                "CreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "EnteredByUser"
+              ]
+            },
+            {
+              "ref": [
+                "CostOriginGroup"
+              ]
+            },
+            {
+              "ref": [
+                "ActlPostgCostCenterActyTypeCat"
+              ]
+            },
+            {
+              "ref": [
+                "OutputQuantityFactor"
+              ]
+            },
+            {
+              "ref": [
+                "ActivityTypeIsBlocked"
+              ]
+            },
+            {
+              "ref": [
+                "FixedCostIsPredistributed"
+              ]
+            },
+            {
+              "ref": [
+                "PriceAllocationMethod"
+              ]
+            },
+            {
+              "ref": [
+                "PeriodPriceIsAverage"
+              ]
+            },
+            {
+              "ref": [
+                "ActualPriceAllocationMethod"
+              ]
+            },
+            {
+              "ref": [
+                "ActualQuantityIsSetManually"
+              ]
+            },
+            {
+              "ref": [
+                "PlanQuantityIsSetManually"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeValidCat"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActyTypeIsCtrlgRlvtComp"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActyTypeIsHumRsceRlvt"
+              ]
+            },
+            {
+              "ref": [
+                "_CostCtrActivityTypeHierNode"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_CostCtrActivityTypeHierNode": {
+              "__abapOriginalName": "_CostCtrActivityTypeHierNode",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CostCtrActivityTypeHierNode",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityType"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CostCtrActivityTypeHierNode",
+                    "CostCtrActivityType"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_CostCtrActivityTypeHierNode"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "CostCenterActivityType.v1.CostCenterActivityTypeText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityType"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "CostCtrActivityType"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCenterActivityTypeText": {
+      "__abapOriginalName": "I_CostCenterActivityTypeText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Cost Center Activity Type - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityType",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 6,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "CostCtrActivityTypeName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "CostCtrActivityTypeName": {
+          "__abapOriginalName": "CostCtrActivityTypeName",
+          "@EndUserText.heading": "Cost Center Activity Type Name",
+          "@EndUserText.label": "Cost Center Activity Type Name",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Name",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "CostCtrActivityTypeDesc": {
+          "__abapOriginalName": "CostCtrActivityTypeDesc",
+          "@EndUserText.heading": "Cost Center Activity Type Description",
+          "@EndUserText.label": "Cost Center Activity Type Description",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "type": "cds.String",
+          "length": 40
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActyTypeTxtSearchTerm": {
+          "__abapOriginalName": "CostCtrActyTypeTxtSearchTerm",
+          "@EndUserText.heading": "Short Text",
+          "@EndUserText.label": "Act. Type Short Text",
+          "@EndUserText.quickInfo": "Search Term for Matchcode Use",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostCenterActivityType.v1.CostCenterActivityTypeText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCenterActivityTypeText",
+        "originalEntityName": "costcenteractivitytype.CostCenterActivityTypeText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostCenterActivityType.v1.CostCenterActivityTypeText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeName"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeDesc"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActyTypeTxtSearchTerm"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCenterActivityTypeText",
+        "originalEntityName": "costcenteractivitytype.CostCenterActivityTypeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCenterActivityTypeText_Delta": {
+      "__abapOriginalName": "I_CostCenterActivityTypeText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Cost Center Activity Type - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityType",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@Search.searchable": true,
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 6,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "CostCtrActivityTypeName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Language"
+          },
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "CostCtrActivityTypeName": {
+          "__abapOriginalName": "CostCtrActivityTypeName",
+          "@EndUserText.heading": "Cost Center Activity Type Name",
+          "@EndUserText.label": "Cost Center Activity Type Name",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Name",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "CostCtrActivityTypeDesc": {
+          "__abapOriginalName": "CostCtrActivityTypeDesc",
+          "@EndUserText.heading": "Cost Center Activity Type Description",
+          "@EndUserText.label": "Cost Center Activity Type Description",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Description",
+          "@Search.defaultSearchElement": true,
+          "@Search.fuzzinessThreshold": {
+            "value": "0.8",
+            "literal": "number"
+          },
+          "@Search.ranking": {
+            "#": "LOW"
+          },
+          "type": "cds.String",
+          "length": 40
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActyTypeTxtSearchTerm": {
+          "__abapOriginalName": "CostCtrActyTypeTxtSearchTerm",
+          "@EndUserText.heading": "Short Text",
+          "@EndUserText.label": "Act. Type Short Text",
+          "@EndUserText.quickInfo": "Search Term for Matchcode Use",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostCenterActivityType.v1.CostCenterActivityTypeText",
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCenterActivityTypeText",
+        "originalEntityName": "costcenteractivitytype.CostCenterActivityTypeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.internalName": {
+        "#": "LOCAL"
+      },
+      "@EndUserText.label": "Cost Center Activity Type Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityTypeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@Hierarchy.notAssignedNode.filter": true,
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "@ObjectModel.association.boundFields.dataMatchesSourceAndTargetTypes": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierarchy"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDateTime"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeTime"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyShortID"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "@ObjectModel.association.boundFields.dataMatchesSourceAndTargetTypes": true,
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ControllingArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "CostCtr Activty Type Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierNdeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyNodeShortText": {
+          "__abapOriginalName": "HierarchyNodeShortText",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20,
+          "@EndUserText.label": "HierarchyNodeShortText"
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierNdeText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeText"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeShortText"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": "*"
+              },
+              "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ControllingArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText_Delta": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierNodeT",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "CostCtr Activty Type Hierarchy Node - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierNdeText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.element": [
+            {
+              "=": "HierarchyNodeText"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "HierarchyNodeText": {
+          "__abapOriginalName": "HierarchyNodeText",
+          "@EndUserText.heading": "Node Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy node description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyNodeShortText": {
+          "__abapOriginalName": "HierarchyNodeShortText",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 20,
+          "@EndUserText.label": "HierarchyNodeShortText"
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText",
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierNdeText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierText": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Activity Type Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityTypeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@EndUserText.heading": "Hierarchy Class",
+          "@EndUserText.label": "Hierarchy Class",
+          "@EndUserText.quickInfo": "Hierarchy Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 12,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "CostCtrActivityTypeHierName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActivityTypeHierName": {
+          "__abapOriginalName": "CostCtrActivityTypeHierName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostCenterActivityType.v1.CostCtrActivityTypeHierText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostCenterActivityType.v1.CostCtrActivityTypeHierText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeHierName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierText_Delta": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Activity Type Hierarchy - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityTypeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierText",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@EndUserText.heading": "Hierarchy Class",
+          "@EndUserText.label": "Hierarchy Class",
+          "@EndUserText.quickInfo": "Hierarchy Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 12,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "CostCtrActivityTypeHierName"
+            }
+          ]
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActivityTypeHierName": {
+          "__abapOriginalName": "CostCtrActivityTypeHierName",
+          "@EndUserText.heading": "Hierarchy Description",
+          "@EndUserText.label": "Description",
+          "@EndUserText.quickInfo": "Hierarchy description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy_Delta": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierarchy",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@Analytics.internalName": {
+        "#": "LOCAL"
+      },
+      "@EndUserText.label": "Cost Center Activity Type Hierarchy",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityTypeHierarchy",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierarchy",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@Hierarchy.notAssignedNode.filter": true,
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.user.lastChangedBy": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "__abapOriginalName": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDateTime.lastChangedAt": true,
+          "type": "cds.Timestamp"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@API.element.releaseState": {
+            "#": "DEPRECATED"
+          },
+          "@API.element.successor": "LastChangeDateTime",
+          "@EndUserText.heading": "Last Updated At",
+          "@EndUserText.label": "Updated At",
+          "@EndUserText.quickInfo": "Last Updated At (Timestamp)",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "LastChangeDateTime",
+          "type": "cds.Timestamp"
+        },
+        "HierarchyShortID": {
+          "__abapOriginalName": "HierarchyShortID",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Hierarchy ID",
+          "@EndUserText.label": "Hierarchy ID",
+          "@EndUserText.quickInfo": "Hierarchy ID",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "@ObjectModel.association.boundFields.dataMatchesSourceAndTargetTypes": true,
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierarchy"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierNode": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Cost Center Activity Type Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CostCenterActivity"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_CostCenterActivity": {
+          "__abapOriginalName": "_CostCenterActivity",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCenterActivityType",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCenterActivity",
+                "CostCtrActivityType"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCenterActivity",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CostCenterActivity"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "CostCenterActivityType.v1.CostCtrActivityTypeHierNode_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierNode"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "CostCenterActivityType.v1.CostCtrActivityTypeHierNode_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            {
+              "ref": [
+                "ParentNode"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyVersion"
+              ]
+            },
+            {
+              "ref": [
+                "ValidityStartDate"
+              ]
+            },
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            {
+              "ref": [
+                "SequenceNumber"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeSequence"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeLevel"
+              ]
+            },
+            {
+              "ref": [
+                "NodeType"
+              ]
+            },
+            {
+              "ref": [
+                "HierarchyNodeVal"
+              ]
+            },
+            {
+              "ref": [
+                "_CostCenterActivity"
+              ]
+            },
+            {
+              "ref": [
+                "_Hierarchy"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_CostCenterActivity": {
+              "__abapOriginalName": "_CostCenterActivity",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "CostCenterActivityType.v1.CostCenterActivityType",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityType"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CostCenterActivity",
+                    "CostCtrActivityType"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_CostCenterActivity",
+                    "ControllingArea"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_CostCenterActivity"
+            },
+            "_Hierarchy": {
+              "__abapOriginalName": "_Hierarchy",
+              "type": "cds.Association",
+              "cardinality": {
+                "min": 1,
+                "max": 1
+              },
+              "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ValidityEndDate"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Hierarchy",
+                    "ValidityEndDate"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Hierarchy"
+            },
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "CostCtrActivityTypeHierarchy"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "HierarchyNode"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "HierarchyNode"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "ControllingArea"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "ControllingArea"
+                  ]
+                },
+                "and",
+                {
+                  "ref": [
+                    "$projection",
+                    "CostCtrActivityType"
+                  ]
+                },
+                "=",
+                {
+                  "val": ""
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCtrActivityTypeHierNode_Delta": {
+      "__abapOriginalName": "I_CostCtrActivityTypeHierNode",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Cost Center Activity Type Hierarchy Node",
+      "@Hierarchy.parentChild.directory": "_Hierarchy",
+      "@Hierarchy.parentChild.recurse.child": "HierarchyNode",
+      "@Hierarchy.parentChild.recurse.parent": "ParentNode",
+      "@Hierarchy.parentChild.siblingsOrder.by": "HierarchyNodeSequence",
+      "@Hierarchy.parentChild.siblingsOrder.direction": "ASC",
+      "@ObjectModel.modelingPattern": {
+        "#": "DATA_STRUCTURE"
+      },
+      "@ObjectModel.representativeKey": "HierarchyNode",
+      "@ObjectModel.sapObjectNodeType.name": "CostCtrActivityTypeHierNode",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "DATA_STRUCTURE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "XL"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityTypeHierarchy": {
+          "__abapOriginalName": "CostCtrActivityTypeHierarchy",
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Cost Center Activity Type Hierarchy",
+          "@EndUserText.label": "Cctr Acttype Hryid",
+          "@EndUserText.quickInfo": "Cost Center Activity Type Hierarchy",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Hierarchy"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 40,
+          "notNull": true
+        },
+        "HierarchyNode": {
+          "__abapOriginalName": "HierarchyNode",
+          "@EndUserText.heading": "Hierarchy Node",
+          "@EndUserText.label": "Node",
+          "@EndUserText.quickInfo": "Hierarchy node",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 50,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@Consumption.filter.mandatory": true,
+          "@Consumption.filter.multipleSelections": false,
+          "@Consumption.filter.selectionType": {
+            "#": "SINGLE"
+          },
+          "@EndUserText.heading": "Validity End Date",
+          "@EndUserText.label": "Validity End Date",
+          "@EndUserText.quickInfo": "Validity End Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ParentNode": {
+          "__abapOriginalName": "ParentNode",
+          "@EndUserText.heading": "Parent Node",
+          "@EndUserText.label": "Par. Node",
+          "@EndUserText.quickInfo": "Hierarchy parent node",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 50
+        },
+        "HierarchyVersion": {
+          "__abapOriginalName": "HierarchyVersion",
+          "@EndUserText.heading": "Hierarchy Version",
+          "@EndUserText.label": "Version",
+          "@EndUserText.quickInfo": "Hierarchy version",
+          "@ObjectModel.upperCase": true,
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "type": "cds.String",
+          "length": 15
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Validity Start Date",
+          "@EndUserText.label": "Validity Start Date",
+          "@EndUserText.quickInfo": "Validity Start Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CostCenterActivity"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "SequenceNumber": {
+          "__abapOriginalName": "SequenceNumber",
+          "@VDM.lifecycle.status": {
+            "#": "DEPRECATED"
+          },
+          "@VDM.lifecycle.successor": "HierarchyNodeSequence",
+          "type": "cds.String",
+          "length": 56,
+          "@EndUserText.label": "SequenceNumber"
+        },
+        "HierarchyNodeSequence": {
+          "__abapOriginalName": "HierarchyNodeSequence",
+          "@EndUserText.heading": "Hierarchy Sequence Number",
+          "@EndUserText.label": "Sequence Number",
+          "@EndUserText.quickInfo": "Hierarchy Sequence Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "HierarchyNodeLevel": {
+          "__abapOriginalName": "HierarchyNodeLevel",
+          "@EndUserText.heading": "Hierarchy Level",
+          "@EndUserText.label": "Hierarchy Level",
+          "@EndUserText.quickInfo": "Hierarchy Level",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "NodeType": {
+          "__abapOriginalName": "NodeType",
+          "@EndUserText.heading": "Node Type",
+          "@EndUserText.label": "Node Type",
+          "@EndUserText.quickInfo": "Hierarchy node type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "HierarchyNodeVal": {
+          "__abapOriginalName": "HierarchyNodeVal",
+          "@EndUserText.heading": "Node Value",
+          "@EndUserText.label": "Value",
+          "@EndUserText.quickInfo": "Node value",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "_CostCenterActivity": {
+          "__abapOriginalName": "_CostCenterActivity",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCenterActivityType",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCenterActivity",
+                "CostCtrActivityType"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCenterActivity",
+                "ControllingArea"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CostCenterActivity"
+        },
+        "_Hierarchy": {
+          "__abapOriginalName": "_Hierarchy",
+          "type": "cds.Association",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Hierarchy",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Hierarchy"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "on": [
+            {
+              "ref": [
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostCtrActivityTypeHierarchy"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "HierarchyNode"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "HierarchyNode"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "val": ""
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+        "originalEntityName": "costcenteractivitytype.CostCtrActivityTypeHierNode"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "CostCenterActivityType.v1.CostCenterActivityType_Delta": {
+      "__abapOriginalName": "I_CostCenterActivityType",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        }
+      ],
+      "@Analytics.dataExtraction.delta.changeDataCapture.automatic": true,
+      "@Analytics.dataExtraction.enabled": true,
+      "@Consumption.filter.businessDate.at": true,
+      "@EndUserText.label": "Cost Center Activity Type",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "CostCtrActivityType",
+      "@ObjectModel.sapObjectNodeType.name": "CostCenterActivityType",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "MASTER"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "CostCtrActivityType": {
+          "__abapOriginalName": "CostCtrActivityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Activity Type",
+          "@EndUserText.quickInfo": "Activity Type",
+          "@ObjectModel.hierarchy.association": "_CostCtrActivityTypeHierNode",
+          "@ObjectModel.text.association": {
+            "=": "_Text"
+          },
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 6,
+          "notNull": true
+        },
+        "ValidityEndDate": {
+          "__abapOriginalName": "ValidityEndDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "to",
+          "@EndUserText.label": "Valid To",
+          "@EndUserText.quickInfo": "Valid To Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.to": true,
+          "key": true,
+          "type": "cds.Date",
+          "notNull": true
+        },
+        "ValidityStartDate": {
+          "__abapOriginalName": "ValidityStartDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Valid From",
+          "@EndUserText.label": "Valid From",
+          "@EndUserText.quickInfo": "Valid-From Date",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.businessDate.from": true,
+          "type": "cds.Date"
+        },
+        "CostCtrActivityTypeQtyUnit": {
+          "__abapOriginalName": "CostCtrActivityTypeQtyUnit",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "CUNIT",
+          "@EndUserText.heading": "AUn",
+          "@EndUserText.label": "Activity Unit",
+          "@EndUserText.quickInfo": "Activity Unit",
+          "@Semantics.unitOfMeasure": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "CostCtrActivityTypeCategory": {
+          "__abapOriginalName": "CostCtrActivityTypeCategory",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ATC",
+          "@EndUserText.label": "ATyp category",
+          "@EndUserText.quickInfo": "Activity Type Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CostCtrActivityTypeCategory"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "AllocationCostElement": {
+          "__abapOriginalName": "AllocationCostElement",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "AllocCElem",
+          "@EndUserText.label": "Allocation cost elem",
+          "@EndUserText.quickInfo": "Allocation Cost Element",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "CostCtrActivityTypeOutpQtyUnit": {
+          "__abapOriginalName": "CostCtrActivityTypeOutpQtyUnit",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "CUNIT",
+          "@EndUserText.heading": "OU",
+          "@EndUserText.label": "Output Unit",
+          "@EndUserText.quickInfo": "Output Unit",
+          "type": "cds.String",
+          "length": 3
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@EndUserText.heading": "Ent. On",
+          "@EndUserText.label": "Entered On",
+          "@EndUserText.quickInfo": "Entered On",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.systemDate.createdAt": true,
+          "type": "cds.Date"
+        },
+        "EnteredByUser": {
+          "__abapOriginalName": "EnteredByUser",
+          "@EndUserText.heading": "Created By",
+          "@EndUserText.label": "Created By",
+          "@EndUserText.quickInfo": "Entered By",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostOriginGroup": {
+          "__abapOriginalName": "CostOriginGroup",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "OrGp",
+          "@EndUserText.label": "Origin Group",
+          "@EndUserText.quickInfo": "Origin Group as Subdivision of Cost Element",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ActlPostgCostCenterActyTypeCat": {
+          "__abapOriginalName": "ActlPostgCostCenterActyTypeCat",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ActTyp",
+          "@EndUserText.label": "Actl Acty Type Cat.",
+          "@EndUserText.quickInfo": "Variant Activity Type Category for Actual Postings",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "OutputQuantityFactor": {
+          "__abapOriginalName": "OutputQuantityFactor",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Output factor",
+          "@EndUserText.quickInfo": "Output factor",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Decimal",
+          "precision": 5,
+          "scale": 2,
+          "@Aggregation.default": {
+            "#": "SUM"
+          },
+          "@AnalyticsDetails.measureType": {
+            "#": "BASE"
+          }
+        },
+        "ActivityTypeIsBlocked": {
+          "__abapOriginalName": "ActivityTypeIsBlocked",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Lock indicator",
+          "@EndUserText.quickInfo": "Lock Indicator",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "FixedCostIsPredistributed": {
+          "__abapOriginalName": "FixedCostIsPredistributed",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Fx",
+          "@EndUserText.label": "PreDistFixCosts",
+          "@EndUserText.quickInfo": "Predistribution of fixed costs for acty type/bus. process",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PriceAllocationMethod": {
+          "__abapOriginalName": "PriceAllocationMethod",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "PrI",
+          "@EndUserText.label": "Price indicator",
+          "@EndUserText.quickInfo": "Price Indicator: Calculate Allocation Price",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "PeriodPriceIsAverage": {
+          "__abapOriginalName": "PeriodPriceIsAverage",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Avg.",
+          "@EndUserText.label": "Average price",
+          "@EndUserText.quickInfo": "Price Calculation with Period-Based Average Prices",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ActualPriceAllocationMethod": {
+          "__abapOriginalName": "ActualPriceAllocationMethod",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "AP",
+          "@EndUserText.label": "Act. price indicator",
+          "@EndUserText.quickInfo": "Indicator: Actual Allocation Price",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "ActualQuantityIsSetManually": {
+          "__abapOriginalName": "ActualQuantityIsSetManually",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Quantity set",
+          "@EndUserText.label": "Actual qty set",
+          "@EndUserText.quickInfo": "Indicator: Confirm quantity manually in actual",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "PlanQuantityIsSetManually": {
+          "__abapOriginalName": "PlanQuantityIsSetManually",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Quantity set",
+          "@EndUserText.label": "Plan qty set",
+          "@EndUserText.quickInfo": "Indicator: Plan quantity manually set.",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CostCtrActivityTypeValidCat": {
+          "__abapOriginalName": "CostCtrActivityTypeValidCat",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CCtr Cat",
+          "@EndUserText.label": "CCtr Categories",
+          "@EndUserText.quickInfo": "Valid Cost Center Categories",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "CostCtrActyTypeIsCtrlgRlvtComp": {
+          "__abapOriginalName": "CostCtrActyTypeIsCtrlgRlvtComp",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CR CO",
+          "@EndUserText.label": "Comp.RelevanceCO",
+          "@EndUserText.quickInfo": "Indicator for component relevancy CO",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CostCtrActyTypeIsHumRsceRlvt": {
+          "__abapOriginalName": "CostCtrActyTypeIsHumRsceRlvt",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CR HR",
+          "@EndUserText.label": "Comp. relevance, HR",
+          "@EndUserText.quickInfo": "Indicator: Component Relevance, HR",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "_CostCtrActivityTypeHierNode": {
+          "__abapOriginalName": "_CostCtrActivityTypeHierNode",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCtrActivityTypeHierNode",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_CostCtrActivityTypeHierNode",
+                "CostCtrActivityType"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_CostCtrActivityTypeHierNode"
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "CostCenterActivityType.v1.CostCenterActivityTypeText",
+          "on": [
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ControllingArea"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "CostCtrActivityType"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "CostCtrActivityType"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "ValidityEndDate"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "ValidityEndDate"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "CostCenterActivityType.v1.CostCenterActivityType",
+      "import_meta": {
+        "qualifiedName": "CostCenterActivityType.v1.CostCenterActivityType",
+        "originalEntityName": "costcenteractivitytype.CostCenterActivityType"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "CostCenterActivityType.v1.CostCenterActivityType",
+    "all_entities": [
+      "CostCenterActivityType.v1.CostCenterActivityType",
+      "CostCenterActivityType.v1.CostCenterActivityType",
+      "CostCenterActivityType.v1.CostCenterActivityTypeText",
+      "CostCenterActivityType.v1",
+      "CostCenterActivityType.v1.CostCenterActivityTypeText_Delta",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierNdeText_Delta",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierText",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierText_Delta",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy_Delta",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierNode",
+      "CostCenterActivityType.v1.CostCtrActivityTypeHierNode_Delta",
+      "CostCenterActivityType.v1.CostCenterActivityType_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierText"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCenterActivityType"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCenterActivityType"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCenterActivityType"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierarchy"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCtrActivityTypeHierNode"
+      },
+      {
+        "from": "CostCenterActivityType.v1.CostCenterActivityType",
+        "to": "CostCenterActivityType.v1.CostCenterActivityTypeText"
+      }
+    ],
+    "invalid_references": []
+  }
+}

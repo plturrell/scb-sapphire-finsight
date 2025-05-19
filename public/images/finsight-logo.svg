@@ -1,0 +1,14 @@
+<svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- SCB Logo using brand colors -->
+  <rect x="10" y="10" width="30" height="30" rx="5" fill="#0072AA" />
+  <circle cx="25" cy="25" r="7" fill="#A4D0A0" />
+  <path d="M45 20 L55 20 L55 30 L45 30 Z" fill="#21AA47" />
+  
+  <!-- FinSight Text -->
+  <text x="65" y="32" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="#0072AA">FinSight</text>
+  
+  <!-- Decorative element using SCB light blue -->
+  <path d="M155 15 L185 15 L185 17 L155 17 Z" fill="#78ADD2" />
+  <path d="M155 23 L175 23 L175 25 L155 25 Z" fill="#78ADD2" />
+  <path d="M155 31 L165 31 L165 33 L155 33 Z" fill="#78ADD2" />
+</svg>

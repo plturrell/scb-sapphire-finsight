@@ -1,0 +1,2311 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "InternalOrder.v1.InternalOrder": {
+      "__abapOriginalName": "I_InternalOrder",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        },
+        {
+          "=": "_InternalOrderTypeText"
+        },
+        {
+          "=": "_ResponsibleUser"
+        },
+        {
+          "=": "_LastChangedByUser"
+        },
+        {
+          "=": "_CreatedByUser"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Internal Order",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "InternalOrder",
+      "@ObjectModel.sapObjectNodeType.name": "InternalOrder",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "TRANSACTIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "InternalOrder": {
+          "__abapOriginalName": "InternalOrder",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Internal Order",
+          "@EndUserText.label": "Internal Order",
+          "@EndUserText.quickInfo": "Internal Order",
+          "@ObjectModel.text.element": [
+            {
+              "=": "InternalOrderDescription"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 12,
+          "notNull": true
+        },
+        "InternalOrderDescription": {
+          "__abapOriginalName": "InternalOrderDescription",
+          "@EndUserText.heading": "Internal Order Description",
+          "@EndUserText.label": "Internal Order Desc.",
+          "@EndUserText.quickInfo": "Internal Order Description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "OrderCategory": {
+          "__abapOriginalName": "OrderCategory",
+          "@EndUserText.heading": "Cat",
+          "@EndUserText.label": "Order Category",
+          "@EndUserText.quickInfo": "Order Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_OrderCategory"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "BusinessArea": {
+          "__abapOriginalName": "BusinessArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Business Area",
+          "@EndUserText.label": "Business Area",
+          "@EndUserText.quickInfo": "Business Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_BusinessArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "Plant": {
+          "__abapOriginalName": "Plant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Plnt",
+          "@EndUserText.label": "Plant",
+          "@EndUserText.quickInfo": "Plant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Plant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "Currency": {
+          "__abapOriginalName": "Currency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Crcy",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Order Currency",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Currency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5,
+          "@Semantics.currencyCode": true
+        },
+        "IsStatisticalOrder": {
+          "__abapOriginalName": "IsStatisticalOrder",
+          "@EndUserText.heading": "Statistical Order",
+          "@EndUserText.label": "Statistical Order",
+          "@EndUserText.quickInfo": "Indicates If the Int. Order Has a Stats. Account Assignment",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ReferenceOrder": {
+          "__abapOriginalName": "ReferenceOrder",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Reference Order",
+          "@EndUserText.label": "Reference Order",
+          "@EndUserText.quickInfo": "Reference Order Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "SalesOrder": {
+          "__abapOriginalName": "SalesOrder",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sales Ord.",
+          "@EndUserText.label": "Sales Order",
+          "@EndUserText.quickInfo": "Sales Order Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SalesOrderItem": {
+          "__abapOriginalName": "SalesOrderItem",
+          "@EndUserText.heading": "SO Item",
+          "@EndUserText.label": "Sales Order Item",
+          "@EndUserText.quickInfo": "Item Number in Sales Order",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "WBSElement": {
+          "__abapOriginalName": "WBSElement",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ABPSP",
+          "@EndUserText.heading": "WBS Element",
+          "@EndUserText.label": "WBS Element",
+          "@EndUserText.quickInfo": "Work Breakdown Structure Element (WBS Element)",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "WBSElementInternalID": {
+          "__abapOriginalName": "WBSElementInternalID",
+          "@EndUserText.heading": "WBS Elem",
+          "@EndUserText.label": "WBS Internal ID",
+          "@EndUserText.quickInfo": "WBS Element",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_WBSElementBasicData"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "RequestingCostCenter": {
+          "__abapOriginalName": "RequestingCostCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Req. CC",
+          "@EndUserText.label": "Request. cost center",
+          "@EndUserText.quickInfo": "Requesting cost center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "RequestingCompanyCode": {
+          "__abapOriginalName": "RequestingCompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "RqCC",
+          "@EndUserText.label": "Requesting co. code",
+          "@EndUserText.quickInfo": "Requesting company code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_RequestingCompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "RequestingOrder": {
+          "__abapOriginalName": "RequestingOrder",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Req. order",
+          "@EndUserText.label": "Requesting order",
+          "@EndUserText.quickInfo": "Requesting order",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_RequestingOrder"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "InternalOrderLocation": {
+          "__abapOriginalName": "InternalOrderLocation",
+          "@EndUserText.heading": "Location",
+          "@EndUserText.label": "Location",
+          "@EndUserText.quickInfo": "Plant location for internal order",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Location"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "LocationPlant": {
+          "__abapOriginalName": "LocationPlant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Plnt",
+          "@EndUserText.label": "Location Plant",
+          "@EndUserText.quickInfo": "Location Plant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LocationPlant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ExternalOrder": {
+          "__abapOriginalName": "ExternalOrder",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "External order no.",
+          "@EndUserText.label": "External order no.",
+          "@EndUserText.quickInfo": "External order number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "ActualPostedCostCenter": {
+          "__abapOriginalName": "ActualPostedCostCenter",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Center for Actual Costs Posting",
+          "@EndUserText.label": "Cost Center for Actual Costs Posting",
+          "@EndUserText.quickInfo": "Cost Center for Actual Costs Posting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "PlanningWithLineItemsIsActive": {
+          "__abapOriginalName": "PlanningWithLineItemsIsActive",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PLI",
+          "@EndUserText.label": "Plan Line Items",
+          "@EndUserText.quickInfo": "Identifier for Planning with Line Items",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CostCenter": {
+          "__abapOriginalName": "CostCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Center",
+          "@EndUserText.label": "Cost Center",
+          "@EndUserText.quickInfo": "Cost Center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "LogicalSystem": {
+          "__abapOriginalName": "LogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Log.System",
+          "@EndUserText.label": "Logical System",
+          "@EndUserText.quickInfo": "Logical System",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LogicalSystem"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "OrdIsUsedInIntegratedPlanning": {
+          "__abapOriginalName": "OrdIsUsedInIntegratedPlanning",
+          "@EndUserText.heading": "Plan-Integrated Order",
+          "@EndUserText.label": "Plan-Integrated Order",
+          "@EndUserText.quickInfo": "Indicates If the Internal Order Is Plan Integrated",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "TaxJurisdiction": {
+          "__abapOriginalName": "TaxJurisdiction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Jurisdiction",
+          "@EndUserText.label": "Tax Jurisdiction",
+          "@EndUserText.quickInfo": "Tax Jurisdiction",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 15
+        },
+        "ResultAnalysisInternalID": {
+          "__abapOriginalName": "ResultAnalysisInternalID",
+          "@EndUserText.heading": "Results Analysis Key",
+          "@EndUserText.label": "Results Analysis Key",
+          "@EndUserText.quickInfo": "Results Analysis Key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "ConditionUsage": {
+          "__abapOriginalName": "ConditionUsage",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "U",
+          "@EndUserText.label": "Usage",
+          "@EndUserText.quickInfo": "Usage of the condition table",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ConditionUsage"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "ConditionApplication": {
+          "__abapOriginalName": "ConditionApplication",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "App",
+          "@EndUserText.label": "Application",
+          "@EndUserText.quickInfo": "Application",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ConditionApplication"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "CostingSheet": {
+          "__abapOriginalName": "CostingSheet",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CostSh",
+          "@EndUserText.label": "Costing Sheet",
+          "@EndUserText.quickInfo": "Costing Sheet",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CostingSheetProcedure"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "OverheadCode": {
+          "__abapOriginalName": "OverheadCode",
+          "@EndUserText.heading": "Overhead Key",
+          "@EndUserText.label": "Overhead Key",
+          "@EndUserText.quickInfo": "Overhead Key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "OrderInterestCalcProfile": {
+          "__abapOriginalName": "OrderInterestCalcProfile",
+          "@EndUserText.heading": "Interest Profile for Order Interest Calculation",
+          "@EndUserText.label": "OrderInterestCalcProfile",
+          "@EndUserText.quickInfo": "Interest Profile for Order Interest Calculation",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 7
+        },
+        "IntOrderSettlementCostElement": {
+          "__abapOriginalName": "IntOrderSettlementCostElement",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Settlement Cost Element",
+          "@EndUserText.label": "Settlement Cost Element",
+          "@EndUserText.quickInfo": "Settlement Cost Element",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "BasicSettlementGLAccount": {
+          "__abapOriginalName": "BasicSettlementGLAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "G/L Acct",
+          "@EndUserText.label": "G/L Account",
+          "@EndUserText.quickInfo": "G/L Account for Basic Settlement",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_BasicSettlementGLAccount"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "IntOrderIndividualField1Value": {
+          "__abapOriginalName": "IntOrderIndividualField1Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Applicant",
+          "@EndUserText.label": "Applicant",
+          "@EndUserText.quickInfo": "Applicant",
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField2Value": {
+          "__abapOriginalName": "IntOrderIndividualField2Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone",
+          "@EndUserText.label": "Telephone",
+          "@EndUserText.quickInfo": "Applicant's telephone number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField3Value": {
+          "__abapOriginalName": "IntOrderIndividualField3Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Person Responsible",
+          "@EndUserText.label": "Person Responsible",
+          "@EndUserText.quickInfo": "Person Responsible",
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField4Value": {
+          "__abapOriginalName": "IntOrderIndividualField4Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone",
+          "@EndUserText.label": "Telephone",
+          "@EndUserText.quickInfo": "Telephone number of person in charge",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField5Amount": {
+          "__abapOriginalName": "IntOrderIndividualField5Amount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Estim. costs",
+          "@EndUserText.label": "Estimated costs",
+          "@EndUserText.quickInfo": "Estimated total costs of order",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.amount.currencyCode": {
+            "=": "Currency"
+          },
+          "type": "cds.Decimal",
+          "precision": 34,
+          "scale": 4
+        },
+        "IntOrderIndividualField6Date": {
+          "__abapOriginalName": "IntOrderIndividualField6Date",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ApplicDate",
+          "@EndUserText.label": "Application date",
+          "@EndUserText.quickInfo": "Application date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderIndividualField7Value": {
+          "__abapOriginalName": "IntOrderIndividualField7Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Department",
+          "@EndUserText.label": "Department",
+          "@EndUserText.quickInfo": "Department",
+          "type": "cds.String",
+          "length": 15
+        },
+        "IntOrderIndividualField8Date": {
+          "__abapOriginalName": "IntOrderIndividualField8Date",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Start work",
+          "@EndUserText.label": "Work Start",
+          "@EndUserText.quickInfo": "Work Start",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderIndividualField9Date": {
+          "__abapOriginalName": "IntOrderIndividualField9Date",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Work End",
+          "@EndUserText.label": "End of Work",
+          "@EndUserText.quickInfo": "End of Work",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderIndividualField10Value": {
+          "__abapOriginalName": "IntOrderIndividualField10Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "WP",
+          "@EndUserText.label": "Work approval",
+          "@EndUserText.quickInfo": "Identifier for work permit issued",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "OrderProcessingGroup": {
+          "__abapOriginalName": "OrderProcessingGroup",
+          "@EndUserText.heading": "Processing Group",
+          "@EndUserText.label": "Processing Group",
+          "@EndUserText.quickInfo": "Processing Group",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_OrderProcessingGroup"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "InvestmentProfile": {
+          "__abapOriginalName": "InvestmentProfile",
+          "@EndUserText.heading": "Investment Measure Profile",
+          "@EndUserText.label": "Investment Measure Profile",
+          "@EndUserText.quickInfo": "Investment Measure Profile",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "InvestmentScale": {
+          "__abapOriginalName": "InvestmentScale",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Investment Scale",
+          "@EndUserText.label": "Investment Scale",
+          "@EndUserText.quickInfo": "Scale of investment objects",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "InvestmentReason": {
+          "__abapOriginalName": "InvestmentReason",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "IR",
+          "@EndUserText.label": "Investment Reason",
+          "@EndUserText.quickInfo": "Reason for Investment",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "EnvironmentalInvestmentReason": {
+          "__abapOriginalName": "EnvironmentalInvestmentReason",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "EnInv",
+          "@EndUserText.label": "Envir. Investment",
+          "@EndUserText.quickInfo": "Reason for Environmental Investment",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_EnvrnmtlInvestmentReason"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "JointVenture": {
+          "__abapOriginalName": "JointVenture",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "JV",
+          "@EndUserText.label": "Joint Venture",
+          "@EndUserText.quickInfo": "Joint Venture",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "JointVentureRecoveryCode": {
+          "__abapOriginalName": "JointVentureRecoveryCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "RI",
+          "@EndUserText.label": "Recovery Indicator",
+          "@EndUserText.quickInfo": "Recovery Indicator",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JointVentureRecovery"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "JointVentureEquityType": {
+          "__abapOriginalName": "JointVentureEquityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "ET",
+          "@EndUserText.label": "Equity Type",
+          "@EndUserText.quickInfo": "Equity Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JntVntrEquityTypeMaster"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "JointVentureOriginalCostObject": {
+          "__abapOriginalName": "JointVentureOriginalCostObject",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "O",
+          "@EndUserText.label": "Orig. Cost Object",
+          "@EndUserText.quickInfo": "JV original cost object",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "JointVentureObjectType": {
+          "__abapOriginalName": "JointVentureObjectType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Type",
+          "@EndUserText.label": "JV Object Type",
+          "@EndUserText.quickInfo": "Joint Venture Object Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "JointVentureClass": {
+          "__abapOriginalName": "JointVentureClass",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Class",
+          "@EndUserText.label": "JIB/JIBE Class",
+          "@EndUserText.quickInfo": "JIB/JIBE Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JntIntrstBillgClass"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "JointVentureSubClass": {
+          "__abapOriginalName": "JointVentureSubClass",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "SCl A",
+          "@EndUserText.label": "JIB/JIBE Subclass A",
+          "@EndUserText.quickInfo": "JIB/JIBE Subclass A",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JntIntrstBillgSubclass"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "IsDeleted": {
+          "__abapOriginalName": "IsDeleted",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "DF",
+          "@EndUserText.label": "Deletion Flag",
+          "@EndUserText.quickInfo": "Deletion Flag",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@EndUserText.heading": "Created On",
+          "@EndUserText.label": "Created On",
+          "@EndUserText.quickInfo": "Created On",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "CreationTime": {
+          "__abapOriginalName": "CreationTime",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Time created",
+          "@EndUserText.quickInfo": "Time created",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "CreatedByUser": {
+          "__abapOriginalName": "CreatedByUser",
+          "@EndUserText.heading": "Created By",
+          "@EndUserText.label": "Created By",
+          "@EndUserText.quickInfo": "Created By",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CreatedByUser"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LastChangedByUser"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDate": {
+          "__abapOriginalName": "LastChangeDate",
+          "@EndUserText.heading": "ChangeDate",
+          "@EndUserText.label": "Changed On",
+          "@EndUserText.quickInfo": "Change Date for Order Master",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Changed At",
+          "@EndUserText.quickInfo": "Changed At",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "ControllingObject": {
+          "__abapOriginalName": "ControllingObject",
+          "@EndUserText.heading": "Object Number",
+          "@EndUserText.label": "Object Number",
+          "@EndUserText.quickInfo": "Object Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 22
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Company Code",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Center",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ProfitCenter"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@EndUserText.heading": "FA",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FunctionalArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "ControllingObjectClass": {
+          "__abapOriginalName": "ControllingObjectClass",
+          "@EndUserText.heading": "Object Class",
+          "@EndUserText.label": "Object Class",
+          "@EndUserText.quickInfo": "Object Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingObjectClass"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "OrderType": {
+          "__abapOriginalName": "OrderType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Type",
+          "@EndUserText.label": "Order Type",
+          "@EndUserText.quickInfo": "Order Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_InternalOrderType"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_InternalOrderTypeText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ResponsibleCostCenter": {
+          "__abapOriginalName": "ResponsibleCostCenter",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Responsible Cost Center",
+          "@EndUserText.label": "Responsible Cost Center",
+          "@EndUserText.quickInfo": "Responsible cost center in internal order",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "InternalOrderResponsibleUser": {
+          "__abapOriginalName": "InternalOrderResponsibleUser",
+          "@EndUserText.heading": "User Responsible",
+          "@EndUserText.label": "User Responsible",
+          "@EndUserText.quickInfo": "Responsible user for Internal Order",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ResponsibleUser"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "IntOrderPlannedReleaseDate": {
+          "__abapOriginalName": "IntOrderPlannedReleaseDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PlnRelease",
+          "@EndUserText.label": "Planned release",
+          "@EndUserText.quickInfo": "Planned release date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderPlannedCompletionDate": {
+          "__abapOriginalName": "IntOrderPlannedCompletionDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PlnCompltn",
+          "@EndUserText.label": "Planned completion",
+          "@EndUserText.quickInfo": "Planned completion date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderPlannedClosingDate": {
+          "__abapOriginalName": "IntOrderPlannedClosingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Pl.clo.dat",
+          "@EndUserText.label": "Planned closing date",
+          "@EndUserText.quickInfo": "Planned closing date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "InternalOrderReleaseDate": {
+          "__abapOriginalName": "InternalOrderReleaseDate",
+          "@EndUserText.heading": "Release",
+          "@EndUserText.label": "Release",
+          "@EndUserText.quickInfo": "Release Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "InternalOrderCompletionDate": {
+          "__abapOriginalName": "InternalOrderCompletionDate",
+          "@EndUserText.heading": "TechCompl.",
+          "@EndUserText.label": "Technical Completion",
+          "@EndUserText.quickInfo": "Technical Completion Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "InternalOrderClosingDate": {
+          "__abapOriginalName": "InternalOrderClosingDate",
+          "@EndUserText.heading": "Close",
+          "@EndUserText.label": "Close",
+          "@EndUserText.quickInfo": "Close Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "CostCollector": {
+          "__abapOriginalName": "CostCollector",
+          "@EndUserText.heading": "Cost Collector Key",
+          "@EndUserText.label": "Cost Collector Key",
+          "@EndUserText.quickInfo": "Cost Collector Key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 23
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "InternalOrder.v1.InternalOrder_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "InternalOrder.v1.InternalOrder",
+        "originalEntityName": "internalorder.InternalOrder"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "InternalOrder.v1.InternalOrder_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "InternalOrder"
+              ]
+            },
+            {
+              "ref": [
+                "InternalOrderDescription"
+              ]
+            },
+            {
+              "ref": [
+                "OrderCategory"
+              ]
+            },
+            {
+              "ref": [
+                "BusinessArea"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingArea"
+              ]
+            },
+            {
+              "ref": [
+                "Plant"
+              ]
+            },
+            {
+              "ref": [
+                "Currency"
+              ]
+            },
+            {
+              "ref": [
+                "IsStatisticalOrder"
+              ]
+            },
+            {
+              "ref": [
+                "ReferenceOrder"
+              ]
+            },
+            {
+              "ref": [
+                "SalesOrder"
+              ]
+            },
+            {
+              "ref": [
+                "SalesOrderItem"
+              ]
+            },
+            {
+              "ref": [
+                "WBSElement"
+              ]
+            },
+            {
+              "ref": [
+                "WBSElementInternalID"
+              ]
+            },
+            {
+              "ref": [
+                "RequestingCostCenter"
+              ]
+            },
+            {
+              "ref": [
+                "RequestingCompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "RequestingOrder"
+              ]
+            },
+            {
+              "ref": [
+                "InternalOrderLocation"
+              ]
+            },
+            {
+              "ref": [
+                "LocationPlant"
+              ]
+            },
+            {
+              "ref": [
+                "ExternalOrder"
+              ]
+            },
+            {
+              "ref": [
+                "ActualPostedCostCenter"
+              ]
+            },
+            {
+              "ref": [
+                "PlanningWithLineItemsIsActive"
+              ]
+            },
+            {
+              "ref": [
+                "CostCenter"
+              ]
+            },
+            {
+              "ref": [
+                "LogicalSystem"
+              ]
+            },
+            {
+              "ref": [
+                "OrdIsUsedInIntegratedPlanning"
+              ]
+            },
+            {
+              "ref": [
+                "TaxJurisdiction"
+              ]
+            },
+            {
+              "ref": [
+                "ResultAnalysisInternalID"
+              ]
+            },
+            {
+              "ref": [
+                "ConditionUsage"
+              ]
+            },
+            {
+              "ref": [
+                "ConditionApplication"
+              ]
+            },
+            {
+              "ref": [
+                "CostingSheet"
+              ]
+            },
+            {
+              "ref": [
+                "OverheadCode"
+              ]
+            },
+            {
+              "ref": [
+                "OrderInterestCalcProfile"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderSettlementCostElement"
+              ]
+            },
+            {
+              "ref": [
+                "BasicSettlementGLAccount"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField1Value"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField2Value"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField3Value"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField4Value"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField5Amount"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField6Date"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField7Value"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField8Date"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField9Date"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderIndividualField10Value"
+              ]
+            },
+            {
+              "ref": [
+                "OrderProcessingGroup"
+              ]
+            },
+            {
+              "ref": [
+                "InvestmentProfile"
+              ]
+            },
+            {
+              "ref": [
+                "InvestmentScale"
+              ]
+            },
+            {
+              "ref": [
+                "InvestmentReason"
+              ]
+            },
+            {
+              "ref": [
+                "EnvironmentalInvestmentReason"
+              ]
+            },
+            {
+              "ref": [
+                "JointVenture"
+              ]
+            },
+            {
+              "ref": [
+                "JointVentureRecoveryCode"
+              ]
+            },
+            {
+              "ref": [
+                "JointVentureEquityType"
+              ]
+            },
+            {
+              "ref": [
+                "JointVentureOriginalCostObject"
+              ]
+            },
+            {
+              "ref": [
+                "JointVentureObjectType"
+              ]
+            },
+            {
+              "ref": [
+                "JointVentureClass"
+              ]
+            },
+            {
+              "ref": [
+                "JointVentureSubClass"
+              ]
+            },
+            {
+              "ref": [
+                "IsDeleted"
+              ]
+            },
+            {
+              "ref": [
+                "CreationDate"
+              ]
+            },
+            {
+              "ref": [
+                "CreationTime"
+              ]
+            },
+            {
+              "ref": [
+                "CreatedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangedByUser"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeDate"
+              ]
+            },
+            {
+              "ref": [
+                "LastChangeTime"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingObject"
+              ]
+            },
+            {
+              "ref": [
+                "CompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "ProfitCenter"
+              ]
+            },
+            {
+              "ref": [
+                "FunctionalArea"
+              ]
+            },
+            {
+              "ref": [
+                "ControllingObjectClass"
+              ]
+            },
+            {
+              "ref": [
+                "OrderType"
+              ]
+            },
+            {
+              "ref": [
+                "ResponsibleCostCenter"
+              ]
+            },
+            {
+              "ref": [
+                "InternalOrderResponsibleUser"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderPlannedReleaseDate"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderPlannedCompletionDate"
+              ]
+            },
+            {
+              "ref": [
+                "IntOrderPlannedClosingDate"
+              ]
+            },
+            {
+              "ref": [
+                "InternalOrderReleaseDate"
+              ]
+            },
+            {
+              "ref": [
+                "InternalOrderCompletionDate"
+              ]
+            },
+            {
+              "ref": [
+                "InternalOrderClosingDate"
+              ]
+            },
+            {
+              "ref": [
+                "CostCollector"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "InternalOrder.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "InternalOrder.v1.InternalOrder",
+        "originalEntityName": "internalorder.InternalOrder"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "InternalOrder.v1.InternalOrder_Delta": {
+      "__abapOriginalName": "I_InternalOrder",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@AccessControl.privilegedAssociations": [
+        {
+          "=": "_ControllingAreaText"
+        },
+        {
+          "=": "_InternalOrderTypeText"
+        },
+        {
+          "=": "_ResponsibleUser"
+        },
+        {
+          "=": "_LastChangedByUser"
+        },
+        {
+          "=": "_CreatedByUser"
+        }
+      ],
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Internal Order",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.representativeKey": "InternalOrder",
+      "@ObjectModel.sapObjectNodeType.name": "InternalOrder",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "TRANSACTIONAL"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "L"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "InternalOrder": {
+          "__abapOriginalName": "InternalOrder",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Internal Order",
+          "@EndUserText.label": "Internal Order",
+          "@EndUserText.quickInfo": "Internal Order",
+          "@ObjectModel.text.element": [
+            {
+              "=": "InternalOrderDescription"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 12,
+          "notNull": true
+        },
+        "InternalOrderDescription": {
+          "__abapOriginalName": "InternalOrderDescription",
+          "@EndUserText.heading": "Internal Order Description",
+          "@EndUserText.label": "Internal Order Desc.",
+          "@EndUserText.quickInfo": "Internal Order Description",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "OrderCategory": {
+          "__abapOriginalName": "OrderCategory",
+          "@EndUserText.heading": "Cat",
+          "@EndUserText.label": "Order Category",
+          "@EndUserText.quickInfo": "Order Category",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_OrderCategory"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "BusinessArea": {
+          "__abapOriginalName": "BusinessArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Business Area",
+          "@EndUserText.label": "Business Area",
+          "@EndUserText.quickInfo": "Business Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_BusinessArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ControllingArea": {
+          "__abapOriginalName": "ControllingArea",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Controlling Area",
+          "@EndUserText.label": "Controlling Area",
+          "@EndUserText.quickInfo": "Controlling Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingArea"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_ControllingAreaText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "Plant": {
+          "__abapOriginalName": "Plant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Plnt",
+          "@EndUserText.label": "Plant",
+          "@EndUserText.quickInfo": "Plant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Plant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "Currency": {
+          "__abapOriginalName": "Currency",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Crcy",
+          "@EndUserText.label": "Currency",
+          "@EndUserText.quickInfo": "Order Currency",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Currency"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5,
+          "@Semantics.currencyCode": true
+        },
+        "IsStatisticalOrder": {
+          "__abapOriginalName": "IsStatisticalOrder",
+          "@EndUserText.heading": "Statistical Order",
+          "@EndUserText.label": "Statistical Order",
+          "@EndUserText.quickInfo": "Indicates If the Int. Order Has a Stats. Account Assignment",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "ReferenceOrder": {
+          "__abapOriginalName": "ReferenceOrder",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Reference Order",
+          "@EndUserText.label": "Reference Order",
+          "@EndUserText.quickInfo": "Reference Order Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "SalesOrder": {
+          "__abapOriginalName": "SalesOrder",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Sales Ord.",
+          "@EndUserText.label": "Sales Order",
+          "@EndUserText.quickInfo": "Sales Order Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "SalesOrderItem": {
+          "__abapOriginalName": "SalesOrderItem",
+          "@EndUserText.heading": "SO Item",
+          "@EndUserText.label": "Sales Order Item",
+          "@EndUserText.quickInfo": "Item Number in Sales Order",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "WBSElement": {
+          "__abapOriginalName": "WBSElement",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ABPSP",
+          "@EndUserText.heading": "WBS Element",
+          "@EndUserText.label": "WBS Element",
+          "@EndUserText.quickInfo": "Work Breakdown Structure Element (WBS Element)",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "WBSElementInternalID": {
+          "__abapOriginalName": "WBSElementInternalID",
+          "@EndUserText.heading": "WBS Elem",
+          "@EndUserText.label": "WBS Internal ID",
+          "@EndUserText.quickInfo": "WBS Element",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_WBSElementBasicData"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 8
+        },
+        "RequestingCostCenter": {
+          "__abapOriginalName": "RequestingCostCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Req. CC",
+          "@EndUserText.label": "Request. cost center",
+          "@EndUserText.quickInfo": "Requesting cost center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "RequestingCompanyCode": {
+          "__abapOriginalName": "RequestingCompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "RqCC",
+          "@EndUserText.label": "Requesting co. code",
+          "@EndUserText.quickInfo": "Requesting company code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_RequestingCompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "RequestingOrder": {
+          "__abapOriginalName": "RequestingOrder",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Req. order",
+          "@EndUserText.label": "Requesting order",
+          "@EndUserText.quickInfo": "Requesting order",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_RequestingOrder"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "InternalOrderLocation": {
+          "__abapOriginalName": "InternalOrderLocation",
+          "@EndUserText.heading": "Location",
+          "@EndUserText.label": "Location",
+          "@EndUserText.quickInfo": "Plant location for internal order",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_Location"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "LocationPlant": {
+          "__abapOriginalName": "LocationPlant",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Plnt",
+          "@EndUserText.label": "Location Plant",
+          "@EndUserText.quickInfo": "Location Plant",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LocationPlant"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ExternalOrder": {
+          "__abapOriginalName": "ExternalOrder",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "External order no.",
+          "@EndUserText.label": "External order no.",
+          "@EndUserText.quickInfo": "External order number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "ActualPostedCostCenter": {
+          "__abapOriginalName": "ActualPostedCostCenter",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Center for Actual Costs Posting",
+          "@EndUserText.label": "Cost Center for Actual Costs Posting",
+          "@EndUserText.quickInfo": "Cost Center for Actual Costs Posting",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "PlanningWithLineItemsIsActive": {
+          "__abapOriginalName": "PlanningWithLineItemsIsActive",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PLI",
+          "@EndUserText.label": "Plan Line Items",
+          "@EndUserText.quickInfo": "Identifier for Planning with Line Items",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CostCenter": {
+          "__abapOriginalName": "CostCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Cost Center",
+          "@EndUserText.label": "Cost Center",
+          "@EndUserText.quickInfo": "Cost Center",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "LogicalSystem": {
+          "__abapOriginalName": "LogicalSystem",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Log.System",
+          "@EndUserText.label": "Logical System",
+          "@EndUserText.quickInfo": "Logical System",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LogicalSystem"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "OrdIsUsedInIntegratedPlanning": {
+          "__abapOriginalName": "OrdIsUsedInIntegratedPlanning",
+          "@EndUserText.heading": "Plan-Integrated Order",
+          "@EndUserText.label": "Plan-Integrated Order",
+          "@EndUserText.quickInfo": "Indicates If the Internal Order Is Plan Integrated",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "TaxJurisdiction": {
+          "__abapOriginalName": "TaxJurisdiction",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Tax Jurisdiction",
+          "@EndUserText.label": "Tax Jurisdiction",
+          "@EndUserText.quickInfo": "Tax Jurisdiction",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 15
+        },
+        "ResultAnalysisInternalID": {
+          "__abapOriginalName": "ResultAnalysisInternalID",
+          "@EndUserText.heading": "Results Analysis Key",
+          "@EndUserText.label": "Results Analysis Key",
+          "@EndUserText.quickInfo": "Results Analysis Key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "ConditionUsage": {
+          "__abapOriginalName": "ConditionUsage",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "U",
+          "@EndUserText.label": "Usage",
+          "@EndUserText.quickInfo": "Usage of the condition table",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ConditionUsage"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "ConditionApplication": {
+          "__abapOriginalName": "ConditionApplication",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "App",
+          "@EndUserText.label": "Application",
+          "@EndUserText.quickInfo": "Application",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ConditionApplication"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "CostingSheet": {
+          "__abapOriginalName": "CostingSheet",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "CostSh",
+          "@EndUserText.label": "Costing Sheet",
+          "@EndUserText.quickInfo": "Costing Sheet",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CostingSheetProcedure"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "OverheadCode": {
+          "__abapOriginalName": "OverheadCode",
+          "@EndUserText.heading": "Overhead Key",
+          "@EndUserText.label": "Overhead Key",
+          "@EndUserText.quickInfo": "Overhead Key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "OrderInterestCalcProfile": {
+          "__abapOriginalName": "OrderInterestCalcProfile",
+          "@EndUserText.heading": "Interest Profile for Order Interest Calculation",
+          "@EndUserText.label": "OrderInterestCalcProfile",
+          "@EndUserText.quickInfo": "Interest Profile for Order Interest Calculation",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 7
+        },
+        "IntOrderSettlementCostElement": {
+          "__abapOriginalName": "IntOrderSettlementCostElement",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Settlement Cost Element",
+          "@EndUserText.label": "Settlement Cost Element",
+          "@EndUserText.quickInfo": "Settlement Cost Element",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "BasicSettlementGLAccount": {
+          "__abapOriginalName": "BasicSettlementGLAccount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "G/L Acct",
+          "@EndUserText.label": "G/L Account",
+          "@EndUserText.quickInfo": "G/L Account for Basic Settlement",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_BasicSettlementGLAccount"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "IntOrderIndividualField1Value": {
+          "__abapOriginalName": "IntOrderIndividualField1Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Applicant",
+          "@EndUserText.label": "Applicant",
+          "@EndUserText.quickInfo": "Applicant",
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField2Value": {
+          "__abapOriginalName": "IntOrderIndividualField2Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone",
+          "@EndUserText.label": "Telephone",
+          "@EndUserText.quickInfo": "Applicant's telephone number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField3Value": {
+          "__abapOriginalName": "IntOrderIndividualField3Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Person Responsible",
+          "@EndUserText.label": "Person Responsible",
+          "@EndUserText.quickInfo": "Person Responsible",
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField4Value": {
+          "__abapOriginalName": "IntOrderIndividualField4Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Telephone",
+          "@EndUserText.label": "Telephone",
+          "@EndUserText.quickInfo": "Telephone number of person in charge",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 20
+        },
+        "IntOrderIndividualField5Amount": {
+          "__abapOriginalName": "IntOrderIndividualField5Amount",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Estim. costs",
+          "@EndUserText.label": "Estimated costs",
+          "@EndUserText.quickInfo": "Estimated total costs of order",
+          "@ObjectModel.upperCase": true,
+          "@Semantics.amount.currencyCode": {
+            "=": "Currency"
+          },
+          "type": "cds.Decimal",
+          "precision": 34,
+          "scale": 4
+        },
+        "IntOrderIndividualField6Date": {
+          "__abapOriginalName": "IntOrderIndividualField6Date",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "ApplicDate",
+          "@EndUserText.label": "Application date",
+          "@EndUserText.quickInfo": "Application date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderIndividualField7Value": {
+          "__abapOriginalName": "IntOrderIndividualField7Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Department",
+          "@EndUserText.label": "Department",
+          "@EndUserText.quickInfo": "Department",
+          "type": "cds.String",
+          "length": 15
+        },
+        "IntOrderIndividualField8Date": {
+          "__abapOriginalName": "IntOrderIndividualField8Date",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Start work",
+          "@EndUserText.label": "Work Start",
+          "@EndUserText.quickInfo": "Work Start",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderIndividualField9Date": {
+          "__abapOriginalName": "IntOrderIndividualField9Date",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Work End",
+          "@EndUserText.label": "End of Work",
+          "@EndUserText.quickInfo": "End of Work",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderIndividualField10Value": {
+          "__abapOriginalName": "IntOrderIndividualField10Value",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "WP",
+          "@EndUserText.label": "Work approval",
+          "@EndUserText.quickInfo": "Identifier for work permit issued",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "OrderProcessingGroup": {
+          "__abapOriginalName": "OrderProcessingGroup",
+          "@EndUserText.heading": "Processing Group",
+          "@EndUserText.label": "Processing Group",
+          "@EndUserText.quickInfo": "Processing Group",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_OrderProcessingGroup"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "InvestmentProfile": {
+          "__abapOriginalName": "InvestmentProfile",
+          "@EndUserText.heading": "Investment Measure Profile",
+          "@EndUserText.label": "Investment Measure Profile",
+          "@EndUserText.quickInfo": "Investment Measure Profile",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "InvestmentScale": {
+          "__abapOriginalName": "InvestmentScale",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Investment Scale",
+          "@EndUserText.label": "Investment Scale",
+          "@EndUserText.quickInfo": "Scale of investment objects",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "InvestmentReason": {
+          "__abapOriginalName": "InvestmentReason",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "IR",
+          "@EndUserText.label": "Investment Reason",
+          "@EndUserText.quickInfo": "Reason for Investment",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "EnvironmentalInvestmentReason": {
+          "__abapOriginalName": "EnvironmentalInvestmentReason",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "EnInv",
+          "@EndUserText.label": "Envir. Investment",
+          "@EndUserText.quickInfo": "Reason for Environmental Investment",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_EnvrnmtlInvestmentReason"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "JointVenture": {
+          "__abapOriginalName": "JointVenture",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "JV",
+          "@EndUserText.label": "Joint Venture",
+          "@EndUserText.quickInfo": "Joint Venture",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "JointVentureRecoveryCode": {
+          "__abapOriginalName": "JointVentureRecoveryCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "RI",
+          "@EndUserText.label": "Recovery Indicator",
+          "@EndUserText.quickInfo": "Recovery Indicator",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JointVentureRecovery"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "JointVentureEquityType": {
+          "__abapOriginalName": "JointVentureEquityType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "ET",
+          "@EndUserText.label": "Equity Type",
+          "@EndUserText.quickInfo": "Equity Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JntVntrEquityTypeMaster"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "JointVentureOriginalCostObject": {
+          "__abapOriginalName": "JointVentureOriginalCostObject",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "O",
+          "@EndUserText.label": "Orig. Cost Object",
+          "@EndUserText.quickInfo": "JV original cost object",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 1
+        },
+        "JointVentureObjectType": {
+          "__abapOriginalName": "JointVentureObjectType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Type",
+          "@EndUserText.label": "JV Object Type",
+          "@EndUserText.quickInfo": "Joint Venture Object Type",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "JointVentureClass": {
+          "__abapOriginalName": "JointVentureClass",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Class",
+          "@EndUserText.label": "JIB/JIBE Class",
+          "@EndUserText.quickInfo": "JIB/JIBE Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JntIntrstBillgClass"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "JointVentureSubClass": {
+          "__abapOriginalName": "JointVentureSubClass",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "SCl A",
+          "@EndUserText.label": "JIB/JIBE Subclass A",
+          "@EndUserText.quickInfo": "JIB/JIBE Subclass A",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_JntIntrstBillgSubclass"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "IsDeleted": {
+          "__abapOriginalName": "IsDeleted",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "DF",
+          "@EndUserText.label": "Deletion Flag",
+          "@EndUserText.quickInfo": "Deletion Flag",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Boolean"
+        },
+        "CreationDate": {
+          "__abapOriginalName": "CreationDate",
+          "@EndUserText.heading": "Created On",
+          "@EndUserText.label": "Created On",
+          "@EndUserText.quickInfo": "Created On",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "CreationTime": {
+          "__abapOriginalName": "CreationTime",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Time created",
+          "@EndUserText.quickInfo": "Time created",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "CreatedByUser": {
+          "__abapOriginalName": "CreatedByUser",
+          "@EndUserText.heading": "Created By",
+          "@EndUserText.label": "Created By",
+          "@EndUserText.quickInfo": "Created By",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CreatedByUser"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangedByUser": {
+          "__abapOriginalName": "LastChangedByUser",
+          "@EndUserText.heading": "Changed By",
+          "@EndUserText.label": "Last Changed By",
+          "@EndUserText.quickInfo": "Last Changed By",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_LastChangedByUser"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDate": {
+          "__abapOriginalName": "LastChangeDate",
+          "@EndUserText.heading": "ChangeDate",
+          "@EndUserText.label": "Changed On",
+          "@EndUserText.quickInfo": "Change Date for Order Master",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "LastChangeTime": {
+          "__abapOriginalName": "LastChangeTime",
+          "@EndUserText.heading": "",
+          "@EndUserText.label": "Changed At",
+          "@EndUserText.quickInfo": "Changed At",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "@Semantics.time": true,
+          "length": 6
+        },
+        "ControllingObject": {
+          "__abapOriginalName": "ControllingObject",
+          "@EndUserText.heading": "Object Number",
+          "@EndUserText.label": "Object Number",
+          "@EndUserText.quickInfo": "Object Number",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 22
+        },
+        "CompanyCode": {
+          "__abapOriginalName": "CompanyCode",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Company Code",
+          "@EndUserText.label": "Company Code",
+          "@EndUserText.quickInfo": "Company Code",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_CompanyCode"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenter": {
+          "__abapOriginalName": "ProfitCenter",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Profit Center",
+          "@EndUserText.label": "Profit Center",
+          "@EndUserText.quickInfo": "Profit Center",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ProfitCenter"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "FunctionalArea": {
+          "__abapOriginalName": "FunctionalArea",
+          "@EndUserText.heading": "FA",
+          "@EndUserText.label": "Functional Area",
+          "@EndUserText.quickInfo": "Functional Area",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_FunctionalArea"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 16
+        },
+        "ControllingObjectClass": {
+          "__abapOriginalName": "ControllingObjectClass",
+          "@EndUserText.heading": "Object Class",
+          "@EndUserText.label": "Object Class",
+          "@EndUserText.quickInfo": "Object Class",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ControllingObjectClass"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "OrderType": {
+          "__abapOriginalName": "OrderType",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Type",
+          "@EndUserText.label": "Order Type",
+          "@EndUserText.quickInfo": "Order Type",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_InternalOrderType"
+          },
+          "@ObjectModel.text.association": {
+            "=": "_InternalOrderTypeText"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ResponsibleCostCenter": {
+          "__abapOriginalName": "ResponsibleCostCenter",
+          "@AbapCatalog.typeSpec.conversionExit": "ALPHA",
+          "@EndUserText.heading": "Responsible Cost Center",
+          "@EndUserText.label": "Responsible Cost Center",
+          "@EndUserText.quickInfo": "Responsible cost center in internal order",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "InternalOrderResponsibleUser": {
+          "__abapOriginalName": "InternalOrderResponsibleUser",
+          "@EndUserText.heading": "User Responsible",
+          "@EndUserText.label": "User Responsible",
+          "@EndUserText.quickInfo": "Responsible user for Internal Order",
+          "@ObjectModel.foreignKey.association": {
+            "=": "_ResponsibleUser"
+          },
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 12
+        },
+        "IntOrderPlannedReleaseDate": {
+          "__abapOriginalName": "IntOrderPlannedReleaseDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PlnRelease",
+          "@EndUserText.label": "Planned release",
+          "@EndUserText.quickInfo": "Planned release date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderPlannedCompletionDate": {
+          "__abapOriginalName": "IntOrderPlannedCompletionDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "PlnCompltn",
+          "@EndUserText.label": "Planned completion",
+          "@EndUserText.quickInfo": "Planned completion date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "IntOrderPlannedClosingDate": {
+          "__abapOriginalName": "IntOrderPlannedClosingDate",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@EndUserText.heading": "Pl.clo.dat",
+          "@EndUserText.label": "Planned closing date",
+          "@EndUserText.quickInfo": "Planned closing date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "InternalOrderReleaseDate": {
+          "__abapOriginalName": "InternalOrderReleaseDate",
+          "@EndUserText.heading": "Release",
+          "@EndUserText.label": "Release",
+          "@EndUserText.quickInfo": "Release Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "InternalOrderCompletionDate": {
+          "__abapOriginalName": "InternalOrderCompletionDate",
+          "@EndUserText.heading": "TechCompl.",
+          "@EndUserText.label": "Technical Completion",
+          "@EndUserText.quickInfo": "Technical Completion Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "InternalOrderClosingDate": {
+          "__abapOriginalName": "InternalOrderClosingDate",
+          "@EndUserText.heading": "Close",
+          "@EndUserText.label": "Close",
+          "@EndUserText.quickInfo": "Close Date",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.Date"
+        },
+        "CostCollector": {
+          "__abapOriginalName": "CostCollector",
+          "@EndUserText.heading": "Cost Collector Key",
+          "@EndUserText.label": "Cost Collector Key",
+          "@EndUserText.quickInfo": "Cost Collector Key",
+          "@ObjectModel.upperCase": true,
+          "type": "cds.String",
+          "length": 23
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "InternalOrder.v1.InternalOrder",
+      "import_meta": {
+        "qualifiedName": "InternalOrder.v1.InternalOrder",
+        "originalEntityName": "internalorder.InternalOrder"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "InternalOrder.v1.InternalOrder",
+    "all_entities": [
+      "InternalOrder.v1.InternalOrder",
+      "InternalOrder.v1.InternalOrder",
+      "InternalOrder.v1",
+      "InternalOrder.v1.InternalOrder_Delta"
+    ],
+    "valid": true,
+    "valid_references": [],
+    "invalid_references": []
+  }
+}

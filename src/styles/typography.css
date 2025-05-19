@@ -1,0 +1,152 @@
+/* SC Prosper Sans Typography System for SCB Sapphire FinSight
+   Follows the exact specifications from the SCB brand guidelines */
+
+@font-face {
+  font-family: 'SC Prosper Sans';
+  src: url('/fonts/SCProsperSans-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SC Prosper Sans';
+  src: url('/fonts/SCProsperSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SC Prosper Sans';
+  src: url('/fonts/SCProsperSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SC Prosper Sans';
+  src: url('/fonts/SCProsperSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SCB Typography Hierarchy System */
+
+/* Dashboard Title - Responsive */
+.scb-title {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 700; /* Bold */
+  font-size: clamp(1.25rem, 3vw, 1.75rem); /* 20px to 28px */
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: rgb(var(--scb-honolulu-blue));
+}
+
+/* Section Headers - Responsive */
+.scb-section-header {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 500; /* Medium */
+  font-size: clamp(1rem, 2.5vw, 1.25rem); /* 16px to 20px */
+  line-height: 1.4;
+  color: rgb(var(--scb-dark-gray));
+  margin-bottom: 0.75rem;
+}
+
+/* Key Metrics - Responsive */
+.scb-metric-primary {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 700; /* Bold */
+  font-size: clamp(1.25rem, 4vw, 1.5rem); /* 20px to 24px */
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums; /* For vertical alignment of numbers */
+}
+
+.scb-metric-secondary {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 700; /* Bold */
+  font-size: clamp(1rem, 3vw, 1.25rem); /* 16px to 20px */
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.scb-metric-tertiary {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 700; /* Bold */
+  font-size: clamp(0.875rem, 2vw, 1rem); /* 14px to 16px */
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Data Labels */
+.scb-data-label {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.5;
+  color: rgb(var(--scb-dark-gray));
+}
+
+.scb-data-label-large {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: 1rem; /* 16px */
+  line-height: 1.5;
+  color: rgb(var(--scb-dark-gray));
+}
+
+/* Supplementary Information */
+.scb-supplementary {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 300; /* Light */
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.5;
+  color: rgba(var(--scb-dark-gray), 0.8);
+}
+
+/* Financial Data - Using tabular figures */
+.scb-financial-data {
+  font-variant-numeric: tabular-nums; /* Ensures vertical alignment of numbers */
+  font-feature-settings: 'tnum'; /* Additional support for tabular numbers */
+}
+
+/* Value Indicators */
+.scb-value-positive {
+  color: rgb(var(--scb-american-green));
+}
+
+.scb-value-negative {
+  color: rgb(var(--scb-muted-red));
+}
+
+.scb-value-neutral {
+  color: rgb(var(--scb-honolulu-blue));
+}
+
+/* Badges for financial status */
+.scb-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.scb-badge-positive {
+  background-color: rgba(var(--scb-american-green), 0.1);
+  color: rgb(var(--scb-american-green));
+}
+
+.scb-badge-negative {
+  background-color: rgba(var(--scb-muted-red), 0.1);
+  color: rgb(var(--scb-muted-red));
+}
+
+.scb-badge-neutral {
+  background-color: rgba(var(--scb-honolulu-blue), 0.1);
+  color: rgb(var(--scb-honolulu-blue));
+}

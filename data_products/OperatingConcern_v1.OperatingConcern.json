@@ -1,0 +1,634 @@
+{
+  "namespace": "sap.sfin.ara",
+  "version": "1.0.0",
+  "entities": {
+    "OperatingConcern.v1.OperatingConcern": {
+      "__abapOriginalName": "I_OperatingConcern",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Operating Concern",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "OperatingConcern",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "OperatingConcern": {
+          "__abapOriginalName": "OperatingConcern",
+          "@EndUserText.heading": "OpCo",
+          "@EndUserText.label": "Operating Concern",
+          "@EndUserText.quickInfo": "Operating Concern",
+          "@ObjectModel.text.element": [
+            {
+              "=": "OperatingConcernName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "OperatingConcernName": {
+          "__abapOriginalName": "OperatingConcernName",
+          "@EndUserText.heading": "Name of operating concern",
+          "@EndUserText.label": "Name",
+          "@EndUserText.quickInfo": "Description of operating concern",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "OperatingConcern.v1.OperatingConcernText",
+          "on": [
+            {
+              "ref": [
+                "OperatingConcern"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "OperatingConcern"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "OperatingConcern.v1.OperatingConcern_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "OperatingConcern.v1.OperatingConcern",
+        "originalEntityName": "operatingconcern.OperatingConcern"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "OperatingConcern.v1.OperatingConcern_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "OperatingConcern"
+              ]
+            },
+            {
+              "ref": [
+                "OperatingConcernName"
+              ]
+            },
+            {
+              "ref": [
+                "_Text"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ],
+          "mixin": {
+            "_Text": {
+              "__abapOriginalName": "_Text",
+              "type": "cds.Association",
+              "cardinality": {
+                "max": "*"
+              },
+              "target": "OperatingConcern.v1.OperatingConcernText",
+              "on": [
+                {
+                  "ref": [
+                    "$projection",
+                    "OperatingConcern"
+                  ]
+                },
+                "=",
+                {
+                  "ref": [
+                    "_Text",
+                    "OperatingConcern"
+                  ]
+                }
+              ],
+              "@EndUserText.label": "_Text"
+            }
+          }
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "OperatingConcern.v1": {
+      "kind": "context",
+      "@DataWarehouse.contentImport.contextType": "api",
+      "@DataWarehouse.contentImport.connection": "4aad9dc0_d75b_4a62_8d31_70c41a65a19f_BDP",
+      "@DataWarehouse.contentImport.readOnly": true,
+      "import_meta": {
+        "qualifiedName": "OperatingConcern.v1.OperatingConcernText",
+        "originalEntityName": "operatingconcern.OperatingConcernText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "OperatingConcern.v1.OperatingConcernText": {
+      "__abapOriginalName": "I_OperatingConcernText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Operating Concern - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "OperatingConcern",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "OperatingConcern": {
+          "__abapOriginalName": "OperatingConcern",
+          "@EndUserText.heading": "OpCo",
+          "@EndUserText.label": "Operating Concern",
+          "@EndUserText.quickInfo": "Operating Concern",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "OperatingConcernName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "OperatingConcernName": {
+          "__abapOriginalName": "OperatingConcernName",
+          "@EndUserText.heading": "Name of operating concern",
+          "@EndUserText.label": "Name",
+          "@EndUserText.quickInfo": "Description of operating concern",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "ACTIVE"
+        },
+        "deltaFromEntities": [
+          "OperatingConcern.v1.OperatingConcernText_Delta"
+        ]
+      },
+      "import_meta": {
+        "qualifiedName": "OperatingConcern.v1.OperatingConcernText",
+        "originalEntityName": "operatingconcern.OperatingConcernText"
+      },
+      "@DataWarehouse.consumption.external": false,
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "OperatingConcern.v1.OperatingConcernText_Delta"
+            ]
+          },
+          "columns": [
+            {
+              "ref": [
+                "OperatingConcern"
+              ]
+            },
+            {
+              "ref": [
+                "Language"
+              ]
+            },
+            {
+              "ref": [
+                "OperatingConcernName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "Change_Type"
+              ]
+            },
+            "not",
+            "in",
+            {
+              "list": [
+                {
+                  "val": "D"
+                },
+                {
+                  "val": "M"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "@DataWarehouse.repository.technicalType": {
+        "#": "DWC_LOCAL_TABLE"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "OperatingConcern.v1.OperatingConcernText_Delta": {
+      "__abapOriginalName": "I_OperatingConcernText",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Operating Concern - Text",
+      "@ObjectModel.dataCategory": {
+        "#": "TEXT"
+      },
+      "@ObjectModel.modelingPattern": {
+        "#": "LANGUAGE_DEPENDENT_TEXT"
+      },
+      "@ObjectModel.representativeKey": "OperatingConcern",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "LANGUAGE_DEPENDENT_TEXT"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "OperatingConcern": {
+          "__abapOriginalName": "OperatingConcern",
+          "@EndUserText.heading": "OpCo",
+          "@EndUserText.label": "Operating Concern",
+          "@EndUserText.quickInfo": "Operating Concern",
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true,
+          "@ObjectModel.text.element": [
+            {
+              "=": "OperatingConcernName"
+            }
+          ]
+        },
+        "Language": {
+          "__abapOriginalName": "Language",
+          "@AbapCatalog.typeSpec.changeDocumentRelevant": true,
+          "@AbapCatalog.typeSpec.conversionExit": "ISOLA",
+          "@EndUserText.heading": "Language",
+          "@EndUserText.label": "Language Key",
+          "@EndUserText.quickInfo": "Language Key",
+          "@Semantics.language": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 2,
+          "notNull": true
+        },
+        "OperatingConcernName": {
+          "__abapOriginalName": "OperatingConcernName",
+          "@EndUserText.heading": "Name of operating concern",
+          "@EndUserText.label": "Name",
+          "@EndUserText.quickInfo": "Description of operating concern",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "OperatingConcern.v1.OperatingConcernText",
+      "import_meta": {
+        "qualifiedName": "OperatingConcern.v1.OperatingConcernText",
+        "originalEntityName": "operatingconcern.OperatingConcernText"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    },
+    "OperatingConcern.v1.OperatingConcern_Delta": {
+      "__abapOriginalName": "I_OperatingConcern",
+      "@AccessControl.authorizationCheck": {
+        "#": "CHECK"
+      },
+      "@Analytics.dataExtraction.enabled": true,
+      "@EndUserText.label": "Operating Concern",
+      "@Metadata.allowExtensions": true,
+      "@ObjectModel.modelingPattern": {
+        "#": "ANALYTICAL_DIMENSION"
+      },
+      "@ObjectModel.representativeKey": "OperatingConcern",
+      "@ObjectModel.supportedCapabilities": [
+        {
+          "#": "ANALYTICAL_DIMENSION"
+        },
+        {
+          "#": "EXTRACTION_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_ASSOCIATION_TARGET"
+        },
+        {
+          "#": "SQL_DATA_SOURCE"
+        },
+        {
+          "#": "CDS_MODELING_DATA_SOURCE"
+        }
+      ],
+      "@ObjectModel.usageType.dataClass": {
+        "#": "CUSTOMIZING"
+      },
+      "@ObjectModel.usageType.serviceQuality": {
+        "#": "A"
+      },
+      "@ObjectModel.usageType.sizeCategory": {
+        "#": "M"
+      },
+      "@VDM.viewType": {
+        "#": "BASIC"
+      },
+      "kind": "entity",
+      "elements": {
+        "OperatingConcern": {
+          "__abapOriginalName": "OperatingConcern",
+          "@EndUserText.heading": "OpCo",
+          "@EndUserText.label": "Operating Concern",
+          "@EndUserText.quickInfo": "Operating Concern",
+          "@ObjectModel.text.element": [
+            {
+              "=": "OperatingConcernName"
+            }
+          ],
+          "@ObjectModel.upperCase": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 4,
+          "notNull": true
+        },
+        "OperatingConcernName": {
+          "__abapOriginalName": "OperatingConcernName",
+          "@EndUserText.heading": "Name of operating concern",
+          "@EndUserText.label": "Name",
+          "@EndUserText.quickInfo": "Description of operating concern",
+          "@Semantics.text": true,
+          "type": "cds.String",
+          "length": 30
+        },
+        "_Text": {
+          "__abapOriginalName": "_Text",
+          "type": "cds.Association",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "OperatingConcern.v1.OperatingConcernText",
+          "on": [
+            {
+              "ref": [
+                "OperatingConcern"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "_Text",
+                "OperatingConcern"
+              ]
+            }
+          ],
+          "@EndUserText.label": "_Text"
+        },
+        "Change_Type": {
+          "type": "cds.String",
+          "notNull": true,
+          "length": 1,
+          "default": {
+            "val": "I"
+          }
+        },
+        "Change_Date": {
+          "type": "cds.Timestamp",
+          "notNull": true,
+          "default": {
+            "func": "CURRENT_UTCTIMESTAMP"
+          }
+        }
+      },
+      "@DataWarehouse.contentImport.readOnly": true,
+      "@DataWarehouse.delta": {
+        "type": {
+          "#": "UPSERT"
+        },
+        "dateTimeElement": {
+          "=": "Change_Date"
+        },
+        "modeElement": {
+          "=": "Change_Type"
+        }
+      },
+      "@DataWarehouse.enclosingObject": "OperatingConcern.v1.OperatingConcern",
+      "import_meta": {
+        "qualifiedName": "OperatingConcern.v1.OperatingConcern",
+        "originalEntityName": "operatingconcern.OperatingConcern"
+      },
+      "_meta": {
+        "dependencies": {
+          "folderAssignment": null
+        }
+      }
+    }
+  },
+  "type": "aspect",
+  "implementation": "managed",
+  "validation": {
+    "primary_entity": "OperatingConcern.v1.OperatingConcern",
+    "all_entities": [
+      "OperatingConcern.v1.OperatingConcern",
+      "OperatingConcern.v1.OperatingConcern",
+      "OperatingConcern.v1",
+      "OperatingConcern.v1.OperatingConcernText",
+      "OperatingConcern.v1.OperatingConcernText_Delta",
+      "OperatingConcern.v1.OperatingConcern_Delta"
+    ],
+    "valid": true,
+    "valid_references": [
+      {
+        "from": "OperatingConcern.v1.OperatingConcern",
+        "to": "OperatingConcern.v1.OperatingConcernText"
+      },
+      {
+        "from": "OperatingConcern.v1.OperatingConcern",
+        "to": "OperatingConcern.v1.OperatingConcernText"
+      },
+      {
+        "from": "OperatingConcern.v1.OperatingConcern",
+        "to": "OperatingConcern.v1.OperatingConcernText"
+      }
+    ],
+    "invalid_references": []
+  }
+}
