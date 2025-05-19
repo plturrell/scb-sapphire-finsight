@@ -33,44 +33,11 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
   const fetchNews = async () => {
     try {
       setLoading(true);
-      // Use the perplexityApi for news data
       const newsData = await perplexityApi.getMarketNews();
-      
-      if (newsData && newsData.length > 0) {
-        setNews(newsData);
-      } else {
-        // Fallback - create some dummy news items if API doesn't return any
-        const fallbackNews = [];
-        for (let i = 0; i < 3; i++) {
-          fallbackNews.push({
-            id: `fallback-${i}`,
-            title: `Financial Update ${i+1}`,
-            summary: "No specific market news available at this time.",
-            category: "Finance",
-            timestamp: new Date().toISOString(),
-            source: "Market Update",
-            url: "#"
-          });
-        }
-        setNews(fallbackNews);
-      }
+      setNews(newsData);
     } catch (error) {
       console.error('Error fetching news:', error);
-      
-      // Create fallback news items on error
-      const fallbackNews = [];
-      for (let i = 0; i < 3; i++) {
-        fallbackNews.push({
-          id: `fallback-${i}`,
-          title: `Market Update ${i+1}`,
-          summary: "Unable to retrieve market news at this time.",
-          category: "Finance",
-          timestamp: new Date().toISOString(),
-          source: "System",
-          url: "#"
-        });
-      }
-      setNews(fallbackNews);
+      setNews([]);
     } finally {
       setLoading(false);
     }
