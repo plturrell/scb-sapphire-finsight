@@ -11,6 +11,10 @@ const nextConfig = {
     // your project has type errors.
     ignoreBuildErrors: true,
   },
+  // Handle trailing slashes consistently
+  trailingSlash: false,
+  // Optimize production builds
+  productionBrowserSourceMaps: false,
 }
 
 module.exports = nextConfig
