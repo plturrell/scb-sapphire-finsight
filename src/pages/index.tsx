@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Layout from '@/components/Layout';
+import ModernLayout from '@/components/ModernLayout';
 import MetricCard from '@/components/MetricCard';
 import JouleAssistant from '@/components/JouleAssistant';
 import {
@@ -45,7 +45,7 @@ export default function Dashboard() {
   const [jouleOpen, setJouleOpen] = useState(false);
 
   return (
-    <Layout>
+    <ModernLayout>
       <div className="space-y-6">
         {/* SCB Banner Image */}
         <div className="w-full overflow-hidden rounded-md shadow-sm mb-6 max-h-[180px]">
@@ -257,6 +257,6 @@ export default function Dashboard() {
       </div>
 
       <JouleAssistant open={jouleOpen} onOpenChange={setJouleOpen} />
-    </Layout>
+    </ModernLayout>
   );
 }

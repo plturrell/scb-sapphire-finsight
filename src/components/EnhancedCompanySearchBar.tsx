@@ -1,0 +1,460 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { 
+  Search, 
+  Building2, 
+  TrendingUp, 
+  Download,
+  Loader,
+  CheckCircle,
+  AlertCircle,
+  Info
+} from 'lucide-react';
+import { useRouter } from 'next/router';
+
+// Debounce function
+function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+  let timeoutId: NodeJS.Timeout | null = null;
+  
+  return ((...args: Parameters<T>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, wait);
+  }) as T;
+}
+
+interface CompanySearchResult {
+  companyId: string;
+  companyCode: string;
+  companyName: string;
+  companyNameLocal?: string;
+  ticker?: string;
+  industry: string;
+  country: string;
+  listingStatus: string;
+  matchScore: number;
+  dataAvailable: {
+    profile: boolean;
+    financials: boolean;
+    filings: boolean;
+    tariffData: boolean;
+  };
+}
+
+// Mock company data for demonstration
+const mockCompanies: CompanySearchResult[] = [
+  {
+    companyId: 'ciq-001',
+    companyCode: 'VCG-0001',
+    companyName: 'Vietnam Dairy Products Joint Stock Company',
+    companyNameLocal: 'Công ty Cổ phần Sữa Việt Nam',
+    ticker: 'VNM',
+    industry: 'Food Products',
+    country: 'Vietnam',
+    listingStatus: 'Listed',
+    matchScore: 0.95,
+    dataAvailable: {
+      profile: true,
+      financials: true,
+      filings: true,
+      tariffData: true
+    }
+  },
+  {
+    companyId: 'ciq-002',
+    companyCode: 'VCG-0002',
+    companyName: 'FPT Corporation',
+    companyNameLocal: 'Công ty Cổ phần FPT',
+    ticker: 'FPT',
+    industry: 'Information Technology',
+    country: 'Vietnam',
+    listingStatus: 'Listed',
+    matchScore: 0.90,
+    dataAvailable: {
+      profile: true,
+      financials: true,
+      filings: true,
+      tariffData: true
+    }
+  },
+  {
+    companyId: 'ciq-003',
+    companyCode: 'VCG-0003',
+    companyName: 'Viettel Group',
+    companyNameLocal: 'Tập đoàn Viễn thông Quân đội',
+    ticker: null,
+    industry: 'Telecommunications',
+    country: 'Vietnam',
+    listingStatus: 'Private',
+    matchScore: 0.88,
+    dataAvailable: {
+      profile: true,
+      financials: false,
+      filings: false,
+      tariffData: true
+    }
+  },
+  {
+    companyId: 'ciq-004',
+    companyCode: 'VCG-0004',
+    companyName: 'Masan Group Corporation',
+    companyNameLocal: 'Công ty Cổ phần Tập đoàn Masan',
+    ticker: 'MSN',
+    industry: 'Consumer Goods',
+    country: 'Vietnam',
+    listingStatus: 'Listed',
+    matchScore: 0.85,
+    dataAvailable: {
+      profile: true,
+      financials: true,
+      filings: true,
+      tariffData: true
+    }
+  },
+  {
+    companyId: 'ciq-005',
+    companyCode: 'VCG-0005',
+    companyName: 'Vietnam Airlines JSC',
+    companyNameLocal: 'Tổng Công ty Hàng không Việt Nam',
+    ticker: 'HVN',
+    industry: 'Airlines',
+    country: 'Vietnam',
+    listingStatus: 'Listed',
+    matchScore: 0.82,
+    dataAvailable: {
+      profile: true,
+      financials: true,
+      filings: true,
+      tariffData: true
+    }
+  },
+  {
+    companyId: 'scb-001',
+    companyCode: 'SCB-001',
+    companyName: 'Standard Chartered Bank',
+    ticker: 'STAN',
+    industry: 'Banking',
+    country: 'United Kingdom',
+    listingStatus: 'Listed',
+    matchScore: 0.92,
+    dataAvailable: {
+      profile: true,
+      financials: true,
+      filings: true,
+      tariffData: false
+    }
+  },
+  {
+    companyId: 'scb-vnm',
+    companyCode: 'SCB-VNM',
+    companyName: 'Standard Chartered Bank (Vietnam) Limited',
+    companyNameLocal: 'Ngân hàng TNHH Một thành viên Standard Chartered (Việt Nam)',
+    industry: 'Banking',
+    country: 'Vietnam',
+    listingStatus: 'Subsidiary',
+    matchScore: 0.89,
+    dataAvailable: {
+      profile: true,
+      financials: true,
+      filings: false,
+      tariffData: false
+    }
+  }
+];
+
+const EnhancedCompanySearchBar: React.FC = () => {
+  const router = useRouter();
+  const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<CompanySearchResult[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [searchStatus, setSearchStatus] = useState<{ type: 'idle' | 'loading' | 'success' | 'error', message?: string }>({ type: 'idle' });
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('recentCompanySearches');
+    if (saved) {
+      setRecentSearches(JSON.parse(saved));
+    }
+  }, []);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Mock search function
+  const performSearch = useCallback(
+    debounce(async (query: string) => {
+      if (query.length < 2) {
+        setSearchResults([]);
+        setSearchStatus({ type: 'idle' });
+        return;
+      }
+
+      setIsLoading(true);
+      setSearchStatus({ type: 'loading', message: 'Searching companies...' });
+      
+      try {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Filter mock data based on query
+        const results = mockCompanies.filter(company => 
+          company.companyName.toLowerCase().includes(query.toLowerCase()) ||
+          company.companyNameLocal?.toLowerCase().includes(query.toLowerCase()) ||
+          company.ticker?.toLowerCase().includes(query.toLowerCase()) ||
+          company.industry.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        // Sort by match score
+        results.sort((a, b) => b.matchScore - a.matchScore);
+        
+        setSearchResults(results);
+        setSearchStatus({ 
+          type: 'success', 
+          message: `Found ${results.length} companies` 
+        });
+      } catch (error) {
+        console.error('Search error:', error);
+        setSearchResults([]);
+        setSearchStatus({ 
+          type: 'error', 
+          message: 'Search failed. Please try again.' 
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }, 300),
+    []
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setShowResults(true);
+    performSearch(query);
+  };
+
+  // Select company from results
+  const selectCompany = (company: CompanySearchResult) => {
+    setSearchQuery(company.companyName);
+    setShowResults(false);
+    
+    // Add to recent searches
+    const newRecent = [company.companyName, ...recentSearches.filter(s => s !== company.companyName)].slice(0, 5);
+    setRecentSearches(newRecent);
+    localStorage.setItem('recentCompanySearches', JSON.stringify(newRecent));
+    
+    // Navigate to company page
+    router.push(`/reports/company/${company.companyCode}`);
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showResults || searchResults.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => 
+          prev < searchResults.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0) {
+          selectCompany(searchResults[selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        setShowResults(false);
+        break;
+    }
+  };
+
+  // Get data availability icon
+  const getDataIcon = (available: boolean) => {
+    return available 
+      ? <CheckCircle className="w-3 h-3 text-green-500" />
+      : <div className="w-3 h-3 rounded-full bg-gray-300" />;
+  };
+
+  // Get status icon
+  const getStatusIcon = () => {
+    switch (searchStatus.type) {
+      case 'loading': return <Loader className="w-4 h-4 text-blue-500 animate-spin" />;
+      case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'error': return <AlertCircle className="w-4 h-4 text-red-500" />;
+      default: return null;
+    }
+  };
+
+  return (
+    <div ref={searchRef} className="relative w-full">
+      {/* Search Input */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <input
+          ref={inputRef}
+          type="text"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setShowResults(true)}
+          placeholder="Search companies by name, ticker, or industry..."
+          className="w-full bg-white border border-gray-300 text-gray-900 py-2.5 px-10 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[rgb(var(--scb-blue))] focus:border-transparent transition-all"
+        />
+        {isLoading && (
+          <Loader className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 animate-spin" />
+        )}
+      </div>
+
+      {/* Search Results Dropdown */}
+      {showResults && (searchResults.length > 0 || (searchQuery.length === 0 && recentSearches.length > 0)) && (
+        <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg overflow-hidden z-50 border border-gray-200">
+          {/* Status Bar */}
+          {searchStatus.type !== 'idle' && searchQuery.length > 0 && (
+            <div className={`px-4 py-2 flex items-center gap-2 text-xs ${
+              searchStatus.type === 'error' ? 'bg-red-50 text-red-700' : 
+              searchStatus.type === 'success' ? 'bg-green-50 text-green-700' : 
+              'bg-blue-50 text-blue-700'
+            }`}>
+              {getStatusIcon()}
+              <span>{searchStatus.message}</span>
+            </div>
+          )}
+          
+          {/* Recent Searches */}
+          {searchQuery.length === 0 && recentSearches.length > 0 && (
+            <>
+              <div className="px-4 py-2 bg-gray-50 border-b">
+                <h4 className="text-xs font-medium text-gray-600 uppercase">Recent Searches</h4>
+              </div>
+              {recentSearches.map((recent, idx) => (
+                <div
+                  key={idx}
+                  className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center"
+                  onClick={() => {
+                    setSearchQuery(recent);
+                    performSearch(recent);
+                  }}
+                >
+                  <TrendingUp className="w-4 h-4 text-gray-400 mr-3" />
+                  <span className="text-sm text-gray-700">{recent}</span>
+                </div>
+              ))}
+            </>
+          )}
+
+          {/* Search Results */}
+          {searchQuery.length > 0 && searchResults.length > 0 && (
+            <>
+              <div className="px-4 py-2 bg-gray-50 border-b">
+                <h4 className="text-xs font-medium text-gray-600 uppercase">
+                  Search Results ({searchResults.length})
+                </h4>
+              </div>
+              
+              <div className="max-h-96 overflow-y-auto">
+                {searchResults.map((company, idx) => (
+                  <div
+                    key={company.companyId}
+                    className={`px-4 py-3 hover:bg-gray-50 cursor-pointer ${
+                      selectedIndex === idx ? 'bg-gray-50' : ''
+                    }`}
+                    onClick={() => selectCompany(company)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <Building2 className="w-4 h-4 text-gray-400 mr-2" />
+                          <span className="font-medium text-gray-900">{company.companyName}</span>
+                          {company.ticker && (
+                            <span className="ml-2 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                              {company.ticker}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {company.companyNameLocal && (
+                          <p className="text-xs text-gray-500 ml-6 mt-0.5">
+                            {company.companyNameLocal}
+                          </p>
+                        )}
+                        
+                        <div className="flex items-center mt-2 ml-6">
+                          <span className="text-xs text-gray-500">
+                            {company.industry} • {company.country}
+                          </span>
+                          {company.listingStatus === 'Listed' && (
+                            <span className="ml-2 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                              Listed
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-3 ml-4">
+                        <div className="flex items-center space-x-1">
+                          <div className="relative group">
+                            {getDataIcon(company.dataAvailable.profile)}
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Profile
+                            </span>
+                          </div>
+                          <div className="relative group">
+                            {getDataIcon(company.dataAvailable.financials)}
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Financials
+                            </span>
+                          </div>
+                          <div className="relative group">
+                            {getDataIcon(company.dataAvailable.filings)}
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Filings
+                            </span>
+                          </div>
+                          <div className="relative group">
+                            {getDataIcon(company.dataAvailable.tariffData)}
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              Tariff
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <Info className="w-4 h-4 text-gray-400" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default EnhancedCompanySearchBar;

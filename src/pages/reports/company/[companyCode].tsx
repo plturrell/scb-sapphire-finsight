@@ -18,7 +18,7 @@ import {
   Calendar,
   DollarSign
 } from 'lucide-react';
-import Layout from '@/components/Layout';
+import ModernLayout from '@/components/ModernLayout';
 import { vietnamReportService } from '@/lib/vietnam-report-service';
 
 interface CompanyReport {
@@ -119,19 +119,19 @@ const CompanyReportPage: React.FC = () => {
 
   if (loading || !report) {
     return (
-      <Layout>
+      <ModernLayout>
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <Loader className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-4" />
             <p className="text-gray-600">Loading company report...</p>
           </div>
         </div>
-      </Layout>
+      </ModernLayout>
     );
   }
 
   return (
-    <Layout>
+    <ModernLayout>
       <div className="max-w-7xl mx-auto">
         {/* Report Header */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
@@ -346,7 +346,7 @@ const CompanyReportPage: React.FC = () => {
           )}
         </div>
       </div>
-    </Layout>
+    </ModernLayout>
   );
 };
 
