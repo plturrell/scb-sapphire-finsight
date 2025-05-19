@@ -77,6 +77,10 @@ const VietnamTariffDashboard: React.FC = () => {
   // Mock data fetch function for network-aware loader
   const fetchTariffAlerts = async (offset: number, limit: number): Promise<TariffAlert[]> => {
     await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+    if (!Array.isArray(mockVietnamTariffAlerts)) {
+      console.warn('mockVietnamTariffAlerts is not an array');
+      return [];
+    }
     return mockVietnamTariffAlerts.slice(offset, offset + limit);
   };
 
@@ -270,7 +274,7 @@ const VietnamTariffDashboard: React.FC = () => {
                       </Typography>
                       
                       <Grid container spacing={2}>
-                        {vietnamAiPredictions.slice(0, 3).map((prediction, index) => (
+                        {Array.isArray(vietnamAiPredictions?.predictions) && vietnamAiPredictions.predictions.slice(0, 3).map((prediction, index) => (
                           <Grid item xs={12} md={4} key={index}>
                             <Paper 
                               variant="outlined" 
@@ -350,7 +354,7 @@ const VietnamTariffDashboard: React.FC = () => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {vietnamTradeCorrelations.slice(0, 4).map((correlation, index) => (
+                          {Array.isArray(vietnamTradeCorrelations?.influences) && vietnamTradeCorrelations.influences.slice(0, 4).map((correlation, index) => (
                             <TableRow key={index}>
                               <TableCell>{correlation.productA} ↔ {correlation.productB}</TableCell>
                               <TableCell align="right">

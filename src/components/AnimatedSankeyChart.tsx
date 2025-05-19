@@ -445,10 +445,12 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
       updateChart();
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
   }, [updateChart]);
 
   return (
@@ -564,7 +566,7 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
           <div
             className="absolute z-10 bg-white p-2 rounded shadow-lg text-sm border border-gray-200 max-w-xs"
             style={{
-              left: Math.min(tooltipContent.x, window.innerWidth - 200),
+              left: Math.min(tooltipContent.x, typeof window !== 'undefined' ? window.innerWidth - 200 : 800),
               top: tooltipContent.y + 10,
             }}
             dangerouslySetInnerHTML={{ __html: tooltipContent.content }}

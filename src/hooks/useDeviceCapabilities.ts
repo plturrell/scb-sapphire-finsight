@@ -39,27 +39,55 @@ interface DeviceCapabilities {
 }
 
 export function useDeviceCapabilities(): DeviceCapabilities {
-  const [capabilities, setCapabilities] = useState<DeviceCapabilities>({
-    hardwareConcurrency: navigator.hardwareConcurrency || 4,
-    deviceMemory: (navigator as any).deviceMemory || 4,
-    connection: {
-      type: 'wifi',
-      downlink: 10,
-      rtt: 100,
-      saveData: false,
-    },
-    pixelRatio: window.devicePixelRatio || 1,
-    colorGamut: 'srgb',
-    hdr: false,
-    touchCapable: 'ontouchstart' in window,
-    reducedMotion: false,
-    prefersColorScheme: 'light',
-    battery: null,
-    tier: 'medium',
-    screenSize: 'desktop',
-  });
+  const getDefaultCapabilities = (): DeviceCapabilities => {
+    if (typeof window === 'undefined') {
+      return {
+        hardwareConcurrency: 4,
+        deviceMemory: 4,
+        connection: {
+          type: 'wifi',
+          downlink: 10,
+          rtt: 100,
+          saveData: false,
+        },
+        pixelRatio: 1,
+        colorGamut: 'srgb',
+        hdr: false,
+        touchCapable: false,
+        reducedMotion: false,
+        prefersColorScheme: 'light',
+        battery: null,
+        tier: 'medium',
+        screenSize: 'desktop',
+      };
+    }
+    
+    return {
+      hardwareConcurrency: navigator.hardwareConcurrency || 4,
+      deviceMemory: (navigator as any).deviceMemory || 4,
+      connection: {
+        type: 'wifi',
+        downlink: 10,
+        rtt: 100,
+        saveData: false,
+      },
+      pixelRatio: window.devicePixelRatio || 1,
+      colorGamut: 'srgb',
+      hdr: false,
+      touchCapable: 'ontouchstart' in window,
+      reducedMotion: false,
+      prefersColorScheme: 'light',
+      battery: null,
+      tier: 'medium',
+      screenSize: 'desktop',
+    };
+  };
+  
+  const [capabilities, setCapabilities] = useState<DeviceCapabilities>(getDefaultCapabilities());
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const updateCapabilities = async () => {
       const newCapabilities: Partial<DeviceCapabilities> = {};
 
