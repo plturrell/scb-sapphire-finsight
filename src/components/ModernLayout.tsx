@@ -310,7 +310,7 @@ export default function ModernLayout({ children }: LayoutProps) {
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors mr-2"
+            className="p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors mr-1"
             aria-label="Toggle menu"
           >
             <Menu className="w-6 h-6" />
@@ -321,9 +321,9 @@ export default function ModernLayout({ children }: LayoutProps) {
             <Image 
               src="https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png" 
               alt="Standard Chartered" 
-              width={300} 
-              height={75} 
-              className="h-12" 
+              width={375} 
+              height={94} 
+              className="h-14" 
               style={{ objectFit: 'contain' }}
               priority
               unoptimized
@@ -345,12 +345,13 @@ export default function ModernLayout({ children }: LayoutProps) {
             title="Joule AI Assistant"
             onClick={() => setJouleOpen(true)}
           >
-            <div className="relative">
-              <Sparkles className="w-5 h-5" style={{ color: '#cc00dc' }} />
-              <div className="absolute -inset-1">
-                <div className="animate-pulse w-7 h-7 rounded opacity-20" style={{ backgroundColor: '#cc00dc' }}></div>
-              </div>
-            </div>
+            <Image
+              src="/assets/Joule.svg"
+              alt="Joule"
+              width={24}
+              height={24}
+              className="w-6 h-6 rounded"
+            />
           </button>
           
           {/* App Finder - Desktop only */}
@@ -746,12 +747,13 @@ export default function ModernLayout({ children }: LayoutProps) {
           {/* Joule Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <Sparkles className="w-8 h-8 text-white" />
-                <div className="absolute -inset-1">
-                  <div className="animate-pulse w-10 h-10 rounded bg-white opacity-20"></div>
-                </div>
-              </div>
+              <Image
+                src="/assets/Joule.svg"
+                alt="Joule"
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-md"
+              />
               <div>
                 <h2 className="text-lg font-semibold text-white">Joule</h2>
                 <p className="text-sm text-white/80 flex items-center gap-2">

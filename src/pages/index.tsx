@@ -48,13 +48,14 @@ export default function Dashboard() {
     <ModernLayout>
       <div className="space-y-6">
         {/* SCB Banner Image */}
-        <div className="w-full overflow-hidden rounded-md shadow-sm mb-6">
+        <div className="w-full rounded-md shadow-sm mb-6">
           <Image 
             src="/assets/finsight_Banner.png" 
             alt="FinSight Banner" 
             width={1200} 
-            height={180} 
-            className="w-full object-cover"
+            height={300} 
+            className="w-full" 
+            style={{ objectFit: 'contain' }}
             priority
           />
         </div>
@@ -270,12 +271,13 @@ export default function Dashboard() {
           {/* Joule Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <Sparkles className="w-8 h-8 text-white" />
-                <div className="absolute -inset-1">
-                  <div className="animate-pulse w-10 h-10 rounded bg-white opacity-20"></div>
-                </div>
-              </div>
+              <Image
+                src="/assets/Joule.svg"
+                alt="Joule"
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-md"
+              />
               <div>
                 <h2 className="text-lg font-semibold text-white">Joule</h2>
                 <p className="text-sm text-white/80 flex items-center gap-2">
