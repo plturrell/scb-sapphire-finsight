@@ -51,5 +51,8 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.3.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
