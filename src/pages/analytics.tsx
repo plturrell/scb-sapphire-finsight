@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@/components/Layout';
-import DetailedAnalyticsTable from '@/components/DetailedAnalyticsTable';
+import DetailedAnalyticsTable from '@/components/DetailedAnalyticsTable.enhanced';
 import {
   BarChart,
   Bar,

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Typography, Container, Grid, Paper, Divider, Button } from '@mui/material';
 import { Link, Globe, Database } from 'lucide-react';
-import VietnamTariffDashboard from '../components/VietnamTariffDashboard';
-import BusinessDataCloudDashboard from '../components/BusinessDataCloudDashboard';
+import VietnamTariffDashboard from '../components/VietnamTariffDashboard.enhanced';
+import BusinessDataCloudDashboard from '../components/BusinessDataCloudDashboard.enhanced';
 
 /**
  * Vietnam Tariff Dashboard Page
