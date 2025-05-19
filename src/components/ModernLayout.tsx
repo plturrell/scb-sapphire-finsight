@@ -757,7 +757,7 @@ export default function ModernLayout({ children }: LayoutProps) {
                 <p className="text-sm text-white/80 flex items-center gap-2">
                   Powered by 
                   <Image
-                    src="/assets/idEDqS_YGr_1747680256633.png"
+                    src="/assets/idEDqS_YGr_1747680256633.svg"
                     alt="SAP"
                     width={32}
                     height={16}

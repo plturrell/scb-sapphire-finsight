@@ -73,11 +73,11 @@ export default function Dashboard() {
             <Sparkles className="w-4 h-4" />
             <span>Launch Joule</span>
             <Image
-              src="/assets/idEDqS_YGr_1747680256633.png"
+              src="/assets/idEDqS_YGr_1747680256633.svg"
               alt="SAP"
               width={32}
               height={16}
-              className="ml-2"
+              className="ml-2 brightness-0 invert"
             />
           </button>
         </div>
@@ -281,7 +281,7 @@ export default function Dashboard() {
                 <p className="text-sm text-white/80 flex items-center gap-2">
                   Powered by 
                   <Image
-                    src="/assets/idEDqS_YGr_1747680256633.png"
+                    src="/assets/idEDqS_YGr_1747680256633.svg"
                     alt="SAP"
                     width={32}
                     height={16}
