@@ -1,0 +1,52 @@
+<\!DOCTYPE html>
+<html>
+<head>
+  <title>Create Joule Icon</title>
+  <script>
+    window.onload = function() {
+      const canvas = document.getElementById('jouleCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Purple background
+      ctx.fillStyle = '#cc00dc';
+      ctx.fillRect(0, 0, 200, 200);
+      
+      // Diamond shape
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(100, 40);
+      ctx.lineTo(160, 100);
+      ctx.lineTo(100, 160);
+      ctx.lineTo(40, 100);
+      ctx.closePath();
+      ctx.stroke();
+      
+      // Lightning bolt
+      ctx.beginPath();
+      ctx.moveTo(100, 70);
+      ctx.lineTo(80, 110);
+      ctx.lineTo(100, 110);
+      ctx.lineTo(100, 140);
+      ctx.lineTo(120, 100);
+      ctx.lineTo(100, 100);
+      ctx.closePath();
+      ctx.fillStyle = 'white';
+      ctx.fill();
+      
+      // Generate image
+      const dataUrl = canvas.toDataURL('image/png');
+      document.getElementById('output').href = dataUrl;
+      document.getElementById('output').innerHTML = "Download JouleIcon.png";
+      document.getElementById('imgPreview').src = dataUrl;
+    };
+  </script>
+</head>
+<body>
+  <canvas id="jouleCanvas" width="200" height="200" style="border:1px solid #000000;"></canvas>
+  <br>
+  <a id="output" download="JouleIcon.png"></a>
+  <br>
+  <img id="imgPreview" style="border:1px solid #000000;">
+</body>
+</html>

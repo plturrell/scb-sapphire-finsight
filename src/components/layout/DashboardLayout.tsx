@@ -12,10 +12,13 @@ import {
   Wallet, 
   TrendingUp,
   X,
-  AlertTriangle
+  AlertTriangle,
+  Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import PerplexityNewsBar from '../PerplexityNewsBar';
+import JouleAssistant from '../JouleAssistant';
 
 // Import SVG logo as a component
 const SCBLogo = () => (
@@ -132,6 +135,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [internalUserRole, setInternalUserRole] = useState<'executive' | 'analyst' | 'operations'>('analyst'); // Default to analyst view
+  const [showNewsBar, setShowNewsBar] = useState(false);
+  const [jouleOpen, setJouleOpen] = useState(false);
+  const [newsItem, setNewsItem] = useState<{
+    title: string;
+    summary: string;
+    category: string;
+    source: string;
+  } | undefined>(undefined);
   
   // Use external role if provided, otherwise use internal state
   const userRole = externalUserRole || internalUserRole;
@@ -152,6 +163,22 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     } else {
       setInternalUserRole(role);
     }
+  };
+  
+  // Handle news analysis with Joule
+  const handleAnalyzeNews = (item: any) => {
+    setNewsItem({
+      title: item.title,
+      summary: item.summary,
+      category: item.category,
+      source: item.source
+    });
+    setJouleOpen(true);
+  };
+  
+  // Toggle news bar
+  const toggleNewsBar = () => {
+    setShowNewsBar(!showNewsBar);
   };
   
   return (
@@ -280,6 +307,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* News Bar */}
+        {showNewsBar && (
+          <div className="fixed right-0 top-16 bottom-0 z-20">
+            <PerplexityNewsBar onAnalyzeNews={handleAnalyzeNews} />
+          </div>
+        )}
+      
+        {/* Joule Assistant */}
+        <JouleAssistant 
+          open={jouleOpen} 
+          onOpenChange={setJouleOpen} 
+          initialNewsItem={newsItem}
+        />
+        
         {/* Header */}
         <header className="fiori-shell-header flex items-center justify-between px-4 h-16 bg-[rgb(var(--scb-honolulu-blue))] text-white shadow-md">
           <div className="flex items-center">
@@ -294,13 +335,30 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <h1 className="scb-title text-white">{title}</h1>
           </div>
           
-          <div className="flex items-center gap-2">
-            {/* Header actions/controls would go here */}
+          <div className="flex items-center gap-4">
+            <button 
+              className="p-2 rounded-md hover:bg-[rgba(255,255,255,0.1)] flex items-center"
+              onClick={toggleNewsBar}
+              title="Toggle market news"
+            >
+              <span className="mr-2 text-sm font-medium hidden md:block">Market News</span>
+              <span className={`flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold ${showNewsBar ? 'bg-white text-[rgb(var(--scb-honolulu-blue))]' : 'bg-[rgba(255,255,255,0.2)]'}`}>
+                P
+              </span>
+            </button>
+            <button 
+              className="p-2 rounded-md hover:bg-[rgba(255,255,255,0.1)] flex items-center"
+              onClick={() => setJouleOpen(true)}
+              title="Open Joule AI Assistant"
+            >
+              <span className="mr-2 text-sm font-medium hidden md:block">Joule Assistant</span>
+              <Sparkles size={18} />
+            </button>
           </div>
         </header>
         
         {/* Page Content */}
-        <main className="flex-1 overflow-auto p-6">
+        <main className={`flex-1 overflow-auto p-6 ${showNewsBar ? 'mr-80' : ''} transition-all duration-300`}>
           {/* Breadcrumbs */}
           <div className="fiori-breadcrumbs mb-4 text-sm text-[rgb(var(--scb-dark-gray))]">
             {/* Dynamic breadcrumbs would go here */}

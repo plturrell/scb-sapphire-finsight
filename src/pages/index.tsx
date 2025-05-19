@@ -3,6 +3,7 @@ import Image from 'next/image';
 import ModernLayout from '@/components/ModernLayout';
 import MetricCard from '@/components/MetricCard';
 import JouleAssistant from '@/components/JouleAssistant';
+import PerplexityNewsBar from '@/components/PerplexityNewsBar';
 import {
   BarChart,
   Bar,
@@ -46,42 +47,48 @@ export default function Dashboard() {
 
   return (
     <ModernLayout>
-      <div className="space-y-6">
-        {/* SCB Banner Image */}
-        <div className="w-full rounded-md shadow-sm mb-6">
-          <Image 
-            src="/assets/finsight_Banner.png" 
-            alt="FinSight Banner" 
-            width={1200} 
-            height={300} 
-            className="w-full" 
-            style={{ objectFit: 'contain' }}
-            priority
-          />
+      <div className="flex gap-6 -m-4 lg:-m-6">
+        {/* News Sidebar */}
+        <div className="hidden lg:block flex-shrink-0">
+          <PerplexityNewsBar />
         </div>
         
-        {/* Welcome Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 border border-[hsl(var(--border))] rounded shadow-sm mb-6">
-          <div>
-            <h1 className="text-xl font-normal text-[hsl(var(--foreground))]">Welcome to SCB Sapphire FinSight</h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">GCFO's digital gateway for data, executive insights driving commercial insights and business decision-making.</p>
-          </div>
-          <button
-            onClick={() => setJouleOpen(true)}
-            className="flex items-center self-start space-x-2 px-4 py-2 rounded-lg text-white hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: '#cc00dc' }}
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Launch Joule</span>
-            <Image
-              src="/assets/idEDqS_YGr_1747680256633.svg"
-              alt="SAP"
-              width={32}
-              height={16}
-              className="ml-2 brightness-0 invert"
+        {/* Main Content Area */}
+        <div className="flex-1 p-4 lg:p-6 space-y-6">
+          {/* SCB Banner Image */}
+          <div className="w-full rounded-md shadow-sm mb-6">
+            <Image 
+              src="/assets/finsight_Banner.png" 
+              alt="FinSight Banner" 
+              width={1200} 
+              height={300} 
+              className="w-full" 
+              style={{ objectFit: 'contain' }}
+              priority
             />
-          </button>
-        </div>
+          </div>
+          
+          {/* Welcome Banner */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 border border-[hsl(var(--border))] rounded shadow-sm mb-6">
+            <div>
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">GCFO's digital gateway for data, executive insights driving commercial insights and business decision-making.</p>
+            </div>
+            <button
+              onClick={() => setJouleOpen(true)}
+              className="flex items-center self-start space-x-2 px-4 py-2 rounded-lg text-white hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: '#cc00dc' }}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Launch Joule</span>
+              <Image
+                src="/assets/idEDqS_YGr_1747680256633.svg"
+                alt="SAP"
+                width={32}
+                height={16}
+                className="ml-2 brightness-0 invert"
+              />
+            </button>
+          </div>
 
         {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -262,6 +269,7 @@ export default function Dashboard() {
               </ul>
             </div>
           </div>
+          </div>
         </div>
       </div>
 
@@ -271,13 +279,11 @@ export default function Dashboard() {
           {/* Joule Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
             <div className="flex items-center gap-3">
-              <Image
-                src="/assets/Joule.svg"
-                alt="Joule"
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-md"
-              />
+              <div 
+                className="w-10 h-10 rounded-md flex items-center justify-center bg-[#cc00dc]" 
+              >
+                <span className="text-white font-bold text-lg">J</span>
+              </div>
               <div>
                 <h2 className="text-lg font-semibold text-white">Joule</h2>
                 <p className="text-sm text-white/80 flex items-center gap-2">

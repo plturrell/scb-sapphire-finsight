@@ -1,0 +1,41 @@
+<\!DOCTYPE html>
+<html>
+<head>
+  <title>Create Perplexity Icon</title>
+  <script>
+    window.onload = function() {
+      const canvas = document.getElementById('perplexityCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Purple background
+      ctx.fillStyle = '#5436D6';
+      ctx.fillRect(0, 0, 200, 200);
+      
+      // P shape
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.moveTo(60, 60);
+      ctx.lineTo(140, 60);
+      ctx.lineTo(140, 100);
+      ctx.lineTo(100, 100);
+      ctx.lineTo(100, 140);
+      ctx.lineTo(60, 140);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Generate image
+      const dataUrl = canvas.toDataURL('image/png');
+      document.getElementById('output').href = dataUrl;
+      document.getElementById('output').innerHTML = "Download perplexity.png";
+      document.getElementById('imgPreview').src = dataUrl;
+    };
+  </script>
+</head>
+<body>
+  <canvas id="perplexityCanvas" width="200" height="200" style="border:1px solid #000000;"></canvas>
+  <br>
+  <a id="output" download="perplexity.png"></a>
+  <br>
+  <img id="imgPreview" style="border:1px solid #000000;">
+</body>
+</html>

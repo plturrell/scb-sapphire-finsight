@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Send, Sparkles, Loader2, InfoIcon, RefreshCw, ThumbsUp, ThumbsDown, Share, Download, ExternalLink, Check, Clipboard, Edit } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,9 +8,15 @@ import { getGrokCompletion, GrokMessageContent } from '@/lib/grok-api';
 interface JouleAssistantProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialNewsItem?: {
+    title: string;
+    summary: string;
+    category: string;
+    source: string;
+  };
 }
 
-export default function JouleAssistant({ open, onOpenChange }: JouleAssistantProps) {
+export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: JouleAssistantProps) {
   const [messages, setMessages] = useState<JouleMessage[]>([
     {
       id: '1',
@@ -25,6 +31,7 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const initialNewsItemProcessed = useRef(false);
 
   // State for showing explanation panel
   const [showExplanation, setShowExplanation] = useState(false);
@@ -37,8 +44,50 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+  
+  // Generate contextual suggestions based on conversation
+  const generateContextualSuggestions = useCallback((userMessage: string, responseContent: string): string[] => {
+    const messageLower = userMessage.toLowerCase();
+    const responseLower = responseContent.toLowerCase();
+    
+    if (messageLower.includes('news') || messageLower.includes('analyze this news') || 
+        (initialNewsItem && messageLower.includes(initialNewsItem.title.toLowerCase()))) {
+      return ['What are the financial implications?', 'How does this affect our portfolio?', 'Find related market trends'];
+    } else if (messageLower.includes('analytics') || responseLower.includes('analytics')) {
+      return ['View detailed analytics', 'Compare to previous period', 'Export analytics data'];
+    } else if (messageLower.includes('portfolio') || responseLower.includes('portfolio')) {
+      return ['View portfolio breakdown', 'Check portfolio performance', 'Adjust portfolio allocation'];
+    } else if (messageLower.includes('report') || responseLower.includes('report')) {
+      return ['Generate report', 'Schedule regular reports', 'Share report with team'];
+    } else {
+      return ['View analytics', 'Check portfolio', 'Review recent transactions'];
+    }
+  }, [initialNewsItem]);
 
-  const sendToGrok = async (userMessage: string) => {
+  // Process initialNewsItem when provided and dialog opens
+  useEffect(() => {
+    if (open && initialNewsItem && !initialNewsItemProcessed.current) {
+      initialNewsItemProcessed.current = true;
+      
+      // Create a synthetic user message about the news item
+      const userMessage = `Can you analyze this news item titled "${initialNewsItem.title}" from ${initialNewsItem.source}? The summary is: ${initialNewsItem.summary}`;
+      
+      // Add the user message to the chat
+      const newMessage: JouleMessage = {
+        id: Date.now().toString(),
+        content: userMessage,
+        sender: 'user',
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, newMessage]);
+      
+      // Process the news item with the AI
+      sendToGrok(userMessage);
+    }
+  }, [open, initialNewsItem, sendToGrok]);
+
+  const sendToGrok = useCallback(async (userMessage: string) => {
     setIsLoading(true);
     
     // Convert chat history to format expected by Grok API
@@ -65,7 +114,9 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
         userMessage.toLowerCase().includes('portfolio') ||
         userMessage.toLowerCase().includes('generate') ||
         userMessage.toLowerCase().includes('statistics') ||
-        userMessage.toLowerCase().includes('analytics')
+        userMessage.toLowerCase().includes('analytics') ||
+        userMessage.toLowerCase().includes('news') ||
+        userMessage.toLowerCase().includes('analyze')
       );
       
       // Get response from Grok with tools if needed
@@ -76,6 +127,15 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
       
       // Determine sources based on response content
       let sources: Source[] = [];
+      
+      // Add the news source if this is a news analysis
+      if (initialNewsItem && userMessage.includes(initialNewsItem.title)) {
+        sources.push({ 
+          name: initialNewsItem.source, 
+          url: '#', 
+          type: 'external' 
+        });
+      }
       
       if (responseContent.includes('financial data') || responseContent.includes('performance')) {
         sources.push({ name: 'SCB Investment Report 2025', url: '#', type: 'internal' });
@@ -116,14 +176,17 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [messages, initialNewsItem, generateContextualSuggestions]);
   
   // Generate contextual suggestions based on conversation
-  const generateContextualSuggestions = (userMessage: string, responseContent: string): string[] => {
+  const generateContextualSuggestions = useCallback((userMessage: string, responseContent: string): string[] => {
     const messageLower = userMessage.toLowerCase();
     const responseLower = responseContent.toLowerCase();
     
-    if (messageLower.includes('analytics') || responseLower.includes('analytics')) {
+    if (messageLower.includes('news') || messageLower.includes('analyze this news') || 
+        (initialNewsItem && messageLower.includes(initialNewsItem.title.toLowerCase()))) {
+      return ['What are the financial implications?', 'How does this affect our portfolio?', 'Find related market trends'];
+    } else if (messageLower.includes('analytics') || responseLower.includes('analytics')) {
       return ['View detailed analytics', 'Compare to previous period', 'Export analytics data'];
     } else if (messageLower.includes('portfolio') || responseLower.includes('portfolio')) {
       return ['View portfolio breakdown', 'Check portfolio performance', 'Adjust portfolio allocation'];
@@ -132,7 +195,7 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
     } else {
       return ['View analytics', 'Check portfolio', 'Review recent transactions'];
     }
-  };
+  }, [initialNewsItem]);
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -174,9 +237,15 @@ export default function JouleAssistant({ open, onOpenChange }: JouleAssistantPro
   };
   
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={(newOpenState) => {
+        // Reset initialNewsItemProcessed when dialog is closed
+        if (!newOpenState) {
+          initialNewsItemProcessed.current = false;
+        }
+        onOpenChange(newOpenState);
+      }}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 horizon-dialog-overlay" />
+        {/* Removed overlay for better UI */}
         <Dialog.Content className="fixed right-4 bottom-4 w-[450px] h-[600px] bg-white horizon-dialog flex flex-col overflow-hidden">
           <div className="fiori-shell-header text-white p-3">
             <div className="flex items-center justify-between">

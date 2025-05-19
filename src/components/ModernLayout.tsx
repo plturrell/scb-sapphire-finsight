@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import EnhancedCompanySearchBar from './EnhancedCompanySearchBar';
+import PerplexitySearchBar from './PerplexitySearchBar';
 import JouleAssistant from './JouleAssistant';
 import {
   LayoutDashboard,
@@ -333,7 +333,7 @@ export default function ModernLayout({ children }: LayoutProps) {
 
         {/* Center section - Search Bar */}
         <div className="flex-1 max-w-3xl mx-auto px-4">
-          <EnhancedCompanySearchBar />
+          <PerplexitySearchBar />
         </div>
 
         {/* Right section - Actions */}
@@ -345,13 +345,11 @@ export default function ModernLayout({ children }: LayoutProps) {
             title="Joule AI Assistant"
             onClick={() => setJouleOpen(true)}
           >
-            <Image
-              src="/assets/Joule.svg"
-              alt="Joule"
-              width={24}
-              height={24}
-              className="w-6 h-6 rounded"
-            />
+            <div 
+              className="w-6 h-6 rounded flex items-center justify-center bg-[#cc00dc]" 
+            >
+              <span className="text-white font-bold text-sm">J</span>
+            </div>
           </button>
           
           {/* App Finder - Desktop only */}
@@ -747,13 +745,11 @@ export default function ModernLayout({ children }: LayoutProps) {
           {/* Joule Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
             <div className="flex items-center gap-3">
-              <Image
-                src="/assets/Joule.svg"
-                alt="Joule"
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-md"
-              />
+              <div 
+                className="w-10 h-10 rounded-md flex items-center justify-center bg-[#cc00dc]" 
+              >
+                <span className="text-white font-bold text-lg">J</span>
+              </div>
               <div>
                 <h2 className="text-lg font-semibold text-white">Joule</h2>
                 <p className="text-sm text-white/80 flex items-center gap-2">
