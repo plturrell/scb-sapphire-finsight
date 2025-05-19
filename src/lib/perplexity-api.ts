@@ -35,15 +35,15 @@ interface PerplexityResponse {
   };
 }
 
-const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || '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';
+const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || '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';
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 // API models - see https://docs.perplexity.ai/docs/model-cards
 const MODELS = {
-  SMALL: 'llama-3.1-405b-reasoning',
-  MEDIUM: 'llama-3.1-70b-reasoning',
-  LARGE: 'sonar-medium-online',
-  DEFAULT: 'llama-3-sonar-small-32k-online'
+  SMALL: 'mistral-7b-instruct',
+  MEDIUM: 'mixtral-8x7b-instruct',
+  LARGE: 'llama-2-70b-chat',
+  DEFAULT: 'sonar-small-chat'
 };
 
 // Delay between retries in milliseconds
@@ -354,7 +354,7 @@ export async function getFinancialInsights(query: string): Promise<any> {
       }
     ];
 
-    const content = await callPerplexityAPI(messages, MODELS.LARGE);
+    const content = await callPerplexityAPI(messages, MODELS.SMALL);
     
     // Extract insights with advanced parsing
     const summary = content.split('\n\n')[0] || content.substring(0, 300);
@@ -442,7 +442,7 @@ export async function getMarketNews(): Promise<any[]> {
       }
     ];
 
-    const content = await callPerplexityAPI(messages, MODELS.LARGE);
+    const content = await callPerplexityAPI(messages, MODELS.SMALL);
     
     // Parse the news content into separate news items
     const newsItems: any[] = [];
