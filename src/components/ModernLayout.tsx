@@ -49,6 +49,7 @@ import {
   Mail,
   Phone,
   MessageSquare,
+  Sparkles,
   Video,
   Headphones,
   Book,
