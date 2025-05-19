@@ -48,7 +48,7 @@ export default function Dashboard() {
     <ModernLayout>
       <div className="space-y-6">
         {/* SCB Banner Image */}
-        <div className="w-full overflow-hidden rounded-md shadow-sm mb-6 max-h-[180px]">
+        <div className="w-full overflow-hidden rounded-md shadow-sm mb-6">
           <Image 
             src="/assets/finsight_Banner.png" 
             alt="FinSight Banner" 

@@ -310,7 +310,7 @@ export default function ModernLayout({ children }: LayoutProps) {
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors mr-4"
+            className="p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors mr-2"
             aria-label="Toggle menu"
           >
             <Menu className="w-6 h-6" />
@@ -321,9 +321,9 @@ export default function ModernLayout({ children }: LayoutProps) {
             <Image 
               src="https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png" 
               alt="Standard Chartered" 
-              width={200} 
-              height={50} 
-              className="h-10" 
+              width={300} 
+              height={75} 
+              className="h-12" 
               style={{ objectFit: 'contain' }}
               priority
               unoptimized
