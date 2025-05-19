@@ -312,9 +312,9 @@ const EnhancedCompanySearchBar: React.FC = () => {
 
   return (
     <div ref={searchRef} className="relative w-full">
-      {/* Search Input */}
+      {/* Search Input - Larger */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
         <input
           ref={inputRef}
           type="text"
@@ -323,10 +323,10 @@ const EnhancedCompanySearchBar: React.FC = () => {
           onKeyDown={handleKeyDown}
           onFocus={() => setShowResults(true)}
           placeholder="Search companies by name, ticker, or industry..."
-          className="w-full bg-white border border-gray-300 text-gray-900 py-2.5 px-10 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[rgb(var(--scb-blue))] focus:border-transparent transition-all"
+          className="w-full bg-gray-50 border border-gray-300 text-gray-900 py-3 px-12 pr-12 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
         />
         {isLoading && (
-          <Loader className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 animate-spin" />
+          <Loader className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 animate-spin" />
         )}
       </div>
 

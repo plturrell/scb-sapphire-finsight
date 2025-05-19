@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import EnhancedCompanySearchBar from './EnhancedCompanySearchBar';
+import JouleAssistant from './JouleAssistant';
 import {
   LayoutDashboard,
   BarChart3,
@@ -136,6 +137,7 @@ export default function ModernLayout({ children }: LayoutProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [appFinderOpen, setAppFinderOpen] = useState(false);
+  const [jouleOpen, setJouleOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -301,36 +303,53 @@ export default function ModernLayout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col bg-[rgb(var(--fiori-content-bg))]">
       {/* Modern Header - White background */}
-      <header className="bg-white shadow-sm border-b border-gray-200 flex items-center px-4 z-50 h-14">
-        {/* Hamburger Menu Button - Always visible */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors mr-4"
-          aria-label="Toggle menu"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
+      <header className="bg-white shadow-sm border-b border-gray-200 flex items-center px-4 z-50 h-16">
+        {/* Left section - Menu and Logo */}
+        <div className="flex items-center w-1/3">
+          {/* Hamburger Menu Button */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 text-gray-700 hover:bg-gray-100 rounded transition-colors mr-4"
+            aria-label="Toggle menu"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
 
-        {/* Branding Area with Logo */}
-        <div className="flex items-center h-full">
+          {/* Branding Area with Logo */}
           <Link href="/" className="flex items-center">
             <Image 
               src="https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png" 
               alt="Standard Chartered" 
-              width={150} 
-              height={36} 
-              className="h-7 w-auto lg:h-8" 
+              width={180} 
+              height={40} 
+              className="h-9" 
               priority
+              unoptimized
             />
           </Link>
         </div>
 
-        {/* Shell Header Actions */}
-        <div className="flex items-center gap-1 lg:gap-3">
-          {/* Company Search Bar - Desktop only */}
-          <div className="hidden lg:block flex-1 max-w-2xl mx-4">
-            <EnhancedCompanySearchBar />
-          </div>
+        {/* Center section - Search Bar */}
+        <div className="flex-1 max-w-3xl mx-auto px-4">
+          <EnhancedCompanySearchBar />
+        </div>
+
+        {/* Right section - Actions */}
+        <div className="flex items-center gap-1 lg:gap-2 w-1/3 justify-end">
+          
+          {/* Joule AI Assistant */}
+          <button 
+            className="flex h-full px-3 text-gray-700 hover:bg-gray-100 items-center space-x-1 transition-colors rounded"
+            title="Joule AI Assistant"
+            onClick={() => setJouleOpen(true)}
+          >
+            <div className="relative">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+              <div className="absolute -inset-1">
+                <div className="animate-pulse w-7 h-7 rounded bg-blue-400 opacity-20"></div>
+              </div>
+            </div>
+          </button>
           
           {/* App Finder - Desktop only */}
           <button 
@@ -718,6 +737,38 @@ export default function ModernLayout({ children }: LayoutProps) {
           })}
         </div>
       </nav>
+
+      {/* Joule AI Assistant Panel - Full Height */}
+      {jouleOpen && (
+        <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out transform translate-x-0">
+          {/* Joule Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Sparkles className="w-8 h-8 text-blue-600" />
+                <div className="absolute -inset-1">
+                  <div className="animate-pulse w-10 h-10 rounded bg-blue-400 opacity-20"></div>
+                </div>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Joule AI Assistant</h2>
+                <p className="text-sm text-gray-600">Powered by SAP</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setJouleOpen(false)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
+
+          {/* Joule Content */}
+          <div className="flex-1 overflow-hidden">
+            <JouleAssistant open={jouleOpen} onOpenChange={setJouleOpen} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
