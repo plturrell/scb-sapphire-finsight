@@ -59,8 +59,17 @@ const VietnamTariffDashboard: React.FC = () => {
                           connection.type !== 'slow-2g' && 
                           !connection.saveData;
 
+  // Define LLM analysis type
+  interface LLMAnalysis {
+    status: string;
+    summary: string;
+    confidence: number;
+    keyFindings: Array<{ finding: string; confidence: number }>;
+    recommendations: string[];
+  }
+
   // Use adaptive fetching for AI analysis
-  const { data: llmAnalysis, loading: llmLoading } = useAdaptiveFetch<any>(
+  const { data: llmAnalysis, loading: llmLoading } = useAdaptiveFetch<LLMAnalysis>(
     '/api/vietnam-tariff/llm-analysis'
   );
 

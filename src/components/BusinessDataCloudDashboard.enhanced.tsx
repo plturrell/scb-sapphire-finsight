@@ -39,8 +39,91 @@ import NetworkAwareDataLoader from './NetworkAwareDataLoader';
 import { useNetworkAwareLoading, useAdaptiveFetch } from '@/hooks/useNetworkAwareLoading';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 
-// [Keep all the interface definitions the same as in the original file]
-// ... interfaces ...
+// Define additional interfaces needed for this component
+interface BusinessDataStatistics {
+  totalSimulations: number;
+  recentSimulations: number;
+  avgConfidence: number;
+  inputCount: number;
+  outputCount: number;
+  parameterChangeCount: number;
+  comparisonCount: number;
+}
+
+interface SimulationConfig {
+  name: string;
+  description: string;
+  iterations?: number;
+  confidenceInterval?: number;
+}
+
+interface TariffSpecificParameters {
+  country: string;
+  sector: string;
+  timeframeMonths: number;
+  confidenceLevel: number;
+  hsCodes?: string[];
+  countries?: string[];
+}
+
+interface SimulationInput {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  simulationType?: string;
+  createdBy?: string;
+  simulationConfig?: SimulationConfig;
+  parameters: {
+    iterations: number;
+    variables: Record<string, { min: number; max: number; mean: number; }>;
+    generalParameters?: Record<string, string | number | boolean>;
+    tariffSpecificParameters?: TariffSpecificParameters;
+  };
+}
+
+interface SimulationOutput {
+  id: string;
+  endTime?: number;
+  status?: 'running' | 'completed' | 'failed' | 'queued';
+  results: {
+    outcome: number;
+    confidence: number;
+    factors: Record<string, number>;
+    statistics?: {
+      mean: number;
+      median: number;
+      min: number;
+      max: number;
+      variance: number;
+    }
+  };
+}
+
+interface ComparisonOutcome {
+  baseline: number;
+  alternate: number;
+  percentChange: number;
+  riskProfileDifferences?: Array<{
+    pessimisticDifference: number;
+    optimisticDifference: number;
+  }>;
+}
+
+interface SimulationComparison {
+  id: string;
+  name: string;
+  baselineId: string;
+  alternateId: string;
+  improvementPercent: number;
+  createdAt: string;
+  simulationIds?: string[];
+  comparisonResults?: {
+    differencePercent: number;
+    details: string;
+    outcomeComparison?: ComparisonOutcome;
+  };
+}
 
 // Network-enhanced business data cloud connector
 const businessDataCloudConnector = {

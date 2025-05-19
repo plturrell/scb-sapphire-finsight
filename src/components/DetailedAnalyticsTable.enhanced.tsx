@@ -62,7 +62,7 @@ export default function DetailedAnalyticsTable({ data }: DetailedAnalyticsTableP
       {displayData.map((item, index) => (
         <div key={index} className="bg-white border border-[hsl(var(--border))] rounded p-4">
           <div className="flex justify-between items-start mb-3">
-            <h4 className="font-medium text-sm">{item.sector}</h4>
+            <h4 className="font-medium text-sm">{item.name}</h4>
             <span className={`text-xs px-2 py-1 rounded ${
               item.change > 0 ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'
             }`}>
@@ -86,7 +86,7 @@ export default function DetailedAnalyticsTable({ data }: DetailedAnalyticsTableP
                 </div>
                 <div>
                   <p className="text-xs text-gray-600">RoRWA</p>
-                  <p className="font-medium">{formatPercentage(item.rorwa)}</p>
+                  <p className="font-medium">{formatPercentage(item.rowWa)}</p>
                 </div>
               </>
             )}
@@ -169,7 +169,7 @@ export default function DetailedAnalyticsTable({ data }: DetailedAnalyticsTableP
                   <tbody>
                     {displayData.map((row, index) => (
                       <tr key={index} className="animate-fadeIn">
-                        <td>{row.sector}</td>
+                        <td>{row.name}</td>
                         <td>{formatCurrency(row.revenue)}</td>
                         <td>{formatCurrency(row.income)}</td>
                         {capabilities.tier !== 'low' && (
@@ -179,7 +179,7 @@ export default function DetailedAnalyticsTable({ data }: DetailedAnalyticsTableP
                           </>
                         )}
                         <td>{formatPercentage(row.yield)}</td>
-                        <td>{formatPercentage(row.rorwa)}</td>
+                        <td>{formatPercentage(row.rowWa)}</td>
                         <td>
                           <span className={row.change > 0 ? 'text-green-600' : 'text-red-600'}>
                             {formatPercentage(row.change)}

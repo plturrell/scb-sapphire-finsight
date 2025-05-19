@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
 
+// Battery API interface (not yet in TypeScript lib)
+interface BatteryManager {
+  charging: boolean;
+  chargingTime: number;
+  dischargingTime: number;
+  level: number;
+}
+
 interface DeviceCapabilities {
   // Performance
   hardwareConcurrency: number;
@@ -84,7 +92,8 @@ export function useDeviceCapabilities(): DeviceCapabilities {
       // Battery status
       if ('getBattery' in navigator) {
         try {
-          const battery = await (navigator as any).getBattery();
+          // Battery API is not in TypeScript's Navigator interface yet
+          const battery = await (navigator as Navigator & { getBattery(): Promise<BatteryManager> }).getBattery();
           newCapabilities.battery = {
             level: battery.level,
             charging: battery.charging,
