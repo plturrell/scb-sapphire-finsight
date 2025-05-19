@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Newspaper, TrendingUp, Clock, ExternalLink, RefreshCw, Sparkles } from 'lucide-react';
 import Image from 'next/image';
-import axios from 'axios';
+import { perplexityApi } from '../lib/market-news-service';
 
 interface NewsItem {
   id: string;
@@ -33,11 +33,11 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
   const fetchNews = async () => {
     try {
       setLoading(true);
-      // Use our internal API endpoint instead of external API
-      const response = await axios.get('/api/market-news');
+      // Use the perplexityApi for news data
+      const newsData = await perplexityApi.getMarketNews();
       
-      if (response.data && response.data.length > 0) {
-        setNews(response.data);
+      if (newsData && newsData.length > 0) {
+        setNews(newsData);
       } else {
         // Fallback - create some dummy news items if API doesn't return any
         const fallbackNews = [];
