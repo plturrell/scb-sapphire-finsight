@@ -43,7 +43,10 @@ class RealCompanySearchService {
 
   constructor() {
     this.vietnamRAG = new VietnamCompanyRAG();
-    this.searchManager = new VietnamSearchManager();
+    this.searchManager = new VietnamSearchManager(
+      null as any, // SearchManager instance not needed for search
+      null as any  // OntologyManager instance not needed for search
+    );
     this.redisStore = new RedisDataStore(
       process.env.REDIS_URL || 'redis://localhost:6379'
     );
