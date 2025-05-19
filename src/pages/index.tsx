@@ -17,7 +17,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, X } from 'lucide-react';
 
 const monthlyData = [
   { month: 'Jan', revenue: 45000, target: 42000 },
@@ -67,10 +67,18 @@ export default function Dashboard() {
           </div>
           <button
             onClick={() => setJouleOpen(true)}
-            className="btn-sapui5 btn-sapui5-primary flex items-center self-start space-x-2"
+            className="flex items-center self-start space-x-2 px-4 py-2 rounded-lg text-white hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: '#cc00dc' }}
           >
             <Sparkles className="w-4 h-4" />
             <span>Launch Joule</span>
+            <Image
+              src="/assets/idEDqS_YGr_1747680256633.png"
+              alt="SAP"
+              width={32}
+              height={16}
+              className="ml-2"
+            />
           </button>
         </div>
 
@@ -256,7 +264,46 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <JouleAssistant open={jouleOpen} onOpenChange={setJouleOpen} />
+      {/* Joule AI Assistant Panel - Full Height */}
+      {jouleOpen && (
+        <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out transform translate-x-0">
+          {/* Joule Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Sparkles className="w-8 h-8 text-white" />
+                <div className="absolute -inset-1">
+                  <div className="animate-pulse w-10 h-10 rounded bg-white opacity-20"></div>
+                </div>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">Joule</h2>
+                <p className="text-sm text-white/80 flex items-center gap-2">
+                  Powered by 
+                  <Image
+                    src="/assets/idEDqS_YGr_1747680256633.png"
+                    alt="SAP"
+                    width={32}
+                    height={16}
+                    className="inline-block brightness-0 invert"
+                  />
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setJouleOpen(false)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          {/* Joule Content */}
+          <div className="flex-1 overflow-hidden">
+            <JouleAssistant open={jouleOpen} onOpenChange={setJouleOpen} />
+          </div>
+        </div>
+      )}
     </ModernLayout>
   );
 }
