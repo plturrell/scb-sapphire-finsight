@@ -2,7 +2,7 @@
 
 ## Overview
 
-This system provides real-time access to S&P Capital IQ data for Vietnam companies using actual credentials (craig.turrell@sc.com / Victoria0405%). All data is 100% real - no mock data is used.
+This system provides real-time access to S&P Capital IQ data for Vietnam companies using secure environment variables for authentication. All data is 100% real - no mock data is used.
 
 ## Components
 
@@ -43,8 +43,8 @@ This system provides real-time access to S&P Capital IQ data for Vietnam compani
 
 3. **Set Environment Variables**:
    ```
-   CAPITAL_IQ_USERNAME=craig.turrell@sc.com
-   CAPITAL_IQ_PASSWORD=Victoria0405%
+   CAPITAL_IQ_USERNAME=your_username
+   CAPITAL_IQ_PASSWORD=your_password
    REDIS_URL=redis://localhost:6379
    ```
 
@@ -130,8 +130,8 @@ For production deployment using Brev CLI:
 brev deploy -f brev-deployment.yaml
 
 # Set environment variables
-brev env set CAPITAL_IQ_USERNAME craig.turrell@sc.com
-brev env set CAPITAL_IQ_PASSWORD Victoria0405%
+brev env set CAPITAL_IQ_USERNAME your_username
+brev env set CAPITAL_IQ_PASSWORD your_password
 ```
 
 ## Support

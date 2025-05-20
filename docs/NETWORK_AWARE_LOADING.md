@@ -1,5 +1,7 @@
 # Network-Aware Loading Strategies
 
+**Version: 1.0.0 (May 2025)**
+
 This document describes the network-aware loading strategies implemented in the FinSight app to provide the best possible experience across different network conditions and device capabilities.
 
 ## Overview

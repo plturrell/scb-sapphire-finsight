@@ -4,9 +4,8 @@ This guide explains how to extract real Vietnam company data from S&P Capital IQ
 
 ## Prerequisites
 
-- S&P Capital IQ account credentials:
-  - Username: craig.turrell@sc.com  
-  - Password: Victoria0405%
+- S&P Capital IQ account credentials (obtain from your system administrator)
+  - Store in environment variables as described in this guide
 - Node.js installed
 - Access to Capital IQ website
 

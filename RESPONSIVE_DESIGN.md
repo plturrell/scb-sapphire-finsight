@@ -1,5 +1,7 @@
 # FinSight Responsive Design Implementation
 
+**Version: 1.0.0 (May 2025)**
+
 This document outlines the comprehensive responsive design system implemented for the SCB Sapphire FinSight application, ensuring a best-in-class experience across browsers, iPads, and iOS mobile devices.
 
 ## 🎯 Core Features

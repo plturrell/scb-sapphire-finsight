@@ -110,6 +110,21 @@ scripts/
 - **Build for production**: `npm run build`
 - **Start production server**: `npm start`
 - **Run linting**: `npm run lint`
+- **Generate PDF docs**: `node scripts/generate-docs-pdf.js`
+
+## Documentation
+
+Complete project documentation is available in the [Documentation Index](./docs/index.md).
+
+Key documentation includes:
+
+- [Executive Summary](./docs/EXECUTIVE_SUMMARY.md) - High-level project overview
+- [User Guide](./docs/USER_GUIDE.md) - End-user instructions
+- [API Reference](./docs/API_REFERENCE.md) - Complete API endpoints reference
+- [Deployment Guide](./DEPLOYMENT.md) - Step-by-step deployment instructions
+- [Responsive Design](./RESPONSIVE_DESIGN.md) - Comprehensive responsive system documentation
+- [Error Monitoring](./docs/ERROR_MONITORING.md) - Error handling and monitoring systems
+- [Performance Benchmarks](./docs/PERFORMANCE_BENCHMARKS.md) - Application performance metrics
 
 ## Features Implemented
 

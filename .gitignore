@@ -38,3 +38,6 @@ next-env.d.ts
 *.tar.gz
 *.gz
 *.zip
+
+# nested repository
+finsight-app/

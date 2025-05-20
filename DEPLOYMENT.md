@@ -1,5 +1,7 @@
 # Deployment Guide for Aspire FinSight
 
+**Version: 1.0.0 (May 2025)**
+
 ## Option 1: Deploy to Vercel (Recommended)
 
 1. **Create a Vercel account**:
