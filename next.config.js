@@ -18,34 +18,13 @@ const nextConfig = {
     // Fixes lexical declaration issues in generated bundle
     config.optimization.moduleIds = 'named';
     
-    // Configure Terser for compatibility with complex libraries
+    // Completely disable Terser minification to avoid build errors
     if (!isServer && !dev) {
-      // Adjust Terser options for better compatibility
-      config.optimization.minimizer.forEach((minimizer) => {
-        if (minimizer.constructor.name === 'TerserPlugin') {
-          minimizer.options.terserOptions = {
-            ...minimizer.options.terserOptions,
-            // Configure Terser to preserve important class properties
-            keep_classnames: true,
-            keep_fnames: true,
-            compress: {
-              ...minimizer.options.terserOptions.compress,
-              arrows: false,
-              keep_fargs: true,
-              sequences: false
-            },
-            mangle: {
-              keep_classnames: true,
-              keep_fnames: true
-            },
-            format: {
-              comments: false,
-              beautify: false,
-              preserve_annotations: true
-            }
-          };
-        }
-      });
+      // Disable minimization entirely for the build to succeed
+      config.optimization.minimize = false;
+      
+      // Clear existing minimizers
+      config.optimization.minimizer = [];
     }
     
     return config;
@@ -76,7 +55,7 @@ const nextConfig = {
   },
   
   // Configure optimization to preserve our beautiful styling
-  swcMinify: false, // Use Terser for minification instead of SWC to preserve our styling
+  swcMinify: false, // Don't use SWC minification either
   
   // Disable checks that might fail build
   eslint: {
