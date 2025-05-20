@@ -51,8 +51,12 @@ const nextConfig = {
   // Disable static export to prevent SSR issues
   output: 'standalone',
   
-  // Disable automatic static optimization for problematic pages
-  unstable_runtimeJS: true,
+  // Configure runtime options for client-side rendering
+  experimental: {
+    esmExternals: 'loose', // Help with module resolution
+    // Modern config approach for runtime JS options
+    optimizePackageImports: ['@mui/material', 'framer-motion'],
+  },
   
   // Explicitly disable SSR for problematic pages
   async exportPathMap(defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
@@ -70,9 +74,6 @@ const nextConfig = {
   
   // Configure optimization to preserve our beautiful styling
   swcMinify: false, // Use Terser for minification instead of SWC to preserve our styling
-  experimental: {
-    esmExternals: 'loose', // Help with module resolution
-  },
   
   // Disable checks that might fail build
   eslint: {
