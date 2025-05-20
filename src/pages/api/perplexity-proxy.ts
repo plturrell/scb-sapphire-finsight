@@ -35,7 +35,7 @@ export default async function handler(
     // Get the request data
     const {
       messages,
-      model = 'sonar-small-chat',
+      model = 'sonar',
       temperature = 0.2,
       max_tokens = 2000,
       stream = false
