@@ -1,0 +1,2 @@
+Build timestamp: 2025-05-20-12:15
+This file is used to trigger new Vercel builds when GitHub shows the correct commit but Vercel is still using an older one.
