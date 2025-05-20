@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "prebuild": "node scripts/force-styling.js",
-    "build": "node scripts/bypass-terser-build.js",
+    "build": "node scripts/emergency-build.js",
+    "build:bypass": "NODE_OPTIONS=\"--require ./next-patch.js\" next build",
     "build:normal": "next build",
     "start": "next start",
     "lint": "next lint",
