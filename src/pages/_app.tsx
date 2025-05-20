@@ -8,8 +8,9 @@ import Head from 'next/head';
 import { registerServiceWorker } from '@/lib/register-service-worker';
 import dynamic from 'next/dynamic';
 
-// Force CSS Variable application
-import { createCache, StyleProvider } from '@emotion/react';
+// Import Emotion's createCache and StyleProvider from the correct location
+import createCache from '@emotion/cache';
+import { CacheProvider as StyleProvider } from '@emotion/react';
 
 // Import GlobalJouleAssistant with SSR disabled
 const GlobalJouleAssistant = dynamic(

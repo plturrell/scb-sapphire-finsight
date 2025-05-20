@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "prebuild": "node scripts/force-styling.js",
-    "build": "node scripts/vercel-build.js",
-    "build:dev": "cross-env NODE_ENV=development next build",
+    "build": "node scripts/safe-build.js",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
