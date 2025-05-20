@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 
 // Using the new API key directly on the server side
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || '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';
+const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || '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';
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
