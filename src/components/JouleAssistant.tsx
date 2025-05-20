@@ -177,25 +177,6 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
       setIsLoading(false);
     }
   }, [messages, initialNewsItem, generateContextualSuggestions]);
-  
-  // Generate contextual suggestions based on conversation
-  const generateContextualSuggestions = useCallback((userMessage: string, responseContent: string): string[] => {
-    const messageLower = userMessage.toLowerCase();
-    const responseLower = responseContent.toLowerCase();
-    
-    if (messageLower.includes('news') || messageLower.includes('analyze this news') || 
-        (initialNewsItem && messageLower.includes(initialNewsItem.title.toLowerCase()))) {
-      return ['What are the financial implications?', 'How does this affect our portfolio?', 'Find related market trends'];
-    } else if (messageLower.includes('analytics') || responseLower.includes('analytics')) {
-      return ['View detailed analytics', 'Compare to previous period', 'Export analytics data'];
-    } else if (messageLower.includes('portfolio') || responseLower.includes('portfolio')) {
-      return ['View portfolio breakdown', 'Check portfolio performance', 'Adjust portfolio allocation'];
-    } else if (messageLower.includes('report') || responseLower.includes('report')) {
-      return ['Generate report', 'Schedule regular reports', 'Share report with team'];
-    } else {
-      return ['View analytics', 'Check portfolio', 'Review recent transactions'];
-    }
-  }, [initialNewsItem]);
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
