@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build --no-lint",
-    "start": "next start",
+    "dev": "NODE_OPTIONS='--no-experimental-fetch' next dev",
+    "build": "NODE_OPTIONS='--no-experimental-fetch' next build --no-lint",
+    "start": "NODE_OPTIONS='--no-experimental-fetch' next start",
     "lint": "next lint",
     "type-check": "npx tsc --noEmit"
   },
