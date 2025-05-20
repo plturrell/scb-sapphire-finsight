@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "prebuild": "node scripts/force-styling.js",
-    "build": "next build",
+    "build": "NODE_ENV=development next build",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
