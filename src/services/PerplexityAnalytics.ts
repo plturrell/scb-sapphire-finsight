@@ -87,23 +87,27 @@ class PerplexityAnalytics {
   }
   
   /**
-   * Load events from localStorage
+   * Load events from localStorage (safely)
    */
   private loadEvents(): void {
     try {
-      const storedEvents = localStorage.getItem(this.options.storageKey);
-      if (storedEvents) {
-        const parsed = JSON.parse(storedEvents);
-        
-        // Validate stored events
-        if (Array.isArray(parsed)) {
-          this.events = parsed;
-          this.removeExpiredEvents();
-        } else {
-          this.events = [];
+      // Check if we're in a browser environment
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const storedEvents = window.localStorage.getItem(this.options.storageKey);
+        if (storedEvents) {
+          const parsed = JSON.parse(storedEvents);
+          
+          // Validate stored events
+          if (Array.isArray(parsed)) {
+            this.events = parsed;
+            this.removeExpiredEvents();
+          } else {
+            this.events = [];
+          }
         }
       }
       
+      // Always mark as initialized
       this.isInitialized = true;
     } catch (error) {
       console.error('Error loading analytics events:', error);
@@ -113,11 +117,16 @@ class PerplexityAnalytics {
   }
   
   /**
-   * Save events to localStorage
+   * Save events to localStorage (safely)
    */
   private saveEvents(): void {
+    // Skip saving if not in browser environment
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return;
+    }
+    
     try {
-      localStorage.setItem(this.options.storageKey, JSON.stringify(this.events));
+      window.localStorage.setItem(this.options.storageKey, JSON.stringify(this.events));
     } catch (error) {
       console.error('Error saving analytics events:', error);
       
@@ -130,7 +139,7 @@ class PerplexityAnalytics {
         
         // Try saving again
         try {
-          localStorage.setItem(this.options.storageKey, JSON.stringify(this.events));
+          window.localStorage.setItem(this.options.storageKey, JSON.stringify(this.events));
         } catch (secondError) {
           console.error('Failed to save events after cleanup:', secondError);
         }

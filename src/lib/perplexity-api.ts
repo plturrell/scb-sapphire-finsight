@@ -3,8 +3,8 @@ import perplexityRateLimiter from '@/services/PerplexityRateLimiter';
 import { PerplexityRequest, PerplexityResponse, SearchResult, CompanySearchResult, FinancialInsights } from '@/types/perplexity';
 // These interfaces have been moved to /src/types/perplexity.ts
 
-const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
-const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
+// Using our proxy endpoint instead of direct API call to avoid CORS issues
+const PERPLEXITY_API_URL = '/api/perplexity-proxy';
 
 // API models - see https://docs.perplexity.ai/docs/model-cards
 const MODELS = {
@@ -51,7 +51,6 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
       const response = await fetch(PERPLEXITY_API_URL, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(request)
@@ -532,17 +531,19 @@ export async function getFinancialInsights(query: string): Promise<any> {
 /**
  * Get market news using Perplexity AI
  */
-export async function getMarketNews(): Promise<any[]> {
+export async function getMarketNews(topic: string = 'financial markets'): Promise<any[]> {
   try {
     // Use our proxy endpoint to avoid CORS issues
-    const response = await fetch('/api/market-news');
+    const response = await fetch(`/api/market-news?topic=${encodeURIComponent(topic)}`);
     
     if (!response.ok) {
+      console.error(`Market news API error: ${response.status} ${response.statusText}`);
       throw new Error(`API error: ${response.status}`);
     }
     
     const data = await response.json();
     if (!data.articles || !Array.isArray(data.articles)) {
+      console.error('Invalid market news data format:', data);
       throw new Error('Invalid news data format');
     }
     

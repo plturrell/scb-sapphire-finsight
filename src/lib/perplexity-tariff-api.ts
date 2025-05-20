@@ -5,9 +5,8 @@ import { TariffDataResponse, PolicyReference, SourceReference, TariffEntry } fro
 
 // Types for tariff data have been moved to /src/types/perplexity.ts
 
-// API configuration
-const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
-const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
+// Using our proxy endpoint instead of direct API call to avoid CORS issues
+const PERPLEXITY_API_URL = '/api/perplexity-proxy';
 
 // API models
 const MODELS = {

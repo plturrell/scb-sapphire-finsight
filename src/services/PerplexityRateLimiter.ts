@@ -62,39 +62,43 @@ class PerplexityRateLimiter {
   }
   
   /**
-   * Load metrics from localStorage
+   * Load metrics from localStorage (safely)
    */
   private loadMetrics(): void {
     try {
-      const storedMetrics = localStorage.getItem(this.options.storageKey);
-      if (storedMetrics) {
-        this.usageMetrics = JSON.parse(storedMetrics);
-        this.isInitialized = true;
-        
-        // Clean up old records and recalculate metrics
-        this.cleanupOldRecords();
-      } else {
-        this.isInitialized = true;
-        this.saveMetrics();
+      // Check if window is defined (client-side only)
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const storedMetrics = window.localStorage.getItem(this.options.storageKey);
+        if (storedMetrics) {
+          this.usageMetrics = JSON.parse(storedMetrics);
+          
+          // Clean up old records and recalculate metrics
+          this.cleanupOldRecords();
+        }
       }
+      
+      // Mark as initialized regardless of storage access
+      this.isInitialized = true;
     } catch (error) {
       console.error('Error loading rate limiter metrics:', error);
       this.isInitialized = true;
-      this.saveMetrics();
     }
     
-    // Log metrics in debug mode
-    if (this.options.debugMode) {
+    // Log metrics in debug mode (client-side only)
+    if (this.options.debugMode && typeof window !== 'undefined') {
       console.log('Perplexity rate limiter initialized with metrics:', this.usageMetrics);
     }
   }
   
   /**
-   * Save metrics to localStorage
+   * Save metrics to localStorage (safely)
    */
   private saveMetrics(): void {
     try {
-      localStorage.setItem(this.options.storageKey, JSON.stringify(this.usageMetrics));
+      // Check if window is defined (client-side only)
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(this.options.storageKey, JSON.stringify(this.usageMetrics));
+      }
     } catch (error) {
       console.error('Error saving rate limiter metrics:', error);
     }
