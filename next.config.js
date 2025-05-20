@@ -47,21 +47,16 @@ const nextConfig = {
     return config;
   },
   
-  // Add custom export config
-  exportPathMap: async function(
-    defaultPathMap,
-    { dev, dir, outDir, distDir, buildId }
-  ) {
-    // We only need to specify the index page as entry point
-    // Rest will be generated automatically
-    return {
-      '/': { page: '/' }
-    };
-  },
+  // Disable static export to prevent SSR issues
+  output: 'standalone',
+  
+  // Disable automatic static optimization for problematic pages
+  unstable_runtimeJS: true,
   
   // Advanced configuration options
   experimental: {
-    optimizeCss: true
+    optimizeCss: true,
+    esmExternals: 'loose', // Try to help with module resolution
   },
   
   // Disable checks that might fail build

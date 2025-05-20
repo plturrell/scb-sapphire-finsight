@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import ModernLayout from '@/components/ModernLayout';
 import MetricCard from '@/components/MetricCard';
-import JouleAssistant from '@/components/JouleAssistant';
+import JouleAssistantWrapper from '@/components/JouleAssistantWrapper';
 import PerplexityNewsBar from '@/components/PerplexityNewsBar';
 import {
   BarChart,
@@ -308,7 +308,7 @@ export default function Dashboard() {
 
           {/* Joule Content */}
           <div className="flex-1 overflow-hidden">
-            <JouleAssistant open={jouleOpen} onOpenChange={setJouleOpen} />
+            <JouleAssistantWrapper open={jouleOpen} onOpenChange={setJouleOpen} />
           </div>
         </div>
       )}
