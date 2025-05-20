@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP FinSight | Tariff Intelligence Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=72:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* SAP Fiori Color Palette */
+            --sapBrandColor: #0a6ed1;
+            --sapHighlightColor: #0a6ed1;
+            --sapBaseColor: #ffffff;
+            --sapShellColor: #354a5f;
+            --sapBackgroundColor: #f7f7f7;
+            --sapFontFamily: '72', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --sapTextColor: #32363a;
+            --sapLinkColor: #0a6ed1;
+            --sapCompanyLogo: #0a6ed1;
+            --sapErrorColor: #bb0000;
+            --sapWarningColor: #e9730c;
+            --sapSuccessColor: #107e3e;
+            --sapInformationColor: #0a6ed1;
+            --sapNeutralColor: #5e696e;
+            --sapContent_Shadow0: 0 0 0 1px rgba(0,0,0,0.1), 0 0.125rem 0.5rem 0 rgba(0,0,0,0.1);
+            --sapContent_Shadow1: 0 0 0 1px rgba(0,0,0,0.08), 0 0.25rem 0.625rem 0 rgba(0,0,0,0.08);
+            --sapContent_Shadow2: 0 0 0 1px rgba(0,0,0,0.05), 0 0.625rem 1.875rem 0 rgba(0,0,0,0.05);
+            --sapTile_Background: #ffffff;
+            --sapTile_BorderColor: #e5e5e5;
+            --sapButton_Background: #ffffff;
+            --sapButton_BorderColor: #0a6ed1;
+            --sapButton_TextColor: #0a6ed1;
+            --sapButton_Hover_Background: #ebf5ff;
+            --sapButton_Active_Background: #0854a0;
+            --sapButton_Active_TextColor: #ffffff;
+        }
+        
+        body {
+            font-family: var(--sapFontFamily);
+            background-color: var(--sapBackgroundColor);
+            color: var(--sapTextColor);
+            font-size: 14px;
+            line-height: 1.42857;
+        }
+        
+        /* Shell Bar */
+        .fd-shellbar {
+            background-color: var(--sapShellColor);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            box-shadow: var(--sapContent_Shadow1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .fd-shellbar__logo {
+            display: flex;
+            align-items: center;
+            margin-right: 2rem;
+        }
+        
+        .fd-shellbar__logo-img {
+            height: 24px;
+            margin-right: 0.75rem;
+        }
+        
+        .fd-shellbar__title {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .fd-shellbar__actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+        
+        .fd-shellbar__button {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.1s;
+        }
+        
+        .fd-shellbar__button:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .fd-shellbar__button--user {
+            width: auto;
+            padding: 0 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Navigation */
+        .fd-side-nav {
+            position: fixed;
+            left: 0;
+            top: 48px;
+            bottom: 0;
+            width: 240px;
+            background-color: var(--sapBackgroundColor);
+            border-right: 1px solid #e5e5e5;
+            z-index: 999;
+            transition: transform 0.3s;
+        }
+        
+        .fd-side-nav.collapsed {
+            transform: translateX(-240px);
+        }
+        
+        .fd-side-nav__main {
+            padding: 1rem 0;
+        }
+        
+        .fd-side-nav__item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--sapTextColor);
+            text-decoration: none;
+            position: relative;
+            transition: background-color 0.1s;
+        }
+        
+        .fd-side-nav__item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .fd-side-nav__item.is-selected {
+            background-color: #ebf5ff;
+            color: var(--sapBrandColor);
+        }
+        
+        .fd-side-nav__item.is-selected::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: var(--sapBrandColor);
+        }
+        
+        .fd-side-nav__icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Page Content */
+        .fd-page {
+            margin-left: 240px;
+            transition: margin-left 0.3s;
+        }
+        
+        .fd-page.expanded {
+            margin-left: 0;
+        }
+        
+        .fd-page__header {
+            background-color: #ffffff;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .fd-page__title {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--sapTextColor);
+            margin: 0;
+        }
+        
+        .fd-page__subtitle {
+            font-size: 14px;
+            color: #6a6d70;
+            margin-top: 0.25rem;
+        }
+        
+        .fd-page__actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .fd-page__content {
+            padding: 2rem;
+        }
+        
+        /* Tiles */
+        .fd-tile-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .fd-tile {
+            background-color: var(--sapTile_Background);
+            border: 1px solid var(--sapTile_BorderColor);
+            border-radius: 4px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: box-shadow 0.2s;
+            cursor: pointer;
+        }
+        
+        .fd-tile:hover {
+            box-shadow: var(--sapContent_Shadow1);
+        }
+        
+        .fd-tile.is-active {
+            border-color: var(--sapBrandColor);
+            box-shadow: 0 0 0 1px var(--sapBrandColor);
+        }
+        
+        .fd-tile__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .fd-tile__title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--sapTextColor);
+            margin: 0;
+        }
+        
+        .fd-tile__subtitle {
+            font-size: 14px;
+            color: #6a6d70;
+            margin-top: 0.25rem;
+        }
+        
+        .fd-tile__icon {
+            font-size: 24px;
+            color: var(--sapNeutralColor);
+        }
+        
+        .fd-tile__content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .fd-tile__kpi {
+            font-size: 36px;
+            font-weight: 300;
+            line-height: 1;
+            margin: 0.5rem 0;
+        }
+        
+        .fd-tile__kpi--negative {
+            color: var(--sapErrorColor);
+        }
+        
+        .fd-tile__kpi--positive {
+            color: var(--sapSuccessColor);
+        }
+        
+        .fd-tile__kpi--warning {
+            color: var(--sapWarningColor);
+        }
+        
+        .fd-tile__status {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            margin-top: 0.5rem;
+        }
+        
+        .fd-tile__status-icon {
+            margin-right: 0.5rem;
+        }
+        
+        /* Tables */
+        .fd-table {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .fd-table__header {
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .fd-table__row {
+            border-bottom: 1px solid #e5e5e5;
+        }
+        
+        .fd-table__row:last-child {
+            border-bottom: none;
+        }
+        
+        .fd-table__row:hover {
+            background-color: #fafafa;
+        }
+        
+        .fd-table__cell {
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+        
+        .fd-table__cell--header {
+            font-weight: 600;
+            color: #6a6d70;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        
+        /* Buttons */
+        .fd-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1rem;
+            height: 36px;
+            border: 1px solid var(--sapButton_BorderColor);
+            border-radius: 4px;
+            background-color: var(--sapButton_Background);
+            color: var(--sapButton_TextColor);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-decoration: none;
+        }
+        
+        .fd-button:hover {
+            background-color: var(--sapButton_Hover_Background);
+        }
+        
+        .fd-button:active {
+            background-color: var(--sapButton_Active_Background);
+            color: var(--sapButton_Active_TextColor);
+        }
+        
+        .fd-button--emphasized {
+            background-color: var(--sapBrandColor);
+            color: #ffffff;
+            border-color: var(--sapBrandColor);
+        }
+        
+        .fd-button--emphasized:hover {
+            background-color: #0854a0;
+            border-color: #0854a0;
+        }
+        
+        .fd-button--ghost {
+            border-color: transparent;
+            background-color: transparent;
+        }
+        
+        .fd-button--ghost:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Cards */
+        .fd-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            box-shadow: var(--sapContent_Shadow0);
+            margin-bottom: 1rem;
+        }
+        
+        .fd-card__header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .fd-card__title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .fd-card__content {
+            padding: 1.5rem;
+        }
+        
+        /* Charts */
+        .fd-chart {
+            height: 300px;
+            position: relative;
+        }
+        
+        /* Status Indicators */
+        .fd-status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .fd-status-indicator--positive {
+            background-color: #f1fdf6;
+            color: var(--sapSuccessColor);
+        }
+        
+        .fd-status-indicator--negative {
+            background-color: #ffebeb;
+            color: var(--sapErrorColor);
+        }
+        
+        .fd-status-indicator--warning {
+            background-color: #fff8e5;
+            color: var(--sapWarningColor);
+        }
+        
+        .fd-status-indicator--information {
+            background-color: #e8f4fd;
+            color: var(--sapInformationColor);
+        }
+        
+        /* Page Sections */
+        .fd-section {
+            margin-bottom: 2rem;
+        }
+        
+        .fd-section__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .fd-section__title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        /* Loading */
+        .fd-busy-indicator {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 0.125rem solid rgba(10, 110, 209, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--sapBrandColor);
+            animation: fd-busy-indicator-rotate 0.6s linear infinite;
+        }
+        
+        @keyframes fd-busy-indicator-rotate {
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .fd-side-nav {
+                transform: translateX(-240px);
+            }
+            
+            .fd-side-nav.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .fd-page {
+                margin-left: 0;
+            }
+            
+            .fd-tile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Tab Navigation */
+        .fd-tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e5e5;
+            margin-bottom: 2rem;
+        }
+        
+        .fd-tabs__item {
+            padding: 0.75rem 1.5rem;
+            color: var(--sapTextColor);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        
+        .fd-tabs__item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .fd-tabs__item.is-selected {
+            color: var(--sapBrandColor);
+            border-bottom-color: var(--sapBrandColor);
+            font-weight: 600;
+        }
+        
+        /* Tab Panels */
+        .fd-tab-panel {
+            display: none;
+        }
+        
+        .fd-tab-panel.is-active {
+            display: block;
+        }
+        
+        /* Notification */
+        .fd-notification {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            box-shadow: var(--sapContent_Shadow2);
+            padding: 1rem;
+            min-width: 300px;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+        
+        .fd-notification.show {
+            transform: translateX(0);
+        }
+        
+        .fd-notification__header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .fd-notification__title {
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .fd-notification__close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #6a6d70;
+        }
+    </style>
+</head>
+<body>
+    <!-- Shell Bar -->
+    <div class="fd-shellbar">
+        <div class="fd-shellbar__logo">
+            <svg class="fd-shellbar__logo-img" viewBox="0 0 24 24" fill="currentColor" style="color: #1ba0e2;">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+            </svg>
+            <div class="fd-shellbar__title">SAP FinSight</div>
+        </div>
+        <div class="fd-shellbar__actions">
+            <button class="fd-shellbar__button" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="fd-shellbar__button" id="notificationBtn">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="fd-shellbar__button fd-shellbar__button--user">
+                <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
+                <span>Sarah Johnson</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Side Navigation -->
+    <nav class="fd-side-nav" id="sideNav">
+        <div class="fd-side-nav__main">
+            <a href="#" class="fd-side-nav__item is-selected" data-page="dashboard">
+                <i class="fas fa-chart-line fd-side-nav__icon"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="fd-side-nav__item" data-page="analysis">
+                <i class="fas fa-analytics fd-side-nav__icon"></i>
+                <span>Impact Analysis</span>
+            </a>
+            <a href="#" class="fd-side-nav__item" data-page="finance">
+                <i class="fas fa-coins fd-side-nav__icon"></i>
+                <span>Finance Options</span>
+            </a>
+            <a href="#" class="fd-side-nav__item" data-page="risk">
+                <i class="fas fa-exclamation-triangle fd-side-nav__icon"></i>
+                <span>Risk Assessment</span>
+            </a>
+            <a href="#" class="fd-side-nav__item" data-page="timeline">
+                <i class="fas fa-calendar-alt fd-side-nav__icon"></i>
+                <span>Action Timeline</span>
+            </a>
+            <a href="#" class="fd-side-nav__item" data-page="reports">
+                <i class="fas fa-file-alt fd-side-nav__icon"></i>
+                <span>Reports</span>
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Page Content -->
+    <main class="fd-page" id="mainContent">
+        <!-- Dashboard Page -->
+        <div class="fd-page-section" id="dashboard-page">
+            <div class="fd-page__header">
+                <div>
+                    <h1 class="fd-page__title">Tariff Impact Command Center</h1>
+                    <p class="fd-page__subtitle">Real-time analysis for Samsung Electronics Vietnam</p>
+                </div>
+                <div class="fd-page__actions">
+                    <button class="fd-button">
+                        <i class="fas fa-sync-alt" style="margin-right: 0.5rem;"></i>
+                        Refresh
+                    </button>
+                    <button class="fd-button fd-button--emphasized">
+                        <i class="fas fa-download" style="margin-right: 0.5rem;"></i>
+                        Export Report
+                    </button>
+                </div>
+            </div>
+            
+            <div class="fd-page__content">
+                <!-- KPI Tiles -->
+                <div class="fd-tile-container">
+                    <div class="fd-tile">
+                        <div class="fd-tile__header">
+                            <div>
+                                <h3 class="fd-tile__title">Revenue at Risk</h3>
+                                <p class="fd-tile__subtitle">US Market Exposure</p>
+                            </div>
+                            <i class="fas fa-chart-line fd-tile__icon"></i>
+                        </div>
+                        <div class="fd-tile__content">
+                            <h2 class="fd-tile__kpi">$21.0B</h2>
+                            <div class="fd-tile__status">
+                                <i class="fas fa-arrow-down fd-tile__status-icon" style="color: var(--sapErrorColor);"></i>
+                                <span>35% of total revenue</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fd-tile">
+                        <div class="fd-tile__header">
+                            <div>
+                                <h3 class="fd-tile__title">Total Impact</h3>
+                                <p class="fd-tile__subtitle">Financial Exposure</p>
+                            </div>
+                            <i class="fas fa-dollar-sign fd-tile__icon"></i>
+                        </div>
+                        <div class="fd-tile__content">
+                            <h2 class="fd-tile__kpi fd-tile__kpi--negative">-$9.87B</h2>
+                            <div class="fd-tile__status">
+                                <i class="fas fa-exclamation-circle fd-tile__status-icon" style="color: var(--sapErrorColor);"></i>
+                                <span>Critical impact level</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fd-tile">
+                        <div class="fd-tile__header">
+                            <div>
+                                <h3 class="fd-tile__title">Success Rate</h3>
+                                <p class="fd-tile__subtitle">With Mitigation</p>
+                            </div>
+                            <i class="fas fa-check-circle fd-tile__icon"></i>
+                        </div>
+                        <div class="fd-tile__content">
+                            <h2 class="fd-tile__kpi fd-tile__kpi--positive">75-80%</h2>
+                            <div class="fd-tile__status">
+                                <i class="fas fa-arrow-up fd-tile__status-icon" style="color: var(--sapSuccessColor);"></i>
+                                <span>With intervention</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fd-tile">
+                        <div class="fd-tile__header">
+                            <div>
+                                <h3 class="fd-tile__title">Critical Risks</h3>
+                                <p class="fd-tile__subtitle">Immediate Action</p>
+                            </div>
+                            <i class="fas fa-exclamation-triangle fd-tile__icon"></i>
+                        </div>
+                        <div class="fd-tile__content">
+                            <h2 class="fd-tile__kpi fd-tile__kpi--warning">3</h2>
+                            <div class="fd-tile__status">
+                                <i class="fas fa-clock fd-tile__status-icon" style="color: var(--sapWarningColor);"></i>
+                                <span>Requires attention</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="fd-section">
+                    <div class="fd-section__header">
+                        <h2 class="fd-section__title">Impact Overview</h2>
+                    </div>
+                    
+                    <!-- Tab Navigation -->
+                    <div class="fd-tabs">
+                        <a class="fd-tabs__item is-selected" data-tab="severity">Severity Analysis</a>
+                        <a class="fd-tabs__item" data-tab="timeline">Timeline View</a>
+                        <a class="fd-tabs__item" data-tab="financial">Financial Impact</a>
+                    </div>
+                    
+                    <!-- Tab Panels -->
+                    <div class="fd-tab-panel is-active" id="severity-panel">
+                        <div class="fd-card">
+                            <div class="fd-card__header">
+                                <h3 class="fd-card__title">Impact by Category</h3>
+                                <button class="fd-button fd-button--ghost">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                            <div class="fd-card__content">
+                                <div class="fd-chart">
+                                    <canvas id="impactChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fd-tab-panel" id="timeline-panel">
+                        <div class="fd-card">
+                            <div class="fd-card__header">
+                                <h3 class="fd-card__title">Recovery Projection</h3>
+                            </div>
+                            <div class="fd-card__content">
+                                <div class="fd-chart">
+                                    <canvas id="timelineChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fd-tab-panel" id="financial-panel">
+                        <div class="fd-card">
+                            <div class="fd-card__header">
+                                <h3 class="fd-card__title">Financial Summary</h3>
+                            </div>
+                            <div class="fd-card__content">
+                                <table class="fd-table">
+                                    <thead>
+                                        <tr class="fd-table__row">
+                                            <th class="fd-table__cell fd-table__cell--header">Metric</th>
+                                            <th class="fd-table__cell fd-table__cell--header">Current</th>
+                                            <th class="fd-table__cell fd-table__cell--header">Impact</th>
+                                            <th class="fd-table__cell fd-table__cell--header">Projected</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="fd-table__row">
+                                            <td class="fd-table__cell">Annual Revenue</td>
+                                            <td class="fd-table__cell">$60.0B</td>
+                                            <td class="fd-table__cell" style="color: var(--sapErrorColor);">-$9.87B</td>
+                                            <td class="fd-table__cell">$50.13B</td>
+                                        </tr>
+                                        <tr class="fd-table__row">
+                                            <td class="fd-table__cell">Profit Margin</td>
+                                            <td class="fd-table__cell">15.0%</td>
+                                            <td class="fd-table__cell" style="color: var(--sapErrorColor);">-4.2pp</td>
+                                            <td class="fd-table__cell">10.8%</td>
+                                        </tr>
+                                        <tr class="fd-table__row">
+                                            <td class="fd-table__cell">Cash Flow</td>
+                                            <td class="fd-table__cell">$9.0B</td>
+                                            <td class="fd-table__cell" style="color: var(--sapErrorColor);">-$3.15B</td>
+                                            <td class="fd-table__cell">$5.85B</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analysis Page -->
+        <div class="fd-page-section" id="analysis-page" style="display: none;">
+            <div class="fd-page__header">
+                <h1 class="fd-page__title">Impact Analysis</h1>
+                <p class="fd-page__subtitle">Comprehensive tariff impact assessment</p>
+            </div>
+            
+            <div class="fd-page__content">
+                <div class="fd-card">
+                    <div class="fd-card__header">
+                        <h3 class="fd-card__title">Risk Matrix</h3>
+                    </div>
+                    <div class="fd-card__content">
+                        <table class="fd-table">
+                            <thead>
+                                <tr class="fd-table__row">
+                                    <th class="fd-table__cell fd-table__cell--header">Category</th>
+                                    <th class="fd-table__cell fd-table__cell--header">Description</th>
+                                    <th class="fd-table__cell fd-table__cell--header">Severity</th>
+                                    <th class="fd-table__cell fd-table__cell--header">Timeline</th>
+                                    <th class="fd-table__cell fd-table__cell--header">Impact</th>
+                                    <th class="fd-table__cell fd-table__cell--header">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="riskTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Finance Options Page -->
+        <div class="fd-page-section" id="finance-page" style="display: none;">
+            <div class="fd-page__header">
+                <h1 class="fd-page__title">Trade Finance Options</h1>
+                <p class="fd-page__subtitle">Available mitigation strategies</p>
+            </div>
+            
+            <div class="fd-page__content">
+                <div class="fd-tile-container" id="financeOptionsContainer">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Risk Assessment Page -->
+        <div class="fd-page-section" id="risk-page" style="display: none;">
+            <div class="fd-page__header">
+                <h1 class="fd-page__title">Risk Assessment</h1>
+                <p class="fd-page__subtitle">Comprehensive risk evaluation</p>
+            </div>
+            
+            <div class="fd-page__content">
+                <div class="fd-card">
+                    <div class="fd-card__content">
+                        <div class="fd-chart">
+                            <canvas id="riskChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Timeline Page -->
+        <div class="fd-page-section" id="timeline-page" style="display: none;">
+            <div class="fd-page__header">
+                <h1 class="fd-page__title">Action Timeline</h1>
+                <p class="fd-page__subtitle">Strategic implementation roadmap</p>
+            </div>
+            
+            <div class="fd-page__content" id="timelineContent">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Reports Page -->
+        <div class="fd-page-section" id="reports-page" style="display: none;">
+            <div class="fd-page__header">
+                <h1 class="fd-page__title">Reports</h1>
+                <p class="fd-page__subtitle">Export and documentation</p>
+            </div>
+            
+            <div class="fd-page__content">
+                <div class="fd-tile-container">
+                    <div class="fd-tile">
+                        <div class="fd-tile__header">
+                            <div>
+                                <h3 class="fd-tile__title">Executive Summary</h3>
+                                <p class="fd-tile__subtitle">PDF Format</p>
+                            </div>
+                            <i class="fas fa-file-pdf fd-tile__icon"></i>
+                        </div>
+                        <div class="fd-tile__content">
+                            <button class="fd-button fd-button--emphasized">
+                                <i class="fas fa-download" style="margin-right: 0.5rem;"></i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="fd-tile">
+                        <div class="fd-tile__header">
+                            <div>
+                                <h3 class="fd-tile__title">Detailed Analysis</h3>
+                                <p class="fd-tile__subtitle">Excel Format</p>
+                            </div>
+                            <i class="fas fa-file-excel fd-tile__icon"></i>
+                        </div>
+                        <div class="fd-tile__content">
+                            <button class="fd-button fd-button--emphasized">
+                                <i class="fas fa-download" style="margin-right: 0.5rem;"></i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Notification -->
+    <div class="fd-notification" id="notification">
+        <div class="fd-notification__header">
+            <span class="fd-notification__title">Data Updated</span>
+            <button class="fd-notification__close" onclick="hideNotification()">×</button>
+        </div>
+        <p>Real-time analysis has been refreshed with latest data.</p>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Real analysis data
+        const ANALYSIS_DATA = {
+            "baseline_data": {
+                "company_profile": {
+                    "name": "Samsung Electronics Vietnam",
+                    "industry": "Electronics",
+                    "annual_revenue": 60000000000,
+                    "employee_count": 160000,
+                    "us_export_percentage": 35.0
+                },
+                "financial_metrics": {
+                    "revenue_at_risk": 21000000000.0,
+                    "estimated_profit_margin": 0.15,
+                    "current_ratio": 1.5
+                }
+            },
+            "tariff_impacts": [
+                {
+                    "category": "financial",
+                    "severity": 9,
+                    "timeframe": "immediate",
+                    "description": "Severe cash flow reduction due to tariff costs",
+                    "financial_impact": -3150000000.0
+                },
+                {
+                    "category": "financial",
+                    "severity": 8,
+                    "timeframe": "short_term",
+                    "description": "Significant profit margin compression",
+                    "financial_impact": -2520000000.0
+                },
+                {
+                    "category": "market",
+                    "severity": 7,
+                    "timeframe": "medium_term",
+                    "description": "Potential loss of US market share",
+                    "financial_impact": -4200000000.0
+                },
+                {
+                    "category": "operational",
+                    "severity": 7,
+                    "timeframe": "short_term",
+                    "description": "Supply chain disruption"
+                },
+                {
+                    "category": "strategic",
+                    "severity": 8,
+                    "timeframe": "long_term",
+                    "description": "Strategic pivot required"
+                }
+            ],
+            "finance_options": [
+                {
+                    "name": "Export Credit Insurance",
+                    "provider": "HSBC",
+                    "cost": 0.5,
+                    "complexity": 4,
+                    "implementation_time": "2-4 weeks"
+                },
+                {
+                    "name": "Supply Chain Financing",
+                    "provider": "Citibank",
+                    "cost": 1.8,
+                    "complexity": 7,
+                    "implementation_time": "4-8 weeks"
+                },
+                {
+                    "name": "Letters of Credit",
+                    "provider": "Multiple Banks",
+                    "cost": 0.75,
+                    "complexity": 5,
+                    "implementation_time": "1-2 weeks"
+                },
+                {
+                    "name": "Working Capital Loans",
+                    "provider": "Commercial Banks",
+                    "cost": 3.0,
+                    "complexity": 5,
+                    "implementation_time": "2-4 weeks"
+                }
+            ],
+            "recommendations": {
+                "immediate_actions": [
+                    {
+                        "action": "Implement Export Credit Insurance",
+                        "timeline": "0-2 weeks",
+                        "priority": "Critical",
+                        "cost": "$105,000,000"
+                    },
+                    {
+                        "action": "Secure Working Capital Facility", 
+                        "timeline": "0-4 weeks",
+                        "priority": "High",
+                        "cost": "$630,000,000"
+                    }
+                ]
+            }
+        };
+        
+        // Page Navigation
+        document.querySelectorAll('.fd-side-nav__item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active nav
+                document.querySelectorAll('.fd-side-nav__item').forEach(nav => nav.classList.remove('is-selected'));
+                item.classList.add('is-selected');
+                
+                // Show corresponding page
+                const page = item.dataset.page;
+                document.querySelectorAll('.fd-page-section').forEach(section => section.style.display = 'none');
+                document.getElementById(`${page}-page`).style.display = 'block';
+                
+                // Load page-specific content
+                loadPageContent(page);
+            });
+        });
+        
+        // Tab Navigation
+        document.querySelectorAll('.fd-tabs__item').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active tab
+                document.querySelectorAll('.fd-tabs__item').forEach(t => t.classList.remove('is-selected'));
+                tab.classList.add('is-selected');
+                
+                // Show corresponding panel
+                const tabName = tab.dataset.tab;
+                document.querySelectorAll('.fd-tab-panel').forEach(panel => panel.classList.remove('is-active'));
+                document.getElementById(`${tabName}-panel`).classList.add('is-active');
+            });
+        });
+        
+        // Initialize Charts
+        function initCharts() {
+            // Impact Chart
+            const impactCtx = document.getElementById('impactChart').getContext('2d');
+            const categories = [...new Set(ANALYSIS_DATA.tariff_impacts.map(i => i.category))];
+            const severities = categories.map(cat => {
+                const catImpacts = ANALYSIS_DATA.tariff_impacts.filter(i => i.category === cat);
+                return Math.max(...catImpacts.map(i => i.severity));
+            });
+            
+            new Chart(impactCtx, {
+                type: 'bar',
+                data: {
+                    labels: categories.map(c => c.charAt(0).toUpperCase() + c.slice(1)),
+                    datasets: [{
+                        data: severities,
+                        backgroundColor: severities.map(s => 
+                            s >= 8 ? '#bb0000' : s >= 6 ? '#e9730c' : '#0a6ed1'
+                        ),
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            grid: {
+                                color: '#e5e5e5'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            
+            // Timeline Chart
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Now', 'Q1', 'Q2', 'Q3', 'Q4', 'Year 2', 'Year 3', 'Year 5'],
+                    datasets: [
+                        {
+                            label: 'Without Intervention',
+                            data: [-35, -32, -28, -25, -22, -20, -18, -15],
+                            borderColor: '#bb0000',
+                            backgroundColor: 'rgba(187, 0, 0, 0.1)',
+                            tension: 0.3
+                        },
+                        {
+                            label: 'With Intervention',
+                            data: [-35, -25, -18, -10, -5, 0, 3, 8],
+                            borderColor: '#107e3e',
+                            backgroundColor: 'rgba(16, 126, 62, 0.1)',
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Revenue Impact (%)' },
+                            grid: { color: '#e5e5e5' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Load Page Content
+        function loadPageContent(page) {
+            switch(page) {
+                case 'analysis':
+                    loadRiskTable();
+                    break;
+                case 'finance':
+                    loadFinanceOptions();
+                    break;
+                case 'timeline':
+                    loadTimeline();
+                    break;
+                case 'risk':
+                    loadRiskChart();
+                    break;
+            }
+        }
+        
+        // Load Risk Table
+        function loadRiskTable() {
+            const tbody = document.getElementById('riskTableBody');
+            tbody.innerHTML = '';
+            
+            ANALYSIS_DATA.tariff_impacts.forEach(impact => {
+                const row = document.createElement('tr');
+                row.className = 'fd-table__row';
+                row.innerHTML = `
+                    <td class="fd-table__cell">${impact.category}</td>
+                    <td class="fd-table__cell">${impact.description}</td>
+                    <td class="fd-table__cell">
+                        <span class="fd-status-indicator fd-status-indicator--${getSeverityClass(impact.severity)}">
+                            ${getSeverityLabel(impact.severity)}
+                        </span>
+                    </td>
+                    <td class="fd-table__cell">${impact.timeframe.replace(/_/g, ' ')}</td>
+                    <td class="fd-table__cell">${impact.financial_impact ? formatCurrency(impact.financial_impact) : '—'}</td>
+                    <td class="fd-table__cell">
+                        <span class="fd-status-indicator fd-status-indicator--${getStatusClass(impact.severity)}">
+                            ${getStatus(impact.severity)}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Load Finance Options
+        function loadFinanceOptions() {
+            const container = document.getElementById('financeOptionsContainer');
+            container.innerHTML = '';
+            
+            ANALYSIS_DATA.finance_options.forEach(option => {
+                const tile = document.createElement('div');
+                tile.className = 'fd-tile';
+                tile.innerHTML = `
+                    <div class="fd-tile__header">
+                        <div>
+                            <h3 class="fd-tile__title">${option.name}</h3>
+                            <p class="fd-tile__subtitle">${option.provider}</p>
+                        </div>
+                        <i class="fas fa-university fd-tile__icon"></i>
+                    </div>
+                    <div class="fd-tile__content">
+                        <div class="fd-tile__kpi">${option.cost}%</div>
+                        <p>Cost above base rate</p>
+                        <p style="margin-top: 1rem;">
+                            <strong>Complexity:</strong> ${option.complexity}/10<br>
+                            <strong>Implementation:</strong> ${option.implementation_time}
+                        </p>
+                        <button class="fd-button fd-button--emphasized" style="margin-top: 1rem;">
+                            View Details
+                        </button>
+                    </div>
+                `;
+                container.appendChild(tile);
+            });
+        }
+        
+        // Load Timeline
+        function loadTimeline() {
+            const container = document.getElementById('timelineContent');
+            container.innerHTML = '';
+            
+            ANALYSIS_DATA.recommendations.immediate_actions.forEach(action => {
+                const card = document.createElement('div');
+                card.className = 'fd-card';
+                card.innerHTML = `
+                    <div class="fd-card__header">
+                        <h3 class="fd-card__title">${action.action}</h3>
+                        <span class="fd-status-indicator fd-status-indicator--${action.priority === 'Critical' ? 'negative' : 'warning'}">
+                            ${action.priority}
+                        </span>
+                    </div>
+                    <div class="fd-card__content">
+                        <p><strong>Timeline:</strong> ${action.timeline}</p>
+                        <p><strong>Cost:</strong> ${action.cost}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        // Load Risk Chart
+        function loadRiskChart() {
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Financial', 'Market', 'Operational', 'Strategic', 'Regulatory'],
+                    datasets: [{
+                        label: 'Risk Level',
+                        data: [9, 7, 7, 8, 6],
+                        backgroundColor: 'rgba(187, 0, 0, 0.2)',
+                        borderColor: '#bb0000',
+                        pointBackgroundColor: '#bb0000'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Utility Functions
+        function getSeverityClass(severity) {
+            if (severity >= 8) return 'negative';
+            if (severity >= 6) return 'warning';
+            return 'information';
+        }
+        
+        function getSeverityLabel(severity) {
+            if (severity >= 8) return 'Critical';
+            if (severity >= 6) return 'High';
+            if (severity >= 4) return 'Medium';
+            return 'Low';
+        }
+        
+        function getStatusClass(severity) {
+            if (severity >= 8) return 'negative';
+            if (severity >= 6) return 'warning';
+            return 'information';
+        }
+        
+        function getStatus(severity) {
+            if (severity >= 8) return 'Action Required';
+            if (severity >= 6) return 'Planning';
+            return 'Monitoring';
+        }
+        
+        function formatCurrency(value) {
+            const num = Math.abs(value);
+            if (num >= 1e9) return `-$${(num / 1e9).toFixed(1)}B`;
+            if (num >= 1e6) return `-$${(num / 1e6).toFixed(1)}M`;
+            return `-$${num.toLocaleString()}`;
+        }
+        
+        // Notification
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        function hideNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            
+            // Simulate real-time updates
+            setInterval(() => {
+                showNotification();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

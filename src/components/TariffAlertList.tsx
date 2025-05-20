@@ -1,6 +1,7 @@
 import React from 'react';
 import { TariffAlert } from '../types';
-import { AlertTriangle, Info, ExternalLink, Clock, Tag } from 'lucide-react';
+import { ExternalLink, Clock, Tag } from 'lucide-react';
+import { AlertIcon, SparklesIcon, LoadingIcon } from './icons';
 
 interface TariffAlertListProps {
   alerts: TariffAlert[];
@@ -20,9 +21,9 @@ const TariffAlertList: React.FC<TariffAlertListProps> = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-4 w-4 bg-blue-200 rounded-full mb-2.5" />
-          <div className="h-2.5 w-24 bg-gray-200 rounded-full" />
+        <div className="flex flex-col items-center">
+          <LoadingIcon variant="spinner" animation="spin" size={24} className="text-blue-500 mb-2.5" />
+          <div className="text-sm text-gray-500">Loading alerts...</div>
         </div>
       </div>
     );
@@ -32,7 +33,7 @@ const TariffAlertList: React.FC<TariffAlertListProps> = ({
     return (
       <div className="py-8 px-4 text-center">
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-          <AlertTriangle size={20} className="text-gray-400" />
+          <AlertIcon variant="info" size={20} className="text-gray-400" />
         </div>
         <h3 className="text-sm font-medium text-gray-900 mb-1">No tariff alerts found</h3>
         <p className="text-xs text-gray-500">
@@ -63,12 +64,17 @@ const TariffAlertList: React.FC<TariffAlertListProps> = ({
           >
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 mt-0.5">
-                <AlertTriangle 
+                <AlertIcon 
+                  variant={
+                    alert.priority === 'Critical' || alert.priority === 'high' ? 'warning' : 
+                    alert.priority === 'medium' ? 'info' : 'info'
+                  }
+                  animation={alert.priority === 'Critical' ? 'pulse' : 'none'}
                   size={16} 
-                  className={
-                    alert.priority === 'Critical' ? 'text-red-600' : 
-                    alert.priority === 'high' ? 'text-amber-600' : 
-                    alert.priority === 'medium' ? 'text-blue-600' : 'text-gray-500'
+                  color={
+                    alert.priority === 'Critical' ? 'rgb(220, 38, 38)' : 
+                    alert.priority === 'high' ? 'rgb(217, 119, 6)' : 
+                    alert.priority === 'medium' ? 'rgb(37, 99, 235)' : 'rgb(107, 114, 128)'
                   } 
                 />
               </div>
@@ -156,7 +162,7 @@ const TariffAlertList: React.FC<TariffAlertListProps> = ({
                   
                   {alert.aiEnhanced && (
                     <div className="flex items-center text-xs text-green-700 gap-1">
-                      <Info size={12} />
+                      <SparklesIcon size={12} animation="pulse" />
                       <span>AI Enhanced</span>
                     </div>
                   )}

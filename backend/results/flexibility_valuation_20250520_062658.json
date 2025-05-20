@@ -1,0 +1,12 @@
+{
+  "flexibility_value": -128100000.0,
+  "flexibility_value_percentage": 25.0,
+  "inputs": {
+    "current_revenue": 10000000000,
+    "revenue_at_risk": 4000000000.0,
+    "time_horizon": 3.0,
+    "volatility": 0.25,
+    "risk_free_rate": 0.03,
+    "tariff_probability": 0.5
+  }
+}

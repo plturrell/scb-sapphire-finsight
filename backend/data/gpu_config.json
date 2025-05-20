@@ -1,0 +1,72 @@
+{
+  "use_gpu": true,
+  "precision": "fp16",
+  "tensor_parallel_size": 4,
+  "batch_size": 1024,
+  "vector_dim": 768,
+  "cuda_kernels": {
+    "similarity": true,
+    "matrix_multiply": true,
+    "monte_carlo": true,
+    "visualization": true
+  },
+  "memory_optimization": {
+    "gradient_checkpointing": true,
+    "mixed_precision": true,
+    "offload_to_cpu": false
+  },
+  "monte_carlo": {
+    "use_tensor_cores": true,
+    "default_batch_size": 10000,
+    "default_iterations": 500000,
+    "max_iterations": 10000000,
+    "default_sampling_method": "latin_hypercube",
+    "available_sampling_methods": [
+      "standard",
+      "stratified",
+      "latin_hypercube",
+      "sobol",
+      "halton",
+      "importance",
+      "control_variate"
+    ],
+    "multi_gpu": {
+      "enabled": true,
+      "strategy": "data_parallel",
+      "synchronization_interval": 1000
+    },
+    "distributed": {
+      "enabled": false,
+      "num_workers": 0,
+      "coordinator_port": 29500
+    },
+    "precision_options": {
+      "mixed": {
+        "enabled": true,
+        "dtype_compute": "fp16",
+        "dtype_output": "fp32"
+      },
+      "double": {
+        "enabled": true,
+        "prioritize_accuracy": true
+      }
+    },
+    "optimization_profiles": {
+      "performance": {
+        "batch_size": 10000,
+        "precision": "mixed",
+        "tensor_cores": true
+      },
+      "accuracy": {
+        "batch_size": 5000,
+        "precision": "double",
+        "tensor_cores": false
+      },
+      "balanced": {
+        "batch_size": 8000,
+        "precision": "mixed",
+        "tensor_cores": true
+      }
+    }
+  }
+}

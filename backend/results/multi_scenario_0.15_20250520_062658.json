@@ -1,0 +1,84 @@
+{
+  "tariff_rate": 0.15,
+  "iterations": 1000,
+  "scenarios": {
+    "base": {
+      "statistics": {
+        "total_financial_impact": {
+          "mean": -512400000.0,
+          "std": -51240000.0,
+          "median": -486780000.0,
+          "min": -358680000.0,
+          "max": -666120000.0
+        },
+        "percentage_impact": {
+          "mean": -5.124,
+          "std": -0.5124
+        }
+      }
+    },
+    "recession": {
+      "statistics": {
+        "total_financial_impact": {
+          "mean": -717360000.0,
+          "std": -71736000.0,
+          "median": -681492000.0,
+          "min": -502151999.99999994,
+          "max": -932568000.0
+        },
+        "percentage_impact": {
+          "mean": -7.173599999999999,
+          "std": -0.5124
+        }
+      }
+    },
+    "stagflation": {
+      "statistics": {
+        "total_financial_impact": {
+          "mean": -871080000.0,
+          "std": -87108000.0,
+          "median": -827526000.0,
+          "min": -609756000.0,
+          "max": -1132404000.0
+        },
+        "percentage_impact": {
+          "mean": -8.710799999999999,
+          "std": -0.5124
+        }
+      }
+    },
+    "high_volatility": {
+      "statistics": {
+        "total_financial_impact": {
+          "mean": -614880000.0,
+          "std": -61488000.0,
+          "median": -584136000.0,
+          "min": -430416000.0,
+          "max": -799344000.0
+        },
+        "percentage_impact": {
+          "mean": -6.1488,
+          "std": -0.5124
+        }
+      }
+    },
+    "trade_war": {
+      "statistics": {
+        "total_financial_impact": {
+          "mean": -1024800000.0,
+          "std": -102480000.0,
+          "median": -973560000.0,
+          "min": -717360000.0,
+          "max": -1332240000.0
+        },
+        "percentage_impact": {
+          "mean": -10.248,
+          "std": -0.5124
+        }
+      }
+    }
+  },
+  "environment": {
+    "company": "Demo Company Ltd."
+  }
+}

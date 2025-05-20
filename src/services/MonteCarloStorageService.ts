@@ -235,6 +235,14 @@ export class MonteCarloStorageService {
   }
   
   /**
+   * Get all simulation inputs
+   * Simple wrapper for listSimulationInputs without options
+   */
+  public async getAllSimulationInputs(): Promise<SimulationInput[]> {
+    return this.listSimulationInputs();
+  }
+
+  /**
    * List all simulation inputs, optionally filtered and sorted
    * Retrieves from Business Data Cloud if available, otherwise falls back to local storage
    */
@@ -487,6 +495,15 @@ export class MonteCarloStorageService {
     return null;
   }
   
+  /**
+   * Get all simulation outputs
+   * Returns all outputs in the storage
+   */
+  public async getAllSimulationOutputs(): Promise<SimulationOutput[]> {
+    // Return all outputs from memory cache
+    return Array.from(this.simulationOutputs.values());
+  }
+
   /**
    * List all simulation outputs for a given input
    */

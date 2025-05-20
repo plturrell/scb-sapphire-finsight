@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import ModernLayout from '@/components/ModernLayout';
 import MetricCard from '@/components/MetricCard';
-import JouleAssistant from '@/components/JouleAssistant';
+import EnhancedJouleContainer from '@/components/EnhancedJouleContainer';
 import PerplexityNewsBar from '@/components/PerplexityNewsBar';
 import {
   BarChart,
@@ -46,12 +46,8 @@ export default function Dashboard() {
   const [jouleOpen, setJouleOpen] = useState(false);
 
   return (
-    <ModernLayout>
+    <ModernLayout showPerplexityPanel={true}>
       <div className="flex gap-6 -m-4 lg:-m-6">
-        {/* News Sidebar */}
-        <div className="hidden lg:block flex-shrink-0">
-          <PerplexityNewsBar />
-        </div>
         
         {/* Main Content Area */}
         <div className="flex-1 p-4 lg:p-6 space-y-6">
@@ -273,45 +269,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Joule AI Assistant Panel - Full Height */}
-      {jouleOpen && (
-        <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out transform translate-x-0">
-          {/* Joule Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-10 h-10 rounded-md flex items-center justify-center bg-[#cc00dc]" 
-              >
-                <span className="text-white font-bold text-lg">J</span>
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-white">Joule</h2>
-                <p className="text-sm text-white/80 flex items-center gap-2">
-                  Powered by 
-                  <Image
-                    src="/assets/idEDqS_YGr_1747680256633.svg"
-                    alt="SAP"
-                    width={32}
-                    height={16}
-                    className="inline-block brightness-0 invert"
-                  />
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setJouleOpen(false)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-white" />
-            </button>
-          </div>
-
-          {/* Joule Content */}
-          <div className="flex-1 overflow-hidden">
-            <JouleAssistant open={jouleOpen} onOpenChange={setJouleOpen} />
-          </div>
-        </div>
-      )}
+      {/* Enhanced Joule AI Assistant Panel */}
+      <EnhancedJouleContainer 
+        open={jouleOpen} 
+        onOpenChange={setJouleOpen} 
+      />
     </ModernLayout>
   );
 }

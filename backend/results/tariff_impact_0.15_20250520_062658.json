@@ -1,0 +1,14 @@
+{
+  "statistics": {
+    "direct_tariff_costs": 600000000.0,
+    "market_share_loss": -756000000.0,
+    "competitor_impact": -356400000.0,
+    "total_financial_impact": -512400000.0,
+    "percentage_impact": -5.124,
+    "new_profit": 2012400000.0,
+    "profit_impact_percentage": -34.16
+  },
+  "environment": {
+    "company": "Demo Company Ltd."
+  }
+}

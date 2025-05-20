@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MCTS Test</title>
+    <script src="mcts_impact_analyzer.js"></script>
+</head>
+<body>
+    <h1>MCTS Impact Analyzer Test</h1>
+    <button onclick="testMCTS()">Test MCTS</button>
+    <div id="results"></div>
+    
+    <script>
+        function testMCTS() {
+            const analysisData = {
+                company: "Samsung Electronics Vietnam",
+                totalRevenue: 47000000000,
+                revenueAtRisk: 21000000000,
+                totalImpact: 9870000000
+            };
+            
+            const analyzer = new MCTSImpactAnalyzer(analysisData);
+            const results = analyzer.runAnalysis();
+            
+            document.getElementById('results').innerHTML = `
+                <h2>MCTS Results:</h2>
+                <p>Best Path: ${results.bestPath.length} actions</p>
+                <p>Scenarios: ${results.scenarios.length}</p>
+                <p>Risk Reduction: ${JSON.stringify(results.riskProbabilities)}</p>
+                <p>Timeline: ${results.impactTimeline.length} periods</p>
+            `;
+        }
+    </script>
+</body>
+</html>

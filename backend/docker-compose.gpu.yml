@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sapphire-finsight-backend:latest
+    container_name: sapphire-finsight-backend
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./results:/app/results
+      - ./data:/app/data
+      - ./semantic:/app/semantic
+    environment:
+      - USE_GPU_ACCELERATION=true
+      - ANALYSIS_RESULTS_PATH=/app/results
+      - MONTE_CARLO_PROFILE=balanced
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: python3 start_backend.py
+    restart: unless-stopped
+
+  # Advanced multi-GPU backend (requires multiple GPUs)
+  backend-multi-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sapphire-finsight-backend:multi-gpu
+    container_name: sapphire-finsight-backend-multi-gpu
+    ports:
+      - "8889:8888"
+    volumes:
+      - ./results:/app/results
+      - ./data:/app/data
+      - ./semantic:/app/semantic
+    environment:
+      - USE_GPU_ACCELERATION=true
+      - ANALYSIS_RESULTS_PATH=/app/results
+      - MONTE_CARLO_PROFILE=performance
+      - MULTI_GPU_ENABLED=true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: python3 start_backend.py
+    restart: unless-stopped
+    profiles:
+      - multi-gpu
+
+  # Distributed coordinator (for distributed mode)
+  coordinator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sapphire-finsight-backend:coordinator
+    container_name: sapphire-finsight-coordinator
+    ports:
+      - "8890:8888"
+      - "29500:29500"
+    volumes:
+      - ./results:/app/results
+      - ./data:/app/data
+      - ./semantic:/app/semantic
+    environment:
+      - USE_GPU_ACCELERATION=true
+      - ANALYSIS_RESULTS_PATH=/app/results
+      - MONTE_CARLO_PROFILE=balanced
+      - DISTRIBUTED_MODE_ENABLED=true
+      - IS_COORDINATOR=true
+      - NODE_ID=1
+      - TOTAL_NODES=2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: python3 start_backend.py
+    restart: unless-stopped
+    profiles:
+      - distributed
+
+  # Distributed worker (for distributed mode)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sapphire-finsight-backend:worker
+    container_name: sapphire-finsight-worker
+    volumes:
+      - ./results:/app/results
+      - ./data:/app/data
+      - ./semantic:/app/semantic
+    environment:
+      - USE_GPU_ACCELERATION=true
+      - ANALYSIS_RESULTS_PATH=/app/results
+      - MONTE_CARLO_PROFILE=balanced
+      - DISTRIBUTED_MODE_ENABLED=true
+      - IS_COORDINATOR=false
+      - NODE_ID=2
+      - TOTAL_NODES=2
+      - COORDINATOR_HOST=coordinator
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: python3 start_backend.py
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    profiles:
+      - distributed
+
+  jena:
+    image: apache/jena-fuseki:4.8.0
+    container_name: sapphire-finsight-jena
+    ports:
+      - "3030:3030"
+    volumes:
+      - ./jena-data:/fuseki/databases
+    environment:
+      - ADMIN_PASSWORD=sapphire_admin
+      - JVM_ARGS=-Xmx4g
+    restart: unless-stopped

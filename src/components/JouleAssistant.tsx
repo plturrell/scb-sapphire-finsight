@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { X, Send, Sparkles, Loader2, InfoIcon, RefreshCw, ThumbsUp, ThumbsDown, Share, Download, ExternalLink, Check, Clipboard, Edit } from 'lucide-react';
+import { X, Send, Loader2, ThumbsDown, Share, Download, ExternalLink, Edit } from 'lucide-react';
+import { Box } from '@mui/material';
 import * as Dialog from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'framer-motion';
-import { JouleMessage, Source } from '@/types';
+import type { JouleMessage, Source } from '../types/JouleTypes';
 import { getGrokCompletion, GrokMessageContent } from '@/lib/grok-api';
+import { SparklesIcon, AlertIcon, LoadingIcon, ArrowIcon, SearchIcon } from './icons';
 
 interface JouleAssistantProps {
   open: boolean;
@@ -85,7 +87,8 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
       // Process the news item with the AI
       sendToGrok(userMessage);
     }
-  }, [open, initialNewsItem, sendToGrok]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialNewsItem]);
 
   const sendToGrok = useCallback(async (userMessage: string) => {
     setIsLoading(true);
@@ -177,25 +180,6 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
       setIsLoading(false);
     }
   }, [messages, initialNewsItem, generateContextualSuggestions]);
-  
-  // Generate contextual suggestions based on conversation
-  const generateContextualSuggestions = useCallback((userMessage: string, responseContent: string): string[] => {
-    const messageLower = userMessage.toLowerCase();
-    const responseLower = responseContent.toLowerCase();
-    
-    if (messageLower.includes('news') || messageLower.includes('analyze this news') || 
-        (initialNewsItem && messageLower.includes(initialNewsItem.title.toLowerCase()))) {
-      return ['What are the financial implications?', 'How does this affect our portfolio?', 'Find related market trends'];
-    } else if (messageLower.includes('analytics') || responseLower.includes('analytics')) {
-      return ['View detailed analytics', 'Compare to previous period', 'Export analytics data'];
-    } else if (messageLower.includes('portfolio') || responseLower.includes('portfolio')) {
-      return ['View portfolio breakdown', 'Check portfolio performance', 'Adjust portfolio allocation'];
-    } else if (messageLower.includes('report') || responseLower.includes('report')) {
-      return ['Generate report', 'Schedule regular reports', 'Share report with team'];
-    } else {
-      return ['View analytics', 'Check portfolio', 'Review recent transactions'];
-    }
-  }, [initialNewsItem]);
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -250,7 +234,7 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
           <div className="fiori-shell-header text-white p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Sparkles className="w-5 h-5" />
+                <SparklesIcon className="w-5 h-5" animation="pulse" />
                 <h2 className="text-base font-normal">Joule Assistant</h2>
               </div>
               <div className="flex items-center space-x-1">
@@ -259,14 +243,28 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                   className="p-1.5 hover:bg-white/20 rounded-full"
                   title="About Joule AI Assistant"
                 >
-                  <InfoIcon className="w-4 h-4" />
+                  <AlertIcon variant="info" className="w-4 h-4" animation="none" hoverAnimation hoverEffect="scale" />
                 </button>
                 <Dialog.Close className="p-1.5 hover:bg-white/20 rounded-full">
                   <X className="w-4 h-4" />
                 </Dialog.Close>
               </div>
             </div>
-            <p className="text-xs mt-1 opacity-90">SCB Sapphire FinSight AI Assistant</p>
+            <Box 
+              sx={{
+                bgcolor: "#f0f0f0", 
+                borderRadius: "4px",
+                px: 1.5,
+                py: 0.25,
+                mt: 0.5,
+                color: "#0a6ed1",
+                fontWeight: 600,
+                fontSize: "0.65rem",
+                display: "inline-block"
+              }}
+            >
+              Powered by SAP Fiori
+            </Box>
           </div>
           
           {/* AI Explanation Panel - Based on "Show the Work" Fiori principle */}
@@ -282,19 +280,19 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                   <h3 className="text-sm font-medium text-[rgb(var(--scb-primary))]">About Joule AI</h3>
                   <ul className="mt-2 text-xs space-y-1.5 text-gray-700">
                     <li className="flex items-start">
-                      <Check className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
+                      <ArrowIcon variant="chevron-right" className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
                       <span>Joule is trained on SCB's financial data and best practices</span>
                     </li>
                     <li className="flex items-start">
-                      <Check className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
+                      <ArrowIcon variant="chevron-right" className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
                       <span>All sources of information are clearly marked when available</span>
                     </li>
                     <li className="flex items-start">
-                      <Check className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
+                      <ArrowIcon variant="chevron-right" className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
                       <span>Your feedback improves Joule's responses over time</span>
                     </li>
                     <li className="flex items-start">
-                      <Check className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
+                      <ArrowIcon variant="chevron-right" className="w-3.5 h-3.5 text-[rgb(var(--scb-accent))] flex-shrink-0 mt-0.5 mr-1.5" />
                       <span>You maintain full control and can edit any AI suggestions</span>
                     </li>
                   </ul>
@@ -322,7 +320,7 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                 >
                   {message.sender === 'assistant' && (
                     <div className="text-xs font-medium text-[rgb(var(--scb-primary))] mb-1 flex items-center">
-                      <Sparkles className="w-3.5 h-3.5 mr-1 text-[rgb(var(--scb-accent))]" />
+                      <SparklesIcon className="w-3.5 h-3.5 mr-1 text-[rgb(var(--scb-accent))]" animation="pulse" />
                       Joule AI
                     </div>
                   )}
@@ -330,7 +328,7 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                   <div className="text-sm whitespace-pre-wrap">
                     {message.sender === 'assistant' && message.toolsUsed && (
                       <div className="mb-2 px-2 py-1 rounded-sm bg-[rgba(var(--scb-accent),0.1)] text-xs text-[rgb(var(--scb-accent))] flex items-center">
-                        <Sparkles className="w-3 h-3 mr-1.5" />
+                        <SparklesIcon className="w-3 h-3 mr-1.5" animation="pulse" />
                         <span>Using Grok 3 tools for financial analysis</span>
                       </div>
                     )}
@@ -347,7 +345,7 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                             {source.type === 'external' ? (
                               <ExternalLink className="w-3 h-3 mr-1 flex-shrink-0" />
                             ) : (
-                              <Clipboard className="w-3 h-3 mr-1 flex-shrink-0" />
+                              <SearchIcon className="w-3 h-3 mr-1 flex-shrink-0" />
                             )}
                             <span>{source.name}</span>
                           </div>
@@ -366,21 +364,21 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                             className={`ai-control-btn ${feedback[message.id] === 'positive' ? 'bg-[rgba(var(--scb-accent),0.1)] text-[rgb(var(--scb-accent))] border-[rgb(var(--scb-accent))]' : ''}`}
                             title="This was helpful"
                           >
-                            <ThumbsUp className="w-3.5 h-3.5" />
+                            <ArrowIcon variant="up" className="w-3.5 h-3.5" />
                           </button>
                           <button 
                             onClick={() => handleFeedback(message.id, 'negative')}
                             className={`ai-control-btn ${feedback[message.id] === 'negative' ? 'bg-[rgba(var(--scb-primary),0.1)] text-[rgb(var(--scb-primary))] border-[rgb(var(--scb-primary))]' : ''}`}
                             title="This wasn't helpful"
                           >
-                            <ThumbsDown className="w-3.5 h-3.5" />
+                            <ArrowIcon variant="down" className="w-3.5 h-3.5" />
                           </button>
                           <button 
                             onClick={() => copyToClipboard(message.content)}
                             className="ai-control-btn"
                             title="Copy to clipboard"
                           >
-                            <Clipboard className="w-3.5 h-3.5" />
+                            <SearchIcon className="w-3.5 h-3.5" />
                           </button>
                         </div>
                         
@@ -392,7 +390,7 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                             <Share className="w-3.5 h-3.5" />
                           </button>
                           <button className="ai-control-btn" title="Generate again">
-                            <RefreshCw className="w-3.5 h-3.5" />
+                            <ArrowIcon variant="right" className="w-3.5 h-3.5" animation="pulse" />
                           </button>
                         </div>
                       </div>
@@ -410,8 +408,9 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                             onClick={() => {
                               setInput(suggestion);
                             }}
-                            className="text-xs py-1.5 px-3 rounded-full border border-[rgb(var(--scb-border))] bg-white hover:bg-[rgba(var(--scb-light-blue),0.05)] transition-colors text-[rgb(var(--scb-primary))]"
+                            className="text-xs py-1.5 px-3 rounded-full border border-[rgb(var(--scb-border))] bg-white hover:bg-[rgba(var(--scb-light-blue),0.05)] transition-colors text-[rgb(var(--scb-primary))] flex items-center"
                           >
+                            <ArrowIcon variant="right" className="w-3 h-3 mr-1.5" />
                             {suggestion}
                           </button>
                         ))}
@@ -424,7 +423,7 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
             {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-white border border-[hsl(var(--border))] rounded p-2 flex items-center space-x-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-[hsl(var(--primary))]" />
+                  <LoadingIcon variant="spinner" className="w-4 h-4 text-[hsl(var(--primary))]" animation="spin" />
                   <p className="text-sm text-gray-700">Thinking...</p>
                 </div>
               </div>
@@ -449,7 +448,11 @@ export default function JouleAssistant({ open, onOpenChange, initialNewsItem }: 
                 className="fiori-btn fiori-btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[40px]"
                 aria-label="Send message"
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                {isLoading ? (
+                  <LoadingIcon variant="spinner" className="w-5 h-5" animation="spin" />
+                ) : (
+                  <ArrowIcon variant="right" className="w-5 h-5" />
+                )}
               </button>
             </div>
             

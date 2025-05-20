@@ -1,0 +1,131 @@
+/* P3 Color Space Enhanced CSS
+   These styles will only apply on devices that support the Display P3 color space
+   such as modern Apple devices (recent iPhones, iPads, and Macs) */
+
+/* Apply enhanced P3 colors only when browser support is detected */
+.supports-p3 {
+  /* Primary SCB Colors with P3 Enhancement */
+  --honolulu-blue-p3: color(display-p3 0 0.447 0.666);
+  --american-green-p3: color(display-p3 0.129 0.666 0.278);
+  --muted-red-p3: color(display-p3 0.827 0.216 0.196);
+  --iceberg-p3: color(display-p3 0.471 0.678 0.824);
+  --eton-blue-p3: color(display-p3 0.643 0.816 0.627);
+  
+  /* Enhanced UI Elements */
+  --chart-blue-p3: color(display-p3 0.039 0.494 0.725);
+  --chart-green-p3: color(display-p3 0.196 0.714 0.329);
+  --chart-orange-p3: color(display-p3 1 0.494 0.157);
+  --chart-purple-p3: color(display-p3 0.702 0.392 0.863);
+  --chart-yellow-p3: color(display-p3 0.949 0.769 0.157);
+  
+  /* Enhanced Gradients */
+  --primary-gradient-p3: linear-gradient(
+    to right,
+    color(display-p3 0 0.447 0.666),
+    color(display-p3 0.129 0.666 0.278)
+  );
+  
+  --positive-gradient-p3: linear-gradient(
+    to right,
+    color(display-p3 0.129 0.666 0.278),
+    color(display-p3 0.471 0.839 0.486)
+  );
+  
+  --negative-gradient-p3: linear-gradient(
+    to right,
+    color(display-p3 0.827 0.216 0.196),
+    color(display-p3 1 0.412 0.4)
+  );
+  
+  --neutral-gradient-p3: linear-gradient(
+    to right,
+    color(display-p3 0.471 0.678 0.824),
+    color(display-p3 0.592 0.753 0.859)
+  );
+}
+
+/* Apply P3 color enhancements to specific UI elements */
+.supports-p3 .scb-title {
+  color: var(--honolulu-blue-p3);
+}
+
+.supports-p3 .card-premium {
+  background: var(--primary-gradient-p3);
+}
+
+/* Chart color enhancement for P3 displays */
+.supports-p3 .chart-bar-1 { fill: var(--chart-blue-p3); stroke: var(--chart-blue-p3); }
+.supports-p3 .chart-bar-2 { fill: var(--chart-green-p3); stroke: var(--chart-green-p3); }
+.supports-p3 .chart-bar-3 { fill: var(--chart-orange-p3); stroke: var(--chart-orange-p3); }
+.supports-p3 .chart-bar-4 { fill: var(--chart-purple-p3); stroke: var(--chart-purple-p3); }
+.supports-p3 .chart-bar-5 { fill: var(--chart-yellow-p3); stroke: var(--chart-yellow-p3); }
+
+/* Enhance visualization colors for P3 displays */
+.supports-p3 .visualization-container {
+  filter: saturate(1.15); /* Subtle enhancement of colors */
+}
+
+/* Enhance logos for P3 displays */
+.supports-p3 .brand-logo {
+  filter: brightness(1.05) saturate(1.1);
+}
+
+/* Enhanced UI elements for P3 displays */
+.supports-p3 .premium-button {
+  background: var(--primary-gradient-p3);
+  box-shadow: 0 4px 16px rgba(0, 114, 170, 0.2);
+}
+
+.supports-p3 .positive-indicator {
+  color: var(--american-green-p3);
+}
+
+.supports-p3 .negative-indicator {
+  color: var(--muted-red-p3);
+}
+
+/* P3-enhanced badges */
+.supports-p3 .badge-positive {
+  background-color: color(display-p3 0.129 0.666 0.278 / 0.1);
+  color: var(--american-green-p3);
+}
+
+.supports-p3 .badge-negative {
+  background-color: color(display-p3 0.827 0.216 0.196 / 0.1);
+  color: var(--muted-red-p3);
+}
+
+.supports-p3 .badge-neutral {
+  background-color: color(display-p3 0 0.447 0.666 / 0.1);
+  color: var(--honolulu-blue-p3);
+}
+
+/* Enhanced shadows for P3 displays */
+.supports-p3 .card-shadow {
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 8px 24px color(display-p3 0 0.447 0.666 / 0.08);
+}
+
+/* Enhanced graphs for P3 displays */
+.supports-p3 .chart-container svg path {
+  stroke-opacity: 0.95; /* Slightly reduced for better visual appearance */
+}
+
+/* HDR Support for compatible displays */
+.supports-hdr.supports-p3 {
+  --hdr-highlight: color(display-p3 1 0.9 0.4);
+  --hdr-glow: 0 0 25px color(display-p3 1 0.9 0.4 / 0.6);
+}
+
+.supports-hdr.supports-p3 .premium-highlight {
+  color: var(--hdr-highlight);
+  text-shadow: var(--hdr-glow);
+}
+
+/* Specific optimization for Apple devices */
+@media (-webkit-device-pixel-ratio: 2) {
+  .supports-p3 .ultra-thin-border {
+    border-width: 0.5px !important; /* Pixel-perfect borders on Retina displays */
+  }
+}

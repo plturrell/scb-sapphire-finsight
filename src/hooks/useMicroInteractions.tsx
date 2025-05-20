@@ -1,5 +1,43 @@
-import { useEffect, useRef, useState } from 'react';
-import { useSpring, animated, config } from '@react-spring/web';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSpring, animated, config, SpringConfig } from '@react-spring/web';
+
+// Define the available micro-interaction types
+export type MicroInteractionType = 
+  | 'pulse'
+  | 'bounce'
+  | 'shake'
+  | 'tilt'
+  | 'scale'
+  | 'highlight'
+  | 'fade'
+  | 'slide'
+  | 'expand'
+  | 'rotate'
+  | 'flash';
+
+// Define the available spring presets
+export type SpringPreset = 
+  | 'gentle' 
+  | 'wobbly' 
+  | 'stiff' 
+  | 'slow' 
+  | 'molasses'
+  | 'default';
+
+export interface MicroInteractionOptions {
+  active?: boolean;
+  direction?: 'up' | 'down' | 'left' | 'right' | 'in' | 'out';
+  intensity?: 'subtle' | 'medium' | 'strong';
+  timing?: number | SpringPreset;
+  repeat?: boolean | number;
+  delay?: number;
+  duration?: number;
+  customConfig?: SpringConfig;
+  onComplete?: () => void;
+}
+
+// Define color-related types
+export type ColorType = string | { from: string; to: string };
 
 interface HapticOptions {
   duration?: number;

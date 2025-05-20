@@ -1,0 +1,321 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix vtir: <http://example.org/vietnam-tariff-impact-research#> .
+
+# Ontology Declaration
+<http://example.org/vietnam-tariff-impact-research> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dc:title "Vietnam Tariff Impact Research Ontology"@en ;
+    dc:description "Ontology for representing research on Vietnamese companies affected by US tariffs"@en ;
+    dc:creator "Research Agent"@en ;
+    dct:created "2025-05-17T10:00:00"^^xsd:dateTime .
+
+# Class Definitions
+vtir:ResearchAgent a owl:Class ;
+    rdfs:subClassOf prov:Agent ;
+    rdfs:label "Research Agent"@en ;
+    rdfs:comment "An agent responsible for conducting part of the research"@en .
+
+vtir:Company a owl:Class ;
+    rdfs:label "Company"@en ;
+    rdfs:comment "A business entity possibly affected by tariffs"@en .
+
+vtir:IndustrySector a owl:Class ;
+    rdfs:label "Industry Sector"@en ;
+    rdfs:comment "An economic sector in Vietnam"@en .
+
+vtir:TariffImpact a owl:Class ;
+    rdfs:label "Tariff Impact"@en ;
+    rdfs:comment "The impact of tariffs on a company or sector"@en .
+
+vtir:ResearchActivity a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Research Activity"@en ;
+    rdfs:comment "A research activity conducted by an agent"@en .
+
+vtir:TariffInformation a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Tariff Information"@en ;
+    rdfs:comment "Information about tariffs and their effects"@en .
+
+# Property Definitions
+vtir:affectedBy a owl:ObjectProperty ;
+    rdfs:domain vtir:Company ;
+    rdfs:range vtir:TariffImpact ;
+    rdfs:label "affected by"@en ;
+    rdfs:comment "Relates a company to how it is affected by tariffs"@en .
+
+vtir:belongsToSector a owl:ObjectProperty ;
+    rdfs:domain vtir:Company ;
+    rdfs:range vtir:IndustrySector ;
+    rdfs:label "belongs to sector"@en ;
+    rdfs:comment "Relates a company to its industry sector"@en .
+
+vtir:impactSeverity a owl:DatatypeProperty ;
+    rdfs:domain vtir:TariffImpact ;
+    rdfs:range xsd:integer ;
+    rdfs:label "impact severity"@en ;
+    rdfs:comment "Indicates the severity of tariff impact on a scale of 1-10"@en .
+
+vtir:exportPercentageToUS a owl:DatatypeProperty ;
+    rdfs:domain vtir:Company ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "export percentage to US"@en ;
+    rdfs:comment "Percentage of company's exports that go to the US market"@en .
+
+# Research Agents (Subagents)
+vtir:TariffResearchAgent a vtir:ResearchAgent, prov:Agent ;
+    rdfs:label "Tariff Research Agent"@en ;
+    prov:actedOnBehalfOf vtir:MainResearchAgent ;
+    dc:description "Agent researching recent US tariffs on Vietnam"@en .
+
+vtir:CompanyIdentificationAgent a vtir:ResearchAgent, prov:Agent ;
+    rdfs:label "Company Identification Agent"@en ;
+    prov:actedOnBehalfOf vtir:MainResearchAgent ;
+    dc:description "Agent identifying top Vietnamese exporters to the US market"@en .
+
+vtir:ExportDependencyAgent a vtir:ResearchAgent, prov:Agent ;
+    rdfs:label "Export Dependency Agent"@en ;
+    prov:actedOnBehalfOf vtir:MainResearchAgent ;
+    dc:description "Agent researching export dependency and financial metrics for Vietnamese companies"@en .
+
+vtir:MitigationStrategyAgent a vtir:ResearchAgent, prov:Agent ;
+    rdfs:label "Mitigation Strategy Agent"@en ;
+    prov:actedOnBehalfOf vtir:MainResearchAgent ;
+    dc:description "Agent collecting public statements and mitigation strategies from companies"@en .
+
+vtir:MainResearchAgent a vtir:ResearchAgent, prov:Agent ;
+    rdfs:label "Main Research Agent"@en ;
+    dc:description "Coordinating agent analyzing all collected data"@en .
+
+# Research Activities
+vtir:TariffResearchActivity a vtir:ResearchActivity, prov:Activity ;
+    rdfs:label "Tariff Research Activity"@en ;
+    prov:wasAssociatedWith vtir:TariffResearchAgent ;
+    prov:startedAtTime "2025-05-17T10:00:00"^^xsd:dateTime ;
+    prov:endedAtTime "2025-05-17T10:30:00"^^xsd:dateTime ;
+    dc:description "Research on US tariff policies affecting Vietnam"@en .
+
+vtir:CompanyIdentificationActivity a vtir:ResearchActivity, prov:Activity ;
+    rdfs:label "Company Identification Activity"@en ;
+    prov:wasAssociatedWith vtir:CompanyIdentificationAgent ;
+    prov:startedAtTime "2025-05-17T10:30:00"^^xsd:dateTime ;
+    prov:endedAtTime "2025-05-17T11:00:00"^^xsd:dateTime ;
+    dc:description "Identification of major Vietnamese exporters to the US"@en .
+
+vtir:ExportDependencyActivity a vtir:ResearchActivity, prov:Activity ;
+    rdfs:label "Export Dependency Analysis Activity"@en ;
+    prov:wasAssociatedWith vtir:ExportDependencyAgent ;
+    prov:startedAtTime "2025-05-17T11:00:00"^^xsd:dateTime ;
+    prov:endedAtTime "2025-05-17T11:30:00"^^xsd:dateTime ;
+    dc:description "Analysis of Vietnamese companies' dependency on US exports"@en .
+
+vtir:MitigationStrategyActivity a vtir:ResearchActivity, prov:Activity ;
+    rdfs:label "Mitigation Strategy Analysis Activity"@en ;
+    prov:wasAssociatedWith vtir:MitigationStrategyAgent ;
+    prov:startedAtTime "2025-05-17T11:30:00"^^xsd:dateTime ;
+    prov:endedAtTime "2025-05-17T12:00:00"^^xsd:dateTime ;
+    dc:description "Analysis of strategies companies are implementing to mitigate tariff impacts"@en .
+
+vtir:FinalAnalysisActivity a vtir:ResearchActivity, prov:Activity ;
+    rdfs:label "Final Analysis Activity"@en ;
+    prov:wasAssociatedWith vtir:MainResearchAgent ;
+    prov:used vtir:TariffInformation1, vtir:CompanyInformation, vtir:ExportDependencyInformation, vtir:MitigationStrategyInformation ;
+    prov:startedAtTime "2025-05-17T12:00:00"^^xsd:dateTime ;
+    prov:endedAtTime "2025-05-17T12:30:00"^^xsd:dateTime ;
+    dc:description "Final analysis of all collected data to identify most affected companies"@en .
+
+# Information Entities
+vtir:TariffInformation1 a vtir:TariffInformation, prov:Entity ;
+    rdfs:label "Tariff Policy Information"@en ;
+    prov:wasGeneratedBy vtir:TariffResearchActivity ;
+    dc:description "Information about recent 46% US tariffs on Vietnam, temporarily reduced to 10% during 90-day negotiation period (until July 2025)"@en ;
+    dc:source "Reuters, CNBC, CFR analyses"@en ;
+    dct:created "2025-05-17T10:30:00"^^xsd:dateTime .
+
+vtir:CompanyInformation a vtir:TariffInformation, prov:Entity ;
+    rdfs:label "Vietnamese Exporter Information"@en ;
+    prov:wasGeneratedBy vtir:CompanyIdentificationActivity ;
+    prov:wasDerivedFrom vtir:TariffInformation1 ;
+    dc:description "Information about top Vietnamese companies exporting to the US"@en ;
+    dc:source "Trade data, company reports, industry analyses"@en ;
+    dct:created "2025-05-17T11:00:00"^^xsd:dateTime .
+
+vtir:ExportDependencyInformation a vtir:TariffInformation, prov:Entity ;
+    rdfs:label "Export Dependency Information"@en ;
+    prov:wasGeneratedBy vtir:ExportDependencyActivity ;
+    prov:wasDerivedFrom vtir:CompanyInformation ;
+    dc:description "Analysis of Vietnamese companies' dependency on US exports, showing Vietnamese exports to US account for 30% of GDP"@en ;
+    dc:source "Economic reports, company financial statements"@en ;
+    dct:created "2025-05-17T11:30:00"^^xsd:dateTime .
+
+vtir:MitigationStrategyInformation a vtir:TariffInformation, prov:Entity ;
+    rdfs:label "Mitigation Strategy Information"@en ;
+    prov:wasGeneratedBy vtir:MitigationStrategyActivity ;
+    prov:wasDerivedFrom vtir:ExportDependencyInformation ;
+    dc:description "Information about strategies companies are implementing to mitigate tariff impacts"@en ;
+    dc:source "Company statements, industry news, analyst reports"@en ;
+    dct:created "2025-05-17T12:00:00"^^xsd:dateTime .
+
+vtir:FinalReport a vtir:TariffInformation, prov:Entity ;
+    rdfs:label "Final Impact Report"@en ;
+    prov:wasGeneratedBy vtir:FinalAnalysisActivity ;
+    prov:wasDerivedFrom vtir:TariffInformation1, vtir:CompanyInformation, vtir:ExportDependencyInformation, vtir:MitigationStrategyInformation ;
+    dc:description "Final report identifying top 10 Vietnamese companies most negatively impacted by US tariffs"@en ;
+    dct:created "2025-05-17T12:30:00"^^xsd:dateTime .
+
+# Industry Sectors
+vtir:ElectronicsSector a vtir:IndustrySector ;
+    rdfs:label "Electronics Sector"@en ;
+    dc:description "Sector producing electronic components, phones, computers, and other devices"@en .
+
+vtir:TextileSector a vtir:IndustrySector ;
+    rdfs:label "Textile and Garment Sector"@en ;
+    dc:description "Sector producing textiles, clothing, and related products"@en .
+
+vtir:FootwearSector a vtir:IndustrySector ;
+    rdfs:label "Footwear Sector"@en ;
+    dc:description "Sector producing shoes and related products"@en .
+
+vtir:FurnitureSector a vtir:IndustrySector ;
+    rdfs:label "Furniture and Wood Products Sector"@en ;
+    dc:description "Sector producing furniture and other wood-based products"@en .
+
+# Tariff Impact Indicators
+vtir:HighImpact a vtir:TariffImpact ;
+    rdfs:label "High Impact"@en ;
+    vtir:impactSeverity 9 ;
+    dc:description "Severe negative impact on exports, revenue, and employment"@en .
+
+vtir:MediumHighImpact a vtir:TariffImpact ;
+    rdfs:label "Medium-High Impact"@en ;
+    vtir:impactSeverity 7 ;
+    dc:description "Significant negative impact on exports and revenue"@en .
+
+vtir:MediumImpact a vtir:TariffImpact ;
+    rdfs:label "Medium Impact"@en ;
+    vtir:impactSeverity 5 ;
+    dc:description "Moderate negative impact on exports and revenue"@en .
+
+# Top 10 Most Affected Companies by Sector
+
+# Electronics Companies
+vtir:SamsungElectronicsVietnam a vtir:Company ;
+    rdfs:label "Samsung Electronics Vietnam"@en ;
+    vtir:belongsToSector vtir:ElectronicsSector ;
+    vtir:affectedBy vtir:HighImpact ;
+    vtir:exportPercentageToUS 35.0 ;
+    dc:description "Major producer of smartphones and electronics in Vietnam with significant US exports"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+vtir:FoxconnVietnam a vtir:Company ;
+    rdfs:label "Foxconn Vietnam"@en ;
+    vtir:belongsToSector vtir:ElectronicsSector ;
+    vtir:affectedBy vtir:HighImpact ;
+    vtir:exportPercentageToUS 40.0 ;
+    dc:description "Contract manufacturer producing electronics for Apple and other US brands"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+vtir:IntelVietnam a vtir:Company ;
+    rdfs:label "Intel Products Vietnam"@en ;
+    vtir:belongsToSector vtir:ElectronicsSector ;
+    vtir:affectedBy vtir:HighImpact ;
+    vtir:exportPercentageToUS 45.0 ;
+    dc:description "Manufacturer of semiconductor components with significant US exports"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+# Textile Companies
+vtir:Vinatex a vtir:Company ;
+    rdfs:label "Vinatex"@en ;
+    vtir:belongsToSector vtir:TextileSector ;
+    vtir:affectedBy vtir:HighImpact ;
+    vtir:exportPercentageToUS 30.0 ;
+    dc:description "Vietnam's largest textile group with significant US market exposure"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+vtir:ThanhCongTextile a vtir:Company ;
+    rdfs:label "Thanh Cong Textile Garment"@en ;
+    vtir:belongsToSector vtir:TextileSector ;
+    vtir:affectedBy vtir:HighImpact ;
+    vtir:exportPercentageToUS 25.0 ;
+    dc:description "Major textile producer making garments for DKNY and Walmart"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+# Footwear Companies
+vtir:PouyuenVietnam a vtir:Company ;
+    rdfs:label "Pouyuen Vietnam"@en ;
+    vtir:belongsToSector vtir:FootwearSector ;
+    vtir:affectedBy vtir:HighImpact ;
+    vtir:exportPercentageToUS 42.5 ;
+    dc:description "Top footwear exporter in Vietnam, producing for major US brands"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+vtir:HwaseungVina a vtir:Company ;
+    rdfs:label "Hwaseung Vina"@en ;
+    vtir:belongsToSector vtir:FootwearSector ;
+    vtir:affectedBy vtir:MediumHighImpact ;
+    vtir:exportPercentageToUS 38.0 ;
+    dc:description "Major footwear manufacturer with significant US market exposure"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+vtir:VietnamChingluhShoes a vtir:Company ;
+    rdfs:label "Vietnam Chingluh Shoes"@en ;
+    vtir:belongsToSector vtir:FootwearSector ;
+    vtir:affectedBy vtir:MediumHighImpact ;
+    vtir:exportPercentageToUS 35.0 ;
+    dc:description "Footwear manufacturer with high dependency on US exports"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+# Furniture/Wood Companies
+vtir:DongGiao a vtir:Company ;
+    rdfs:label "Dong Giao Wood"@en ;
+    vtir:belongsToSector vtir:FurnitureSector ;
+    vtir:affectedBy vtir:MediumHighImpact ;
+    vtir:exportPercentageToUS 32.0 ;
+    dc:description "Major wood furniture exporter to the US market"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+vtir:GreatVina a vtir:Company ;
+    rdfs:label "GreatVina"@en ;
+    vtir:belongsToSector vtir:FurnitureSector ;
+    vtir:affectedBy vtir:MediumImpact ;
+    vtir:exportPercentageToUS 29.0 ;
+    dc:description "Furniture manufacturer with significant US market exposure"@en ;
+    prov:wasAttributedTo vtir:CompanyIdentificationAgent, vtir:ExportDependencyAgent .
+
+# Additional PROV-O Tracing
+vtir:MainResearchAgent prov:wasInformedBy 
+    vtir:TariffResearchAgent, 
+    vtir:CompanyIdentificationAgent, 
+    vtir:ExportDependencyAgent, 
+    vtir:MitigationStrategyAgent .
+
+vtir:FinalReport prov:wasInfluencedBy 
+    vtir:TariffResearchActivity, 
+    vtir:CompanyIdentificationActivity, 
+    vtir:ExportDependencyActivity, 
+    vtir:MitigationStrategyActivity .
+
+# Overall Research Process
+vtir:ResearchProcess a prov:Plan ;
+    rdfs:label "Vietnam Tariff Impact Research Process"@en ;
+    dc:description "Structured process to identify companies most affected by US tariffs"@en ;
+    prov:influenced vtir:TariffResearchActivity, 
+                    vtir:CompanyIdentificationActivity, 
+                    vtir:ExportDependencyActivity, 
+                    vtir:MitigationStrategyActivity, 
+                    vtir:FinalAnalysisActivity .
+
+# Research Steps Sequence
+vtir:TariffResearchActivity prov:wasInformedBy vtir:ResearchProcess .
+vtir:CompanyIdentificationActivity prov:wasInformedBy vtir:TariffResearchActivity .
+vtir:ExportDependencyActivity prov:wasInformedBy vtir:CompanyIdentificationActivity .
+vtir:MitigationStrategyActivity prov:wasInformedBy vtir:ExportDependencyActivity .
+vtir:FinalAnalysisActivity prov:wasInformedBy vtir:MitigationStrategyActivity .

@@ -181,18 +181,17 @@ const TariffAlertNotification: React.FC<TariffAlertNotificationProps> = ({
             <div className="text-xs text-gray-500">
               Showing {visibleAlerts.length} of {alerts.length} alerts
             </div>
-            <Link href="/tariff-alerts" passHref>
-              <a 
-                className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors" 
-                onClick={(e) => {
-                  if (onViewAll) {
-                    e.preventDefault();
-                    onViewAll();
-                  }
-                }}
-              >
-                View All Alerts
-              </a>
+            <Link 
+              href="/tariff-alerts" 
+              className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              onClick={(e) => {
+                if (onViewAll) {
+                  e.preventDefault();
+                  onViewAll();
+                }
+              }}
+            >
+              View All Alerts
             </Link>
           </div>
         </div>

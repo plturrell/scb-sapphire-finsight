@@ -31,7 +31,7 @@ import {
 import AnimatedSankeyChart from './AnimatedSankeyChart';
 import { styled } from '@mui/material/styles';
 import { format } from 'date-fns';
-import { mockVietnamTariffAlerts } from '../mock/vietnamTariffData';
+// Real data will be fetched from APIs
 import { SankeyData, SankeyNode as BaseSankeyNode, SankeyLink, TariffAlert } from '../types';
 import type { SxProps } from '@mui/system';
 import type { Theme } from '@mui/material/styles';

@@ -588,7 +588,10 @@ const SemanticTariffVisualizer: React.FC = () => {
                         <XAxis dataKey="countryName" />
                         <YAxis label={{ value: 'Average Tariff Rate (%)', angle: -90, position: 'insideLeft' }} />
                         <RechartsTooltip
-                          formatter={(value, name, props) => [`${value.toFixed(2)}%`, 'Average Tariff']}
+                          formatter={(value, name, props) => [
+                            `${typeof value === 'number' ? value.toFixed(2) : value}%`, 
+                            'Average Tariff'
+                          ]}
                           labelFormatter={(label) => `Country: ${label}`}
                         />
                         <Legend />
@@ -755,7 +758,7 @@ const SemanticTariffVisualizer: React.FC = () => {
           borderWidth="1px"
           borderRadius="md"
           borderColor={borderColor}
-          bg={useColorModeValue('gray.50', 'gray.900')}
+          bg={bgColor === 'white' ? 'gray.50' : 'gray.900'}
         >
           <SearchIcon boxSize={10} color="gray.400" mb={4} />
           <Text fontSize="lg" fontWeight="medium" mb={2}>No tariff data found</Text>

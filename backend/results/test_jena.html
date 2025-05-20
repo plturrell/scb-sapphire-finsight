@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jena API Test</title>
+</head>
+<body>
+    <h1>Jena API Test</h1>
+    <button onclick="testAPI()">Test Jena API</button>
+    <div id="results"></div>
+    
+    <script>
+        async function testAPI() {
+            try {
+                const response = await fetch('http://localhost:5000/api/jena/latest');
+                const data = await response.json();
+                document.getElementById('results').innerHTML = `
+                    <h2>Jena Data Retrieved:</h2>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `
+                    <h2>Error:</h2>
+                    <p>${error.message}</p>
+                    <p>Make sure the Jena API server is running on port 5000</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

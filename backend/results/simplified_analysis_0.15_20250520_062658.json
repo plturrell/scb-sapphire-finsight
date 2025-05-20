@@ -1,0 +1,19 @@
+{
+  "tariff_rate": 0.15,
+  "baseline_revenue": 10000000000,
+  "baseline_costs": 8500000000,
+  "baseline_profit": 1500000000,
+  "us_export_percentage": 40.0,
+  "price_elasticity": -1.8,
+  "revenue_at_risk": 4000000000.0,
+  "impacts": {
+    "direct_tariff_costs": 600000000.0,
+    "market_share_loss": -756000000.0,
+    "competitor_impact": -356400000.0,
+    "total_financial_impact": -512400000.0,
+    "percentage_impact": -5.124,
+    "new_profit": 2012400000.0,
+    "profit_impact_percentage": -34.16
+  },
+  "timestamp": "2025-05-20T06:26:58.707254"
+}

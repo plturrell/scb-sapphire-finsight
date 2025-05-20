@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspire FinSight Enterprise | Real-Time Tariff Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0066FF;
+            --primary-dark: #004AD7;
+            --secondary: #6C7293;
+            --success: #00E676;
+            --warning: #FFB300;
+            --danger: #FF5252;
+            --text-primary: #212529;
+            --text-secondary: #6C757D;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8FAFB;
+            --bg-dark: #0F1419;
+            --border: #E1E8ED;
+            --shadow: 0 0 35px 0 rgba(154,161,171,0.15);
+            --shadow-lg: 0 0 60px 0 rgba(0,0,0,0.12);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #00F260 0%, #0575E6 100%);
+            --gradient-dark: linear-gradient(135deg, #1A1E23 0%, #2D3436 100%);
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Data Loading Animation */
+        .data-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s;
+        }
+        
+        .data-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            animation: rotate 2s linear infinite;
+        }
+        
+        .loader-spinner::before,
+        .loader-spinner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+        
+        .loader-spinner::before {
+            border-top-color: var(--primary);
+            animation: rotate 1.5s linear infinite;
+        }
+        
+        .loader-spinner::after {
+            border-bottom-color: var(--primary-dark);
+            animation: rotate 1s linear infinite reverse;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        .nav-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-item:hover {
+            color: var(--primary);
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: none;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            margin-top: 77px;
+            padding: 32px;
+            max-width: 1920px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Page Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+        
+        .page-title {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .page-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+        
+        .real-time-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-left: 16px;
+            font-size: 14px;
+            box-shadow: var(--shadow);
+        }
+        
+        .real-time-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        /* Metric Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .metric-card {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .metric-icon.primary {
+            background: rgba(0, 102, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .metric-icon.success {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+        }
+        
+        .metric-icon.danger {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger);
+        }
+        
+        .metric-icon.warning {
+            background: rgba(255, 179, 0, 0.1);
+            color: var(--warning);
+        }
+        
+        .metric-body {
+            margin-bottom: 20px;
+        }
+        
+        .metric-value {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+            transition: all 0.5s;
+        }
+        
+        .metric-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .metric-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .metric-change.positive {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+        }
+        
+        .metric-change.negative {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger);
+        }
+        
+        .metric-sparkline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            opacity: 0.1;
+        }
+        
+        /* Chart Containers */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .chart-container {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+        }
+        
+        .chart-container:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .chart-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .chart-controls {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chart-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .chart-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+        
+        .chart-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .data-table th {
+            text-align: left;
+            padding: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 2px solid var(--border);
+            background: var(--bg-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+        }
+        
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        
+        .data-table tr:hover td {
+            background: var(--bg-secondary);
+        }
+        
+        /* Status Indicators */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge.critical {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger);
+        }
+        
+        .status-badge.high {
+            background: rgba(255, 179, 0, 0.1);
+            color: var(--warning);
+        }
+        
+        .status-badge.medium {
+            background: rgba(0, 102, 255, 0.1);
+            color: var(--primary);
+        }
+        
+        .status-badge.low {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+        }
+        
+        /* Interactive Knowledge Graph */
+        .knowledge-graph {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            height: 600px;
+            position: relative;
+        }
+        
+        #knowledge-graph-svg {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+        
+        #knowledge-graph-svg:active {
+            cursor: grabbing;
+        }
+        
+        .node {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .node:hover {
+            filter: brightness(1.2);
+        }
+        
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 2px;
+            transition: all 0.3s;
+        }
+        
+        .link:hover {
+            stroke-opacity: 1;
+            stroke-width: 3px;
+        }
+        
+        /* Action Timeline */
+        .timeline-container {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 40px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--border);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 80px;
+            margin-bottom: 40px;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: 31px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+            z-index: 1;
+        }
+        
+        .timeline-dot.critical {
+            border-color: var(--danger);
+        }
+        
+        .timeline-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .timeline-description {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .timeline-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Real-time Updates */
+        .update-indicator {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: var(--bg-primary);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s;
+        }
+        
+        .update-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .update-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-nav {
+                display: none;
+            }
+            
+            .main-container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Data Loader -->
+    <div class="data-loader" id="dataLoader">
+        <div class="loader-spinner"></div>
+        <p style="margin-top: 20px; color: var(--text-secondary);">Connecting to Jena Knowledge Graph...</p>
+    </div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">AI</div>
+                <div class="logo-text">Aspire FinSight Enterprise</div>
+            </div>
+            
+            <nav class="header-nav">
+                <a href="#" class="nav-item active">Real-Time Dashboard</a>
+                <a href="#" class="nav-item">Risk Analysis</a>
+                <a href="#" class="nav-item">Finance Options</a>
+                <a href="#" class="nav-item">Knowledge Graph</a>
+                <a href="#" class="nav-item">Reports</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="action-btn" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="action-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+                <button class="action-btn">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Container -->
+    <main class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">
+                Tariff Impact Intelligence
+                <span class="real-time-indicator">
+                    <span class="real-time-dot"></span>
+                    Real-time Data
+                </span>
+            </h1>
+            <p class="page-subtitle">Comprehensive analysis powered by Apache Jena knowledge graph</p>
+        </div>
+        
+        <!-- Metrics Grid -->
+        <div class="metrics-grid" id="metricsGrid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon primary">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="metric-sparkline" id="revenueSparkline"></div>
+                </div>
+                <div class="metric-body">
+                    <div class="metric-value" id="revenueAtRisk">—</div>
+                    <div class="metric-label">Revenue at Risk</div>
+                </div>
+                <div class="metric-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span id="revenueChange">—</span>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon danger">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="metric-sparkline" id="impactSparkline"></div>
+                </div>
+                <div class="metric-body">
+                    <div class="metric-value" id="totalImpact">—</div>
+                    <div class="metric-label">Total Financial Impact</div>
+                </div>
+                <div class="metric-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span id="impactChange">—</span>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="metric-sparkline" id="successSparkline"></div>
+                </div>
+                <div class="metric-body">
+                    <div class="metric-value" id="successProb">—</div>
+                    <div class="metric-label">Success Probability</div>
+                </div>
+                <div class="metric-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span id="successChange">With intervention</span>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="metric-sparkline" id="risksSparkline"></div>
+                </div>
+                <div class="metric-body">
+                    <div class="metric-value" id="criticalRisks">—</div>
+                    <div class="metric-label">Critical Risk Areas</div>
+                </div>
+                <div class="metric-change">
+                    <i class="fas fa-clock"></i>
+                    <span>Immediate action</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Grid -->
+        <div class="chart-grid">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Impact Analysis by Category</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-chart="impact" data-view="severity">Severity</button>
+                        <button class="chart-btn" data-chart="impact" data-view="timeline">Timeline</button>
+                        <button class="chart-btn" data-chart="impact" data-view="financial">Financial</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="impactChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Trade Finance Options Matrix</h3>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" data-chart="finance" data-view="complexity">Complexity</button>
+                        <button class="chart-btn" data-chart="finance" data-view="cost">Cost Analysis</button>
+                        <button class="chart-btn" data-chart="finance" data-view="timeline">Implementation</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="financeChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recovery Timeline -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Recovery Projection with Mitigation Strategies</h3>
+                <div class="chart-controls">
+                    <button class="chart-btn" id="exportBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            <div class="chart-wrapper" style="height: 400px;">
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Risk Assessment Matrix -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Real-Time Risk Assessment Matrix</h3>
+                <div class="chart-controls">
+                    <button class="chart-btn" id="sparqlBtn">
+                        <i class="fas fa-code"></i> SPARQL Query
+                    </button>
+                </div>
+            </div>
+            <table class="data-table" id="riskTable">
+                <thead>
+                    <tr>
+                        <th>Risk Category</th>
+                        <th>Description</th>
+                        <th>Severity</th>
+                        <th>Timeframe</th>
+                        <th>Financial Impact</th>
+                        <th>Mitigation Options</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="riskTableBody">
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Knowledge Graph -->
+        <div class="knowledge-graph">
+            <div class="chart-header">
+                <h3 class="chart-title">Interactive Knowledge Graph</h3>
+                <div class="chart-controls">
+                    <button class="chart-btn" id="graphResetBtn">
+                        <i class="fas fa-undo"></i> Reset View
+                    </button>
+                    <button class="chart-btn" id="graphFullscreenBtn">
+                        <i class="fas fa-expand"></i> Fullscreen
+                    </button>
+                </div>
+            </div>
+            <svg id="knowledge-graph-svg"></svg>
+        </div>
+        
+        <!-- Action Timeline -->
+        <div class="timeline-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Strategic Action Timeline</h3>
+            </div>
+            <div class="timeline" id="actionTimeline">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+    
+    <!-- Update Indicator -->
+    <div class="update-indicator" id="updateIndicator">
+        <div class="update-icon">
+            <i class="fas fa-sync"></i>
+        </div>
+        <div>
+            <div style="font-weight: 600;">Data Updated</div>
+            <div style="font-size: 14px; color: var(--text-secondary);">New insights available</div>
+        </div>
+    </div>
+    
+    <script>
+        // Global configuration
+        const API_BASE_URL = 'http://localhost:8888/api';
+        const UPDATE_INTERVAL = 5000; // 5 seconds
+        
+        // Chart instances
+        let impactChart, financeChart, timelineChart;
+        
+        // Initialize the dashboard
+        async function initDashboard() {
+            try {
+                // Show loader
+                document.getElementById('dataLoader').classList.remove('hidden');
+                
+                // Fetch real-time data
+                await fetchRealTimeData();
+                
+                // Initialize charts
+                initializeCharts();
+                
+                // Initialize knowledge graph
+                initializeKnowledgeGraph();
+                
+                // Set up real-time updates
+                setInterval(updateRealTimeData, UPDATE_INTERVAL);
+                
+                // Hide loader
+                setTimeout(() => {
+                    document.getElementById('dataLoader').classList.add('hidden');
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+                showError('Failed to initialize dashboard');
+            }
+        }
+        
+        // Fetch data from Jena API
+        async function fetchRealTimeData() {
+            try {
+                // Fetch metrics
+                const metricsResponse = await fetch(`${API_BASE_URL}/metrics`);
+                const metrics = await metricsResponse.json();
+                updateMetrics(metrics);
+                
+                // Fetch impacts
+                const impactsResponse = await fetch(`${API_BASE_URL}/impacts`);
+                const impacts = await impactsResponse.json();
+                updateImpactChart(impacts);
+                updateRiskTable(impacts);
+                
+                // Fetch finance options
+                const financeResponse = await fetch(`${API_BASE_URL}/finance-options`);
+                const financeOptions = await financeResponse.json();
+                updateFinanceChart(financeOptions);
+                
+                // Fetch recommendations
+                const recommendationsResponse = await fetch(`${API_BASE_URL}/recommendations`);
+                const recommendations = await recommendationsResponse.json();
+                updateTimeline(recommendations);
+                
+            } catch (error) {
+                console.error('Error fetching real-time data:', error);
+                showError('Failed to fetch real-time data');
+            }
+        }
+        
+        // Update metric cards with real data
+        function updateMetrics(metrics) {
+            // Format large numbers
+            const formatNumber = (num) => {
+                if (num >= 1e9) return `$${(num / 1e9).toFixed(1)}B`;
+                if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
+                return `$${num.toLocaleString()}`;
+            };
+            
+            // Update revenue at risk
+            const revenueAtRisk = document.getElementById('revenueAtRisk');
+            if (revenueAtRisk) {
+                const currentValue = parseFloat(revenueAtRisk.textContent.replace(/[$,B]/g, '')) || 0;
+                const newValue = metrics.revenue_at_risk;
+                
+                // Animate value change
+                animateValue(revenueAtRisk, currentValue, newValue, 1000, (val) => formatNumber(val));
+                
+                // Update percentage
+                const percentageAtRisk = (newValue / metrics.revenue * 100).toFixed(1);
+                document.getElementById('revenueChange').textContent = `${percentageAtRisk}% of total revenue`;
+            }
+            
+            // Update total impact
+            const totalImpact = document.getElementById('totalImpact');
+            if (totalImpact) {
+                totalImpact.textContent = metrics.total_impact;
+            }
+            
+            // Update success probability
+            const successProb = document.getElementById('successProb');
+            if (successProb) {
+                successProb.textContent = metrics.success_probability;
+            }
+            
+            // Update critical risks
+            const criticalRisks = document.getElementById('criticalRisks');
+            if (criticalRisks) {
+                criticalRisks.textContent = metrics.critical_risks;
+            }
+            
+            // Generate sparklines
+            generateSparklines();
+        }
+        
+        // Animate numeric value changes
+        function animateValue(element, start, end, duration, formatter = (val) => val) {
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentValue = start + (end - start) * easeOutQuart(progress);
+                element.textContent = formatter(currentValue);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        // Easing function for smooth animations
+        function easeOutQuart(t) {
+            return 1 - Math.pow(1 - t, 4);
+        }
+        
+        // Initialize Charts
+        function initializeCharts() {
+            // Configure Chart.js defaults
+            Chart.defaults.font.family = "'SF Pro Display', sans-serif";
+            Chart.defaults.color = '#6C757D';
+            Chart.register(ChartDataLabels);
+            
+            // Impact Chart
+            const impactCtx = document.getElementById('impactChart').getContext('2d');
+            impactChart = new Chart(impactCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Impact Severity',
+                        data: [],
+                        backgroundColor: [],
+                        borderRadius: 8,
+                        borderWidth: 0,
+                        maxBarThickness: 60
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            grid: {
+                                borderDash: [3, 3],
+                                color: '#E1E8ED'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            color: '#212529'
+                        }
+                    }
+                }
+            });
+            
+            // Finance Options Chart
+            const financeCtx = document.getElementById('financeChart').getContext('2d');
+            financeChart = new Chart(financeCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Trade Finance Options',
+                        data: [],
+                        backgroundColor: 'rgba(0, 102, 255, 0.6)',
+                        borderColor: 'rgba(0, 102, 255, 1)',
+                        borderWidth: 2,
+                        pointRadius: 8,
+                        pointHoverRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Cost (% above base rate)',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                borderDash: [3, 3],
+                                color: '#E1E8ED'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Implementation Complexity',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            min: 0,
+                            max: 10,
+                            grid: {
+                                borderDash: [3, 3],
+                                color: '#E1E8ED'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return [
+                                        context.raw.name,
+                                        `Provider: ${context.raw.provider}`,
+                                        `Cost: ${context.raw.x}%`,
+                                        `Complexity: ${context.raw.y}/10`
+                                    ];
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            align: 'center',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            },
+                            color: 'white',
+                            formatter: function(value) {
+                                return value.name.split(' ')[0];
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Timeline Chart
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            timelineChart = new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Now', 'Q1', 'Q2', 'Q3', 'Q4', 'Year 2', 'Year 3', 'Year 5'],
+                    datasets: [{
+                        label: 'Without Intervention',
+                        data: [-35, -32, -28, -25, -22, -20, -18, -15],
+                        borderColor: '#FF5252',
+                        backgroundColor: 'rgba(255, 82, 82, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#FF5252'
+                    }, {
+                        label: 'With Intervention',
+                        data: [-35, -25, -18, -10, -5, 0, 3, 8],
+                        borderColor: '#00E676',
+                        backgroundColor: 'rgba(0, 230, 118, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#00E676'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Revenue Impact (%)',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                borderDash: [3, 3],
+                                color: '#E1E8ED'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: false
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        
+        // Update Impact Chart with real data
+        function updateImpactChart(impacts) {
+            if (!impactChart) return;
+            
+            // Group impacts by category
+            const impactsByCategory = {};
+            impacts.forEach(impact => {
+                const category = impact.category.value;
+                if (!impactsByCategory[category]) {
+                    impactsByCategory[category] = [];
+                }
+                impactsByCategory[category].push(impact);
+            });
+            
+            // Calculate average severity by category
+            const categories = Object.keys(impactsByCategory);
+            const severities = categories.map(category => {
+                const categoryImpacts = impactsByCategory[category];
+                const totalSeverity = categoryImpacts.reduce((sum, impact) => 
+                    sum + parseInt(impact.severity.value), 0);
+                return totalSeverity / categoryImpacts.length;
+            });
+            
+            // Update chart data
+            impactChart.data.labels = categories.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1));
+            impactChart.data.datasets[0].data = severities;
+            impactChart.data.datasets[0].backgroundColor = severities.map(severity => {
+                if (severity >= 8) return '#FF5252';
+                if (severity >= 6) return '#FFB300';
+                if (severity >= 4) return '#0066FF';
+                return '#00E676';
+            });
+            
+            impactChart.update('active');
+        }
+        
+        // Update Finance Chart with real data
+        function updateFinanceChart(financeOptions) {
+            if (!financeChart) return;
+            
+            const chartData = financeOptions.map(option => ({
+                x: parseFloat(option.cost.value),
+                y: parseInt(option.complexity.value),
+                name: option.name.value,
+                provider: option.provider.value,
+                r: 10 + (parseInt(option.complexity.value) * 3) // Size based on complexity
+            }));
+            
+            financeChart.data.datasets[0].data = chartData;
+            financeChart.update('active');
+        }
+        
+        // Update Risk Table with real data
+        function updateRiskTable(impacts) {
+            const tbody = document.getElementById('riskTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            impacts.forEach(impact => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${impact.category.value.charAt(0).toUpperCase() + impact.category.value.slice(1)}</strong></td>
+                    <td>${impact.description.value}</td>
+                    <td>
+                        <span class="status-badge ${getSeverityClass(impact.severity.value)}">
+                            ${getSeverityLabel(impact.severity.value)}
+                        </span>
+                    </td>
+                    <td>${impact.timeframe.value.replace(/_/g, ' ')}</td>
+                    <td>${impact.financialImpact ? formatCurrency(impact.financialImpact.value) : '—'}</td>
+                    <td>${getMitigationOptions(impact)}</td>
+                    <td>
+                        <span class="status-badge ${getStatusClass(impact.severity.value)}">
+                            ${getStatus(impact.severity.value)}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Update Timeline with real data
+        function updateTimeline(recommendations) {
+            const timeline = document.getElementById('actionTimeline');
+            if (!timeline) return;
+            
+            timeline.innerHTML = '';
+            
+            Object.entries(recommendations).forEach(([timeframe, actions]) => {
+                actions.forEach(action => {
+                    const item = document.createElement('div');
+                    item.className = 'timeline-item';
+                    item.innerHTML = `
+                        <div class="timeline-dot ${action.priority === 'Critical' ? 'critical' : ''}"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">${action.action}</div>
+                            <div class="timeline-description">
+                                Priority: ${action.priority} | Timeline: ${timeframe}
+                            </div>
+                            <div class="timeline-meta">
+                                ${action.cost ? `<span><i class="fas fa-dollar-sign"></i> ${action.cost}</span>` : ''}
+                                <span><i class="fas fa-clock"></i> Implementation required</span>
+                            </div>
+                        </div>
+                    `;
+                    timeline.appendChild(item);
+                });
+            });
+        }
+        
+        // Initialize Knowledge Graph
+        function initializeKnowledgeGraph() {
+            const width = document.getElementById('knowledge-graph-svg').clientWidth;
+            const height = 550;
+            
+            const svg = d3.select('#knowledge-graph-svg')
+                .attr('viewBox', `0 0 ${width} ${height}`);
+            
+            // Create sample knowledge graph data
+            const nodes = [
+                { id: 'company', label: 'Samsung Electronics', type: 'company', fx: width/2, fy: height/2 },
+                { id: 'tariff', label: '46% US Tariff', type: 'policy' },
+                { id: 'financial', label: 'Financial Impact', type: 'impact' },
+                { id: 'market', label: 'Market Impact', type: 'impact' },
+                { id: 'operational', label: 'Operational Impact', type: 'impact' },
+                { id: 'strategic', label: 'Strategic Impact', type: 'impact' },
+                { id: 'insurance', label: 'Export Credit Insurance', type: 'finance' },
+                { id: 'loans', label: 'Working Capital Loans', type: 'finance' },
+                { id: 'scf', label: 'Supply Chain Finance', type: 'finance' }
+            ];
+            
+            const links = [
+                { source: 'tariff', target: 'company' },
+                { source: 'company', target: 'financial' },
+                { source: 'company', target: 'market' },
+                { source: 'company', target: 'operational' },
+                { source: 'company', target: 'strategic' },
+                { source: 'insurance', target: 'financial' },
+                { source: 'loans', target: 'financial' },
+                { source: 'scf', target: 'operational' }
+            ];
+            
+            // Create force simulation
+            const simulation = d3.forceSimulation(nodes)
+                .force('link', d3.forceLink(links).id(d => d.id).distance(120))
+                .force('charge', d3.forceManyBody().strength(-500))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(40));
+            
+            // Create links
+            const link = svg.append('g')
+                .selectAll('line')
+                .data(links)
+                .enter().append('line')
+                .attr('class', 'link');
+            
+            // Create nodes
+            const node = svg.append('g')
+                .selectAll('g')
+                .data(nodes)
+                .enter().append('g')
+                .attr('class', 'node')
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended));
+            
+            // Add circles to nodes
+            node.append('circle')
+                .attr('r', d => d.type === 'company' ? 30 : 20)
+                .attr('fill', d => {
+                    switch(d.type) {
+                        case 'company': return '#0066FF';
+                        case 'policy': return '#FF5252';
+                        case 'impact': return '#FFB300';
+                        case 'finance': return '#00E676';
+                        default: return '#6C757D';
+                    }
+                });
+            
+            // Add labels to nodes
+            node.append('text')
+                .text(d => d.label)
+                .attr('text-anchor', 'middle')
+                .attr('dy', 35)
+                .style('font-size', '12px')
+                .style('font-weight', '500');
+            
+            // Update positions on tick
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+                
+                node
+                    .attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+            
+            // Drag functions
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+            
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+            
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                if (d.type !== 'company') {
+                    d.fx = null;
+                    d.fy = null;
+                }
+            }
+        }
+        
+        // Generate sparklines
+        function generateSparklines() {
+            const sparklineData = () => Array.from({length: 20}, () => Math.random() * 100);
+            
+            ['revenue', 'impact', 'success', 'risks'].forEach(metric => {
+                const canvas = document.getElementById(`${metric}Sparkline`);
+                if (!canvas) return;
+                
+                const ctx = canvas.getContext('2d');
+                const data = sparklineData();
+                const width = canvas.width = canvas.offsetWidth;
+                const height = canvas.height = 60;
+                
+                ctx.clearRect(0, 0, width, height);
+                ctx.strokeStyle = '#0066FF20';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                data.forEach((value, index) => {
+                    const x = (index / (data.length - 1)) * width;
+                    const y = height - (value / 100) * height;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+            });
+        }
+        
+        // Update real-time data
+        async function updateRealTimeData() {
+            try {
+                await fetchRealTimeData();
+                showUpdateIndicator();
+            } catch (error) {
+                console.error('Error updating real-time data:', error);
+            }
+        }
+        
+        // Show update indicator
+        function showUpdateIndicator() {
+            const indicator = document.getElementById('updateIndicator');
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Utility functions
+        function formatCurrency(value) {
+            const num = parseFloat(value);
+            if (num >= 1e9) return `$${(num / 1e9).toFixed(1)}B`;
+            if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
+            return `$${num.toLocaleString()}`;
+        }
+        
+        function getSeverityClass(severity) {
+            const value = parseInt(severity);
+            if (value >= 8) return 'critical';
+            if (value >= 6) return 'high';
+            if (value >= 4) return 'medium';
+            return 'low';
+        }
+        
+        function getSeverityLabel(severity) {
+            const value = parseInt(severity);
+            if (value >= 8) return 'Critical';
+            if (value >= 6) return 'High';
+            if (value >= 4) return 'Medium';
+            return 'Low';
+        }
+        
+        function getStatusClass(severity) {
+            const value = parseInt(severity);
+            if (value >= 8) return 'critical';
+            if (value >= 6) return 'warning';
+            return 'medium';
+        }
+        
+        function getStatus(severity) {
+            const value = parseInt(severity);
+            if (value >= 8) return 'Action Required';
+            if (value >= 6) return 'Planning';
+            return 'Monitoring';
+        }
+        
+        function getMitigationOptions(impact) {
+            // This would come from the actual SPARQL query
+            return 'Export credit, Supply chain finance';
+        }
+        
+        function showError(message) {
+            console.error(message);
+            // Could show a toast notification here
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', initDashboard);
+        
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('refreshBtn');
+            btn.querySelector('i').classList.add('fa-spin');
+            await updateRealTimeData();
+            setTimeout(() => {
+                btn.querySelector('i').classList.remove('fa-spin');
+            }, 1000);
+        });
+        
+        // Chart view toggles
+        document.querySelectorAll('.chart-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const chart = e.target.dataset.chart;
+                const view = e.target.dataset.view;
+                
+                // Update active state
+                document.querySelectorAll(`[data-chart="${chart}"]`).forEach(b => {
+                    b.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                // Update chart view (simplified for demo)
+                console.log(`Switching ${chart} to ${view} view`);
+            });
+        });
+        
+        // Export button
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            // Export functionality
+            window.print();
+        });
+        
+        // SPARQL query button
+        document.getElementById('sparqlBtn').addEventListener('click', () => {
+            // Open SPARQL query interface
+            alert('SPARQL Query Interface - Coming Soon');
+        });
+        
+        // Graph controls
+        document.getElementById('graphResetBtn').addEventListener('click', () => {
+            // Reset graph view
+            initializeKnowledgeGraph();
+        });
+        
+        document.getElementById('graphFullscreenBtn').addEventListener('click', () => {
+            const graphContainer = document.querySelector('.knowledge-graph');
+            if (graphContainer.requestFullscreen) {
+                graphContainer.requestFullscreen();
+            }
+        });
+    </script>
+</body>
+</html>

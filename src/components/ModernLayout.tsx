@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { Box } from '@mui/material';
 import PerplexitySearchBar from './PerplexitySearchBar';
 import JouleAssistant from './JouleAssistant';
+import EnhancedPerplexityPanel from './EnhancedPerplexityPanel';
+import { BrandingHeader } from './common';
 import {
   LayoutDashboard,
   BarChart3,
@@ -66,6 +69,7 @@ import {
 
 interface LayoutProps {
   children: React.ReactNode;
+  showPerplexityPanel?: boolean;
 }
 
 interface AppItem {
@@ -132,13 +136,14 @@ const appCatalog: AppItem[] = [
   { id: 'help', name: 'Help Center', icon: HelpCircle, href: '/help', category: 'Tools', color: 'bg-blue-400', description: 'Documentation & support' },
 ];
 
-export default function ModernLayout({ children }: LayoutProps) {
+export default function ModernLayout({ children, showPerplexityPanel = false }: LayoutProps) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [appFinderOpen, setAppFinderOpen] = useState(false);
   const [jouleOpen, setJouleOpen] = useState(false);
+  const [perplexityPanelOpen, setPerplexityPanelOpen] = useState(showPerplexityPanel);
   const [isMobile, setIsMobile] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -316,18 +321,9 @@ export default function ModernLayout({ children }: LayoutProps) {
             <Menu className="w-6 h-6" />
           </button>
 
-          {/* Branding Area with Logo */}
+          {/* Modern Branding Area with SCB and SAP Fiori */}
           <Link href="/" className="flex items-center">
-            <Image 
-              src="https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png" 
-              alt="Standard Chartered" 
-              width={375} 
-              height={94} 
-              className="h-14" 
-              style={{ objectFit: 'contain' }}
-              priority
-              unoptimized
-            />
+            <BrandingHeader compact={false} showSapFiori={false} />
           </Link>
         </div>
 
@@ -338,6 +334,19 @@ export default function ModernLayout({ children }: LayoutProps) {
 
         {/* Right section - Actions */}
         <div className="flex items-center gap-1 lg:gap-2 w-1/3 justify-end">
+          
+          {/* Perplexity Panel */}
+          <button 
+            className="flex h-full px-3 text-gray-700 hover:bg-gray-100 items-center space-x-1 transition-colors rounded"
+            title="Perplexity AI Panel"
+            onClick={() => setPerplexityPanelOpen(!perplexityPanelOpen)}
+          >
+            <div 
+              className={`w-6 h-6 rounded flex items-center justify-center ${perplexityPanelOpen ? 'bg-[#5436DA]' : 'bg-gray-200'}`} 
+            >
+              <span className={`text-white font-bold text-sm ${perplexityPanelOpen ? 'text-white' : 'text-gray-600'}`}>P</span>
+            </div>
+          </button>
           
           {/* Joule AI Assistant */}
           <button 
@@ -630,7 +639,9 @@ export default function ModernLayout({ children }: LayoutProps) {
             
             <div className="fixed inset-y-0 left-0 w-full max-w-xs bg-white animate-slide-in">
               <div className="flex items-center justify-between h-14 px-4 border-b">
-                <span className="text-base font-medium text-gray-800">FinSight</span>
+                <div className="flex-1">
+                  <BrandingHeader compact={true} showSapFiori={true} />
+                </div>
                 <button
                   onClick={() => setSidebarOpen(false)}
                   className="p-2 -mr-2 text-gray-500 hover:text-gray-900 touch-manipulation"
@@ -710,7 +721,7 @@ export default function ModernLayout({ children }: LayoutProps) {
           </div>
 
           {/* SAP Fiori Page Content - Responsive padding */}
-          <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[rgb(var(--fiori-content-bg))] pb-20 lg:pb-6">
+          <main className={`flex-1 overflow-y-auto p-4 lg:p-6 bg-[rgb(var(--fiori-content-bg))] pb-20 lg:pb-6 ${perplexityPanelOpen ? 'mr-[380px]' : ''} transition-all duration-300`}>
             <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-[rgb(var(--scb-border))]">
               {children}
             </div>
@@ -739,10 +750,17 @@ export default function ModernLayout({ children }: LayoutProps) {
         </div>
       </nav>
 
+      {/* Enhanced Perplexity Panel */}
+      {perplexityPanelOpen && (
+        <div className="fixed inset-y-0 right-0 z-40">
+          <EnhancedPerplexityPanel />
+        </div>
+      )}
+      
       {/* Joule AI Assistant Panel - Full Height */}
       {jouleOpen && (
         <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out transform translate-x-0">
-          {/* Joule Header */}
+          {/* Joule Header with SAP Fiori Branding */}
           <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
             <div className="flex items-center gap-3">
               <div 
@@ -754,13 +772,20 @@ export default function ModernLayout({ children }: LayoutProps) {
                 <h2 className="text-lg font-semibold text-white">Joule</h2>
                 <p className="text-sm text-white/80 flex items-center gap-2">
                   Powered by 
-                  <Image
-                    src="/assets/idEDqS_YGr_1747680256633.svg"
-                    alt="SAP"
-                    width={32}
-                    height={16}
-                    className="inline-block brightness-0 invert"
-                  />
+                  <Box 
+                    sx={{
+                      bgcolor: "#f0f0f0", 
+                      borderRadius: "4px",
+                      px: 1.5,
+                      py: 0.25,
+                      ml: 0.5,
+                      color: "#0a6ed1",
+                      fontWeight: 600,
+                      fontSize: "0.7rem"
+                    }}
+                  >
+                    SAP Fiori
+                  </Box>
                 </p>
               </div>
             </div>

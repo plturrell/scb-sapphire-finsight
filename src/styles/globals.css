@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Apple design enhancements */
+@import './apple-enhancements.css';
+
 :root {
   /* Standard Chartered Bank Colors - 2021 Brand Refresh */
   --scb-honolulu-blue: 0 114 170; /* #0072AA - Primary Blue */
@@ -48,6 +51,31 @@
   --fiori-positive-bg: rgba(var(--scb-american-green), 0.1);
   --fiori-negative-bg: rgba(var(--scb-muted-red), 0.1);
   --fiori-neutral-bg: rgba(var(--scb-honolulu-blue), 0.1);
+}
+
+.dark {
+  /* Dark mode theme variables */
+  --scb-light-gray: 20 22 25; /* Dark background color */
+  --scb-white: 28 30 35; /* Dark surface color */
+  --scb-dark-gray: 180 182 185; /* Lighter secondary text for dark mode */
+  --scb-border: 50 55 60; /* Darker dividers for dark mode */
+  
+  /* SAP Fiori Theming - Dark Mode Override */
+  --fiori-shell-header-bg: 0 94 135; /* Darker #005E87 */
+  --fiori-sidebar-bg: 28 30 35; /* Dark sidebar */
+  --fiori-sidebar-text: 180 182 185; /* Light text on dark background */
+  --fiori-content-bg: 20 22 25; /* Dark background */
+  --fiori-tile-bg: 28 30 35; /* Dark surfaces */
+  --fiori-button-secondary-bg: 40 42 48; /* Darker button background */
+  --fiori-button-secondary-text: 200 215 225; /* Lighter text */
+  
+  /* Financial Data Presentation Variables - Dark Mode */
+  --fiori-positive-bg: rgba(var(--scb-american-green), 0.15); /* More prominent in dark mode */
+  --fiori-negative-bg: rgba(var(--scb-muted-red), 0.15); /* More prominent in dark mode */
+  --fiori-neutral-bg: rgba(var(--scb-honolulu-blue), 0.15); /* More prominent in dark mode */
+  
+  /* Increase contrast for better accessibility */
+  --horizon-focus-color: 0 124 180; /* Brighter focus for dark mode */
 }
 
 /* SAP Horizon Shell Header */
@@ -472,6 +500,59 @@
     /* SAP UI5 uses minimal border radius */
     --radius: 0.25rem;
   }
+  
+  .dark {
+    /* Dark mode color palette */
+    --background: 224 15% 9%;
+    --foreground: 210 20% 90%;
+    
+    /* Primary color slightly adjusted for dark mode */
+    --primary: 200 85% 40%; /* Brighter blue for dark mode */
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary adjusted for dark mode */
+    --secondary: 205 40% 40%;
+    --secondary-foreground: 0 0% 95%;
+    
+    /* Shell header - darker in dark mode */
+    --shell-header: 200 90% 30%;
+    
+    /* Content background - dark gray */
+    --content-bg: 222 15% 13%;
+    
+    /* Muted elements - darker in dark mode */
+    --muted: 222 15% 20%;
+    --muted-foreground: 210 20% 70%;
+    
+    /* Accent adjusted for dark mode */
+    --accent: 205 40% 40%;
+    --accent-foreground: 0 0% 95%;
+    
+    /* Alert colors adjusted for better visibility in dark mode */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Success adjusted for dark mode */
+    --success: 137 55% 40%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Subtle success adjusted */
+    --subtle-success: 115 30% 40%;
+    --subtle-success-foreground: 120 20% 95%;
+    
+    /* Warning adjusted for dark mode */
+    --warning: 35 80% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    /* Information adjusted for dark mode */
+    --information: 200 70% 45%;
+    --information-foreground: 0 0% 100%;
+    
+    /* Borders and inputs for dark mode */
+    --border: 215 15% 25%;
+    --input: 215 15% 25%;
+    --ring: 200 80% 45%;
+  }
 
   * {
     box-sizing: border-box;
@@ -487,6 +568,12 @@
   }
 
   body {
+    background-color: hsl(var(--content-bg));
+    color: hsl(var(--foreground));
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .dark body {
     background-color: hsl(var(--content-bg));
     color: hsl(var(--foreground));
   }
@@ -690,6 +777,32 @@
 
 .animate-slide-in {
   animation: slideIn 0.3s ease-out;
+}
+
+/* Glassmorphism utilities */
+.glass-effect {
+  @apply backdrop-blur-md backdrop-saturate-150 bg-white/85 dark:bg-gray-800/75;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.3s ease;
+}
+
+.glass-effect-darker {
+  @apply backdrop-blur-lg backdrop-saturate-125 bg-gray-800/85;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.glass-effect:hover {
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-reduced-motion) {
+  .glass-effect, .glass-effect-darker {
+    transition: none;
+  }
 }
 
 /* Responsive spacing system */

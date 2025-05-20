@@ -1,0 +1,15 @@
+Monte Carlo Integration Test - 2025-05-20T14:24:50.810Z
+
+Input file exists: true
+Output file exists: true
+History file exists: true
+
+Input file has 4 records
+Output file has 4 records
+History file has 7 records
+Outputs with valid input references: 4/4
+Mock integration imported 4 inputs
+Mock integration imported 4 outputs
+Mock simulation result: Success
+
+OVERALL RESULT: PASS

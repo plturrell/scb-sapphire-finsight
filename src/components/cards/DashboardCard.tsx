@@ -36,13 +36,19 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   
   return (
     <div 
-      className={`fiori-tile border border-[rgb(var(--scb-border))] rounded-md overflow-hidden bg-white ${className}`}
-      style={{ boxShadow: '0 2px 6px rgba(0, 0, 0, 0.05)' }}
+      className={`fiori-tile border border-[rgb(var(--scb-border))] dark:border-gray-700/40 rounded-lg overflow-hidden bg-white dark:bg-gray-800/80 backdrop-blur-md dark:backdrop-blur-xl backdrop-saturate-150 dark:backdrop-saturate-125 ${className}`}
+      style={{ 
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        background: 'rgba(255, 255, 255, 0.85)',
+        transition: 'all 0.3s ease'
+      }}
     >
-      <div className="flex items-center justify-between p-4 border-b border-[rgb(var(--scb-border))]">
+      <div className="flex items-center justify-between p-4 border-b border-[rgb(var(--scb-border))] dark:border-gray-700/40">
         <div>
-          <h3 className="scb-section-header text-[rgb(var(--scb-honolulu-blue))] mb-0">{title}</h3>
-          {subtitle && <p className="scb-supplementary mt-1">{subtitle}</p>}
+          <h3 className="scb-section-header text-[rgb(var(--scb-honolulu-blue))] dark:text-blue-300 mb-0 transition-colors">{title}</h3>
+          {subtitle && <p className="scb-supplementary dark:text-gray-300 mt-1 transition-colors">{subtitle}</p>}
         </div>
         
         <div className="flex items-center gap-2">
@@ -50,7 +56,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
           
           {expandable && (
             <button
-              className="p-1 rounded hover:bg-[rgba(var(--scb-honolulu-blue),0.05)]"
+              className="p-1 rounded hover:bg-[rgba(var(--scb-honolulu-blue),0.05)] dark:hover:bg-blue-500/10 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
               onClick={onToggleExpand}
               aria-label={expanded ? 'Collapse' : 'Expand'}
             >
@@ -60,7 +66,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
           
           {exportable && (
             <button
-              className="p-1 rounded hover:bg-[rgba(var(--scb-honolulu-blue),0.05)]"
+              className="p-1 rounded hover:bg-[rgba(var(--scb-honolulu-blue),0.05)] dark:hover:bg-blue-500/10 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
               onClick={onExport}
               aria-label="Export"
             >
@@ -71,7 +77,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
           {menuItems && menuItems.length > 0 && (
             <div className="relative">
               <button
-                className="p-1 rounded hover:bg-[rgba(var(--scb-honolulu-blue),0.05)]"
+                className="p-1 rounded hover:bg-[rgba(var(--scb-honolulu-blue),0.05)] dark:hover:bg-blue-500/10 text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="More options"
               >
@@ -80,14 +86,19 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
               
               {menuOpen && (
                 <div 
-                  className="absolute right-0 top-full mt-1 bg-white border border-[rgb(var(--scb-border))] rounded-md shadow-md z-10 w-48"
+                  className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800/90 backdrop-blur-md backdrop-saturate-150 border border-[rgb(var(--scb-border))] dark:border-gray-700/50 rounded-md shadow-lg z-10 w-48"
                   onBlur={() => setMenuOpen(false)}
+                  style={{
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)'
+                  }}
                 >
                   <ul>
                     {menuItems.map((item, index) => (
                       <li key={index}>
                         <button
-                          className="w-full text-left px-4 py-2 hover:bg-[rgba(var(--scb-honolulu-blue),0.05)] scb-data-label"
+                          className="w-full text-left px-4 py-2 hover:bg-[rgba(var(--scb-honolulu-blue),0.05)] dark:hover:bg-blue-500/10 scb-data-label dark:text-gray-200 transition-colors"
                           onClick={() => {
                             item.onClick();
                             setMenuOpen(false);
@@ -105,7 +116,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
         </div>
       </div>
       
-      <div className={`p-4 ${expandable ? (expanded ? 'max-h-full' : 'max-h-[300px] overflow-y-auto') : ''}`}>
+      <div className={`p-4 ${expandable ? (expanded ? 'max-h-full' : 'max-h-[300px] overflow-y-auto') : ''} dark:text-gray-200`}>
         {children}
       </div>
     </div>

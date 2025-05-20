@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspire FinSight | Sapphire UI 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <script src="mcts_impact_analyzer.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Sapphire 2025 Color Palette */
+            --sapphire-primary: #1e3a8a;
+            --sapphire-primary-light: #3b82f6;
+            --sapphire-accent: #06b6d4;
+            --sapphire-success: #10b981;
+            --sapphire-warning: #f59e0b;
+            --sapphire-danger: #ef4444;
+            --sapphire-bg: #f9fafb;
+            --sapphire-surface: #ffffff;
+            --sapphire-gray-50: #f9fafb;
+            --sapphire-gray-100: #f3f4f6;
+            --sapphire-gray-200: #e5e7eb;
+            --sapphire-gray-300: #d1d5db;
+            --sapphire-gray-400: #9ca3af;
+            --sapphire-gray-500: #6b7280;
+            --sapphire-gray-600: #4b5563;
+            --sapphire-gray-700: #374151;
+            --sapphire-gray-800: #1f2937;
+            --sapphire-gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--sapphire-bg);
+            color: var(--sapphire-gray-800);
+            line-height: 1.5;
+        }
+        
+        /* Header Banner */
+        .header-banner {
+            background: linear-gradient(135deg, var(--sapphire-primary) 0%, var(--sapphire-primary-light) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--sapphire-primary);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: var(--sapphire-primary);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .header-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--sapphire-primary);
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        /* Page Content */
+        .page-content {
+            display: none;
+        }
+        
+        .page-content.active {
+            display: block;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--sapphire-surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--sapphire-gray-700);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .card-icon.primary {
+            background: rgba(30, 58, 138, 0.1);
+            color: var(--sapphire-primary);
+        }
+        
+        .card-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--sapphire-success);
+        }
+        
+        .card-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--sapphire-warning);
+        }
+        
+        .card-icon.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--sapphire-danger);
+        }
+        
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--sapphire-gray-900);
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-label {
+            font-size: 0.875rem;
+            color: var(--sapphire-gray-500);
+        }
+        
+        .card-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        
+        .card-change.positive {
+            color: var(--sapphire-success);
+        }
+        
+        .card-change.negative {
+            color: var(--sapphire-danger);
+        }
+        
+        /* Action Cards */
+        .action-card {
+            background: var(--sapphire-surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .action-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--sapphire-gray-900);
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-description {
+            font-size: 0.875rem;
+            color: var(--sapphire-gray-600);
+            line-height: 1.5;
+        }
+        
+        /* Charts Container */
+        .chart-container {
+            background: var(--sapphire-surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--sapphire-gray-900);
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chart-action {
+            background: var(--sapphire-gray-100);
+            border: none;
+            color: var(--sapphire-gray-700);
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .chart-action:hover {
+            background: var(--sapphire-gray-200);
+        }
+        
+        .chart-action.active {
+            background: var(--sapphire-primary);
+            color: white;
+        }
+        
+        /* Data Table */
+        .data-table {
+            background: var(--sapphire-surface);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--sapphire-gray-200);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: var(--sapphire-gray-50);
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--sapphire-gray-700);
+            border-bottom: 1px solid var(--sapphire-gray-200);
+        }
+        
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--sapphire-gray-100);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:hover {
+            background: var(--sapphire-gray-50);
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-badge.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--sapphire-success);
+        }
+        
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--sapphire-warning);
+        }
+        
+        .status-badge.inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--sapphire-danger);
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--sapphire-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--sapphire-primary-light);
+        }
+        
+        .btn-secondary {
+            background: var(--sapphire-gray-100);
+            color: var(--sapphire-gray-700);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--sapphire-gray-200);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            background: var(--sapphire-surface);
+            border: 2px solid transparent;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .quick-action-btn:hover {
+            border-color: var(--sapphire-primary);
+        }
+        
+        .quick-action-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--sapphire-primary);
+        }
+        
+        .quick-action-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--sapphire-gray-700);
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--sapphire-gray-500);
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--sapphire-gray-200);
+            border-top-color: var(--sapphire-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-tabs {
+                width: 100%;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Banner -->
+    <header class="header-banner">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">AF</div>
+                    <div class="logo-text">Aspire FinSight</div>
+                </div>
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" onclick="showPage('dashboard')">Dashboard</button>
+                    <button class="nav-tab" onclick="showPage('impact')">Impact Analysis</button>
+                    <button class="nav-tab" onclick="showPage('finance')">Finance Options</button>
+                    <button class="nav-tab" onclick="showPage('risk')">Risk Assessment</button>
+                    <button class="nav-tab" onclick="showPage('timeline')">Timeline</button>
+                    <button class="nav-tab" onclick="showPage('reports')">Reports</button>
+                </nav>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="header-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="header-btn">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="header-btn">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">JD</div>
+                    <span>John Doe</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page-content active">
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="showPage('impact')">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="quick-action-label">Analyze Impact</div>
+                </button>
+                <button class="quick-action-btn" onclick="showPage('finance')">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="quick-action-label">Finance Options</div>
+                </button>
+                <button class="quick-action-btn" onclick="showPage('risk')">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="quick-action-label">Risk Analysis</div>
+                </button>
+                <button class="quick-action-btn" onclick="exportReport()">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="quick-action-label">Export Report</div>
+                </button>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Total Revenue at Risk</h3>
+                        <div class="card-icon danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">$21.0B</div>
+                    <div class="card-label">Annual Export Revenue</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>47% of total revenue</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Total Tariff Impact</h3>
+                        <div class="card-icon warning">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">$9.87B</div>
+                    <div class="card-label">Financial Exposure</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>25% tariff rate</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">US Market Share</h3>
+                        <div class="card-icon primary">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">45%</div>
+                    <div class="card-label">Export Dependency</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+5% YoY growth</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Risk Score</h3>
+                        <div class="card-icon danger">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">87/100</div>
+                    <div class="card-label">Critical Level</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+15 points</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Trend Analysis</h3>
+                    <div class="chart-actions">
+                        <button class="chart-action active">Monthly</button>
+                        <button class="chart-action">Quarterly</button>
+                        <button class="chart-action">Yearly</button>
+                    </div>
+                </div>
+                <canvas id="revenueChart" height="300"></canvas>
+            </div>
+
+            <!-- Action Cards -->
+            <div class="dashboard-grid">
+                <div class="action-card" onclick="showPage('impact')">
+                    <div class="action-icon primary">
+                        <i class="fas fa-analytics"></i>
+                    </div>
+                    <h3 class="action-title">Impact Analysis</h3>
+                    <p class="action-description">Detailed analysis of tariff impacts across product categories and markets</p>
+                </div>
+
+                <div class="action-card" onclick="showPage('finance')">
+                    <div class="action-icon success">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h3 class="action-title">Finance Options</h3>
+                    <p class="action-description">Explore trade finance alternatives and mitigation strategies</p>
+                </div>
+
+                <div class="action-card" onclick="showPage('risk')">
+                    <div class="action-icon warning">
+                        <i class="fas fa-chart-radar"></i>
+                    </div>
+                    <h3 class="action-title">Risk Assessment</h3>
+                    <p class="action-description">Comprehensive risk analysis and mitigation recommendations</p>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table -->
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="chart-title">Recent Activity</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Impact</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>May 17, 2025</td>
+                            <td>Analysis</td>
+                            <td>Completed tariff impact assessment</td>
+                            <td>$9.87B</td>
+                            <td><span class="status-badge active">Complete</span></td>
+                        </tr>
+                        <tr>
+                            <td>May 16, 2025</td>
+                            <td>Alert</td>
+                            <td>New US tariff announcement</td>
+                            <td>25%</td>
+                            <td><span class="status-badge pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>May 15, 2025</td>
+                            <td>Report</td>
+                            <td>Q2 Trade finance review</td>
+                            <td>$250M</td>
+                            <td><span class="status-badge active">Approved</span></td>
+                        </tr>
+                        <tr>
+                            <td>May 14, 2025</td>
+                            <td>Update</td>
+                            <td>Supply chain diversification plan</td>
+                            <td>15%</td>
+                            <td><span class="status-badge pending">In Progress</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Impact Analysis Page -->
+        <div id="impact" class="page-content">
+            <h2 style="margin-bottom: 2rem;">Tariff Impact Analysis</h2>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Product Impact</h3>
+                        <div class="card-icon primary">
+                            <i class="fas fa-box"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">$5.6B</div>
+                    <div class="card-label">Consumer Electronics</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>25% tariff applied</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Components Impact</h3>
+                        <div class="card-icon warning">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">$2.9B</div>
+                    <div class="card-label">Semiconductors</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>25% tariff applied</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Display Impact</h3>
+                        <div class="card-icon danger">
+                            <i class="fas fa-tv"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">$1.4B</div>
+                    <div class="card-label">Display Panels</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>25% tariff applied</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Impact by Product Category</h3>
+                </div>
+                <canvas id="impactChart" height="300"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Geographic Exposure</h3>
+                </div>
+                <div id="geoChart" style="height: 400px;"></div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Trade Flow Risk Analysis (MCTS-Powered)</h3>
+                    <div class="chart-actions">
+                        <button class="chart-action active" onclick="updateSankey('all')">Current State</button>
+                        <button class="chart-action" onclick="updateSankey('3M')">3 Months</button>
+                        <button class="chart-action" onclick="updateSankey('6M')">6 Months</button>
+                        <button class="chart-action" onclick="updateSankey('12M')">12 Months</button>
+                        <button class="chart-action" onclick="updateSankey('24M')">24 Months</button>
+                        <button class="chart-action" onclick="runMCTS()">Run Simulation</button>
+                    </div>
+                </div>
+                <div id="sankeyChart" style="height: 500px;"></div>
+            </div>
+            
+            <!-- MCTS Analysis Results -->
+            <div class="dashboard-grid" style="margin-top: 2rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">MCTS Simulation Status</h3>
+                        <div class="card-icon primary">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="mctsSimulations">0</div>
+                    <div class="card-label">Simulations Run</div>
+                    <div class="card-change positive" id="mctsConfidence">
+                        <i class="fas fa-chart-line"></i>
+                        <span>0% Confidence</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Optimal Path</h3>
+                        <div class="card-icon success">
+                            <i class="fas fa-route"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="optimalActions">0</div>
+                    <div class="card-label">Actions Recommended</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span id="pathCost">$0M cost</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Risk Reduction</h3>
+                        <div class="card-icon warning">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="riskReduction">0%</div>
+                    <div class="card-label">Expected Reduction</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-down"></i>
+                        <span id="impactMitigation">$0B saved</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container" style="margin-top: 2rem;">
+                <div class="chart-header">
+                    <h3 class="chart-title">MCTS Decision Tree Path</h3>
+                    <div class="chart-actions">
+                        <button class="chart-action active" onclick="showDecisionTree('best')">Best Path</button>
+                        <button class="chart-action" onclick="showDecisionTree('alternatives')">Alternatives</button>
+                        <button class="chart-action" onclick="showDecisionTree('probabilities')">Probabilities</button>
+                    </div>
+                </div>
+                <div id="decisionTreeChart" style="height: 400px;"></div>
+            </div>
+        </div>
+
+        <!-- Finance Options Page -->
+        <div id="finance" class="page-content">
+            <h2 style="margin-bottom: 2rem;">Trade Finance Options</h2>
+            
+            <div class="dashboard-grid">
+                <div class="action-card">
+                    <div class="action-icon success">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3 class="action-title">Letter of Credit</h3>
+                    <p class="action-description">$250M revolving facility at 3.5% annual cost</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-arrow-right"></i>
+                        Apply Now
+                    </button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon primary">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3 class="action-title">Supply Chain Finance</h3>
+                    <p class="action-description">$200M program at 2.8% effective rate</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-arrow-right"></i>
+                        Learn More
+                    </button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon warning">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="action-title">Export Credit Insurance</h3>
+                    <p class="action-description">90% coverage at 0.9% premium rate</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-arrow-right"></i>
+                        Get Quote
+                    </button>
+                </div>
+            </div>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="chart-title">Finance Option Comparison</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Capacity</th>
+                            <th>Cost</th>
+                            <th>Processing Time</th>
+                            <th>Recommendation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Letter of Credit</td>
+                            <td>$250M</td>
+                            <td>3.5% p.a.</td>
+                            <td>5-7 days</td>
+                            <td><span class="status-badge active">Recommended</span></td>
+                        </tr>
+                        <tr>
+                            <td>Supply Chain Finance</td>
+                            <td>$200M</td>
+                            <td>2.8% p.a.</td>
+                            <td>10-14 days</td>
+                            <td><span class="status-badge active">Recommended</span></td>
+                        </tr>
+                        <tr>
+                            <td>Invoice Factoring</td>
+                            <td>$150M</td>
+                            <td>2.5% per invoice</td>
+                            <td>1-2 days</td>
+                            <td><span class="status-badge pending">Consider</span></td>
+                        </tr>
+                        <tr>
+                            <td>Export Credit Insurance</td>
+                            <td>$500M</td>
+                            <td>0.9% premium</td>
+                            <td>21-30 days</td>
+                            <td><span class="status-badge active">Recommended</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Risk Assessment Page -->
+        <div id="risk" class="page-content">
+            <h2 style="margin-bottom: 2rem;">Risk Assessment</h2>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Regulatory Risk</h3>
+                        <div class="card-icon danger">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">High</div>
+                    <div class="card-label">Trade policy uncertainty</div>
+                    <div class="card-change negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>85% probability</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Market Risk</h3>
+                        <div class="card-icon warning">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">Medium</div>
+                    <div class="card-label">Demand volatility</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>45% probability</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Operational Risk</h3>
+                        <div class="card-icon primary">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">Low</div>
+                    <div class="card-label">Supply chain disruption</div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>25% probability</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Risk Matrix</h3>
+                </div>
+                <div id="riskMatrix" style="height: 400px;"></div>
+            </div>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="chart-title">Risk Mitigation Strategies</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Risk Category</th>
+                            <th>Strategy</th>
+                            <th>Cost</th>
+                            <th>Effectiveness</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Regulatory</td>
+                            <td>Diversify export markets</td>
+                            <td>$45M</td>
+                            <td>High</td>
+                            <td><span class="status-badge danger">Critical</span></td>
+                        </tr>
+                        <tr>
+                            <td>Market</td>
+                            <td>Hedging instruments</td>
+                            <td>$12M</td>
+                            <td>Medium</td>
+                            <td><span class="status-badge warning">High</span></td>
+                        </tr>
+                        <tr>
+                            <td>Operational</td>
+                            <td>Supply chain redundancy</td>
+                            <td>$25M</td>
+                            <td>High</td>
+                            <td><span class="status-badge warning">High</span></td>
+                        </tr>
+                        <tr>
+                            <td>Financial</td>
+                            <td>Trade finance facilities</td>
+                            <td>$8M</td>
+                            <td>Medium</td>
+                            <td><span class="status-badge active">Medium</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Timeline Page -->
+        <div id="timeline" class="page-content">
+            <h2 style="margin-bottom: 2rem;">Action Timeline</h2>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Implementation Plan</h3>
+                </div>
+                <div id="timelineChart" style="height: 600px;"></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="action-card">
+                    <div class="action-icon danger">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="action-title">Immediate Actions (0-3 months)</h3>
+                    <ul style="margin-top: 1rem; list-style: none; line-height: 2;">
+                        <li><i class="fas fa-check" style="color: var(--sapphire-success); margin-right: 0.5rem;"></i> Accelerate Q2 shipments</li>
+                        <li><i class="fas fa-check" style="color: var(--sapphire-success); margin-right: 0.5rem;"></i> Activate LC facilities</li>
+                        <li><i class="fas fa-check" style="color: var(--sapphire-success); margin-right: 0.5rem;"></i> Engage with US buyers</li>
+                        <li><i class="fas fa-check" style="color: var(--sapphire-success); margin-right: 0.5rem;"></i> Implement FX hedging</li>
+                    </ul>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="action-title">Short-term (3-6 months)</h3>
+                    <ul style="margin-top: 1rem; list-style: none; line-height: 2;">
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-warning); margin-right: 0.5rem; font-size: 0.5rem;"></i> Supply chain optimization</li>
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-warning); margin-right: 0.5rem; font-size: 0.5rem;"></i> Alternative markets exploration</li>
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-warning); margin-right: 0.5rem; font-size: 0.5rem;"></i> Cost reduction program</li>
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-warning); margin-right: 0.5rem; font-size: 0.5rem;"></i> Trade finance expansion</li>
+                    </ul>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon primary">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="action-title">Long-term (6+ months)</h3>
+                    <ul style="margin-top: 1rem; list-style: none; line-height: 2;">
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-primary); margin-right: 0.5rem; font-size: 0.5rem;"></i> Production relocation study</li>
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-primary); margin-right: 0.5rem; font-size: 0.5rem;"></i> Strategic partnerships</li>
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-primary); margin-right: 0.5rem; font-size: 0.5rem;"></i> Regulatory compliance</li>
+                        <li><i class="fas fa-circle" style="color: var(--sapphire-primary); margin-right: 0.5rem; font-size: 0.5rem;"></i> Investment diversification</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reports" class="page-content">
+            <h2 style="margin-bottom: 2rem;">Analytical Reports</h2>
+            
+            <div class="dashboard-grid">
+                <div class="action-card" onclick="downloadReport('executive')">
+                    <div class="action-icon primary">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="action-title">Executive Summary</h3>
+                    <p class="action-description">High-level overview of tariff impacts and recommendations</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                </div>
+
+                <div class="action-card" onclick="downloadReport('detailed')">
+                    <div class="action-icon success">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <h3 class="action-title">Detailed Analysis</h3>
+                    <p class="action-description">Comprehensive financial impact assessment with projections</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-download"></i>
+                        Download Excel
+                    </button>
+                </div>
+
+                <div class="action-card" onclick="downloadReport('risk')">
+                    <div class="action-icon warning">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="action-title">Risk Assessment</h3>
+                    <p class="action-description">Complete risk analysis with mitigation strategies</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="chart-title">Recent Reports</h3>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Report Name</th>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Q2 2025 Tariff Impact Analysis</td>
+                            <td>May 17, 2025</td>
+                            <td>PDF</td>
+                            <td>2.4 MB</td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Trade Finance Options Review</td>
+                            <td>May 15, 2025</td>
+                            <td>Excel</td>
+                            <td>1.8 MB</td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Risk Mitigation Strategy</td>
+                            <td>May 14, 2025</td>
+                            <td>PDF</td>
+                            <td>3.1 MB</td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </button>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MCTS Analyzer instance
+        let mctsAnalyzer = null;
+        let mctsResults = null;
+        
+        // Analysis Data
+        const analysisData = {
+            company: "Samsung Electronics Vietnam",
+            totalRevenue: 47000000000,
+            revenueAtRisk: 21000000000, 
+            totalImpact: 9870000000,
+            tariffRate: 0.25,
+            usMarketShare: 0.45,
+            exportPercentage: 0.87,
+            riskScore: 87,
+            productCategories: {
+                "Consumer Electronics": 5600000000,
+                "Semiconductors": 2900000000,
+                "Display Panels": 1370000000
+            },
+            monthlyRevenue: [
+                3900, 4100, 4200, 4300, 4100, 4000,
+                3800, 3600, 3500, 3400, 3300, 3200
+            ],
+            riskMatrix: [
+                { name: 'Regulatory', impact: 9, probability: 9 },
+                { name: 'Market', impact: 7, probability: 6 },
+                { name: 'Operational', impact: 5, probability: 4 },
+                { name: 'Financial', impact: 6, probability: 5 },
+                { name: 'Supply Chain', impact: 8, probability: 3 }
+            ]
+        };
+
+        // Initialize Charts
+        function initializeCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart');
+            if (revenueCtx) {
+                new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Revenue (Millions)',
+                            data: analysisData.monthlyRevenue,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value + 'M';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Impact Chart
+            const impactCtx = document.getElementById('impactChart');
+            if (impactCtx) {
+                new Chart(impactCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(analysisData.productCategories),
+                        datasets: [{
+                            data: Object.values(analysisData.productCategories),
+                            backgroundColor: ['#3b82f6', '#06b6d4', '#f59e0b']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Risk Matrix
+            const riskMatrixEl = document.getElementById('riskMatrix');
+            if (riskMatrixEl) {
+                const options = {
+                    series: [{
+                        name: 'Risks',
+                        data: analysisData.riskMatrix.map(risk => ({
+                            x: risk.probability,
+                            y: risk.impact,
+                            z: risk.impact * risk.probability,
+                            name: risk.name
+                        }))
+                    }],
+                    chart: {
+                        height: 400,
+                        type: 'bubble',
+                        toolbar: { show: false }
+                    },
+                    xaxis: {
+                        title: { text: 'Probability' },
+                        min: 0,
+                        max: 10
+                    },
+                    yaxis: {
+                        title: { text: 'Impact' },
+                        min: 0,
+                        max: 10
+                    },
+                    colors: ['#ef4444'],
+                    fill: { opacity: 0.8 }
+                };
+                new ApexCharts(riskMatrixEl, options).render();
+            }
+
+            // Timeline Chart
+            const timelineEl = document.getElementById('timelineChart');
+            if (timelineEl) {
+                const timelineOptions = {
+                    series: [{
+                        data: [
+                            { x: 'Immediate Actions', y: [new Date('2025-05-01').getTime(), new Date('2025-08-01').getTime()] },
+                            { x: 'Trade Finance Setup', y: [new Date('2025-06-01').getTime(), new Date('2025-09-01').getTime()] },
+                            { x: 'Market Diversification', y: [new Date('2025-07-01').getTime(), new Date('2025-12-01').getTime()] },
+                            { x: 'Supply Chain Optimization', y: [new Date('2025-08-01').getTime(), new Date('2026-02-01').getTime()] },
+                            { x: 'Long-term Strategy', y: [new Date('2025-10-01').getTime(), new Date('2026-05-01').getTime()] }
+                        ]
+                    }],
+                    chart: {
+                        height: 600,
+                        type: 'rangeBar',
+                        toolbar: { show: false }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: true,
+                            distributed: true,
+                            dataLabels: {
+                                hideOverflowingLabels: false
+                            }
+                        }
+                    },
+                    xaxis: {
+                        type: 'datetime'
+                    },
+                    colors: ['#3b82f6', '#06b6d4', '#f59e0b', '#10b981', '#8b5cf6']
+                };
+                new ApexCharts(timelineEl, timelineOptions).render();
+            }
+
+            // Geographic Chart
+            const geoEl = document.getElementById('geoChart');
+            if (geoEl) {
+                const geoOptions = {
+                    series: [{
+                        name: 'Export Revenue',
+                        data: [
+                            { x: 'USA', y: 21000 },
+                            { x: 'China', y: 9000 },
+                            { x: 'Europe', y: 8000 },
+                            { x: 'Japan', y: 5000 },
+                            { x: 'Others', y: 4000 }
+                        ]
+                    }],
+                    chart: {
+                        type: 'treemap',
+                        height: 400,
+                        toolbar: { show: false }
+                    },
+                    colors: ['#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6'],
+                    plotOptions: {
+                        treemap: {
+                            distributed: true,
+                            enableShades: false
+                        }
+                    }
+                };
+                new ApexCharts(geoEl, geoOptions).render();
+            }
+            
+            // Initialize Sankey Chart
+            initializeSankey();
+        }
+        
+        // Sankey Diagram for Trade Flows
+        function initializeSankey() {
+            if (!document.getElementById('sankeyChart')) return;
+            
+            // Clear any existing chart
+            d3.select("#sankeyChart").selectAll("*").remove();
+            
+            // Set up dimensions
+            const margin = { top: 20, right: 130, bottom: 20, left: 130 };
+            const width = document.getElementById('sankeyChart').offsetWidth - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+            
+            // Create SVG
+            const svg = d3.select("#sankeyChart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            
+            // Create Sankey generator
+            const sankey = d3.sankey()
+                .nodeWidth(20)
+                .nodePadding(10)
+                .extent([[0, 0], [width, height]]);
+            
+            // Data for trade flows
+            const nodes = [
+                // Sources
+                { name: "Samsung Vietnam" },
+                { name: "Consumer Electronics" }, 
+                { name: "Semiconductors" },
+                { name: "Display Panels" },
+                // Destinations
+                { name: "US Market (at risk)" },
+                { name: "China Market" },
+                { name: "Europe Market" },
+                { name: "Japan Market" },
+                { name: "Other Markets" }
+            ];
+            
+            const links = [
+                { source: 0, target: 1, value: 22400, risk: true }, // Vietnam -> Consumer Electronics
+                { source: 0, target: 2, value: 11600, risk: true }, // Vietnam -> Semiconductors
+                { source: 0, target: 3, value: 5480, risk: true },  // Vietnam -> Display Panels
+                { source: 1, target: 4, value: 5600, risk: true },  // Consumer Electronics -> US (at risk)
+                { source: 1, target: 5, value: 4480, risk: false }, // Consumer Electronics -> China
+                { source: 1, target: 6, value: 4480, risk: false }, // Consumer Electronics -> Europe
+                { source: 1, target: 7, value: 3920, risk: false }, // Consumer Electronics -> Japan
+                { source: 1, target: 8, value: 3920, risk: false }, // Consumer Electronics -> Others
+                { source: 2, target: 4, value: 2900, risk: true },  // Semiconductors -> US (at risk)
+                { source: 2, target: 5, value: 2320, risk: false }, // Semiconductors -> China
+                { source: 2, target: 6, value: 2320, risk: false }, // Semiconductors -> Europe
+                { source: 2, target: 7, value: 2030, risk: false }, // Semiconductors -> Japan
+                { source: 2, target: 8, value: 2030, risk: false }, // Semiconductors -> Others
+                { source: 3, target: 4, value: 1370, risk: true },  // Display Panels -> US (at risk)
+                { source: 3, target: 5, value: 1096, risk: false }, // Display Panels -> China
+                { source: 3, target: 6, value: 1096, risk: false }, // Display Panels -> Europe
+                { source: 3, target: 7, value: 959, risk: false },  // Display Panels -> Japan
+                { source: 3, target: 8, value: 959, risk: false }   // Display Panels -> Others
+            ];
+            
+            // Store for filtering
+            window.sankeyData = { nodes: nodes, links: links };
+            
+            // Apply Sankey algorithm  
+            sankey({ nodes: nodes.map(d => Object.assign({}, d)), links: links.map(d => Object.assign({}, d)) });
+            
+            // Add links
+            const link = svg.append("g")
+                .selectAll(".link")
+                .data(links)
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", d3.sankeyLinkHorizontal())
+                .attr("stroke", d => d.risk ? "#ef4444" : "#10b981")
+                .attr("stroke-width", d => Math.max(1, d.width))
+                .attr("fill", "none")
+                .attr("opacity", 0.5);
+            
+            // Add nodes
+            const node = svg.append("g")
+                .selectAll(".node")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", "node");
+            
+            node.append("rect")
+                .attr("x", d => d.x0)
+                .attr("y", d => d.y0)
+                .attr("height", d => d.y1 - d.y0)
+                .attr("width", d => d.x1 - d.x0)
+                .attr("fill", d => d.name.includes("risk") ? "#ef4444" : "#3b82f6");
+            
+            node.append("text")
+                .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                .attr("y", d => (d.y1 + d.y0) / 2)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
+                .text(d => d.name)
+                .style("font-size", "12px")
+                .style("fill", "#374151");
+            
+            // Add tooltips
+            link.append("title")
+                .text(d => `${nodes[d.source].name} → ${nodes[d.target].name}\n$${(d.value / 1000).toFixed(1)}B`);
+        }
+        
+        // Run MCTS Analysis
+        function runMCTS() {
+            // Show loading state
+            document.getElementById('mctsSimulations').textContent = 'Running...';
+            document.getElementById('mctsConfidence').innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Processing...</span>';
+            
+            // Initialize MCTS analyzer
+            mctsAnalyzer = new MCTSImpactAnalyzer(analysisData);
+            
+            // Run analysis with progress updates
+            setTimeout(() => {
+                mctsResults = mctsAnalyzer.runAnalysis();
+                
+                // Update UI with results
+                document.getElementById('mctsSimulations').textContent = '1,000';
+                document.getElementById('mctsConfidence').innerHTML = '<i class="fas fa-check-circle"></i> <span>95% Confidence</span>';
+                
+                // Update optimal path
+                const optimalPath = mctsResults.bestPath;
+                document.getElementById('optimalActions').textContent = optimalPath.length;
+                
+                // Calculate total cost
+                const totalCost = optimalPath.reduce((sum, action) => sum + action.cost, 0);
+                document.getElementById('pathCost').textContent = `$${totalCost.toFixed(0)}M cost`;
+                
+                // Calculate risk reduction
+                const riskReduction = mctsResults.riskProbabilities.tariff_rate.percentiles.p50 * 100;
+                document.getElementById('riskReduction').textContent = `${(100 - riskReduction).toFixed(0)}%`;
+                
+                // Calculate impact mitigation
+                const originalImpact = analysisData.totalImpact / 1000000000;
+                const mitigatedImpact = originalImpact * (riskReduction / 100);
+                const saved = originalImpact - mitigatedImpact;
+                document.getElementById('impactMitigation').textContent = `$${saved.toFixed(1)}B saved`;
+                
+                // Update Sankey with initial state
+                updateSankeyWithMCTS('current');
+                
+                // Create decision tree
+                createDecisionTree('best');
+                
+                // Show success message
+                console.log('MCTS analysis complete:', mctsResults);
+            }, 500);
+        }
+        
+        // Update Sankey with MCTS results
+        function updateSankeyWithMCTS(timeHorizon) {
+            if (!mctsAnalyzer || !mctsResults) {
+                alert('Please run MCTS simulation first');
+                return;
+            }
+            
+            // Get Sankey data from MCTS analyzer
+            const sankeyData = mctsAnalyzer.generateSankeyData(timeHorizon);
+            
+            // Clear existing chart
+            d3.select("#sankeyChart").selectAll("*").remove();
+            
+            // Create new Sankey with MCTS data
+            createSankeyFromData(sankeyData);
+            
+            // Update button states
+            document.querySelectorAll('.chart-action').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Create Sankey from MCTS data
+        function createSankeyFromData(data) {
+            const margin = { top: 20, right: 150, bottom: 20, left: 150 };
+            const width = document.getElementById('sankeyChart').offsetWidth - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+            
+            const svg = d3.select("#sankeyChart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            
+            const sankey = d3.sankey()
+                .nodeWidth(25)
+                .nodePadding(15)
+                .nodeAlign(d3.sankeyLeft)
+                .extent([[0, 0], [width, height]]);
+            
+            const graph = sankey(data);
+            
+            // Add gradient definitions
+            const defs = svg.append("defs");
+            
+            // Create gradients for each link
+            graph.links.forEach((link, i) => {
+                const gradient = defs.append("linearGradient")
+                    .attr("id", `gradient-${i}`)
+                    .attr("gradientUnits", "userSpaceOnUse")
+                    .attr("x1", link.source.x1)
+                    .attr("y1", (link.source.y0 + link.source.y1) / 2)
+                    .attr("x2", link.target.x0)
+                    .attr("y2", (link.target.y0 + link.target.y1) / 2);
+                
+                gradient.append("stop")
+                    .attr("offset", "0%")
+                    .attr("stop-color", link.risk ? "#ef4444" : "#10b981")
+                    .attr("stop-opacity", 0.7);
+                    
+                gradient.append("stop")
+                    .attr("offset", "100%")
+                    .attr("stop-color", link.risk ? "#dc2626" : "#059669")
+                    .attr("stop-opacity", 0.3);
+            });
+            
+            // Add links
+            const link = svg.append("g")
+                .selectAll(".link")
+                .data(graph.links)
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", d3.sankeyLinkHorizontal())
+                .attr("stroke", (d, i) => `url(#gradient-${i})`)
+                .attr("stroke-width", d => Math.max(1, d.width))
+                .attr("fill", "none")
+                .attr("opacity", 0.7)
+                .on("mouseover", function(event, d) {
+                    d3.select(this).attr("opacity", 1);
+                })
+                .on("mouseout", function(event, d) {
+                    d3.select(this).attr("opacity", 0.7);
+                });
+            
+            // Add nodes
+            const node = svg.append("g")
+                .selectAll(".node")
+                .data(graph.nodes)
+                .enter().append("g")
+                .attr("class", "node");
+            
+            node.append("rect")
+                .attr("x", d => d.x0)
+                .attr("y", d => d.y0)
+                .attr("height", d => d.y1 - d.y0)
+                .attr("width", d => d.x1 - d.x0)
+                .attr("fill", d => {
+                    if (d.group === "source") return "#1e3a8a";
+                    if (d.group === "product") return "#3b82f6";
+                    if (d.group === "market" && d.risk) return "#ef4444";
+                    if (d.group === "market") return "#10b981";
+                    if (d.group === "mitigation") return "#f59e0b";
+                    return "#6b7280";
+                })
+                .attr("stroke", "#000")
+                .attr("stroke-width", 1);
+            
+            // Add node labels
+            node.append("text")
+                .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                .attr("y", d => (d.y1 + d.y0) / 2)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
+                .text(d => d.name)
+                .style("font-size", "14px")
+                .style("font-weight", "500")
+                .style("fill", "#374151");
+            
+            // Add tooltips
+            link.append("title")
+                .text(d => `${d.source.name} → ${d.target.name}\n$${(d.value / 1000).toFixed(1)}B`);
+                
+            node.append("title")
+                .text(d => `${d.name}\n$${(d.value / 1000).toFixed(1)}B`);
+        }
+        
+        // Create Decision Tree visualization
+        function createDecisionTree(type) {
+            if (!mctsResults) return;
+            
+            const treeEl = document.getElementById('decisionTreeChart');
+            
+            const options = {
+                series: [{
+                    data: generateTreeData(type)
+                }],
+                chart: {
+                    height: 400,
+                    type: 'treemap',
+                    toolbar: { show: false }
+                },
+                colors: ['#1e3a8a', '#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'],
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 600
+                    },
+                    formatter: function(text, op) {
+                        return [text, op.value ? '$' + (op.value / 1000000).toFixed(0) + 'M' : ''];
+                    }
+                },
+                plotOptions: {
+                    treemap: {
+                        distributed: true,
+                        enableShades: false
+                    }
+                }
+            };
+            
+            if (window.decisionTreeChart) {
+                window.decisionTreeChart.destroy();
+            }
+            
+            window.decisionTreeChart = new ApexCharts(treeEl, options);
+            window.decisionTreeChart.render();
+        }
+        
+        // Generate tree data based on type
+        function generateTreeData(type) {
+            const bestPath = mctsResults.bestPath;
+            
+            if (type === 'best') {
+                return bestPath.map(action => ({
+                    x: action.type.replace(/_/g, ' '),
+                    y: action.cost * 1000000
+                }));
+            } else if (type === 'alternatives') {
+                return mctsResults.scenarios.slice(0, 5).map((scenario, i) => ({
+                    x: `Scenario ${i + 1}`,
+                    y: scenario.value
+                }));
+            } else {
+                return Object.entries(mctsResults.riskProbabilities).map(([risk, stats]) => ({
+                    x: risk.replace(/_/g, ' '),
+                    y: stats.mean * 100
+                }));
+            }
+        }
+        
+        // Show Decision Tree
+        function showDecisionTree(type) {
+            const parentEl = document.getElementById('decisionTreeChart').parentElement.parentElement;
+            createDecisionTree(type);
+            
+            // Update button states
+            parentEl.querySelectorAll('.chart-action').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        
+        // Update Sankey filter (modified for MCTS)
+        function updateSankey(filter) {
+            if (filter === 'current') {
+                // Show current state
+                initializeSankey();
+            } else if (['3M', '6M', '12M', '24M'].includes(filter)) {
+                // MCTS time-based projections
+                if (!mctsAnalyzer) {
+                    alert('Please run MCTS simulation first');
+                    return;
+                }
+                updateSankeyWithMCTS(filter);
+            }
+        }
+        
+        // Original Sankey function (renamed)
+        function updateSankeyOriginal(filter) {
+            const sankeyEl = document.getElementById('sankeyChart');
+            if (!sankeyEl) return;
+            
+            // Update button states
+            document.querySelectorAll('.chart-action').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter links based on selection
+            let filteredLinks = window.sankeyData.links;
+            if (filter === 'risk') {
+                filteredLinks = window.sankeyData.links.filter(d => d.risk);
+            } else if (filter === 'safe') {
+                filteredLinks = window.sankeyData.links.filter(d => !d.risk);
+            }
+            
+            // Recreate Sankey with filtered data
+            d3.select("#sankeyChart").selectAll("*").remove();
+            const margin = { top: 20, right: 130, bottom: 20, left: 130 };
+            const width = sankeyEl.offsetWidth - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+            
+            const svg = d3.select("#sankeyChart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            
+            const sankey = d3.sankey()
+                .nodeWidth(20)
+                .nodePadding(10)
+                .extent([[0, 0], [width, height]]);
+                
+            const nodes = window.sankeyData.nodes.map(d => Object.assign({}, d));
+            const links = filteredLinks.map(d => Object.assign({}, d));
+            
+            const graph = sankey({ nodes, links });
+            
+            // Add links
+            const link = svg.append("g")
+                .selectAll(".link")
+                .data(graph.links)
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", d3.sankeyLinkHorizontal())
+                .attr("stroke", d => d.risk ? "#ef4444" : "#10b981")
+                .attr("stroke-width", d => Math.max(1, d.width))
+                .attr("fill", "none")
+                .attr("opacity", 0.5);
+            
+            // Add nodes
+            const node = svg.append("g")
+                .selectAll(".node")
+                .data(graph.nodes)
+                .enter().append("g")
+                .attr("class", "node");
+            
+            node.append("rect")
+                .attr("x", d => d.x0)
+                .attr("y", d => d.y0)
+                .attr("height", d => d.y1 - d.y0)
+                .attr("width", d => d.x1 - d.x0)
+                .attr("fill", d => d.name.includes("risk") ? "#ef4444" : "#3b82f6");
+            
+            node.append("text")
+                .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                .attr("y", d => (d.y1 + d.y0) / 2)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
+                .text(d => d.name)
+                .style("font-size", "12px")
+                .style("fill", "#374151");
+                
+            // Add tooltips
+            link.append("title")
+                .text(d => `${nodes[d.source.index].name} → ${nodes[d.target.index].name}\n$${(d.value / 1000).toFixed(1)}B`);
+        }
+
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            // Initialize charts if needed
+            if (pageId === 'dashboard' || pageId === 'impact' || pageId === 'risk' || pageId === 'timeline') {
+                setTimeout(initializeCharts, 100);
+                
+                // Initialize MCTS on Impact Analysis page
+                if (pageId === 'impact' && !mctsAnalyzer) {
+                    // Auto-run MCTS simulation when Impact Analysis is loaded
+                    setTimeout(runMCTS, 200);
+                }
+            }
+        }
+
+        // Download Report
+        function downloadReport(type) {
+            alert(`Downloading ${type} report...`);
+        }
+
+        // Export Report
+        function exportReport() {
+            alert('Exporting comprehensive report...');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+        });
+    </script>
+</body>
+</html>

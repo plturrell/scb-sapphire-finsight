@@ -28,12 +28,7 @@ import {
   AlertCircle,
   ChevronRight
 } from 'lucide-react';
-import { 
-  mockVietnamTariffAlerts, 
-  vietnamAiPredictions,
-  vietnamTariffTrends,
-  vietnamTradeCorrelations 
-} from '../mock/vietnamTariffData';
+// Real data will be fetched from the API
 import { VietnamMonteCarloHistory } from './VietnamMonteCarloHistory';
 import { VietnamMonteCarloLlmAnalysis } from './VietnamMonteCarloLlmAnalysis';
 
@@ -191,7 +186,8 @@ const VietnamTariffDashboard: React.FC = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {mockVietnamTariffAlerts.slice(0, 3).map((alert) => (
+                        {/* Data will be fetched from API */}
+                  {[].map((alert: any) => (
                           <TableRow key={alert.id}>
                             <TableCell>
                               <Typography variant="body2">{alert.title}</Typography>
@@ -218,7 +214,8 @@ const VietnamTariffDashboard: React.FC = () => {
                   </Typography>
                   
                   <Grid container spacing={2} sx={{ mb: 3 }}>
-                    {vietnamAiPredictions.predictions.slice(0, 3).map((prediction, idx) => (
+                    {/* Predictions will be fetched from API */}
+                  {[].map((prediction: any, idx) => (
                       <Grid item xs={12} sm={6} md={4} key={idx}>
                         <Paper 
                           elevation={0} 

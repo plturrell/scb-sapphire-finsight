@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { Box, Typography } from '@mui/material';
 import CompanySearchBar from './CompanySearchBar';
+import { ThemeToggle } from './ThemeToggle';
+import { BrandingHeader } from './common';
 import {
   LayoutDashboard,
   BarChart3,
@@ -69,9 +72,9 @@ export default function Layout({ children }: LayoutProps) {
   }, [router.pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[rgb(var(--fiori-content-bg))]">
+    <div className="min-h-screen flex flex-col bg-[rgb(var(--fiori-content-bg))] dark:bg-gray-900 transition-colors duration-300">
       {/* SAP Fiori Shell Header - Responsive */}
-      <header className="fiori-shell-header flex items-center px-4 justify-between z-50 h-14 lg:h-12 safe-top">
+      <header className="fiori-shell-header flex items-center px-4 justify-between z-50 h-14 lg:h-12 safe-top dark:bg-gray-800">
         {/* Mobile Menu Button */}
         <button
           onClick={() => setSidebarOpen(true)}
@@ -84,14 +87,9 @@ export default function Layout({ children }: LayoutProps) {
         {/* Branding Area */}
         <div className="flex items-center h-full">
           <Link href="/" className="flex items-center">
-            <Image 
-              src="https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png" 
-              alt="Standard Chartered" 
-              width={150} 
-              height={36} 
-              className="h-7 w-auto lg:h-8" 
-              priority
-            />
+            <div className="h-full flex items-center">
+              <BrandingHeader compact={isMobile} showSapFiori={false} />
+            </div>
           </Link>
         </div>
 
@@ -100,6 +98,11 @@ export default function Layout({ children }: LayoutProps) {
           {/* Company Search Bar - Hidden on mobile */}
           <div className="hidden lg:block flex-1 max-w-2xl mx-4">
             <CompanySearchBar />
+          </div>
+          
+          {/* Theme Toggle - Desktop only */}
+          <div className="hidden lg:block">
+            <ThemeToggle />
           </div>
           
           {/* App Finder - Desktop only */}
@@ -232,15 +235,20 @@ export default function Layout({ children }: LayoutProps) {
           <div className="fixed inset-0 z-50 lg:hidden" aria-modal="true">
             <div className="fixed inset-0 bg-gray-900/50" onClick={() => setSidebarOpen(false)} />
             
-            <div className="fixed inset-y-0 left-0 w-full max-w-xs bg-white animate-slide-in">
-              <div className="flex items-center justify-between h-14 px-4 border-b">
-                <span className="text-base font-medium text-gray-800">FinSight</span>
+            <div className="fixed inset-y-0 left-0 w-full max-w-xs bg-white dark:bg-gray-800 dark:text-white animate-slide-in">
+              <div className="flex items-center justify-between h-14 px-4 border-b dark:border-gray-700">
+                <div className="flex-1">
+                  <BrandingHeader compact={true} showSapFiori={true} />
+                </div>
                 <button
                   onClick={() => setSidebarOpen(false)}
-                  className="p-2 -mr-2 text-gray-500 hover:text-gray-900 touch-manipulation"
+                  className="p-2 -mr-2 text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white touch-manipulation"
                 >
                   <X className="w-6 h-6" />
                 </button>
+              </div>
+              <div className="px-4 pt-4">
+                <ThemeToggle />
               </div>
               <nav className="flex-1 overflow-y-auto py-4 px-4">
                 {navigation.map((item) => {
@@ -267,10 +275,10 @@ export default function Layout({ children }: LayoutProps) {
         )}
 
         {/* Desktop Sidebar */}
-        <div className="hidden lg:block w-64 fiori-sidebar">
+        <div className="hidden lg:block w-64 fiori-sidebar dark:bg-gray-800 dark:border-gray-700">
           <div className="h-full flex flex-col">
-            <div className="h-12 px-4 border-b flex items-center">
-              <span className="text-sm font-medium text-gray-800">FinSight Spaces</span>
+            <div className="h-12 px-4 border-b dark:border-gray-700 flex items-center">
+              <span className="text-sm font-medium text-gray-800 dark:text-white">FinSight Spaces</span>
             </div>
             <nav className="flex-1 overflow-y-auto py-2">
               {navigation.map((item) => {
@@ -293,9 +301,9 @@ export default function Layout({ children }: LayoutProps) {
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Page Header - Desktop only */}
-          <div className="hidden lg:flex h-12 bg-white border-b px-6 items-center justify-between shadow-sm">
+          <div className="hidden lg:flex h-12 bg-white dark:bg-gray-800 border-b dark:border-gray-700 px-6 items-center justify-between shadow-sm">
             <div className="flex items-center space-x-2">
-              <h1 className="text-base font-medium text-gray-800">
+              <h1 className="text-base font-medium text-gray-800 dark:text-white">
                 {navigation.find(item => item.href === router.pathname)?.name || 'FinSight'}
               </h1>
             </div>
@@ -313,8 +321,8 @@ export default function Layout({ children }: LayoutProps) {
           </div>
 
           {/* SAP Fiori Page Content - Responsive padding */}
-          <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[rgb(var(--fiori-content-bg))] pb-20 lg:pb-6">
-            <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-[rgb(var(--scb-border))]">
+          <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[rgb(var(--fiori-content-bg))] dark:bg-gray-900 pb-20 lg:pb-6">
+            <div className="bg-white dark:bg-gray-800 p-4 lg:p-6 rounded-lg shadow-sm border border-[rgb(var(--scb-border))] dark:border-gray-700">
               {children}
             </div>
           </main>
@@ -322,7 +330,7 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 safe-bottom">
         <div className="grid grid-cols-4 gap-1">
           {mobileNav.map((item) => {
             const isActive = router.pathname === item.href;

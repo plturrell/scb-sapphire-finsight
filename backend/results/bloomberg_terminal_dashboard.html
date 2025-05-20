@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASPIRE TERMINAL | TARIFF IMPACT MONITOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #141414;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-dim: #555555;
+            --accent-green: #00ff00;
+            --accent-red: #ff0000;
+            --accent-amber: #ffaa00;
+            --accent-cyan: #00ffff;
+            --accent-blue: #4080ff;
+            --border-color: #222222;
+            --header-bg: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'IBM Plex Mono', 'Roboto Mono', monospace;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 11px;
+            line-height: 1.4;
+            overflow: hidden;
+        }
+        
+        /* Terminal Header */
+        .terminal-header {
+            background: var(--header-bg);
+            height: 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .terminal-logo {
+            color: var(--accent-amber);
+            font-weight: 700;
+            font-size: 14px;
+            margin-right: 20px;
+        }
+        
+        .terminal-nav {
+            display: flex;
+            gap: 1px;
+            flex-grow: 1;
+        }
+        
+        .terminal-tab {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 10px;
+            font-weight: 600;
+            transition: all 0.1s;
+            position: relative;
+        }
+        
+        .terminal-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+        
+        .terminal-tab.active {
+            color: var(--accent-amber);
+            background: var(--bg-primary);
+            border-bottom-color: var(--bg-primary);
+        }
+        
+        .terminal-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-amber);
+        }
+        
+        .terminal-time {
+            color: var(--accent-cyan);
+            font-size: 11px;
+            margin-left: auto;
+            font-weight: 600;
+        }
+        
+        /* Main Layout */
+        .terminal-container {
+            position: absolute;
+            top: 32px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: 120px 1fr 1fr 1fr;
+            gap: 1px;
+            background: var(--border-color);
+            padding: 1px;
+        }
+        
+        .terminal-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .panel-header {
+            background: var(--bg-secondary);
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-header-title {
+            color: var(--accent-amber);
+        }
+        
+        .panel-content {
+            padding: 6px;
+            height: calc(100% - 24px);
+            overflow: auto;
+        }
+        
+        /* Key Metrics */
+        .key-metrics {
+            grid-column: span 4;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            padding: 1px;
+        }
+        
+        .metric-box {
+            background: var(--bg-secondary);
+            padding: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 9px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .metric-value.green {
+            color: var(--accent-green);
+        }
+        
+        .metric-value.red {
+            color: var(--accent-red);
+        }
+        
+        .metric-value.amber {
+            color: var(--accent-amber);
+        }
+        
+        .metric-change {
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+        
+        .metric-change.positive {
+            color: var(--accent-green);
+        }
+        
+        .metric-change.negative {
+            color: var(--accent-red);
+        }
+        
+        /* Market Depth */
+        .market-depth {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+        
+        .depth-table {
+            width: 100%;
+            font-size: 10px;
+        }
+        
+        .depth-table th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            padding: 4px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .depth-table td {
+            padding: 2px 4px;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+        
+        .depth-table .bid {
+            color: var(--accent-green);
+        }
+        
+        .depth-table .ask {
+            color: var(--accent-red);
+        }
+        
+        /* Sankey Chart */
+        .sankey-panel {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+        
+        /* Data Grid */
+        .data-grid {
+            width: 100%;
+            font-size: 10px;
+        }
+        
+        .data-grid th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            padding: 4px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+        }
+        
+        .data-grid td {
+            padding: 2px 4px;
+            border-bottom: 1px solid var(--bg-secondary);
+        }
+        
+        .data-grid tr:hover {
+            background: var(--bg-secondary);
+        }
+        
+        /* Charts */
+        .chart-container {
+            height: 100%;
+            position: relative;
+        }
+        
+        /* Terminal Input */
+        .terminal-input {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .terminal-prompt {
+            color: var(--accent-green);
+            margin-right: 8px;
+            font-weight: 600;
+        }
+        
+        .terminal-command {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 11px;
+            flex-grow: 1;
+            outline: none;
+        }
+        
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        
+        .status-indicator.live {
+            background: var(--accent-green);
+            animation: pulse-green 2s infinite;
+        }
+        
+        .status-indicator.warning {
+            background: var(--accent-amber);
+            animation: pulse-amber 2s infinite;
+        }
+        
+        .status-indicator.error {
+            background: var(--accent-red);
+            animation: pulse-red 2s infinite;
+        }
+        
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-green); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 2px var(--accent-green); }
+        }
+        
+        @keyframes pulse-amber {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-amber); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 2px var(--accent-amber); }
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-red); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 2px var(--accent-red); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-dim);
+        }
+        
+        /* Flashing Values */
+        .flash {
+            animation: flash 0.5s;
+        }
+        
+        @keyframes flash {
+            0%, 100% { background: transparent; }
+            50% { background: var(--accent-amber); color: var(--bg-primary); }
+        }
+        
+        /* Mini Charts */
+        .mini-chart {
+            height: 40px;
+            width: 100%;
+            margin-top: 4px;
+        }
+        
+        /* Heat Map */
+        .heat-map-cell {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 1px;
+            position: relative;
+        }
+        
+        .heat-map-cell::after {
+            content: attr(data-value);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-header">
+        <div class="terminal-logo">ASPIRE TERMINAL</div>
+        <div class="terminal-nav">
+            <div class="terminal-tab active" onclick="showScreen('TARIFF')">TARIFF</div>
+            <div class="terminal-tab" onclick="showScreen('TRADE')">TRADE</div>
+            <div class="terminal-tab" onclick="showScreen('RISK')">RISK</div>
+            <div class="terminal-tab" onclick="showScreen('FLOW')">FLOW</div>
+            <div class="terminal-tab" onclick="showScreen('ALERT')">ALERT</div>
+            <div class="terminal-tab" onclick="showScreen('NEWS')">NEWS</div>
+        </div>
+        <div class="terminal-time" id="terminalTime">17:42:33 EST</div>
+    </div>
+
+    <div class="terminal-container">
+        <!-- Key Metrics Bar -->
+        <div class="terminal-panel key-metrics">
+            <div class="metric-box">
+                <div class="metric-label">REV@RISK</div>
+                <div class="metric-value red">$21.0B</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-caret-down"></i>
+                    <span>-2.3%</span>
+                </div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">TARIFF IMP</div>
+                <div class="metric-value amber">$9.87B</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-caret-up"></i>
+                    <span>+1.2%</span>
+                </div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">RISK SCR</div>
+                <div class="metric-value red">87/100</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-caret-up"></i>
+                    <span>+15</span>
+                </div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">US EXPO</div>
+                <div class="metric-value amber">45%</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-caret-up"></i>
+                    <span>+5.2%</span>
+                </div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">VND/USD</div>
+                <div class="metric-value green">23,485</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-caret-down"></i>
+                    <span>-0.12%</span>
+                </div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">VOL INDEX</div>
+                <div class="metric-value amber">24.7</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-caret-up"></i>
+                    <span>+3.4</span>
+                </div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">TRADE BAL</div>
+                <div class="metric-value green">$80B</div>
+                <div class="metric-change positive">
+                    <i class="fas fa-caret-up"></i>
+                    <span>+8.1%</span>
+                </div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">STATUS</div>
+                <div class="metric-value green">LIVE</div>
+                <div class="metric-change">
+                    <span class="status-indicator live"></span>
+                    <span>JENA</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Depth -->
+        <div class="terminal-panel market-depth">
+            <div class="panel-header">
+                <span class="panel-header-title">MARKET DEPTH</span>
+                <span>SAMSUNG ELECTRONICS VIETNAM</span>
+            </div>
+            <div class="panel-content">
+                <table class="depth-table">
+                    <thead>
+                        <tr>
+                            <th>SIZE</th>
+                            <th>BID</th>
+                            <th>ASK</th>
+                            <th>SIZE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marketDepth">
+                        <tr>
+                            <td>1,200</td>
+                            <td class="bid">47.85</td>
+                            <td class="ask">47.92</td>
+                            <td>850</td>
+                        </tr>
+                        <tr>
+                            <td>2,300</td>
+                            <td class="bid">47.84</td>
+                            <td class="ask">47.93</td>
+                            <td>1,100</td>
+                        </tr>
+                        <tr>
+                            <td>3,500</td>
+                            <td class="bid">47.83</td>
+                            <td class="ask">47.94</td>
+                            <td>2,200</td>
+                        </tr>
+                        <tr>
+                            <td>1,800</td>
+                            <td class="bid">47.82</td>
+                            <td class="ask">47.95</td>
+                            <td>1,500</td>
+                        </tr>
+                        <tr>
+                            <td>2,700</td>
+                            <td class="bid">47.81</td>
+                            <td class="ask">47.96</td>
+                            <td>3,100</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mini-chart" id="depthChart"></div>
+            </div>
+        </div>
+
+        <!-- Trade Flow Sankey -->
+        <div class="terminal-panel sankey-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">TRADE FLOW ANALYSIS</span>
+                <span>
+                    <select id="flowFilter" style="background: #000; color: #888; border: 1px solid #222; font-size: 10px;">
+                        <option value="all">ALL FLOWS</option>
+                        <option value="risk">AT RISK</option>
+                        <option value="safe">SAFE</option>
+                    </select>
+                </span>
+            </div>
+            <div class="panel-content">
+                <div id="sankeyChart" style="height: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Risk Matrix -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">RISK MATRIX</span>
+                <span>LIVE UPDATE</span>
+            </div>
+            <div class="panel-content">
+                <div id="riskMatrix"></div>
+            </div>
+        </div>
+
+        <!-- Price Action -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">PRICE ACTION</span>
+                <span>15MIN</span>
+            </div>
+            <div class="panel-content">
+                <canvas id="priceChart" style="width: 100%; height: 100%;"></canvas>
+            </div>
+        </div>
+
+        <!-- Order Book -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">ORDER BOOK</span>
+                <span>LEVEL II</span>
+            </div>
+            <div class="panel-content">
+                <table class="data-grid">
+                    <thead>
+                        <tr>
+                            <th>TIME</th>
+                            <th>SIDE</th>
+                            <th>SIZE</th>
+                            <th>PRICE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderBook">
+                        <tr>
+                            <td>17:42:31</td>
+                            <td style="color: #00ff00;">BUY</td>
+                            <td>5,000</td>
+                            <td>47.83</td>
+                        </tr>
+                        <tr>
+                            <td>17:42:28</td>
+                            <td style="color: #ff0000;">SELL</td>
+                            <td>3,200</td>
+                            <td>47.91</td>
+                        </tr>
+                        <tr>
+                            <td>17:42:24</td>
+                            <td style="color: #00ff00;">BUY</td>
+                            <td>1,500</td>
+                            <td>47.82</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- News Feed -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">NEWS FEED</span>
+                <span>REUTERS</span>
+            </div>
+            <div class="panel-content">
+                <div style="margin-bottom: 8px;">
+                    <div style="color: #ffaa00; font-size: 10px;">17:41:02</div>
+                    <div style="color: #fff; font-size: 11px;">US TRADE REP: VIETNAM TARIFF REVIEW ONGOING</div>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <div style="color: #ffaa00; font-size: 10px;">17:38:45</div>
+                    <div style="color: #fff; font-size: 11px;">SAMSUNG: Q2 EXPORTS TO US $5.3B, UP 12% YOY</div>
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <div style="color: #ffaa00; font-size: 10px;">17:35:12</div>
+                    <div style="color: #fff; font-size: 11px;">MOODY'S: VN TRADE SURPLUS REMAINS STRONG</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sector Heat Map -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">SECTOR HEAT MAP</span>
+                <span>IMPACT %</span>
+            </div>
+            <div class="panel-content" id="heatMap">
+                <!-- Heat map will be generated here -->
+            </div>
+        </div>
+
+        <!-- Trade Analytics -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">TRADE ANALYTICS</span>
+                <span>YTD</span>
+            </div>
+            <div class="panel-content">
+                <table class="data-grid">
+                    <thead>
+                        <tr>
+                            <th>METRIC</th>
+                            <th>VALUE</th>
+                            <th>CHG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TOTAL EXPORTS</td>
+                            <td>$47.0B</td>
+                            <td style="color: #00ff00;">+12.3%</td>
+                        </tr>
+                        <tr>
+                            <td>US EXPORTS</td>
+                            <td>$21.0B</td>
+                            <td style="color: #00ff00;">+8.7%</td>
+                        </tr>
+                        <tr>
+                            <td>MARGIN</td>
+                            <td>18.5%</td>
+                            <td style="color: #ff0000;">-2.1%</td>
+                        </tr>
+                        <tr>
+                            <td>EMPLOYEES</td>
+                            <td>110K</td>
+                            <td style="color: #00ff00;">+3.2%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Command History -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span class="panel-header-title">COMMAND HISTORY</span>
+                <span>LAST 10</span>
+            </div>
+            <div class="panel-content" style="font-family: 'Courier New', monospace; font-size: 10px;">
+                <div style="margin-bottom: 4px;">
+                    <span style="color: #00ff00;">></span> 
+                    <span style="color: #888;">LOAD SAMSUNG_VN_ANALYSIS</span>
+                </div>
+                <div style="margin-bottom: 4px;">
+                    <span style="color: #00ff00;">></span> 
+                    <span style="color: #888;">SET TARIFF_RATE 25%</span>
+                </div>
+                <div style="margin-bottom: 4px;">
+                    <span style="color: #00ff00;">></span> 
+                    <span style="color: #888;">RUN IMPACT_CALC</span>
+                </div>
+                <div style="margin-bottom: 4px;">
+                    <span style="color: #00ff00;">></span> 
+                    <span style="color: #888;">SHOW FLOW_DIAGRAM</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal-input">
+        <span class="terminal-prompt">ASPIRE></span>
+        <input type="text" class="terminal-command" id="terminalCommand" placeholder="Enter command..." />
+    </div>
+
+    <script>
+        // Real-time clock
+        function updateClock() {
+            const now = new Date();
+            const time = now.toTimeString().split(' ')[0] + ' EST';
+            document.getElementById('terminalTime').textContent = time;
+        }
+        setInterval(updateClock, 1000);
+
+        // Initialize Sankey
+        function initializeSankey() {
+            const sankeyEl = document.getElementById('sankeyChart');
+            if (!sankeyEl) return;
+            
+            d3.select(sankeyEl).selectAll("*").remove();
+            
+            const margin = { top: 10, right: 10, bottom: 10, left: 10 };
+            const width = sankeyEl.offsetWidth - margin.left - margin.right;
+            const height = sankeyEl.offsetHeight - margin.top - margin.bottom;
+            
+            const svg = d3.select(sankeyEl)
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            
+            // Data
+            const nodes = [
+                { name: "SAMSUNG VN" },
+                { name: "ELECTRONICS" },
+                { name: "COMPONENTS" },
+                { name: "DISPLAYS" },
+                { name: "US (RISK)" },
+                { name: "CHINA" },
+                { name: "EU" },
+                { name: "OTHERS" }
+            ];
+            
+            const links = [
+                { source: 0, target: 1, value: 22400 },
+                { source: 0, target: 2, value: 11600 },
+                { source: 0, target: 3, value: 5480 },
+                { source: 1, target: 4, value: 5600, risk: true },
+                { source: 1, target: 5, value: 6720 },
+                { source: 1, target: 6, value: 5600 },
+                { source: 1, target: 7, value: 4480 },
+                { source: 2, target: 4, value: 2900, risk: true },
+                { source: 2, target: 5, value: 3480 },
+                { source: 2, target: 6, value: 2900 },
+                { source: 2, target: 7, value: 2320 },
+                { source: 3, target: 4, value: 1370, risk: true },
+                { source: 3, target: 5, value: 1644 },
+                { source: 3, target: 6, value: 1370 },
+                { source: 3, target: 7, value: 1096 }
+            ];
+            
+            const sankey = d3.sankey()
+                .nodeWidth(15)
+                .nodePadding(10)
+                .extent([[0, 0], [width, height]]);
+            
+            const { nodes: graphNodes, links: graphLinks } = sankey({
+                nodes: nodes.map(d => Object.assign({}, d)),
+                links: links.map(d => Object.assign({}, d))
+            });
+            
+            // Links
+            svg.append("g")
+                .selectAll(".link")
+                .data(graphLinks)
+                .enter().append("path")
+                .attr("class", "link")
+                .attr("d", d3.sankeyLinkHorizontal())
+                .attr("stroke", d => d.risk ? "#ff0000" : "#00ff00")
+                .attr("stroke-width", d => Math.max(1, d.width))
+                .attr("fill", "none")
+                .attr("opacity", 0.3);
+            
+            // Nodes
+            const node = svg.append("g")
+                .selectAll(".node")
+                .data(graphNodes)
+                .enter().append("g")
+                .attr("class", "node");
+            
+            node.append("rect")
+                .attr("x", d => d.x0)
+                .attr("y", d => d.y0)
+                .attr("height", d => d.y1 - d.y0)
+                .attr("width", d => d.x1 - d.x0)
+                .attr("fill", d => d.name.includes("RISK") ? "#ff0000" : "#00ff00")
+                .attr("opacity", 0.8);
+            
+            node.append("text")
+                .attr("x", d => d.x0 - 6)
+                .attr("y", d => (d.y1 + d.y0) / 2)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", "end")
+                .text(d => d.name)
+                .style("font-size", "9px")
+                .style("fill", "#ffffff")
+                .filter(d => d.x0 < width / 2)
+                .attr("x", d => d.x1 + 6)
+                .attr("text-anchor", "start");
+        }
+
+        // Initialize Price Chart
+        function initializePriceChart() {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            // Generate candlestick data
+            const data = [];
+            let price = 47.5;
+            
+            for (let i = 0; i < 30; i++) {
+                const open = price;
+                const change = (Math.random() - 0.5) * 0.3;
+                price = price + change;
+                const close = price;
+                const high = Math.max(open, close) + Math.random() * 0.1;
+                const low = Math.min(open, close) - Math.random() * 0.1;
+                
+                data.push({
+                    x: new Date(Date.now() - (30 - i) * 15 * 60000),
+                    o: open,
+                    h: high,
+                    l: low,
+                    c: close
+                });
+            }
+            
+            new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    datasets: [{
+                        label: 'SAMSUNG VN',
+                        data: data,
+                        borderColor: '#00ff00',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            grid: { color: '#222' },
+                            ticks: { color: '#888' }
+                        },
+                        y: {
+                            grid: { color: '#222' },
+                            ticks: { color: '#888' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize Risk Matrix
+        function initializeRiskMatrix() {
+            const container = document.getElementById('riskMatrix');
+            const risks = [
+                { name: 'REGULATORY', probability: 9, impact: 9 },
+                { name: 'MARKET', probability: 7, impact: 6 },
+                { name: 'OPERATIONAL', probability: 4, impact: 5 },
+                { name: 'FINANCIAL', probability: 5, impact: 6 },
+                { name: 'GEOPOLITICAL', probability: 8, impact: 8 }
+            ];
+            
+            const matrix = document.createElement('div');
+            matrix.style.display = 'grid';
+            matrix.style.gridTemplateColumns = 'repeat(10, 1fr)';
+            matrix.style.gridTemplateRows = 'repeat(10, 1fr)';
+            matrix.style.gap = '2px';
+            matrix.style.height = '200px';
+            
+            // Create grid
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.style.background = '#0a0a0a';
+                cell.style.border = '1px solid #222';
+                matrix.appendChild(cell);
+            }
+            
+            // Place risks
+            risks.forEach(risk => {
+                const index = (9 - risk.impact) * 10 + risk.probability;
+                const cell = matrix.children[index];
+                const intensity = (risk.probability * risk.impact) / 81;
+                cell.style.background = `rgba(255, 0, 0, ${intensity})`;
+                cell.title = `${risk.name}\nP: ${risk.probability} I: ${risk.impact}`;
+            });
+            
+            container.appendChild(matrix);
+            
+            // Add labels
+            const label = document.createElement('div');
+            label.style.marginTop = '10px';
+            label.style.fontSize = '9px';
+            label.style.color = '#888';
+            label.innerHTML = 'PROBABILITY → | IMPACT ↑';
+            container.appendChild(label);
+        }
+
+        // Initialize Heat Map
+        function initializeHeatMap() {
+            const container = document.getElementById('heatMap');
+            const sectors = [
+                { name: 'ELECTRONICS', impact: 25 },
+                { name: 'SEMICON', impact: 25 },
+                { name: 'DISPLAY', impact: 25 },
+                { name: 'TELECOM', impact: 15 },
+                { name: 'APPLIANCE', impact: 10 },
+                { name: 'BATTERY', impact: 20 },
+                { name: 'MEMORY', impact: 25 },
+                { name: 'SENSOR', impact: 18 }
+            ];
+            
+            sectors.forEach(sector => {
+                const cell = document.createElement('div');
+                cell.className = 'heat-map-cell';
+                cell.style.background = `rgba(255, 0, 0, ${sector.impact / 25})`;
+                cell.setAttribute('data-value', sector.impact + '%');
+                cell.title = `${sector.name}: ${sector.impact}% impact`;
+                container.appendChild(cell);
+            });
+        }
+
+        // Market Depth Updates
+        function updateMarketDepth() {
+            const tbody = document.getElementById('marketDepth');
+            const rows = tbody.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const cells = row.getElementsByTagName('td');
+                
+                // Random updates
+                if (Math.random() > 0.7) {
+                    cells[0].textContent = Math.floor(Math.random() * 5000 + 500);
+                    cells[3].textContent = Math.floor(Math.random() * 5000 + 500);
+                    row.classList.add('flash');
+                    setTimeout(() => row.classList.remove('flash'), 500);
+                }
+            }
+        }
+
+        // Order Book Updates
+        function updateOrderBook() {
+            const tbody = document.getElementById('orderBook');
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            
+            const newOrder = document.createElement('tr');
+            const side = Math.random() > 0.5 ? 'BUY' : 'SELL';
+            const color = side === 'BUY' ? '#00ff00' : '#ff0000';
+            
+            newOrder.innerHTML = `
+                <td>${timeStr}</td>
+                <td style="color: ${color};">${side}</td>
+                <td>${Math.floor(Math.random() * 10000 + 100)}</td>
+                <td>${(47.8 + Math.random() * 0.2).toFixed(2)}</td>
+            `;
+            
+            tbody.insertBefore(newOrder, tbody.firstChild);
+            
+            if (tbody.children.length > 20) {
+                tbody.removeChild(tbody.lastChild);
+            }
+        }
+
+        // Terminal Commands
+        document.getElementById('terminalCommand').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const command = this.value.toUpperCase();
+                console.log('Command:', command);
+                
+                // Process commands
+                if (command === 'REFRESH') {
+                    location.reload();
+                } else if (command === 'HELP') {
+                    alert('Commands: REFRESH, HELP, CLEAR, EXPORT');
+                }
+                
+                this.value = '';
+            }
+        });
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSankey();
+            initializeRiskMatrix();
+            initializeHeatMap();
+            
+            // Start real-time updates
+            setInterval(updateMarketDepth, 2000);
+            setInterval(updateOrderBook, 3000);
+            
+            // Initialize charts (requires Chart.js financial plugin)
+            try {
+                initializePriceChart();
+            } catch (e) {
+                console.log('Price chart requires financial plugin');
+            }
+        });
+
+        // Screen switching
+        function showScreen(screen) {
+            document.querySelectorAll('.terminal-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            console.log('Switching to screen:', screen);
+        }
+    </script>
+</body>
+</html>

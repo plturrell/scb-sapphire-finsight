@@ -1,11 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
-  Search, 
   Building2, 
   TrendingUp, 
-  Loader,
   Brain,
-  Sparkles,
   FileText,
   Globe,
   AlertCircle
@@ -13,6 +10,7 @@ import {
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { searchWithPerplexity, searchCompanies, getFinancialInsights } from '@/lib/perplexity-api';
+import { SearchIcon, SparklesIcon, LoadingIcon, AlertIcon } from './icons';
 
 // Debounce function
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
@@ -132,7 +130,7 @@ export default function PerplexitySearchBar() {
             type: 'general',
             title: 'AI Summary',
             description: generalResults.summary,
-            icon: Sparkles,
+            icon: () => <span className="text-yellow-500">✨</span>,
             confidence: 1.0
           });
         }
@@ -205,6 +203,18 @@ export default function PerplexitySearchBar() {
   };
 
   const getResultIcon = (result: SearchResult) => {
+    if (result.type === 'insight') {
+      return <SparklesIcon className="w-5 h-5 flex-shrink-0" animation="pulse" color="#9333ea" />;
+    }
+    
+    if (result.type === 'general' && result.title === 'AI Summary') {
+      return <SparklesIcon className="w-5 h-5 flex-shrink-0" animation="pulse" color="#9333ea" />;
+    }
+    
+    if (result.type === 'general' && result.title === 'Search Error') {
+      return <AlertIcon variant="alert" className="w-5 h-5 flex-shrink-0" animation="pulse" color="#ef4444" />;
+    }
+    
     const Icon = result.icon || Globe;
     return <Icon className="w-5 h-5 flex-shrink-0" />;
   };
@@ -214,7 +224,12 @@ export default function PerplexitySearchBar() {
       {/* Search Input */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <SearchIcon 
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+            animation="none"
+            hoverAnimation={false}
+          />
           <input
             ref={inputRef}
             type="text"
@@ -239,11 +254,11 @@ export default function PerplexitySearchBar() {
             </select>
             
             {isLoading ? (
-              <Loader className="w-5 h-5 text-purple-500 animate-spin" />
+              <LoadingIcon variant="spinner" className="w-5 h-5 text-purple-500" animation="spin" />
             ) : error ? (
-              <AlertCircle className="w-5 h-5 text-red-500" />
+              <AlertIcon variant="alert" className="w-5 h-5 text-red-500" animation="pulse" />
             ) : (
-              <Brain className="w-5 h-5 text-purple-500" />
+              <SparklesIcon className="w-5 h-5 text-purple-500" animation="pulse" />
             )}
           </div>
         </div>
@@ -263,7 +278,7 @@ export default function PerplexitySearchBar() {
       {error && searchQuery.length > 0 && (
         <div className="absolute top-full mt-1 w-full p-3 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+            <AlertIcon variant="alert" className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" animation="pulse" />
             <div>
               <p className="text-sm text-red-800 mb-1">Search service is temporarily unavailable.</p>
               <button 
@@ -284,7 +299,7 @@ export default function PerplexitySearchBar() {
       {aiInsight && showResults && !error && (
         <div className="absolute top-full mt-1 w-full p-3 bg-purple-50 border border-purple-200 rounded-lg">
           <div className="flex items-start gap-2">
-            <Sparkles className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+            <SparklesIcon className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" animation="pulse" />
             <p className="text-sm text-purple-900">{aiInsight}</p>
           </div>
         </div>

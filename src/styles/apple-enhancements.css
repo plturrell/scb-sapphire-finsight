@@ -1,0 +1,321 @@
+/**
+ * Apple Design System Enhancements
+ * 
+ * Applies premium Apple-like styling to upgrade the UI quality
+ * for both desktop and mobile experiences.
+ */
+
+:root {
+  /* Apple SF Pro Typography */
+  --apple-font-thin: 200;
+  --apple-font-light: 300;
+  --apple-font-regular: 400;
+  --apple-font-medium: 500;
+  --apple-font-semibold: 600;
+  --apple-font-bold: 700;
+  
+  /* Apple Colors */
+  --apple-blue: rgba(0, 122, 255, 1);
+  --apple-green: rgba(52, 199, 89, 1);
+  --apple-indigo: rgba(88, 86, 214, 1);
+  --apple-orange: rgba(255, 149, 0, 1);
+  --apple-pink: rgba(255, 45, 85, 1);
+  --apple-purple: rgba(175, 82, 222, 1);
+  --apple-red: rgba(255, 59, 48, 1);
+  --apple-teal: rgba(90, 200, 250, 1);
+  --apple-yellow: rgba(255, 204, 0, 1);
+  
+  /* Grays */
+  --apple-gray-50: rgba(249, 249, 254, 1);
+  --apple-gray-100: rgba(242, 242, 247, 1);
+  --apple-gray-200: rgba(229, 229, 234, 1);
+  --apple-gray-300: rgba(209, 209, 214, 1);
+  --apple-gray-400: rgba(199, 199, 204, 1);
+  --apple-gray-500: rgba(174, 174, 178, 1);
+  --apple-gray-600: rgba(142, 142, 147, 1);
+  --apple-gray-700: rgba(99, 99, 102, 1);
+  --apple-gray-800: rgba(72, 72, 74, 1);
+  --apple-gray-900: rgba(44, 44, 46, 1);
+  
+  /* Shadows */
+  --apple-shadow-light: rgba(0, 0, 0, 0.03);
+  --apple-shadow-medium: rgba(0, 0, 0, 0.05);
+  --apple-shadow-dark: rgba(0, 0, 0, 0.1);
+  
+  /* Border Radius */
+  --apple-radius-sm: 6px;
+  --apple-radius-md: 8px;
+  --apple-radius-lg: 12px;
+  --apple-radius-xl: 16px;
+  
+  /* Transitions */
+  --apple-transition-fast: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --apple-transition-medium: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --apple-transition-slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --apple-transition-spring: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Apply Apple-like font rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Enhanced body styling */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: -0.011em;
+  background-color: var(--apple-gray-50);
+}
+
+/* Enhanced Card Styling */
+.card,
+.MuiPaper-root,
+.MuiCard-root {
+  border-radius: var(--apple-radius-md);
+  box-shadow: 0 2px 10px var(--apple-shadow-medium);
+  border: 0.5px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(30px);
+  transition: var(--apple-transition-medium);
+}
+
+.card:hover,
+.MuiPaper-root:hover,
+.MuiCard-root:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--apple-shadow-medium);
+}
+
+/* Enhanced Button Styling */
+button,
+.MuiButton-root,
+.btn {
+  font-weight: var(--apple-font-medium);
+  border-radius: var(--apple-radius-md);
+  letter-spacing: -0.01em;
+  transition: var(--apple-transition-fast);
+}
+
+/* Glass effect for panels */
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--apple-radius-lg);
+}
+
+/* Apple-style inputs */
+input,
+.MuiTextField-root .MuiInputBase-root,
+.MuiOutlinedInput-root {
+  border-radius: var(--apple-radius-md);
+  border: 0.5px solid var(--apple-gray-300);
+  transition: var(--apple-transition-fast);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+input:focus,
+.MuiTextField-root .MuiInputBase-root:focus-within,
+.MuiOutlinedInput-root:focus-within {
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+}
+
+/* Enhanced typography */
+h1, h2, h3, h4, h5, h6,
+.MuiTypography-h1, .MuiTypography-h2, .MuiTypography-h3,
+.MuiTypography-h4, .MuiTypography-h5, .MuiTypography-h6 {
+  font-weight: var(--apple-font-semibold);
+  letter-spacing: -0.024em;
+  line-height: 1.15;
+}
+
+p, .MuiTypography-body1, .MuiTypography-body2 {
+  letter-spacing: -0.011em;
+  line-height: 1.5;
+}
+
+/* Apple-style navigation */
+.MuiAppBar-root,
+.fiori-shell-header,
+header {
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+}
+
+/* BrandingHeader enhancement */
+.branding-header {
+  transition: var(--apple-transition-spring);
+}
+
+.branding-header:hover {
+  transform: scale(1.01);
+}
+
+/* Mobile enhancements */
+@media (max-width: 768px) {
+  /* Increase tap targets on mobile */
+  button,
+  .MuiButton-root,
+  .btn,
+  .MuiListItem-root,
+  .fiori-sidebar-item {
+    min-height: 48px;
+    padding: 12px;
+  }
+  
+  /* Apple-style bottom navigation */
+  nav.mobile-nav {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border-top: 0.5px solid var(--apple-gray-200);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+  }
+  
+  /* Mobile card styling */
+  .card,
+  .MuiPaper-root,
+  .MuiCard-root {
+    margin-bottom: 16px;
+    border-radius: var(--apple-radius-lg);
+  }
+  
+  /* Better scrolling */
+  .overflow-auto,
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Dynamic island style notifications */
+  .notification {
+    border-radius: 24px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    animation: island-expand 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  @keyframes island-expand {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+}
+
+/* Ultra-thin borders */
+.thin-border {
+  border-width: 0.5px !important;
+}
+
+.thin-border-bottom {
+  border-bottom-width: 0.5px !important;
+}
+
+/* Premium transition effects */
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Enhanced loading animations */
+.loading-skeleton {
+  background: linear-gradient(90deg, var(--apple-gray-200) 0%, var(--apple-gray-100) 50%, var(--apple-gray-200) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Scroll enhancements */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Joule assistant enhancements */
+.ai-assistant-message {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--apple-radius-lg);
+  border: 0.5px solid var(--apple-gray-200);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.ai-control-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 0.5px solid var(--apple-gray-200);
+  transition: all 0.2s ease;
+}
+
+.ai-control-btn:hover {
+  background-color: var(--apple-gray-100);
+  transform: scale(1.05);
+}
+
+/* Splash screen enhancements */
+.splash-logo {
+  animation: pulsate 2s infinite alternate ease-in-out;
+}
+
+@keyframes pulsate {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.03); }
+}
+
+/* Safari-style scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--apple-gray-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--apple-gray-400);
+}
+
+/* Polished SCB branding elements */
+.scb-logo {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: filter 0.3s ease;
+}
+
+.scb-logo:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.sap-fiori-badge {
+  box-shadow: 0 2px 6px rgba(10, 110, 209, 0.1);
+  transform-origin: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sap-fiori-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(10, 110, 209, 0.15);
+}

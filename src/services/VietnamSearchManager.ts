@@ -1,12 +1,11 @@
 import { SearchManager } from './SearchManager';
 import { OntologyManager } from './OntologyManager';
 import VietnamApiClient from './VietnamApiClient';
-import { TariffAlert, VietnamAnnouncement, VietnamNewsArticle } from '../types';
+import { TariffAlert } from '../types';
+import { VietnamAnnouncement, VietnamNewsArticleDetail as VietnamNewsArticle } from '../types/index';
 
 // Use type alias instead of re-export due to export issue
 export type { VietnamAnnouncement, VietnamNewsArticle };
-
-// No need to redefine interfaces that are imported from types
 
 // Types specific to Vietnam search manager
 interface VietnamSearchOptions {
@@ -48,605 +47,183 @@ export class VietnamSearchManager {
   // Callback for tariff information
   private onTariffInformationFound: (tariffInfo: TariffAlert) => void = () => {};
   
-  // Polling intervals
-  private pollingIntervals: NodeJS.Timeout[] = [];
-  
-  constructor(searchManager: SearchManager, ontologyManager: OntologyManager, config?: {
-    reutersApiKey?: string;
-    bloombergApiKey?: string;
-    vietnamApiKey?: string;
-    onTariffInformationFound?: (tariffInfo: TariffAlert) => void;
-  }) {
+  constructor(
+    searchManager: SearchManager,
+    ontologyManager: OntologyManager,
+    options?: {
+      reutersApiKey?: string;
+      bloombergApiKey?: string;
+      vietnamApiKey?: string;
+    }
+  ) {
     this.searchManager = searchManager;
     this.ontologyManager = ontologyManager;
     
-    // Set the callback for tariff information, prioritizing config param if provided
-    if (config?.onTariffInformationFound) {
-      this.onTariffInformationFound = config.onTariffInformationFound;
-    }
-    
-    if (config) {
-      this.reutersApiKey = config.reutersApiKey;
-      this.bloombergApiKey = config.bloombergApiKey;
-      this.vietnamApiKey = config.vietnamApiKey;
+    if (options) {
+      this.reutersApiKey = options.reutersApiKey;
+      this.bloombergApiKey = options.bloombergApiKey;
+      this.vietnamApiKey = options.vietnamApiKey;
       
-      // Initialize Vietnam-specific API client if API key is provided
-      if (config.vietnamApiKey) {
+      // Initialize API client if key provided
+      if (this.vietnamApiKey) {
         this.vietnamApiClient = new VietnamApiClient({
-          apiKey: config.vietnamApiKey,
-          maxRetries: 3,
-          rateLimitPerMinute: 60
+          apiKey: this.vietnamApiKey
         });
       }
     }
   }
   
   /**
-   * Configure specialized Vietnam tariff search parameters
-   * Sets up high-frequency searches for Vietnam-specific tariff information
-   * Enhanced with specialized Vietnamese language sources and ASEAN integration
+   * Register a callback for when new tariff information is found
    */
-  public configureVietnamTariffSearches(): void {
-    // General Vietnam tariff search
-    this.searchManager.registerSearch({
+  public onTariffInformation(callback: (tariffInfo: TariffAlert) => void): void {
+    this.onTariffInformationFound = callback;
+  }
+  
+  /**
+   * Search for Vietnam-specific tariff information
+   * Enhanced with Vietnamese language support and industry context
+   */
+  public async searchVietnamTariffs(options: VietnamSearchOptions): Promise<any[]> {
+    const { query, includeAsean = true } = options;
+    
+    // Search for Vietnam-specific tariff information
+    const vietnamResults = await this.searchManager.search({
+      query: `${query} Vietnam tariff "thuế quan"`,
       country: 'Vietnam',
-      frequency: 1800000, // 30 minutes
-      sources: [
-        'Reuters', 'Bloomberg', 
-        ...this.vietnamSpecificSources
-      ],
-      customQuery: 'Vietnam tariff changes',
-      priority: 'medium',
-      metadata: {
-        includeVietnameseLanguage: true,
-        translateResults: true,
-        relevanceThreshold: 0.75
-      }
+      minConfidence: options.minConfidence || 0.6,
+      limit: 20
     });
     
-    // Vietnam-US tariff relations - higher priority
-    this.registerVietnamUSTradeSearches();
+    // Transform and filter results
+    let results = vietnamResults.items || [];
     
-    // Vietnam-ASEAN tariff relations with enhanced ASEAN integration
-    this.registerVietnamASEANTradeSearches();
-    
-    // Vietnam-EU tariff relations
-    this.registerVietnamEUTradeSearches();
-    
-    console.log('Vietnam-specific tariff searches configured with enhanced API integration');
-  }
-  
-  /**
-   * Register specialized Vietnam-US trade tension searches
-   * Higher frequency and specialized queries based on your suggested implementation
-   */
-  private registerVietnamUSTradeSearches(): void {
-    const vietnamUSSources = [
-      'Reuters', 'Bloomberg', 'VnExpress', 'Vietnam News',
-      'Ministry of Finance Vietnam', 'USTR', 'US Department of Commerce'
-    ];
-    
-    // Create specific search queries for Vietnam-US trade tensions
-    const searchQueries = [
-      "Vietnam US tariff rate",
-      "Vietnam export tariff impact",
-      "USTR Vietnam investigation",
-      "Vietnam currency manipulation tariff",
-      "Vietnam textile export tariff",
-      "Vietnam US trade remedies"
-    ];
-    
-    // Register high-frequency search for each query
-    searchQueries.forEach(query => {
-      this.searchManager.registerSearch({
-        country: 'Vietnam',
-        frequency: 1800000, // 30 minutes - higher frequency
-        sources: vietnamUSSources,
-        customQuery: query,
-        priority: 'high'
-      });
-    });
-    
-    console.log(`Registered ${searchQueries.length} Vietnam-US trade searches`);
-  }
-  
-  /**
-   * Register Vietnam-ASEAN trade relation searches
-   */
-  private registerVietnamASEANTradeSearches(): void {
-    const vietnamASEANSources = [
-      'Reuters', 'Bloomberg', 'VnExpress', 
-      'ASEAN Secretariat', 'Vietnam News'
-    ];
-    
-    const aseanSearchQueries = [
-      "RCEP Vietnam implementation",
-      "Vietnam ASEAN tariff reduction",
-      "Vietnam Thailand trade agreement",
-      "Vietnam Singapore tariff"
-    ];
-    
-    aseanSearchQueries.forEach(query => {
-      this.searchManager.registerSearch({
-        country: 'Vietnam',
-        frequency: 3600000, // 1 hour
-        sources: vietnamASEANSources,
-        customQuery: query,
-        priority: 'medium'
-      });
-    });
-    
-    console.log(`Registered ${aseanSearchQueries.length} Vietnam-ASEAN trade searches`);
-  }
-  
-  /**
-   * Register Vietnam-EU trade relation searches
-   */
-  private registerVietnamEUTradeSearches(): void {
-    const vietnamEUSources = [
-      'Reuters', 'Bloomberg', 'VnExpress', 
-      'EU Trade Commission', 'Vietnam News'
-    ];
-    
-    const euSearchQueries = [
-      "Vietnam EU FTA tariff",
-      "Vietnam EU textile quota",
-      "EVFTA implementation Vietnam",
-      "Vietnam EU export duties"
-    ];
-    
-    euSearchQueries.forEach(query => {
-      this.searchManager.registerSearch({
-        country: 'Vietnam',
-        frequency: 3600000, // 1 hour
-        sources: vietnamEUSources,
-        customQuery: query,
-        priority: 'medium'
-      });
-    });
-    
-    console.log(`Registered ${euSearchQueries.length} Vietnam-EU trade searches`);
-  }
-  
-  /**
-   * Perform specialized Reuters search for Vietnam tariff news
-   * If a Reuters API key is available, this will use the actual API
-   */
-  public async searchReutersForVietnam(query: string): Promise<any[]> {
-    if (!this.reutersApiKey) {
-      console.log('No Reuters API key available for Vietnam search');
-      return [];
+    // If ASEAN context is enabled, get regional information
+    if (includeAsean) {
+      const aseanResults = await this.getAseanRelatedTariffs(query);
+      results = [...results, ...aseanResults];
     }
     
-    try {
-      console.log(`Searching Reuters for Vietnam tariff news: ${query}`);
-      // In a real implementation, this would call the Reuters API
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Return empty array - in production would return actual results
-      return [];
-    } catch (error) {
-      console.error('Error searching Reuters for Vietnam:', error);
-      return [];
-    }
-  }
-  
-  /**
-   * Perform specialized Bloomberg search for Vietnam tariff news
-   * If a Bloomberg API key is available, this will use the actual API
-   */
-  public async searchBloombergForVietnam(query: string): Promise<any[]> {
-    if (!this.bloombergApiKey) {
-      console.log('No Bloomberg API key available for Vietnam search');
-      return [];
-    }
-    
-    try {
-      console.log(`Searching Bloomberg for Vietnam tariff news: ${query}`);
-      // In a real implementation, this would call the Bloomberg API
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 700));
-      
-      // Return empty array - in production would return actual results
-      return [];
-    } catch (error) {
-      console.error('Error searching Bloomberg for Vietnam:', error);
-      return [];
-    }
-  }
-  
-  /**
-   * Perform a Vietnam-specific search
-   * Enhanced with multi-source integration and ASEAN filtering
-   * @param options Search options
-   */
-  public async performVietnamSearch(options: VietnamSearchOptions): Promise<TariffAlert[]> {
-    console.log(`Performing enhanced Vietnam search: ${options.query}`);
-    
-    const results: TariffAlert[] = [];
-    const searchPromises: Promise<any>[] = [];
-    
-    // Search Vietnam-specific sources if API client is available
+    // Add results from Vietnam-specific sources
     if (this.vietnamApiClient) {
-      // VnExpress search
-      if (!options.sourceFilters || options.sourceFilters.includes('VnExpress')) {
-        const vnExpressPromise = this.vietnamApiClient.searchVnExpress(options.query, {
-          fromDate: options.fromDate,
-          toDate: options.toDate,
-          limit: 20
-        });
-        searchPromises.push(vnExpressPromise);
+      const vnExpressResults = await this.vietnamApiClient.searchVnExpress(`${query} thuế quan`, {
+        fromDate: options.fromDate,
+        toDate: options.toDate,
+        limit: 10
+      });
+      
+      if (vnExpressResults.success && vnExpressResults.articles.length > 0) {
+        const alerts = vnExpressResults.articles.map(article => 
+          this.convertToTariffAlert(article, 'VnExpress')
+        );
+        results = [...results, ...alerts];
       }
       
-      // Ministry of Finance search
-      if (!options.sourceFilters || options.sourceFilters.includes('Ministry of Finance')) {
-        const mofPromise = this.vietnamApiClient.getMinistryOfFinanceTariffUpdates({
-          productCategory: options.productCategories?.join(',')
-        });
-        searchPromises.push(mofPromise);
-      }
+      // Add results from Ministry of Finance
+      const mofResults = await this.vietnamApiClient.getMinistryOfFinanceTariffUpdates({
+        fromDate: options.fromDate,
+        toDate: options.toDate,
+        category: options.productCategories ? options.productCategories.join(',') : undefined
+      });
       
-      // Vietstock analysis
-      if (!options.sourceFilters || options.sourceFilters.includes('VietstockFinance')) {
-        const vietstockPromise = this.vietnamApiClient.getVietstockTariffAnalysis({
-          sectors: options.productCategories
-        });
-        searchPromises.push(vietstockPromise);
+      if (mofResults.success && mofResults.announcements.length > 0) {
+        const alerts = mofResults.announcements.map(announcement => 
+          this.convertAnnouncementToTariffAlert(announcement, 'Ministry of Finance Vietnam')
+        );
+        results = [...results, ...alerts];
       }
     }
     
-    // Wait for all search promises to resolve
-    const searchResults = await Promise.allSettled(searchPromises);
-    
-    // Process successful results
-    searchResults.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
-        // VnExpress results
-        if (index === 0 && result.value?.success) {
-          const articles = result.value.articles.map((article: any) => 
-            this.convertToTariffAlert(article, 'VnExpress'));
-          results.push(...articles);
-        }
-        // Ministry of Finance results
-        else if (index === 1 && result.value?.success) {
-          const announcements = result.value.announcements.map((announcement: any) => 
-            this.convertAnnouncementToTariffAlert(announcement, 'Ministry of Finance Vietnam')
-          );
-          results.push(...announcements);
-        }
-        // Vietstock results
-        else if (index === 2 && result.value?.success) {
-          const analyses = result.value.analysis.map((analysis: any) =>
-            this.convertAnalysisToTariffAlert(analysis, 'VietstockFinance')
-          );
-          results.push(...analyses);
-        }
-      }
-    });
-    
-    // Apply ASEAN-specific filtering if requested
-    if (options.includeAsean) {
-      const aseanResults = await this.getAseanRelatedTariffs(options.query);
-      results.push(...aseanResults);
-    }
-    
-    // Filter by minimum confidence if specified
-    const filteredResults = options.minConfidence 
-      ? results.filter(item => item.confidence >= (options.minConfidence || 0))
-      : results;
-    
-    // Sort by date (newest first)
-    filteredResults.sort((a, b) => 
-      new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+    // Apply filters
+    const filteredResults = this.applyFilters(results, options);
     
     return filteredResults;
   }
   
   /**
-   * Schedule regular polling of Vietnam-specific APIs
-   * This enhances real-time monitoring of Vietnam tariff changes
+   * Search for Vietnam-specific news and announcements
+   * Returns a mix of news articles and government announcements
    */
-  public scheduleVietnamSpecificAPIs(): void {
-    if (!this.vietnamApiClient) {
-      console.warn('Vietnam API client not initialized, skipping API polling');
-      return;
-    }
+  public async searchVietnamNews(options: VietnamSearchOptions): Promise<any[]> {
+    let newsResults: any[] = [];
     
-    // Check Ministry of Finance announcements every hour
-    const mofInterval = setInterval(async () => {
-      try {
-        const result = await this.vietnamApiClient!.getMinistryOfFinanceTariffUpdates();
-        if (result.success && result.announcements.length > 0) {
-          // Process new announcements with proper typing
-          const alerts = result.announcements.map((announcement: VietnamAnnouncement) => 
-            this.convertAnnouncementToTariffAlert(announcement, 'Ministry of Finance Vietnam')
-          );
-          
-          // Notify SearchManager of new tariff information using the correct callback
-          alerts.forEach((alert: TariffAlert) => {
-            // Use the SearchManager's notification method consistently throughout the app
-            this.searchManager.notifyTariffInformationFound(alert);
-          });
-        }
-      } catch (error) {
-        console.error('Error polling Ministry of Finance API:', error);
-      }
-    }, 3600000); // 1 hour
-    this.pollingIntervals.push(mofInterval);
-    
-    // Check VnExpress for tariff news every 30 minutes
-    const vnExpressInterval = setInterval(async () => {
-      try {
-        const result = await this.vietnamApiClient!.searchVnExpress('thuế quan vietnam tariff', {
-          fromDate: new Date(Date.now() - 1800000), // Last 30 minutes
-          limit: 10
-        });
-        
-        if (result.success && result.articles.length > 0) {
-          // Process new articles
-          const alerts = result.articles.map((article: any) => 
-            this.convertToTariffAlert(article, 'VnExpress')
-          );
-          
-          // Notify SearchManager of new tariff information
-          alerts.forEach(alert => {
-            this.onTariffInformationFound(alert);
-          });
-        }
-      } catch (error) {
-        console.error('Error polling VnExpress API:', error);
-      }
-    }, 1800000); // 30 minutes
-    this.pollingIntervals.push(vnExpressInterval);
-  }
-  
-  /**
-   * Convert a news article to TariffAlert format
-   */
-  private convertToTariffAlert(article: any, source: string): TariffAlert {
-    // Extract product categories using ontology
-    const productCategories = this.extractProductCategories(article.title + ' ' + article.description);
-    
-    // Extract tariff rate if available
-    const tariffRate = this.extractTariffRate(article.title + ' ' + article.description);
-    
-    // Calculate impact severity based on tariff rate and product categories
-    const impactSeverity = this.calculateImpactSeverity(tariffRate, productCategories);
-    
-    return {
-      id: `vn-${source.toLowerCase().replace(/\s+/g, '-')}-${article.id}`,
-      title: article.title,
-      description: article.description || article.summary,
+    // Use search manager for general news
+    const standardResults = await this.searchManager.search({
+      query: options.query + ' Vietnam' + (options.language === 'vi' ? ' "tin tức"' : ''),
       country: 'Vietnam',
-      impactSeverity,
-      confidence: 0.85, // Default confidence for news articles
-      sourceUrl: article.url,
-      sourceName: source,
-      publishDate: new Date(article.publishDate),
-      createdAt: new Date(),
-      priority: impactSeverity > 7 ? 'high' : impactSeverity > 5 ? 'medium' : 'low',
-      tariffRate,
-      productCategories,
-      aiEnhanced: true,
-      affectedProvinces: this.extractAffectedProvinces(article.content || ''),
-      tradingPartners: this.extractTradingPartners(article.content || '')
-    };
-  }
-  
-  /**
-   * Convert a government announcement to TariffAlert format
-   */
-  private convertAnnouncementToTariffAlert(announcement: any, source: string): TariffAlert {
-    // Extract tariff rate from changes if available
-    let tariffRate = 0;
-    if (announcement.tariffChanges && announcement.tariffChanges.length > 0) {
-      const rates = announcement.tariffChanges.map((change: any) => change.newRate - change.oldRate);
-      tariffRate = rates.reduce((sum: number, rate: number) => sum + rate, 0) / rates.length;
+      minConfidence: options.minConfidence || 0.5,
+      limit: 20
+    });
+    
+    if (standardResults.items) {
+      newsResults = [...standardResults.items];
     }
     
-    // Calculate impact severity
-    const impactSeverity = this.calculateImpactSeverity(
-      tariffRate,
-      announcement.affectedProducts || []
-    );
-    
-    return {
-      id: `vn-mof-${announcement.id}`,
-      title: announcement.title,
-      description: announcement.summary,
-      country: 'Vietnam',
-      impactSeverity,
-      confidence: 0.95, // Higher confidence for official sources
-      sourceUrl: announcement.url,
-      sourceName: source,
-      publishDate: new Date(announcement.issuedDate),
-      createdAt: new Date(),
-      priority: impactSeverity > 7 ? 'high' : impactSeverity > 5 ? 'medium' : 'low',
-      tariffRate,
-      productCategories: announcement.affectedProducts || [],
-      aiEnhanced: false,
-      effectiveDate: new Date(announcement.effectiveDate),
-      documentNumber: announcement.documentNumber
-    };
-  }
-  
-  /**
-   * Convert market analysis to TariffAlert format
-   */
-  private convertAnalysisToTariffAlert(analysis: any, source: string): TariffAlert {
-    return {
-      id: `vn-analysis-${analysis.id}`,
-      title: analysis.title,
-      description: analysis.summary,
-      country: 'Vietnam',
-      impactSeverity: analysis.impactScore * 10 || 5,
-      confidence: analysis.confidenceLevel || 0.8,
-      sourceUrl: analysis.url,
-      sourceName: source,
-      publishDate: new Date(analysis.publishDate),
-      createdAt: new Date(),
-      priority: analysis.priority || 'medium',
-      tariffRate: analysis.tariffRateChange || 0,
-      productCategories: analysis.sectors || [],
-      aiEnhanced: true,
-      tradingPartners: analysis.countries || []
-    };
-  }
-  
-  /**
-   * Get ASEAN-related tariff information
-   * Enhanced with country-specific filtering
-   */
-  private async getAseanRelatedTariffs(query: string): Promise<TariffAlert[]> {
-    const aseanCountries = ['Singapore', 'Malaysia', 'Indonesia', 'Thailand', 'Philippines', 'Brunei', 'Cambodia', 'Laos', 'Myanmar'];
-    const results: TariffAlert[] = [];
-    
-    // Search for each ASEAN country's relation to Vietnam
-    for (const country of aseanCountries) {
-      try {
-        const countryQuery = `${query} ${country} ASEAN`;
-        // For now, return empty array since SearchManager search isn't implemented
-        results.push([]); 
-      } catch (error) {
-        console.error(`Error searching for ASEAN ${country} relation:`, error);
-      }
-    }
-    
-    return results.flat();
-  }
-  
-  /**
-   * Calculate impact severity based on tariff rate and product categories
-   */
-  private calculateImpactSeverity(tariffRate: number, productCategories: string[]): number {
-    // Base severity on absolute tariff rate
-    let baseSeverity = Math.min(10, Math.abs(tariffRate) * 1.2);
-    
-    // Adjust based on product categories
-    const highImpactCategories = ['Electronics', 'Textiles', 'Machinery', 'Agriculture'];
-    const categoryImpact = productCategories.reduce((impact, category) => {
-      return impact + (highImpactCategories.includes(category) ? 1 : 0.5);
-    }, 0);
-    
-    // Normalize category impact
-    const normalizedCategoryImpact = Math.min(3, categoryImpact);
-    
-    // Combine base severity with category impact
-    const combinedSeverity = baseSeverity + normalizedCategoryImpact;
-    
-    // Cap at 10
-    return Math.min(10, Math.max(1, Math.round(combinedSeverity * 10) / 10));
-  }
-  
-  /**
-   * Extract product categories from text using ontology
-   */
-  private extractProductCategories(text: string): string[] {
-    // In a real implementation, this would use the ontology to extract categories
-    // For now, we'll use a simple keyword matching approach
-    const categories: string[] = [];
-    
-    const categoryKeywords: {[key: string]: string[]} = {
-      'Electronics': ['electronics', 'semiconductor', 'computer', 'phone', 'electronic'],
-      'Textiles': ['textile', 'apparel', 'clothing', 'fabric', 'garment'],
-      'Machinery': ['machinery', 'equipment', 'industrial', 'manufacturing'],
-      'Agriculture': ['agriculture', 'rice', 'farm', 'crop', 'grain'],
-      'Automotive': ['auto', 'car', 'vehicle', 'automotive'],
-      'Chemicals': ['chemical', 'pharma', 'pharmaceutical', 'medicine'],
-      'Furniture': ['furniture', 'wood', 'household'],
-      'Seafood': ['seafood', 'fish', 'shrimp', 'aquaculture']
-    };
-    
-    const lowerText = text.toLowerCase();
-    
-    for (const [category, keywords] of Object.entries(categoryKeywords)) {
-      if (keywords.some(keyword => lowerText.includes(keyword))) {
-        categories.push(category);
-      }
-    }
-    
-    return categories;
-  }
-  
-  /**
-   * Extract tariff rate from text
-   */
-  private extractTariffRate(text: string): number {
-    // In a real implementation, this would use NLP to extract tariff rates
-    // For now, we'll use a simple regex approach
-    const tariffRegex = /(increased|decreased|reduced|raised|cut|added|imposed|lowered)\s+by\s+(\d+(\.\d+)?)\s*%/i;
-    const match = text.match(tariffRegex);
-    
-    if (match) {
-      const direction = match[1].toLowerCase();
-      const rate = parseFloat(match[2]);
+    // Add Vietnam-specific news sources
+    if (this.vietnamApiClient) {
+      const vnExpressResults = await this.vietnamApiClient.searchVnExpress(options.query, {
+        fromDate: options.fromDate,
+        toDate: options.toDate,
+        limit: 15
+      });
       
-      // Determine if it's a positive or negative change
-      const isNegative = ['decreased', 'reduced', 'cut', 'lowered'].includes(direction);
-      return isNegative ? -rate : rate;
+      if (vnExpressResults.success && vnExpressResults.articles.length > 0) {
+        // Convert to VietnamNewsArticle format
+        const articles: VietnamNewsArticle[] = vnExpressResults.articles.map(article => ({
+          id: article.id,
+          title: article.title,
+          content: article.content || article.description,
+          publishDate: new Date(article.publishDate),
+          source: 'VnExpress',
+          url: article.url,
+          category: article.category || 'news',
+          tags: article.tags,
+          relevance: article.relevance
+        }));
+        
+        newsResults = [...newsResults, ...articles];
+      }
     }
     
-    return 0; // Default if no rate found
-  }
-  
-  /**
-   * Extract affected provinces from text
-   */
-  private extractAffectedProvinces(text: string): string[] {
-    const provinces = [
-      'Ho Chi Minh City', 'Hanoi', 'Da Nang', 'Hai Phong', 'Can Tho',
-      'Binh Duong', 'Dong Nai', 'Ba Ria-Vung Tau', 'Quang Ninh', 'Bac Ninh',
-      'Hai Duong', 'Vinh Phuc', 'Thua Thien-Hue', 'Khanh Hoa', 'Tay Ninh'
-    ];
+    // Apply filters
+    const filteredResults = this.applyNewsFilters(newsResults, options);
     
-    return provinces.filter(province => text.includes(province));
+    return filteredResults;
   }
   
   /**
-   * Extract trading partners from text
+   * Get recent tariff announcements from Vietnam
    */
-  private extractTradingPartners(text: string): string[] {
-    const countries = [
-      'USA', 'China', 'Japan', 'South Korea', 'EU', 
-      'Singapore', 'Malaysia', 'Thailand', 'Australia', 'Germany',
-      'France', 'UK', 'Russia', 'India', 'Taiwan'
-    ];
+  public async getRecentTariffAnnouncements(limit: number = 10): Promise<VietnamAnnouncement[]> {
+    if (!this.vietnamApiClient) {
+      return [];
+    }
     
-    return countries.filter(country => text.includes(country));
+    const result = await this.vietnamApiClient.getMinistryOfFinanceTariffUpdates({
+      limit: limit
+    });
+    
+    if (!result.success) {
+      return [];
+    }
+    
+    return result.announcements.map(announcement => ({
+      id: announcement.id,
+      title: announcement.title,
+      content: announcement.content,
+      publishDate: new Date(announcement.publishDate),
+      documentNumber: announcement.documentNumber,
+      ministry: announcement.ministry || 'Ministry of Finance',
+      type: announcement.type || 'tariff',
+      url: announcement.url,
+      affectedProducts: announcement.affectedProducts,
+      affectedCountries: announcement.affectedCountries,
+      effectiveDate: announcement.effectiveDate ? new Date(announcement.effectiveDate) : undefined
+    }));
   }
   
   /**
-   * Clean up resources when this manager is no longer needed
-   */
-  public dispose(): void {
-    // Clear all polling intervals
-    this.pollingIntervals.forEach(interval => clearInterval(interval));
-    this.pollingIntervals = [];
-    
-    console.log('Vietnam search manager resources released');
-  }
-}
-
-/**
- * Enhanced Vietnam search monitor with API polling capabilities
- */
-export class VietnamSearchMonitor {
-  private vietnamApiClient?: VietnamApiClient;
-  private searchManager: SearchManager;
-  private pollingIntervals: NodeJS.Timeout[] = [];
-  private onTariffInformationFound?: (tariffInfo: TariffAlert) => void;
-  
-  constructor(searchManager: SearchManager, vietnamApiClient?: VietnamApiClient, onTariffCallback?: (tariffInfo: TariffAlert) => void) {
-    this.searchManager = searchManager;
-    this.vietnamApiClient = vietnamApiClient;
-    this.onTariffInformationFound = onTariffCallback;
-  }
-  
-  /**
-   * Schedule regular polling of Vietnam-specific APIs
+   * Schedule periodic checks for Vietnam-specific tariff updates
    * This enhances real-time monitoring of Vietnam tariff changes
    */
   public scheduleVietnamSpecificAPIs(): void {
@@ -753,20 +330,20 @@ export class VietnamSearchMonitor {
     return {
       id: `vn-mof-${announcement.id}`,
       title: announcement.title,
-      description: announcement.summary,
+      description: announcement.summary || announcement.content?.substring(0, 200) || '',
       country: 'Vietnam',
       impactSeverity,
       confidence: 0.95, // Higher confidence for official sources
       sourceUrl: announcement.url,
       sourceName: source,
-      publishDate: new Date(announcement.issuedDate),
+      publishDate: new Date(announcement.issuedDate || announcement.publishDate),
       createdAt: new Date(),
       priority: impactSeverity > 7 ? 'high' : impactSeverity > 5 ? 'medium' : 'low',
       tariffRate,
       productCategories: announcement.affectedProducts || [],
       aiEnhanced: false,
-      effectiveDate: new Date(announcement.effectiveDate),
-      documentNumber: announcement.documentNumber
+      affectedProvinces: announcement.regions || [],
+      tradingPartners: announcement.affectedCountries || []
     };
   }
   
@@ -789,7 +366,8 @@ export class VietnamSearchMonitor {
       tariffRate: analysis.tariffRateChange || 0,
       productCategories: analysis.sectors || [],
       aiEnhanced: true,
-      tradingPartners: analysis.countries || []
+      affectedProvinces: analysis.regions || [],
+      tradingPartners: analysis.tradingPartners || []
     };
   }
   
@@ -820,7 +398,7 @@ export class VietnamSearchMonitor {
           results.push(...vietnamRelevant);
         }
       } catch (error) {
-        console.error(`Error searching for ASEAN ${country} relation:`, error);
+        console.error(`Error searching for ${country} tariff information:`, error);
       }
     }
     
@@ -828,255 +406,47 @@ export class VietnamSearchMonitor {
   }
   
   /**
-   * Calculate impact severity based on tariff rate and product categories
+   * Apply filters to tariff search results
    */
-  private calculateImpactSeverity(tariffRate: number, productCategories: string[]): number {
-    // Base severity on absolute tariff rate
-    let baseSeverity = Math.min(10, Math.abs(tariffRate) * 1.2);
+  private applyFilters(results: any[], options: VietnamSearchOptions): any[] {
+    // Filter by date if specified
+    let filteredResults = results;
     
-    // Adjust based on product categories
-    const highImpactCategories = ['Electronics', 'Textiles', 'Machinery', 'Agriculture'];
-    const categoryImpact = productCategories.reduce((impact, category) => {
-      return impact + (highImpactCategories.includes(category) ? 1 : 0.5);
-    }, 0);
-    
-    // Normalize category impact
-    const normalizedCategoryImpact = Math.min(3, categoryImpact);
-    
-    // Combine base severity with category impact
-    const combinedSeverity = baseSeverity + normalizedCategoryImpact;
-    
-    // Cap at 10
-    return Math.min(10, Math.max(1, Math.round(combinedSeverity * 10) / 10));
-  }
-  
-  /**
-   * Extract product categories from text using ontology
-   */
-  private extractProductCategories(text: string): string[] {
-    // In a real implementation, this would use the ontology to extract categories
-    // For now, we'll use a simple keyword matching approach
-    const categories: string[] = [];
-    
-    const categoryKeywords: {[key: string]: string[]} = {
-      'Electronics': ['electronics', 'semiconductor', 'computer', 'phone', 'electronic'],
-      'Textiles': ['textile', 'apparel', 'clothing', 'fabric', 'garment'],
-      'Machinery': ['machinery', 'equipment', 'industrial', 'manufacturing'],
-      'Agriculture': ['agriculture', 'rice', 'farm', 'crop', 'grain'],
-      'Automotive': ['auto', 'car', 'vehicle', 'automotive'],
-      'Chemicals': ['chemical', 'pharma', 'pharmaceutical', 'medicine'],
-      'Furniture': ['furniture', 'wood', 'household'],
-      'Seafood': ['seafood', 'fish', 'shrimp', 'aquaculture']
-    };
-    
-    const lowerText = text.toLowerCase();
-    
-    for (const [category, keywords] of Object.entries(categoryKeywords)) {
-      if (keywords.some(keyword => lowerText.includes(keyword))) {
-        categories.push(category);
-      }
+    if (options.fromDate) {
+      filteredResults = filteredResults.filter(item => 
+        new Date(item.publishDate) >= options.fromDate!
+      );
     }
     
-    return categories;
-  }
-  
-  /**
-   * Extract tariff rate from text
-   */
-  private extractTariffRate(text: string): number {
-    // In a real implementation, this would use NLP to extract tariff rates
-    // For now, we'll use a simple regex approach
-    const tariffRegex = /(increased|decreased|reduced|raised|cut|added|imposed|lowered)\s+by\s+(\d+(\.\d+)?)\s*%/i;
-    const match = text.match(tariffRegex);
-    
-    if (match) {
-      const direction = match[1].toLowerCase();
-      const rate = parseFloat(match[2]);
-      
-      // Determine if it's a positive or negative change
-      const isNegative = ['decreased', 'reduced', 'cut', 'lowered'].includes(direction);
-      return isNegative ? -rate : rate;
+    if (options.toDate) {
+      filteredResults = filteredResults.filter(item => 
+        new Date(item.publishDate) <= options.toDate!
+      );
     }
     
-    return 0; // Default if no rate found
-  }
-  
-  /**
-   * Extract affected provinces from text
-   */
-  private extractAffectedProvinces(text: string): string[] {
-    const provinces = [
-      'Ho Chi Minh City', 'Hanoi', 'Da Nang', 'Hai Phong', 'Can Tho',
-      'Binh Duong', 'Dong Nai', 'Ba Ria-Vung Tau', 'Quang Ninh', 'Bac Ninh',
-      'Hai Duong', 'Vinh Phuc', 'Thua Thien-Hue', 'Khanh Hoa', 'Tay Ninh'
-    ];
-    
-    return provinces.filter(province => text.includes(province));
-  }
-  
-  /**
-   * Extract trading partners from text
-   */
-  private extractTradingPartners(text: string): string[] {
-    const countries = [
-      'USA', 'China', 'Japan', 'South Korea', 'EU', 
-      'Singapore', 'Malaysia', 'Thailand', 'Australia', 'Germany',
-      'France', 'UK', 'Russia', 'India', 'Taiwan'
-    ];
-    
-    return countries.filter(country => text.includes(country));
-  }
-  /**
-   * Schedule regular polling of Vietnam-specific APIs
-   * This enhances real-time monitoring of Vietnam tariff changes
-   */
-  public scheduleVietnamSpecificAPIs(): void {
-    if (!this.vietnamApiClient) {
-      console.warn('Vietnam API client not initialized, skipping API polling');
-      return;
+    // Filter by product categories if specified
+    if (options.productCategories && options.productCategories.length > 0) {
+      filteredResults = filteredResults.filter(item => {
+        if (!item.productCategories) return false;
+        return item.productCategories.some((category: string) => 
+          options.productCategories!.includes(category)
+        );
+      });
     }
     
-    // Check Ministry of Finance announcements every hour
-    const mofInterval = setInterval(async () => {
-      try {
-        const result = await this.vietnamApiClient!.getMinistryOfFinanceTariffUpdates();
-        if (result.success && result.announcements.length > 0) {
-          // Process new announcements with proper typing
-          const alerts = result.announcements.map((announcement: VietnamAnnouncement) => 
-            this.convertAnnouncementToTariffAlert(announcement, 'Ministry of Finance Vietnam')
-          );
-          
-          // Notify SearchManager of new tariff information using the correct callback
-          alerts.forEach((alert: TariffAlert) => {
-            // Use the onTariffInformationFound callback that's defined in SearchManager
-            this.onTariffInformationFound?.(alert);
-          });
-        }
-      } catch (error) {
-        console.error('Error polling Ministry of Finance API:', error);
-      }
-    }, 3600000); // 1 hour
-    this.pollingIntervals.push(mofInterval);
-    
-    // Check VnExpress for tariff news every 30 minutes
-    const vnExpressInterval = setInterval(async () => {
-      try {
-        const result = await this.vietnamApiClient!.searchVnExpress('thuế quan vietnam tariff', {
-          fromDate: new Date(Date.now() - 1800000), // Last 30 minutes
-          limit: 10
-        });
-        
-        if (result.success && result.articles.length > 0) {
-          // Process new articles
-          const alerts = result.articles.map((article: any) => 
-            this.convertToTariffAlert(article, 'VnExpress')
-          );
-          
-          // Notify SearchManager of new tariff information
-          alerts.forEach(alert => {
-            this.searchManager.notifyTariffInformationFound(alert);
-          });
-        }
-      } catch (error) {
-        console.error('Error polling VnExpress API:', error);
-      }
-    }, 1800000); // 30 minutes
-    this.pollingIntervals.push(vnExpressInterval);
-  }
-  
-  /**
-   * Perform a Vietnam-specific search
-   * Enhanced with multi-source integration and ASEAN filtering
-   * @param options Search options
-   */
-  public async performVietnamSearch(options: VietnamSearchOptions): Promise<TariffAlert[]> {
-    console.log(`Performing enhanced Vietnam search: ${options.query}`);
-    
-    const results: TariffAlert[] = [];
-    const searchPromises: Promise<any>[] = [];
-    
-    // Search standard sources via SearchManager
-    const standardSourcePromise = this.searchManager.search({
-      query: options.query,
-      country: 'Vietnam',
-      fromDate: options.fromDate,
-      toDate: options.toDate
-    });
-    
-    searchPromises.push(standardSourcePromise);
-    
-    // Search Vietnam-specific sources if API client is available
-    if (this.vietnamApiClient) {
-      // VnExpress search
-      if (!options.sourceFilters || options.sourceFilters.includes('VnExpress')) {
-        const vnExpressPromise = this.vietnamApiClient.searchVnExpress(options.query, {
-          fromDate: options.fromDate,
-          toDate: options.toDate,
-          limit: 20
-        });
-        searchPromises.push(vnExpressPromise);
-      }
-      
-      // Ministry of Finance search
-      if (!options.sourceFilters || options.sourceFilters.includes('Ministry of Finance')) {
-        const mofPromise = this.vietnamApiClient.getMinistryOfFinanceTariffUpdates({
-          productCategory: options.productCategories?.join(',')
-        });
-        searchPromises.push(mofPromise);
-      }
-      
-      // Vietstock analysis
-      if (!options.sourceFilters || options.sourceFilters.includes('VietstockFinance')) {
-        const vietstockPromise = this.vietnamApiClient.getVietstockTariffAnalysis({
-          sectors: options.productCategories
-        });
-        searchPromises.push(vietstockPromise);
-      }
+    // Filter by source if specified
+    if (options.sourceFilters && options.sourceFilters.length > 0) {
+      filteredResults = filteredResults.filter(item => 
+        options.sourceFilters!.includes(item.sourceName)
+      );
     }
     
-    // Wait for all search promises to resolve
-    const searchResults = await Promise.allSettled(searchPromises);
-    
-    // Process successful results
-    searchResults.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
-        // Standard search results
-        if (index === 0 && result.value?.items) {
-          results.push(...result.value.items);
-        }
-        // VnExpress results
-        else if (index === 1 && result.value?.success) {
-          const articles = result.value.articles.map((article: any) => 
-            this.convertToTariffAlert(article, 'VnExpress'));
-          results.push(...articles);
-        }
-        // Ministry of Finance results
-        else if (index === 2 && result.value?.success) {
-          const announcements = result.value.announcements.map((announcement: any) => 
-            this.convertAnnouncementToTariffAlert(announcement, 'Ministry of Finance Vietnam')
-          );
-          results.push(...announcements);
-        }
-        // Vietstock results
-        else if (index === 3 && result.value?.success) {
-          const analyses = result.value.analysis.map((analysis: any) =>
-            this.convertAnalysisToTariffAlert(analysis, 'VietstockFinance')
-          );
-          results.push(...analyses);
-        }
-      }
-    });
-    
-    // Apply ASEAN-specific filtering if requested
-    if (options.includeAsean) {
-      const aseanResults = await this.getAseanRelatedTariffs(options.query);
-      results.push(...aseanResults);
+    // Filter by confidence if specified
+    if (options.minConfidence) {
+      filteredResults = filteredResults.filter(item => 
+        item.confidence >= options.minConfidence!
+      );
     }
-    
-    // Filter by minimum confidence if specified
-    const filteredResults = options.minConfidence 
-      ? results.filter(item => item.confidence >= (options.minConfidence || 0))
-      : results;
     
     // Sort by date (newest first)
     filteredResults.sort((a, b) => 
@@ -1086,174 +456,88 @@ export class VietnamSearchMonitor {
   }
   
   /**
-   * Convert a news article to TariffAlert format
+   * Apply filters to news search results
    */
-  private convertToTariffAlert(article: any, source: string): TariffAlert {
-    // Extract product categories using ontology
-    const productCategories = this.extractProductCategories(article.title + ' ' + article.description);
+  private applyNewsFilters(results: any[], options: VietnamSearchOptions): any[] {
+    // Filter by date if specified
+    let filteredResults = results;
     
-    // Extract tariff rate if available
-    const tariffRate = this.extractTariffRate(article.title + ' ' + article.description);
-    
-    // Calculate impact severity based on tariff rate and product categories
-    const impactSeverity = this.calculateImpactSeverity(tariffRate, productCategories);
-    
-    return {
-      id: `vn-${source.toLowerCase().replace(/\s+/g, '-')}-${article.id}`,
-      title: article.title,
-      description: article.description || article.summary,
-      country: 'Vietnam',
-      impactSeverity,
-      confidence: 0.85, // Default confidence for news articles
-      sourceUrl: article.url,
-      sourceName: source,
-      publishDate: new Date(article.publishDate),
-      createdAt: new Date(),
-      priority: impactSeverity > 7 ? 'high' : impactSeverity > 5 ? 'medium' : 'low',
-      tariffRate,
-      productCategories,
-      aiEnhanced: true,
-      tradingPartners: this.extractTradingPartners(article.content || '')
-    };
-  }
-  
-  /**
-   * Convert a government announcement to TariffAlert format
-   */
-  private convertAnnouncementToTariffAlert(announcement: any, source: string): TariffAlert {
-    // Extract tariff rate from changes if available
-    let tariffRate = 0;
-    if (announcement.tariffChanges && announcement.tariffChanges.length > 0) {
-      const rates = announcement.tariffChanges.map((change: any) => change.newRate - change.oldRate);
-      tariffRate = rates.reduce((sum: number, rate: number) => sum + rate, 0) / rates.length;
+    if (options.fromDate) {
+      filteredResults = filteredResults.filter(item => 
+        new Date(item.publishDate) >= options.fromDate!
+      );
     }
     
-    // Calculate impact severity
-    const impactSeverity = this.calculateImpactSeverity(
-      tariffRate,
-      announcement.affectedProducts || []
-    );
-    
-    return {
-      id: `vn-mof-${announcement.id}`,
-      title: announcement.title,
-      description: announcement.summary,
-      country: 'Vietnam',
-      impactSeverity,
-      confidence: 0.95, // Higher confidence for official sources
-      sourceUrl: announcement.url,
-      sourceName: source,
-      publishDate: new Date(announcement.issuedDate),
-      createdAt: new Date(),
-      priority: impactSeverity > 7 ? 'high' : impactSeverity > 5 ? 'medium' : 'low',
-      tariffRate,
-      productCategories: announcement.affectedProducts || [],
-      aiEnhanced: false
-    };
-  }
-  
-  /**
-   * Convert market analysis to TariffAlert format
-   */
-  private convertAnalysisToTariffAlert(analysis: any, source: string): TariffAlert {
-    return {
-      id: `vn-analysis-${analysis.id}`,
-      title: analysis.title,
-      description: analysis.summary,
-      country: 'Vietnam',
-      impactSeverity: analysis.impactScore * 10 || 5,
-      confidence: analysis.confidenceLevel || 0.8,
-      sourceUrl: analysis.url,
-      sourceName: source,
-      publishDate: new Date(analysis.publishDate),
-      createdAt: new Date(),
-      priority: analysis.priority || 'medium',
-      tariffRate: analysis.tariffRateChange || 0,
-      productCategories: analysis.sectors || [],
-      aiEnhanced: true
-    };
-  }
-  
-  /**
-   * Get ASEAN-related tariff information
-   * Enhanced with country-specific filtering
-   */
-  private async getAseanRelatedTariffs(query: string): Promise<TariffAlert[]> {
-    const aseanCountries = ['Singapore', 'Malaysia', 'Indonesia', 'Thailand', 'Philippines', 'Brunei', 'Cambodia', 'Laos', 'Myanmar'];
-    const results: TariffAlert[] = [];
-    
-    // Search for each ASEAN country's relation to Vietnam
-    for (const country of aseanCountries) {
-      try {
-        const countryQuery = `${query} ${country} ASEAN`;
-        const searchResults = await this.searchManager.search({
-          query: countryQuery,
-          country: country
-        });
-        
-        if (searchResults.items && searchResults.items.length > 0) {
-          // Filter for Vietnam relevance
-          const vietnamRelevant = searchResults.items.filter((item: any) => 
-            (item.title?.toLowerCase().includes('vietnam') || 
-             item.description?.toLowerCase().includes('vietnam'))
-          );
-          
-          results.push(...vietnamRelevant);
-        }
-      } catch (error) {
-        console.error(`Error searching for ASEAN ${country} relation:`, error);
-      }
+    if (options.toDate) {
+      filteredResults = filteredResults.filter(item => 
+        new Date(item.publishDate) <= options.toDate!
+      );
     }
     
-    return results;
+    // Filter by source if specified
+    if (options.sourceFilters && options.sourceFilters.length > 0) {
+      filteredResults = filteredResults.filter(item => 
+        options.sourceFilters!.includes(item.source)
+      );
+    }
+    
+    // Sort by date (newest first)
+    filteredResults.sort((a, b) => 
+      new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+    
+    return filteredResults;
   }
   
   /**
-   * Calculate impact severity based on tariff rate and product categories
-   */
-  private calculateImpactSeverity(tariffRate: number, productCategories: string[]): number {
-    // Base severity on absolute tariff rate
-    let baseSeverity = Math.min(10, Math.abs(tariffRate) * 1.2);
-    
-    // Adjust based on product categories
-    const highImpactCategories = ['Electronics', 'Textiles', 'Machinery', 'Agriculture'];
-    const categoryImpact = productCategories.reduce((impact, category) => {
-      return impact + (highImpactCategories.includes(category) ? 1 : 0.5);
-    }, 0);
-    
-    // Normalize category impact
-    const normalizedCategoryImpact = Math.min(3, categoryImpact);
-    
-    // Combine base severity with category impact
-    const combinedSeverity = baseSeverity + normalizedCategoryImpact;
-    
-    // Cap at 10
-    return Math.min(10, Math.max(1, Math.round(combinedSeverity * 10) / 10));
-  }
-  
-  /**
-   * Extract product categories from text using ontology
+   * Extract product categories from text
    */
   private extractProductCategories(text: string): string[] {
-    // In a real implementation, this would use the ontology to extract categories
-    // For now, we'll use a simple keyword matching approach
     const categories: string[] = [];
     
-    const categoryKeywords: {[key: string]: string[]} = {
-      'Electronics': ['electronics', 'semiconductor', 'computer', 'phone', 'electronic'],
-      'Textiles': ['textile', 'apparel', 'clothing', 'fabric', 'garment'],
-      'Machinery': ['machinery', 'equipment', 'industrial', 'manufacturing'],
-      'Agriculture': ['agriculture', 'rice', 'farm', 'crop', 'grain'],
-      'Automotive': ['auto', 'car', 'vehicle', 'automotive'],
-      'Chemicals': ['chemical', 'pharma', 'pharmaceutical', 'medicine'],
-      'Furniture': ['furniture', 'wood', 'household'],
-      'Seafood': ['seafood', 'fish', 'shrimp', 'aquaculture']
+    // Use ontology manager to extract categories
+    const ontologyResults = this.ontologyManager.analyzeText(text);
+    
+    if (ontologyResults.productCategories && ontologyResults.productCategories.length > 0) {
+      categories.push(...ontologyResults.productCategories);
+    }
+    
+    // Fallback to keyword matching
+    const keywordMapping: Record<string, string> = {
+      'textile': 'Textiles',
+      'fabric': 'Textiles',
+      'garment': 'Textiles',
+      'clothing': 'Textiles',
+      'apparel': 'Textiles',
+      'electronics': 'Electronics',
+      'computer': 'Electronics',
+      'phone': 'Electronics',
+      'semiconductor': 'Electronics',
+      'agriculture': 'Agriculture',
+      'farming': 'Agriculture',
+      'crop': 'Agriculture',
+      'food': 'Agriculture',
+      'fruit': 'Agriculture',
+      'rice': 'Agriculture',
+      'wood': 'Forestry',
+      'timber': 'Forestry',
+      'furniture': 'Forestry',
+      'seafood': 'Fisheries',
+      'fish': 'Fisheries',
+      'automotive': 'Automotive',
+      'car': 'Automotive',
+      'vehicle': 'Automotive',
+      'plastic': 'Chemicals',
+      'chemical': 'Chemicals',
+      'petroleum': 'Energy',
+      'oil': 'Energy',
+      'gas': 'Energy',
+      'fuel': 'Energy'
     };
     
     const lowerText = text.toLowerCase();
     
-    for (const [category, keywords] of Object.entries(categoryKeywords)) {
-      if (keywords.some(keyword => lowerText.includes(keyword))) {
+    for (const [keyword, category] of Object.entries(keywordMapping)) {
+      if (lowerText.includes(keyword) && !categories.includes(category)) {
         categories.push(category);
       }
     }
@@ -1265,46 +549,158 @@ export class VietnamSearchMonitor {
    * Extract tariff rate from text
    */
   private extractTariffRate(text: string): number {
-    // In a real implementation, this would use NLP to extract tariff rates
-    // For now, we'll use a simple regex approach
-    const tariffRegex = /(increased|decreased|reduced|raised|cut|added|imposed|lowered)\s+by\s+(\d+(\.\d+)?)\s*%/i;
-    const match = text.match(tariffRegex);
+    // Look for patterns like "X% tariff", "tariff of X%", "increased by X%"
+    const percentageMatches = text.match(/(\d+(\.\d+)?)%/g);
     
-    if (match) {
-      const direction = match[1].toLowerCase();
-      const rate = parseFloat(match[2]);
+    if (percentageMatches && percentageMatches.length > 0) {
+      // If multiple percentages, try to find one close to tariff-related words
+      const tariffRelatedWords = ['tariff', 'duty', 'tax', 'surcharge', 'levy', 'thuế'];
       
-      // Determine if it's a positive or negative change
-      const isNegative = ['decreased', 'reduced', 'cut', 'lowered'].includes(direction);
-      return isNegative ? -rate : rate;
+      for (const word of tariffRelatedWords) {
+        const index = text.toLowerCase().indexOf(word);
+        if (index > -1) {
+          // Find closest percentage to this word
+          let closestMatch = null;
+          let closestDistance = Number.MAX_SAFE_INTEGER;
+          
+          for (const match of percentageMatches) {
+            const matchIndex = text.indexOf(match);
+            const distance = Math.abs(matchIndex - index);
+            
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closestMatch = match;
+            }
+          }
+          
+          if (closestMatch && closestDistance < 100) { // Within reasonable distance
+            return parseFloat(closestMatch.replace('%', ''));
+          }
+        }
+      }
+      
+      // If no specific match found, take the first percentage
+      return parseFloat(percentageMatches[0].replace('%', ''));
     }
     
-    return 0; // Default if no rate found
+    return 0;
+  }
+  
+  /**
+   * Calculate impact severity based on tariff rate and product categories
+   */
+  private calculateImpactSeverity(tariffRate: number, productCategories: string[]): number {
+    // Base severity on tariff rate
+    let baseSeverity = 5; // Default medium severity
+    
+    if (tariffRate > 25) {
+      baseSeverity = 9;
+    } else if (tariffRate > 15) {
+      baseSeverity = 8;
+    } else if (tariffRate > 10) {
+      baseSeverity = 7;
+    } else if (tariffRate > 5) {
+      baseSeverity = 6;
+    } else if (tariffRate > 0) {
+      baseSeverity = 5;
+    }
+    
+    // Adjust based on product categories
+    const highImpactCategories = ['Electronics', 'Textiles', 'Automotive', 'Fisheries'];
+    const mediumImpactCategories = ['Agriculture', 'Forestry', 'Energy'];
+    
+    let categoryAdjustment = 0;
+    
+    // Check if any high impact categories are affected
+    if (productCategories.some(category => highImpactCategories.includes(category))) {
+      categoryAdjustment += 1;
+    }
+    
+    // Check if any medium impact categories are affected
+    if (productCategories.some(category => mediumImpactCategories.includes(category))) {
+      categoryAdjustment += 0.5;
+    }
+    
+    // Adjust final severity
+    let finalSeverity = Math.min(10, baseSeverity + categoryAdjustment);
+    
+    return finalSeverity;
+  }
+  
+  /**
+   * Extract affected provinces from text
+   */
+  private extractAffectedProvinces(text: string): string[] {
+    const provinces: string[] = [];
+    
+    // List of major Vietnam provinces/cities
+    const majorProvinces = [
+      'Ho Chi Minh City', 'Hanoi', 'Da Nang', 'Can Tho', 'Hai Phong',
+      'An Giang', 'Ba Ria-Vung Tau', 'Bac Giang', 'Bac Kan', 'Bac Lieu',
+      'Bac Ninh', 'Ben Tre', 'Binh Dinh', 'Binh Duong', 'Binh Phuoc',
+      'Binh Thuan', 'Ca Mau', 'Cao Bang', 'Dak Lak', 'Dak Nong',
+      'Dien Bien', 'Dong Nai', 'Dong Thap', 'Gia Lai', 'Ha Giang',
+      'Ha Nam', 'Ha Tinh', 'Hai Duong', 'Hau Giang', 'Hoa Binh',
+      'Hung Yen', 'Khanh Hoa', 'Kien Giang', 'Kon Tum', 'Lai Chau',
+      'Lam Dong', 'Lang Son', 'Lao Cai', 'Long An', 'Nam Dinh',
+      'Nghe An', 'Ninh Binh', 'Ninh Thuan', 'Phu Tho', 'Phu Yen',
+      'Quang Binh', 'Quang Nam', 'Quang Ngai', 'Quang Ninh', 'Quang Tri',
+      'Soc Trang', 'Son La', 'Tay Ninh', 'Thai Binh', 'Thai Nguyen',
+      'Thanh Hoa', 'Thua Thien Hue', 'Tien Giang', 'Tra Vinh', 'Tuyen Quang',
+      'Vinh Long', 'Vinh Phuc', 'Yen Bai'
+    ];
+    
+    // Check for each province in the text
+    for (const province of majorProvinces) {
+      if (text.includes(province)) {
+        provinces.push(province);
+      }
+    }
+    
+    return provinces;
   }
   
   /**
    * Extract trading partners from text
    */
   private extractTradingPartners(text: string): string[] {
-    const countries = [
-      'USA', 'China', 'Japan', 'South Korea', 'EU', 
-      'Singapore', 'Malaysia', 'Thailand', 'Australia', 'Germany',
-      'France', 'UK', 'Russia', 'India', 'Taiwan'
+    const partners: string[] = [];
+    
+    // List of major trading partners for Vietnam
+    const majorPartners = [
+      'United States', 'US', 'USA', 'China', 'Japan', 'South Korea', 'Korea',
+      'Thailand', 'Malaysia', 'Singapore', 'Indonesia', 'Philippines',
+      'Australia', 'EU', 'European Union', 'Germany', 'Netherlands',
+      'United Kingdom', 'UK', 'France', 'India', 'Taiwan', 'Hong Kong',
+      'Russia', 'Canada', 'New Zealand', 'Mexico', 'Brazil', 'Chile'
     ];
     
-    return countries.filter(country => text.includes(country));
-  }
-  
-  /**
-   * Clean up resources when this manager is no longer needed
-   */
-  public dispose(): void {
-    // Clear all polling intervals
-    this.pollingIntervals.forEach(interval => clearInterval(interval));
-    this.pollingIntervals = [];
+    // Check for each partner in the text
+    for (const partner of majorPartners) {
+      if (text.includes(partner)) {
+        // Normalize country names
+        if (partner === 'US' || partner === 'USA') {
+          if (!partners.includes('United States')) {
+            partners.push('United States');
+          }
+        } else if (partner === 'UK') {
+          if (!partners.includes('United Kingdom')) {
+            partners.push('United Kingdom');
+          }
+        } else if (partner === 'Korea') {
+          if (!partners.includes('South Korea')) {
+            partners.push('South Korea');
+          }
+        } else if (partner === 'EU') {
+          if (!partners.includes('European Union')) {
+            partners.push('European Union');
+          }
+        } else if (!partners.includes(partner)) {
+          partners.push(partner);
+        }
+      }
+    }
     
-    console.log('Vietnam search manager resources released');
+    return partners;
   }
 }
-
-export default VietnamSearchManager;

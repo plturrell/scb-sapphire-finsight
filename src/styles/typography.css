@@ -33,13 +33,43 @@
   font-display: swap;
 }
 
-/* SCB Typography Hierarchy System */
+/* SCB Typography Hierarchy System - Enhanced with fluid typography */
+
+/* H1 - Dashboard Main Title - Responsive */
+.scb-h1 {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 700; /* Bold */
+  font-size: clamp(1.5rem, 2.5vw + 1rem, 2.75rem); /* Fluid scaling from 24px to 44px */
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: rgb(var(--scb-honolulu-blue));
+}
+
+/* H2 - Section Title - Responsive */
+.scb-h2 {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 700; /* Bold */
+  font-size: clamp(1.25rem, 1.5vw + 0.9rem, 2rem); /* Fluid scaling from 20px to 32px */
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: rgb(var(--scb-honolulu-blue));
+}
+
+/* H3 - Card or Panel Title - Responsive */
+.scb-h3 {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 600; /* Semibold */
+  font-size: clamp(1.125rem, 1vw + 0.9rem, 1.5rem); /* Fluid scaling from 18px to 24px */
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: rgb(var(--scb-dark-gray));
+}
 
 /* Dashboard Title - Responsive */
 .scb-title {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 700; /* Bold */
-  font-size: clamp(1.25rem, 3vw, 1.75rem); /* 20px to 28px */
+  font-size: clamp(1.25rem, 1.5vw + 1rem, 1.75rem); /* Fluid scaling from 20px to 28px */
   line-height: 1.25;
   letter-spacing: -0.01em;
   color: rgb(var(--scb-honolulu-blue));
@@ -49,25 +79,43 @@
 .scb-section-header {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 500; /* Medium */
-  font-size: clamp(1rem, 2.5vw, 1.25rem); /* 16px to 20px */
+  font-size: clamp(1rem, 1vw + 0.8rem, 1.25rem); /* Fluid scaling from 16px to 20px */
   line-height: 1.4;
   color: rgb(var(--scb-dark-gray));
   margin-bottom: 0.75rem;
 }
 
-/* Key Metrics - Responsive */
+/* Body Text - Responsive */
+.scb-body {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: clamp(0.875rem, 0.5vw + 0.8rem, 1rem); /* Fluid scaling from 14px to 16px */
+  line-height: 1.5;
+  color: rgb(var(--scb-dark-gray));
+}
+
+/* Large Body Text - Responsive */
+.scb-body-large {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: clamp(1rem, 0.5vw + 0.9rem, 1.125rem); /* Fluid scaling from 16px to 18px */
+  line-height: 1.5;
+  color: rgb(var(--scb-dark-gray));
+}
+
+/* Key Metrics - Responsive with enhanced fluid scaling */
 .scb-metric-primary {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 700; /* Bold */
-  font-size: clamp(1.25rem, 4vw, 1.5rem); /* 20px to 24px */
-  line-height: 1.2;
+  font-size: clamp(1.25rem, 2vw + 1rem, 2rem); /* Fluid scaling from 20px to 32px */
+  line-height: 1.1;
   font-variant-numeric: tabular-nums; /* For vertical alignment of numbers */
 }
 
 .scb-metric-secondary {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 700; /* Bold */
-  font-size: clamp(1rem, 3vw, 1.25rem); /* 16px to 20px */
+  font-size: clamp(1rem, 1.5vw + 0.8rem, 1.5rem); /* Fluid scaling from 16px to 24px */
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
@@ -75,16 +123,16 @@
 .scb-metric-tertiary {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 700; /* Bold */
-  font-size: clamp(0.875rem, 2vw, 1rem); /* 14px to 16px */
+  font-size: clamp(0.875rem, 0.75vw + 0.75rem, 1.125rem); /* Fluid scaling from 14px to 18px */
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
-/* Data Labels */
+/* Data Labels - Optimized with careful sizing */
 .scb-data-label {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 400; /* Regular */
-  font-size: 0.875rem; /* 14px */
+  font-size: clamp(0.75rem, 0.5vw + 0.7rem, 0.875rem); /* Fluid scaling from 12px to 14px */
   line-height: 1.5;
   color: rgb(var(--scb-dark-gray));
 }
@@ -92,7 +140,7 @@
 .scb-data-label-large {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 400; /* Regular */
-  font-size: 1rem; /* 16px */
+  font-size: clamp(0.875rem, 0.5vw + 0.8rem, 1rem); /* Fluid scaling from 14px to 16px */
   line-height: 1.5;
   color: rgb(var(--scb-dark-gray));
 }
@@ -101,9 +149,19 @@
 .scb-supplementary {
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 300; /* Light */
-  font-size: 0.875rem; /* 14px */
+  font-size: clamp(0.75rem, 0.5vw + 0.7rem, 0.875rem); /* Fluid scaling from 12px to 14px */
   line-height: 1.5;
   color: rgba(var(--scb-dark-gray), 0.8);
+}
+
+/* Small Caption Text - Responsive */
+.scb-caption {
+  font-family: 'SC Prosper Sans', sans-serif;
+  font-weight: 400; /* Regular */
+  font-size: clamp(0.625rem, 0.25vw + 0.6rem, 0.75rem); /* Fluid scaling from 10px to 12px */
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: rgba(var(--scb-dark-gray), 0.7);
 }
 
 /* Financial Data - Using tabular figures */
@@ -133,7 +191,7 @@
   border-radius: 0.25rem;
   font-family: 'SC Prosper Sans', sans-serif;
   font-weight: 500;
-  font-size: 0.75rem;
+  font-size: clamp(0.625rem, 0.25vw + 0.6rem, 0.75rem); /* Fluid scaling from 10px to 12px */
 }
 
 .scb-badge-positive {

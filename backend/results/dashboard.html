@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tariff Impact Analysis Dashboard - Samsung Electronics Vietnam</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin: 10px 0;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10ناء;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .recommendations {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .timeline-item {
+            flex: 1;
+            min-width: 200px;
+            margin: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #1e3a8a;
+        }
+        .critical { color: #dc3545; }
+        .high { color: #fd7e14; }
+        .medium { color: #ffc107; }
+        .low { color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>Tariff Impact Analysis Dashboard</h1>
+            <h2>Samsung Electronics Vietnam</h2>
+            <p>Analysis Date: May 17, 2025 | Tariff Rate: 46%</p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Revenue at Risk</div>
+                <div class="metric-value">$21B</div>
+                <div class="metric-label">35% of Total Revenue</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Financial Impact</div>
+                <div class="metric-value critical">-$9.87B</div>
+                <div class="metric-label">Potential Loss</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Success Probability</div>
+                <div class="metric-value high">75-80%</div>
+                <div class="metric-label">With Intervention</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Critical Risk Areas</div>
+                <div class="metric-value critical">3</div>
+                <div class="metric-label">Requiring Immediate Action</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3>Impact by Category</h3>
+                <canvas id="impactChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Finance Options Comparison</h3>
+                <canvas id="financeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>Implementation Timeline</h3>
+            <canvas id="timelineChart"></canvas>
+        </div>
+
+        <div class="recommendations">
+            <h3>Strategic Recommendations</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Immediate (0-3 months)</h4>
+                    <ul>
+                        <li>Export Credit Insurance</li>
+                        <li>Working Capital Facility</li>
+                        <li>Cost Reduction Program</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Short-term (3-12 months)</h4>
+                    <ul>
+                        <li>Market Diversification</li>
+                        <li>Supply Chain Optimization</li>
+                        <li>Pricing Strategy Adjustment</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Medium-term (1-3 years)</h4>
+                    <ul>
+                        <li>Production Diversification</li>
+                        <li>Technology Investment</li>
+                        <li>Regional Partnerships</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Long-term (3-5 years)</h4>
+                    <ul>
+                        <li>Business Model Evolution</li>
+                        <li>Global Supply Chain Redesign</li>
+                        <li>Strategic Transformation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Impact by Category Chart
+        const impactCtx = document.getElementById('impactChart').getContext('2d');
+        new Chart(impactCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Financial', 'Market', 'Operational', 'Strategic'],
+                datasets: [{
+                    label: 'Impact Severity (1-10)',
+                    data: [9, 7, 7, 8],
+                    backgroundColor: [
+                        'rgba(220, 53, 69, 0.8)',
+                        'rgba(253, 126, 20, 0.8)',
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ]
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    }
+                }
+            }
+        });
+
+        // Finance Options Chart
+        const financeCtx = document.getElementById('financeChart').getContext('2d');
+        new Chart(financeCtx, {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Trade Finance Options',
+                    data: [
+                        { x: 0.5, y: 4, r: 10, name: 'Export Credit Insurance' },
+                        { x: 0.75, y: 5, r: 8, name: 'Letters of Credit' },
+                        { x: 3.0, y: 5, r: 12, name: 'Working Capital Loans' },
+                        { x: 1.8, y: 7, r: 15, name: 'Supply Chain Financing' },
+                        { x: 2.5, y: 9, r: 18, name: 'Structured Trade Finance' }
+                    ],
+                    backgroundColor: 'rgba(30, 58, 138, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Cost (% above base rate)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Complexity (1-10)'
+                        },
+                        max: 10
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.name + ': Cost ' + context.raw.x + '%, Complexity ' + context.raw.y;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Timeline Chart
+        const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+        new Chart(timelineCtx, {
+            type: 'line',
+            data: {
+                labels: ['Now', '3 months', '6 months', '1 year', '2 years', '3 years', '5 years'],
+                datasets: [{
+                    label: 'Revenue Impact',
+                    data: [-35, -30, -25, -20, -15, -10, -5],
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    fill: false,
+                    tension: 0.1
+                }, {
+                    label: 'Recovery with Intervention',
+                    data: [-35, -28, -20, -12, -5, 0, 5],
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Revenue Impact (%)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,6 +5,7 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: 'class',
   theme: {
     screens: {
       // iPhone SE, standard phones
@@ -86,6 +87,13 @@ module.exports = {
         'slide-in': 'slideIn 0.3s ease-out',
         'slide-out': 'slideOut 0.3s ease-out',
         'fade-in': 'fadeIn 0.2s ease-out',
+        'ripple': 'ripple 0.8s ease-out forwards',
+        'pulse': 'pulse 1.5s ease-in-out infinite',
+        'wobble': 'wobble 1s ease-in-out',
+        'float': 'float 3s ease-in-out infinite',
+        'bounce-subtle': 'bounceSubtle 2s ease-in-out infinite',
+        'jelly': 'jelly 0.8s ease-in-out',
+        'spin-slow': 'spin 3s linear infinite',
       },
       keyframes: {
         slideIn: {
@@ -99,6 +107,50 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        ripple: {
+          '0%': { 
+            width: '0',
+            height: '0',
+            opacity: '0.5'
+          },
+          '100%': { 
+            width: '300px',
+            height: '300px',
+            opacity: '0'
+          },
+        },
+        pulse: {
+          '0%, 100%': { 
+            transform: 'scale(1)',
+            opacity: '1'
+          },
+          '50%': { 
+            transform: 'scale(1.1)',
+            opacity: '0.8'
+          },
+        },
+        wobble: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '15%': { transform: 'translateX(-12px) rotate(-3deg)' },
+          '30%': { transform: 'translateX(10px) rotate(3deg)' },
+          '45%': { transform: 'translateX(-8px) rotate(-1.8deg)' },
+          '60%': { transform: 'translateX(6px) rotate(1.2deg)' },
+          '75%': { transform: 'translateX(-4px) rotate(-0.6deg)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        bounceSubtle: {
+          '0%, 100%': { transform: 'translateY(0) scale(1)' },
+          '50%': { transform: 'translateY(-5px) scale(1.01)' },
+        },
+        jelly: {
+          '0%, 100%': { transform: 'scale(1, 1)' },
+          '25%': { transform: 'scale(0.95, 1.05)' },
+          '50%': { transform: 'scale(1.05, 0.95)' },
+          '75%': { transform: 'scale(0.98, 1.02)' },
         },
       },
     },

@@ -1,0 +1,259 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix vtro: <http://example.org/vietnam-tariff-research-ontology#> .
+
+# Ontology Declaration
+<http://example.org/vietnam-tariff-research-ontology> a owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    dc:title "Vietnam Tariff Research Ontology"@en ;
+    dc:description "Ontology for representing research plan on Vietnamese companies affected by US tariffs"@en ;
+    dc:creator "Research Planning Agent"@en ;
+    dct:created "2025-05-17T14:00:00"^^xsd:dateTime .
+
+# Class Definitions
+vtro:ResearchAgent a owl:Class ;
+    rdfs:subClassOf prov:Agent ;
+    rdfs:label "Research Agent"@en ;
+    rdfs:comment "An agent responsible for researching aspects of Vietnamese companies affected by US tariffs"@en .
+
+vtro:ResearchPlan a owl:Class ;
+    rdfs:subClassOf prov:Plan ;
+    rdfs:label "Research Plan"@en ;
+    rdfs:comment "A structured plan for investigating impacts of US tariffs on Vietnamese companies"@en .
+
+vtro:ResearchStep a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Research Step"@en ;
+    rdfs:comment "A specific step within the research plan"@en .
+
+vtro:ResearchDimension a owl:Class ;
+    rdfs:label "Research Dimension"@en ;
+    rdfs:comment "A specific aspect of the company-tariff relationship to analyze"@en .
+
+vtro:CompanyDataEntity a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Company Data Entity"@en ;
+    rdfs:comment "Information about Vietnamese companies and tariff impacts"@en .
+
+vtro:TariffDataEntity a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Tariff Data Entity"@en ;
+    rdfs:comment "Information about US tariff policies affecting Vietnam"@en .
+
+vtro:AnalysisApproach a owl:Class ;
+    rdfs:label "Analysis Approach"@en ;
+    rdfs:comment "Methodology used to analyze the collected data"@en .
+
+vtro:IndustrySector a owl:Class ;
+    rdfs:label "Industry Sector"@en ;
+    rdfs:comment "An economic sector in Vietnam affected by tariffs"@en .
+
+# Property Definitions
+vtro:hasDimension a owl:ObjectProperty ;
+    rdfs:domain vtro:ResearchPlan ;
+    rdfs:range vtro:ResearchDimension ;
+    rdfs:label "has dimension"@en ;
+    rdfs:comment "Relates a research plan to a dimension being analyzed"@en .
+
+vtro:implementsApproach a owl:ObjectProperty ;
+    rdfs:domain vtro:ResearchPlan ;
+    rdfs:range vtro:AnalysisApproach ;
+    rdfs:label "implements approach"@en ;
+    rdfs:comment "Relates a research plan to its analysis methodology"@en .
+
+vtro:investigatesSector a owl:ObjectProperty ;
+    rdfs:domain vtro:ResearchPlan ;
+    rdfs:range vtro:IndustrySector ;
+    rdfs:label "investigates sector"@en ;
+    rdfs:comment "Relates a research plan to an industry sector being investigated"@en .
+
+vtro:hasOrderPosition a owl:DatatypeProperty ;
+    rdfs:domain vtro:ResearchStep ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has order position"@en ;
+    rdfs:comment "Specifies the sequence position of a research step"@en .
+
+# Analysis Approach
+vtro:BreadthFirstApproach a vtro:AnalysisApproach ;
+    rdfs:label "Breadth-First Approach"@en ;
+    dc:description "An approach that analyzes multiple companies across several dimensions simultaneously"@en .
+
+# Main Research Plan
+vtro:VietnamTariffImpactPlan a vtro:ResearchPlan, prov:Plan ;
+    rdfs:label "Vietnam Tariff Impact Research Plan"@en ;
+    dc:description "Research plan to identify the top 10 Vietnamese companies most negatively impacted by recent US tariffs"@en ;
+    dct:created "2025-05-17T14:00:00"^^xsd:dateTime ;
+    vtro:implementsApproach vtro:BreadthFirstApproach ;
+    vtro:investigatesSector vtro:ElectronicsSector, vtro:TextileSector, vtro:FootwearSector, vtro:FurnitureSector ;
+    vtro:hasDimension vtro:ExportVolumeDimension, vtro:SectorExposureDimension, vtro:RevenueDependencyDimension, vtro:PublicStatementsDimension, vtro:MitigationStrategiesDimension ;
+    prov:wasAttributedTo vtro:MainResearchAgent .
+
+# Research Dimensions
+vtro:ExportVolumeDimension a vtro:ResearchDimension ;
+    rdfs:label "Export Volume Dimension"@en ;
+    dc:description "Analysis of Vietnamese companies with high US export volume"@en .
+
+vtro:SectorExposureDimension a vtro:ResearchDimension ;
+    rdfs:label "Sector Exposure Dimension"@en ;
+    dc:description "Analysis of companies in sectors most affected by tariffs (electronics, textiles, footwear, furniture)"@en .
+
+vtro:RevenueDependencyDimension a vtro:ResearchDimension ;
+    rdfs:label "Revenue Dependency Dimension"@en ;
+    dc:description "Analysis of companies with high revenue dependency on US exports and quantitative data on US market exposure"@en .
+
+vtro:PublicStatementsDimension a vtro:ResearchDimension ;
+    rdfs:label "Public Statements Dimension"@en ;
+    dc:description "Analysis of public statements about tariff impacts"@en .
+
+vtro:MitigationStrategiesDimension a vtro:ResearchDimension ;
+    rdfs:label "Mitigation Strategies Dimension"@en ;
+    dc:description "Analysis of mitigation strategies being implemented by companies"@en .
+
+# Industry Sectors
+vtro:ElectronicsSector a vtro:IndustrySector ;
+    rdfs:label "Electronics Sector"@en ;
+    dc:description "Sector producing electronic components, phones, computers, and other devices"@en .
+
+vtro:TextileSector a vtro:IndustrySector ;
+    rdfs:label "Textile and Garment Sector"@en ;
+    dc:description "Sector producing textiles, clothing, and related products"@en .
+
+vtro:FootwearSector a vtro:IndustrySector ;
+    rdfs:label "Footwear Sector"@en ;
+    dc:description "Sector producing shoes and related products"@en .
+
+vtro:FurnitureSector a vtro:IndustrySector ;
+    rdfs:label "Furniture Sector"@en ;
+    dc:description "Sector producing furniture and wood-based products"@en .
+
+# Research Agents (Subagents)
+vtro:MainResearchAgent a vtro:ResearchAgent, prov:Agent ;
+    rdfs:label "Main Research Coordinator"@en ;
+    dc:description "Primary agent coordinating all aspects of research"@en ;
+    prov:actedOnBehalfOf vtro:ResearchInitiator .
+
+vtro:TariffResearchAgent a vtro:ResearchAgent, prov:Agent ;
+    rdfs:label "Tariff Research Agent"@en ;
+    dc:description "Subagent 1: Research the recent US tariffs on Vietnam (details, timing, rates, affected sectors)"@en ;
+    prov:actedOnBehalfOf vtro:MainResearchAgent .
+
+vtro:CompanyIdentificationAgent a vtro:ResearchAgent, prov:Agent ;
+    rdfs:label "Company Identification Agent"@en ;
+    dc:description "Subagent 2: Identify top Vietnamese exporters to the US market by volume and sector"@en ;
+    prov:actedOnBehalfOf vtro:MainResearchAgent .
+
+vtro:ExportDependencyAgent a vtro:ResearchAgent, prov:Agent ;
+    rdfs:label "Export Dependency Agent"@en ;
+    dc:description "Subagent 3: Research export dependency and financial metrics for these companies"@en ;
+    prov:actedOnBehalfOf vtro:MainResearchAgent .
+
+vtro:MitigationStrategyAgent a vtro:ResearchAgent, prov:Agent ;
+    rdfs:label "Mitigation Strategy Agent"@en ;
+    dc:description "Subagent 4: Collect public statements and mitigation strategies from these companies"@en ;
+    prov:actedOnBehalfOf vtro:MainResearchAgent .
+
+vtro:ResearchInitiator a prov:Agent ;
+    rdfs:label "Research Initiator"@en ;
+    dc:description "Entity that initiated the research plan"@en .
+
+# Research Steps
+vtro:TariffResearchStep a vtro:ResearchStep, prov:Activity ;
+    rdfs:label "Tariff Research Step"@en ;
+    dc:description "Step 1: Establish what the recent US tariffs on Vietnam actually entail (when announced, implementation timeline, affected sectors, tariff rates)"@en ;
+    vtro:hasOrderPosition 1 ;
+    prov:wasAssociatedWith vtro:TariffResearchAgent ;
+    prov:used vtro:ResearchPlanBundle ;
+    prov:wasInformedBy vtro:VietnamTariffImpactPlan .
+
+vtro:ExporterIdentificationStep a vtro:ResearchStep, prov:Activity ;
+    rdfs:label "Exporter Identification Step"@en ;
+    dc:description "Step 2: Identify the major Vietnamese exporters to the US market"@en ;
+    vtro:hasOrderPosition 2 ;
+    prov:wasAssociatedWith vtro:CompanyIdentificationAgent ;
+    prov:used vtro:TariffDataBundle ;
+    prov:wasInformedBy vtro:TariffResearchStep .
+
+vtro:CompanyExposureStep a vtro:ResearchStep, prov:Activity ;
+    rdfs:label "Company Exposure Research Step"@en ;
+    dc:description "Step 3: Research each company's exposure and response to the tariffs"@en ;
+    vtro:hasOrderPosition 3 ;
+    prov:wasAssociatedWith vtro:ExportDependencyAgent, vtro:MitigationStrategyAgent ;
+    prov:used vtro:ExporterDataBundle ;
+    prov:wasInformedBy vtro:ExporterIdentificationStep .
+
+vtro:ImpactAnalysisStep a vtro:ResearchStep, prov:Activity ;
+    rdfs:label "Impact Analysis Step"@en ;
+    dc:description "Step 4: Analyze and rank the companies based on negative impact"@en ;
+    vtro:hasOrderPosition 4 ;
+    prov:wasAssociatedWith vtro:MainResearchAgent ;
+    prov:used vtro:CompanyExposureBundle ;
+    prov:wasInformedBy vtro:CompanyExposureStep .
+
+# Data Bundles
+vtro:ResearchPlanBundle a prov:Bundle, prov:Entity ;
+    rdfs:label "Research Plan Bundle"@en ;
+    dc:description "Initial research plan and requirements"@en ;
+    prov:wasAttributedTo vtro:MainResearchAgent ;
+    prov:wasGeneratedBy vtro:PlanCreationActivity .
+
+vtro:TariffDataBundle a prov:Bundle, prov:Entity ;
+    rdfs:label "Tariff Data Bundle"@en ;
+    dc:description "Data about recent US tariffs on Vietnam (details, timing, rates, affected sectors)"@en ;
+    prov:wasAttributedTo vtro:TariffResearchAgent ;
+    prov:wasGeneratedBy vtro:TariffResearchStep .
+
+vtro:ExporterDataBundle a prov:Bundle, prov:Entity ;
+    rdfs:label "Exporter Data Bundle"@en ;
+    dc:description "Data about major Vietnamese exporters to the US market by volume and sector"@en ;
+    prov:wasAttributedTo vtro:CompanyIdentificationAgent ;
+    prov:wasGeneratedBy vtro:ExporterIdentificationStep .
+
+vtro:CompanyExposureBundle a prov:Bundle, prov:Entity ;
+    rdfs:label "Company Exposure Bundle"@en ;
+    dc:description "Data about each company's exposure and response to the tariffs"@en ;
+    prov:wasAttributedTo vtro:ExportDependencyAgent, vtro:MitigationStrategyAgent ;
+    prov:wasGeneratedBy vtro:CompanyExposureStep .
+
+vtro:FinalReportBundle a prov:Bundle, prov:Entity ;
+    rdfs:label "Final Report Bundle"@en ;
+    dc:description "Final report identifying the top 10 Vietnamese companies most negatively impacted by US tariffs"@en ;
+    prov:wasAttributedTo vtro:MainResearchAgent ;
+    prov:wasGeneratedBy vtro:ImpactAnalysisStep ;
+    prov:wasDerivedFrom vtro:TariffDataBundle, vtro:ExporterDataBundle, vtro:CompanyExposureBundle .
+
+# Creation Activity for Research Plan
+vtro:PlanCreationActivity a prov:Activity ;
+    rdfs:label "Plan Creation Activity"@en ;
+    dc:description "Activity that created the research plan"@en ;
+    prov:wasAssociatedWith vtro:ResearchInitiator, vtro:MainResearchAgent ;
+    prov:startedAtTime "2025-05-17T14:00:00"^^xsd:dateTime ;
+    prov:endedAtTime "2025-05-17T14:30:00"^^xsd:dateTime .
+
+# Key Expected Outputs from Research
+vtro:Top10ImpactedCompanies a vtro:CompanyDataEntity, prov:Entity ;
+    rdfs:label "Top 10 Impacted Companies"@en ;
+    dc:description "List of the 10 Vietnamese companies most negatively impacted by US tariffs"@en ;
+    prov:wasGeneratedBy vtro:ImpactAnalysisStep ;
+    prov:wasAttributedTo vtro:MainResearchAgent ;
+    prov:wasDerivedFrom vtro:TariffDataBundle, vtro:ExporterDataBundle, vtro:CompanyExposureBundle .
+
+# Batch Execution Process
+vtro:BatchExecutionProcess a prov:Activity ;
+    rdfs:label "Batch Execution Process"@en ;
+    dc:description "Process of executing the 4 subagents simultaneously to maximize efficiency"@en ;
+    prov:wasAssociatedWith vtro:MainResearchAgent ;
+    prov:used vtro:ResearchPlanBundle ;
+    prov:influenced vtro:TariffResearchStep, vtro:ExporterIdentificationStep, vtro:CompanyExposureStep ;
+    prov:startedAtTime "2025-05-17T14:30:00"^^xsd:dateTime .
+
+# Additional PROV-O Provenance Relationships
+vtro:VietnamTariffImpactPlan prov:wasGeneratedBy vtro:PlanCreationActivity .
+vtro:MainResearchAgent prov:wasInformedBy vtro:TariffResearchAgent, vtro:CompanyIdentificationAgent, vtro:ExportDependencyAgent, vtro:MitigationStrategyAgent .
+vtro:FinalReportBundle prov:wasInfluencedBy vtro:TariffResearchStep, vtro:ExporterIdentificationStep, vtro:CompanyExposureStep, vtro:ImpactAnalysisStep .

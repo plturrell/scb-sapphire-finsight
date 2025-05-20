@@ -66,19 +66,30 @@ export interface VietnamTradeSectorData {
 
 // Node type for Sankey diagrams
 export interface SankeyNode {
-  id: string;
+  id?: string;
   name: string;
-  group: string;
+  group?: string;
+  category?: string;
+  value?: number;
+  predictedValue?: number;
+  confidence?: number;
+  x0?: number;
+  x1?: number;
+  y0?: number;
+  y1?: number;
+  index?: number;
 }
 
 // Link type for Sankey diagrams
 export interface SankeyLink {
-  source: string;
-  target: string;
+  source: number | SankeyNode;
+  target: number | SankeyNode;
   value: number;
-  type: string;
-  uiColor: string;
+  type?: string;
+  uiColor?: string;
   aiEnhanced?: boolean;
+  originalValue?: number; // Original value before AI enhancement
+  uid?: string; // Unique identifier for links
 }
 
 // AI Insights type
@@ -93,5 +104,25 @@ export interface AIInsights {
 export interface SankeyData {
   nodes: SankeyNode[];
   links: SankeyLink[];
-  aiInsights: AIInsights;
+  aiInsights?: AIInsights;
+}
+
+// Simulation Result
+export interface SimulationResult {
+  optimalPath: {
+    allocations: Record<string, number>;
+    recommendations: string[];
+  };
+  expectedValue: {
+    totalReturn: number;
+    byCountry: Record<string, number>;
+  };
+  riskMetrics: {
+    volatility: number;
+    confidenceLowerBound: number;
+    confidenceUpperBound: number;
+    maxDrawdown: number;
+    recessionImpact: number;
+  };
+  flowData: SankeyData;
 }

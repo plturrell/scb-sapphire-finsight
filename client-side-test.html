@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monte Carlo Data Products Integration Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button.running {
+            background-color: #f39c12;
+            cursor: not-allowed;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .warning {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        .result {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .panel {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .log {
+            height: 250px;
+            overflow: auto;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        input, select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin: 5px;
+        }
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+            background-color: #3498db;
+            color: white;
+        }
+        .test-summary {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f1f9ff;
+            border-radius: 4px;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #ecf0f1;
+            border-radius: 6px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .tab-container {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 4px 4px 0 0;
+            background-color: #f8f9fa;
+        }
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Monte Carlo Data Products Integration Test</h1>
+    <p>This test verifies that the API endpoints for Monte Carlo Data Products integration are working correctly with a 0% mock implementation.</p>
+    
+    <div class="tab-container">
+        <div class="tab active" data-tab="manual-test">Manual Tests</div>
+        <div class="tab" data-tab="auto-test">Automated Test Suite</div>
+        <div class="tab" data-tab="data-view">Data Viewer</div>
+    </div>
+    
+    <div id="manual-test" class="tab-content active">
+        <div class="panel">
+            <h2>1. Import Data Products</h2>
+            <div class="actions">
+                <button onclick="importInputs()">Import Inputs</button>
+                <button onclick="importOutputs()">Import Outputs</button>
+                <button onclick="importParameterHistory()">Import Parameter History</button>
+                <button onclick="importAll()">Import All Data</button>
+            </div>
+            <div id="importResult" class="result">Results will appear here...</div>
+        </div>
+        
+        <div class="panel">
+            <h2>2. Get Mapping</h2>
+            <button onclick="getMapping()">Get Input/Output Mapping</button>
+            <div id="mappingResult" class="result">Results will appear here...</div>
+        </div>
+        
+        <div class="panel">
+            <h2>3. Run Simulation</h2>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <input type="text" id="inputId" placeholder="Input ID" style="width: 300px; flex-grow: 1;">
+                <button id="runSimulationBtn" onclick="runSimulation()">Run Simulation</button>
+            </div>
+            <div id="simulationResult" class="result">Results will appear here...</div>
+        </div>
+        
+        <div class="panel">
+            <h2>4. Export Data Products</h2>
+            <div class="actions">
+                <button onclick="exportInputs()">Export Inputs</button>
+                <button onclick="exportOutputs()">Export Outputs</button>
+                <button onclick="exportAll()">Export All Data</button>
+            </div>
+            <div id="exportResult" class="result">Results will appear here...</div>
+        </div>
+    </div>
+    
+    <div id="auto-test" class="tab-content">
+        <div class="panel">
+            <h2>Automated Integration Test Suite</h2>
+            <p>Run an automated test suite to verify all components of the integration are working correctly.</p>
+            <button id="runTestSuiteBtn" onclick="runAutomatedTests()">Run Complete Test Suite</button>
+            <div class="progress-bar">
+                <div id="testProgress" class="progress-bar-fill"></div>
+            </div>
+            <div id="testSummary" class="test-summary">
+                <h3>Test Results</h3>
+                <div id="testResults"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="data-view" class="tab-content">
+        <div class="panel">
+            <h2>Data Products Explorer</h2>
+            <select id="dataProductSelector" onchange="loadDataProduct()">
+                <option value="">Select a data product...</option>
+                <option value="inputs">Monte Carlo Simulation Inputs</option>
+                <option value="outputs">Monte Carlo Simulation Outputs</option>
+                <option value="parameter-history">Monte Carlo Parameter History</option>
+            </select>
+            <div id="dataProductViewer" class="result" style="max-height: 500px;">Select a data product to view its contents</div>
+        </div>
+    </div>
+    
+    <h2>Test Log</h2>
+    <button onclick="clearLog()" style="float: right; background-color: #e74c3c;">Clear Log</button>
+    <div id="log" class="log"></div>
+    
+    <footer>
+        <p>Data Products Monte Carlo Integration Test - SCB FinSight App &copy; 2025</p>
+        <p><small>Version 1.2.0 - Non-Mocked Implementation</small></p>
+    </footer>
+
+    <script>
+        // Tabs functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Logging
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#e74c3c' : 
+                         type === 'success' ? '#27ae60' : 
+                         type === 'warning' ? '#f39c12' : '#3498db';
+            
+            logElement.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            log('Log cleared', 'info');
+        }
+
+        // API helpers
+        async function fetchAPI(endpoint, method = 'GET', body = null, timeout = 30000) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                log(`API Request: ${method} ${endpoint}`);
+                
+                // Set up timeout for fetch
+                const controller = new AbortController();
+                options.signal = controller.signal;
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+                
+                try {
+                    const response = await fetch(endpoint, options);
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        let errorMessage = `API error (${response.status})`;
+                        try {
+                            const errorResponse = await response.json();
+                            errorMessage += `: ${errorResponse.message || response.statusText}`;
+                        } catch {
+                            errorMessage += `: ${await response.text() || response.statusText}`;
+                        }
+                        throw new Error(errorMessage);
+                    }
+                    
+                    const data = await response.json();
+                    log(`API Response: ${method} ${endpoint} - Success`, 'success');
+                    return data;
+                } catch (fetchError) {
+                    clearTimeout(timeoutId);
+                    if (fetchError.name === 'AbortError') {
+                        throw new Error(`Request timeout after ${timeout}ms`);
+                    }
+                    throw fetchError;
+                }
+            } catch (error) {
+                log(`API Error: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Test functions
+        async function importInputs() {
+            try {
+                const result = await fetchAPI('/api/monte-carlo/data-products?action=inputs');
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Imported ${result.inputs?.length || 0} inputs.<br><br>` + 
+                    JSON.stringify(result, null, 2);
+                
+                // If inputs were imported, store the first input ID
+                if (result.inputs && result.inputs.length > 0) {
+                    document.getElementById('inputId').value = result.inputs[0].id;
+                    log(`Set Input ID to ${result.inputs[0].id}`, 'info');
+                }
+                
+                return result;
+            } catch (error) {
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="error">✗ Error!</span> ${error.message}`;
+                throw error;
+            }
+        }
+
+        async function importOutputs() {
+            try {
+                const result = await fetchAPI('/api/monte-carlo/data-products?action=outputs');
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Imported ${result.outputs?.length || 0} outputs.<br><br>` + 
+                    JSON.stringify(result, null, 2);
+                return result;
+            } catch (error) {
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="error">✗ Error!</span> ${error.message}`;
+                throw error;
+            }
+        }
+
+        async function importParameterHistory() {
+            try {
+                const result = await fetchAPI('/api/monte-carlo/data-products?action=parameter-history');
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Imported ${result.history?.length || 0} parameter history records.<br><br>` + 
+                    JSON.stringify(result, null, 2);
+                return result;
+            } catch (error) {
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="error">✗ Error!</span> ${error.message}`;
+                throw error;
+            }
+        }
+        
+        async function importAll() {
+            try {
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="warning">⏳ Importing all data...</span>`;
+                
+                const [inputs, outputs, history] = await Promise.all([
+                    importInputs().catch(e => ({ error: e.message, type: 'inputs' })),
+                    importOutputs().catch(e => ({ error: e.message, type: 'outputs' })),
+                    importParameterHistory().catch(e => ({ error: e.message, type: 'history' }))
+                ]);
+                
+                // Check for errors
+                const errors = [];
+                if (inputs.error) errors.push(`${inputs.type}: ${inputs.error}`);
+                if (outputs.error) errors.push(`${outputs.type}: ${outputs.error}`);
+                if (history.error) errors.push(`${history.type}: ${history.error}`);
+                
+                if (errors.length > 0) {
+                    document.getElementById('importResult').innerHTML = 
+                        `<span class="error">✗ Errors occurred during import:</span><br>` + 
+                        errors.join('<br>');
+                    return false;
+                }
+                
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Import summary:<br>` +
+                    `- Inputs: ${inputs.inputs?.length || 0} records<br>` +
+                    `- Outputs: ${outputs.outputs?.length || 0} records<br>` +
+                    `- Parameter History: ${history.history?.length || 0} records<br><br>` +
+                    `Total data products imported: ${(inputs.inputs?.length || 0) + (outputs.outputs?.length || 0) + (history.history?.length || 0)}`;
+                
+                // If inputs were imported, store the first input ID
+                if (inputs.inputs && inputs.inputs.length > 0) {
+                    document.getElementById('inputId').value = inputs.inputs[0].id;
+                    log(`Set Input ID to ${inputs.inputs[0].id}`, 'info');
+                }
+                
+                return true;
+            } catch (error) {
+                document.getElementById('importResult').innerHTML = 
+                    `<span class="error">✗ Error importing all data!</span> ${error.message}`;
+                return false;
+            }
+        }
+
+        async function getMapping() {
+            try {
+                const result = await fetchAPI('/api/monte-carlo/data-products?action=mapping');
+                document.getElementById('mappingResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Retrieved mapping between ${Object.keys(result.mapping || {}).length} inputs and their outputs.<br><br>` + 
+                    JSON.stringify(result, null, 2);
+                return result;
+            } catch (error) {
+                document.getElementById('mappingResult').innerHTML = 
+                    `<span class="error">✗ Error!</span> ${error.message}`;
+                throw error;
+            }
+        }
+
+        async function runSimulation() {
+            try {
+                const inputId = document.getElementById('inputId').value.trim();
+                const runButton = document.getElementById('runSimulationBtn');
+                
+                if (!inputId) {
+                    throw new Error('Please enter an Input ID');
+                }
+                
+                document.getElementById('simulationResult').innerHTML = 
+                    `<span class="warning">⏳ Running simulation...</span>`;
+                
+                // Disable button during simulation
+                runButton.disabled = true;
+                runButton.classList.add('running');
+                runButton.textContent = 'Running Simulation...';
+                
+                // Use a longer timeout for simulation (2 minutes)
+                const result = await fetchAPI(
+                    `/api/monte-carlo/data-products?action=run&inputId=${inputId}`, 
+                    'POST',
+                    null,
+                    120000 // 2 minute timeout
+                );
+                
+                document.getElementById('simulationResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Simulation completed in ${result.output?.computeTimeMs ? (result.output.computeTimeMs / 1000).toFixed(2) + 's' : 'unknown time'}.<br><br>` + 
+                    JSON.stringify(result, null, 2);
+                
+                // Re-enable button
+                runButton.disabled = false;
+                runButton.classList.remove('running');
+                runButton.textContent = 'Run Simulation';
+                
+                return result;
+            } catch (error) {
+                document.getElementById('simulationResult').innerHTML = 
+                    `<span class="error">✗ Error!</span> ${error.message}`;
+                
+                // Re-enable button
+                const runButton = document.getElementById('runSimulationBtn');
+                runButton.disabled = false;
+                runButton.classList.remove('running');
+                runButton.textContent = 'Run Simulation';
+                
+                throw error;
+            }
+        }
+
+        async function exportInputs() {
+            try {
+                const result = await fetchAPI('/api/monte-carlo/data-products?action=inputs/export', 'POST');
+                document.getElementById('exportResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Exported inputs to data products.<br><br>` + 
+                    JSON.stringify(result, null, 2);
+                return result;
+            } catch (error) {
+                document.getElementById('exportResult').innerHTML = 
+                    `<span class="error">✗ Error!</span> ${error.message}`;
+                throw error;
+            }
+        }
+
+        async function exportOutputs() {
+            try {
+                const result = await fetchAPI('/api/monte-carlo/data-products?action=outputs/export', 'POST');
+                document.getElementById('exportResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> Exported outputs to data products.<br><br>` + 
+                    JSON.stringify(result, null, 2);
+                return result;
+            } catch (error) {
+                document.getElementById('exportResult').innerHTML = 
+                    `<span class="error">✗ Error!</span> ${error.message}`;
+                throw error;
+            }
+        }
+        
+        async function exportAll() {
+            try {
+                document.getElementById('exportResult').innerHTML = 
+                    `<span class="warning">⏳ Exporting all data...</span>`;
+                
+                const [inputs, outputs] = await Promise.all([
+                    exportInputs().catch(e => ({ error: e.message, type: 'inputs' })),
+                    exportOutputs().catch(e => ({ error: e.message, type: 'outputs' }))
+                ]);
+                
+                // Check for errors
+                const errors = [];
+                if (inputs.error) errors.push(`${inputs.type}: ${inputs.error}`);
+                if (outputs.error) errors.push(`${outputs.type}: ${outputs.error}`);
+                
+                if (errors.length > 0) {
+                    document.getElementById('exportResult').innerHTML = 
+                        `<span class="error">✗ Errors occurred during export:</span><br>` + 
+                        errors.join('<br>');
+                    return false;
+                }
+                
+                document.getElementById('exportResult').innerHTML = 
+                    `<span class="success">✓ Success!</span> All data products exported successfully.<br><br>` +
+                    `- Inputs: ${inputs.success ? 'Exported successfully' : 'Failed'}<br>` +
+                    `- Outputs: ${outputs.success ? 'Exported successfully' : 'Failed'}<br>`;
+                
+                return true;
+            } catch (error) {
+                document.getElementById('exportResult').innerHTML = 
+                    `<span class="error">✗ Error exporting all data!</span> ${error.message}`;
+                return false;
+            }
+        }
+        
+        // Data Viewer functionality
+        async function loadDataProduct() {
+            const select = document.getElementById('dataProductSelector');
+            const viewer = document.getElementById('dataProductViewer');
+            const dataType = select.value;
+            
+            if (!dataType) {
+                viewer.innerHTML = 'Select a data product to view its contents';
+                return;
+            }
+            
+            viewer.innerHTML = `<span class="warning">⏳ Loading ${dataType}...</span>`;
+            
+            try {
+                let result;
+                switch(dataType) {
+                    case 'inputs':
+                        result = await fetchAPI('/api/monte-carlo/data-products?action=inputs');
+                        viewer.innerHTML = `<h3>Monte Carlo Simulation Inputs <span class="badge">${result.inputs?.length || 0}</span></h3>` + 
+                            JSON.stringify(result.inputs, null, 2);
+                        break;
+                    case 'outputs':
+                        result = await fetchAPI('/api/monte-carlo/data-products?action=outputs');
+                        viewer.innerHTML = `<h3>Monte Carlo Simulation Outputs <span class="badge">${result.outputs?.length || 0}</span></h3>` + 
+                            JSON.stringify(result.outputs, null, 2);
+                        break;
+                    case 'parameter-history':
+                        result = await fetchAPI('/api/monte-carlo/data-products?action=parameter-history');
+                        viewer.innerHTML = `<h3>Monte Carlo Parameter History <span class="badge">${result.history?.length || 0}</span></h3>` + 
+                            JSON.stringify(result.history, null, 2);
+                        break;
+                    default:
+                        viewer.innerHTML = 'Invalid data product selection';
+                }
+            } catch (error) {
+                viewer.innerHTML = `<span class="error">✗ Error loading data!</span> ${error.message}`;
+            }
+        }
+        
+        // Automated Test Suite
+        async function runAutomatedTests() {
+            const testSummary = document.getElementById('testSummary');
+            const testResults = document.getElementById('testResults');
+            const progressBar = document.getElementById('testProgress');
+            const runButton = document.getElementById('runTestSuiteBtn');
+            
+            // Reset UI
+            testSummary.style.display = 'none';
+            testResults.innerHTML = '';
+            progressBar.style.width = '0%';
+            runButton.disabled = true;
+            runButton.textContent = 'Running Tests...';
+            
+            log('Starting automated test suite', 'info');
+            
+            // Define tests
+            const tests = [
+                {
+                    name: 'Import Monte Carlo Inputs',
+                    run: async () => {
+                        const result = await fetchAPI('/api/monte-carlo/data-products?action=inputs');
+                        if (!result.inputs || result.inputs.length === 0) {
+                            throw new Error('No inputs were imported');
+                        }
+                        return {
+                            success: true,
+                            message: `Imported ${result.inputs.length} Monte Carlo inputs`,
+                            data: result
+                        };
+                    }
+                },
+                {
+                    name: 'Import Monte Carlo Outputs',
+                    run: async () => {
+                        const result = await fetchAPI('/api/monte-carlo/data-products?action=outputs');
+                        if (!result.outputs || result.outputs.length === 0) {
+                            throw new Error('No outputs were imported');
+                        }
+                        return {
+                            success: true,
+                            message: `Imported ${result.outputs.length} Monte Carlo outputs`,
+                            data: result
+                        };
+                    }
+                },
+                {
+                    name: 'Import Parameter History',
+                    run: async () => {
+                        const result = await fetchAPI('/api/monte-carlo/data-products?action=parameter-history');
+                        if (!result.history || result.history.length === 0) {
+                            throw new Error('No parameter history records were imported');
+                        }
+                        return {
+                            success: true,
+                            message: `Imported ${result.history.length} parameter history records`,
+                            data: result
+                        };
+                    }
+                },
+                {
+                    name: 'Get Input-Output Mapping',
+                    run: async () => {
+                        const result = await fetchAPI('/api/monte-carlo/data-products?action=mapping');
+                        if (!result.mapping) {
+                            throw new Error('No mapping was returned');
+                        }
+                        return {
+                            success: true,
+                            message: `Retrieved mapping for ${Object.keys(result.mapping).length} inputs`,
+                            data: result
+                        };
+                    }
+                },
+                {
+                    name: 'Export Monte Carlo Inputs',
+                    run: async () => {
+                        const result = await fetchAPI('/api/monte-carlo/data-products?action=inputs/export', 'POST');
+                        if (!result.success) {
+                            throw new Error('Failed to export inputs');
+                        }
+                        return {
+                            success: true,
+                            message: 'Successfully exported Monte Carlo inputs',
+                            data: result
+                        };
+                    }
+                },
+                {
+                    name: 'Export Monte Carlo Outputs',
+                    run: async () => {
+                        const result = await fetchAPI('/api/monte-carlo/data-products?action=outputs/export', 'POST');
+                        if (!result.success) {
+                            throw new Error('Failed to export outputs');
+                        }
+                        return {
+                            success: true,
+                            message: 'Successfully exported Monte Carlo outputs',
+                            data: result
+                        };
+                    }
+                },
+                {
+                    name: 'Run Simulation',
+                    run: async () => {
+                        // First get inputs to find a valid input ID
+                        const inputsResult = await fetchAPI('/api/monte-carlo/data-products?action=inputs');
+                        if (!inputsResult.inputs || inputsResult.inputs.length === 0) {
+                            throw new Error('No inputs available for simulation');
+                        }
+                        
+                        const inputId = inputsResult.inputs[0].id;
+                        const result = await fetchAPI(`/api/monte-carlo/data-products?action=run&inputId=${inputId}`, 'POST', null, 120000);
+                        
+                        if (!result.output) {
+                            throw new Error('Simulation did not produce output');
+                        }
+                        
+                        return {
+                            success: true,
+                            message: `Successfully ran simulation with input ID ${inputId}`,
+                            data: result
+                        };
+                    }
+                }
+            ];
+            
+            // Run tests
+            const results = [];
+            let successCount = 0;
+            
+            for (let i = 0; i < tests.length; i++) {
+                const test = tests[i];
+                log(`Running test: ${test.name}`, 'info');
+                
+                // Update progress
+                progressBar.style.width = `${Math.round((i / tests.length) * 100)}%`;
+                
+                try {
+                    const result = await test.run();
+                    results.push({
+                        name: test.name,
+                        success: true,
+                        message: result.message
+                    });
+                    successCount++;
+                    log(`Test passed: ${test.name} - ${result.message}`, 'success');
+                } catch (error) {
+                    results.push({
+                        name: test.name,
+                        success: false,
+                        message: error.message
+                    });
+                    log(`Test failed: ${test.name} - ${error.message}`, 'error');
+                }
+            }
+            
+            // Complete progress
+            progressBar.style.width = '100%';
+            
+            // Display results
+            testSummary.style.display = 'block';
+            let html = `<p><strong>${successCount}/${tests.length}</strong> tests passed</p><ul>`;
+            
+            results.forEach(result => {
+                html += `<li>${result.success ? '<span class="success">✓</span>' : '<span class="error">✗</span>'} ${result.name}: ${result.message}</li>`;
+            });
+            
+            html += '</ul>';
+            
+            if (successCount === tests.length) {
+                html += `<p class="success">All tests passed! The Monte Carlo Data Products Integration is fully functional.</p>`;
+            } else {
+                html += `<p class="error">Some tests failed. Please check the log for details.</p>`;
+            }
+            
+            testResults.innerHTML = html;
+            
+            // Re-enable button
+            runButton.disabled = false;
+            runButton.textContent = 'Run Complete Test Suite';
+            
+            log(`Automated test suite completed: ${successCount}/${tests.length} tests passed`, successCount === tests.length ? 'success' : 'warning');
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Client-side test loaded', 'info');
+            log('Testing 0% mock / direct integration with SAP data products', 'info');
+            log('Ready to test API endpoints', 'info');
+        });
+    </script>
+</body>
+</html>

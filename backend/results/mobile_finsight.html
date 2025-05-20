@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>FinSight - Mobile</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background-color: #f2f2f7;
+            color: #000;
+            overflow-x: hidden;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        /* Status Bar Overlay */
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: white;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-time {
+            flex: 1;
+        }
+        
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        /* Header */
+        .app-header {
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: white;
+            border-bottom: 0.5px solid #c6c6c8;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+        }
+        
+        .header-back {
+            font-size: 17px;
+            color: #007aff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 17px;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 20px;
+        }
+        
+        /* Tab Bar */
+        .tab-bar {
+            position: fixed;
+            top: 94px;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: white;
+            display: flex;
+            border-bottom: 0.5px solid #c6c6c8;
+            z-index: 999;
+        }
+        
+        .tab-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #8e8e93;
+            text-decoration: none;
+            position: relative;
+        }
+        
+        .tab-item.active {
+            color: #000;
+        }
+        
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: #007aff;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding-top: 138px;
+            padding-bottom: 80px;
+            min-height: 100vh;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            margin: 12px 16px;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            font-size: 13px;
+            color: #8e8e93;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 16px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 4px;
+        }
+        
+        .metric-label {
+            font-size: 13px;
+            color: #8e8e93;
+        }
+        
+        .metric-change {
+            font-size: 13px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .metric-change.positive {
+            color: #34c759;
+        }
+        
+        .metric-change.negative {
+            color: #ff3b30;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            height: 200px;
+            margin-top: 16px;
+        }
+        
+        /* List Items */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 0.5px solid #c6c6c8;
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .list-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .list-content {
+            flex: 1;
+        }
+        
+        .list-title {
+            font-size: 16px;
+            color: #000;
+            margin-bottom: 2px;
+        }
+        
+        .list-subtitle {
+            font-size: 13px;
+            color: #8e8e93;
+        }
+        
+        .list-value {
+            font-size: 17px;
+            color: #000;
+            font-weight: 500;
+        }
+        
+        /* Bottom Tab Bar */
+        .bottom-tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(20px);
+            border-top: 0.5px solid #c6c6c8;
+            display: flex;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 1000;
+        }
+        
+        .bottom-tab {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #8e8e93;
+            font-size: 10px;
+        }
+        
+        .bottom-tab.active {
+            color: #007aff;
+        }
+        
+        .bottom-tab i {
+            font-size: 24px;
+        }
+        
+        /* Action Button */
+        .action-button {
+            position: fixed;
+            right: 16px;
+            bottom: 100px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: #007aff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+            z-index: 900;
+        }
+        
+        /* Pull to Refresh */
+        .pull-to-refresh {
+            position: fixed;
+            top: 138px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-60px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        
+        .pull-to-refresh.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007aff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Status Colors */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-dot.green { background: #34c759; }
+        .status-dot.yellow { background: #ffcc00; }
+        .status-dot.red { background: #ff3b30; }
+        
+        /* Haptic Feedback Animation */
+        .haptic {
+            animation: haptic 0.1s ease-out;
+        }
+        
+        @keyframes haptic {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-time">10:12</div>
+        <div class="status-icons">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-three-quarters"></i>
+        </div>
+    </div>
+    
+    <!-- Header -->
+    <header class="app-header">
+        <a href="#" class="header-back">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <div class="header-title">FinSight</div>
+        <div class="header-actions">
+            <i class="fas fa-search"></i>
+            <i class="fas fa-bell"></i>
+        </div>
+    </header>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <a href="#" class="tab-item active">Posts</a>
+        <a href="#" class="tab-item">Files</a>
+        <a href="#" class="tab-item">More</a>
+    </div>
+    
+    <!-- Pull to Refresh -->
+    <div class="pull-to-refresh" id="pullToRefresh">
+        <div class="spinner"></div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card haptic">
+                <div class="metric-value">$21.0B</div>
+                <div class="metric-label">Revenue at Risk</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    35% of total
+                </div>
+            </div>
+            
+            <div class="metric-card haptic">
+                <div class="metric-value" style="color: #ff3b30;">-$9.87B</div>
+                <div class="metric-label">Total Impact</div>
+                <div class="metric-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    Critical
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chart Card -->
+        <div class="card">
+            <div class="card-header">Impact Analysis</div>
+            <div class="chart-container">
+                <canvas id="mobileChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Risk Assessment -->
+        <div class="card">
+            <div class="card-header">Risk Assessment</div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #ffe0e0;">
+                    <i class="fas fa-exclamation-triangle" style="color: #ff3b30;"></i>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Financial Risk</div>
+                    <div class="list-subtitle">Severe cash flow reduction</div>
+                </div>
+                <div>
+                    <span class="status-dot red"></span>
+                    <span class="list-value">Critical</span>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #fff3cd;">
+                    <i class="fas fa-chart-line" style="color: #ffcc00;"></i>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Market Risk</div>
+                    <div class="list-subtitle">US market share erosion</div>
+                </div>
+                <div>
+                    <span class="status-dot yellow"></span>
+                    <span class="list-value">High</span>
+                </div>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #e3f2fd;">
+                    <i class="fas fa-cog" style="color: #007aff;"></i>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Operational Risk</div>
+                    <div class="list-subtitle">Supply chain disruption</div>
+                </div>
+                <div>
+                    <span class="status-dot yellow"></span>
+                    <span class="list-value">High</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Finance Options -->
+        <div class="card">
+            <div class="card-header">Trade Finance Options</div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #34c75920;">
+                    <i class="fas fa-shield-alt" style="color: #34c759;"></i>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Export Credit Insurance</div>
+                    <div class="list-subtitle">HSBC • 0.5% cost</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: #c6c6c8;"></i>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #007aff20;">
+                    <i class="fas fa-file-invoice-dollar" style="color: #007aff;"></i>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Letters of Credit</div>
+                    <div class="list-subtitle">Multiple Banks • 0.75% cost</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: #c6c6c8;"></i>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #5856d620;">
+                    <i class="fas fa-hand-holding-usd" style="color: #5856d6;"></i>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Working Capital Loans</div>
+                    <div class="list-subtitle">Commercial Banks • 3.0% cost</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: #c6c6c8;"></i>
+            </div>
+        </div>
+        
+        <!-- Action Items -->
+        <div class="card">
+            <div class="card-header">Immediate Actions Required</div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #ff3b3020;">
+                    <span style="color: #ff3b30; font-weight: bold;">1</span>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Implement Export Credit Insurance</div>
+                    <div class="list-subtitle">Due: 2 weeks</div>
+                </div>
+                <span style="color: #ff3b30; font-size: 11px; font-weight: 600;">URGENT</span>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #ffcc0020;">
+                    <span style="color: #ffcc00; font-weight: bold;">2</span>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Secure Working Capital Facility</div>
+                    <div class="list-subtitle">Due: 4 weeks</div>
+                </div>
+                <span style="color: #ffcc00; font-size: 11px; font-weight: 600;">HIGH</span>
+            </div>
+            
+            <div class="list-item">
+                <div class="list-icon" style="background: #007aff20;">
+                    <span style="color: #007aff; font-weight: bold;">3</span>
+                </div>
+                <div class="list-content">
+                    <div class="list-title">Launch Cost Reduction Program</div>
+                    <div class="list-subtitle">Due: 3 months</div>
+                </div>
+                <span style="color: #007aff; font-size: 11px; font-weight: 600;">MEDIUM</span>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Action Button -->
+    <button class="action-button">
+        <i class="fas fa-plus"></i>
+    </button>
+    
+    <!-- Bottom Tab Bar -->
+    <nav class="bottom-tab-bar">
+        <a href="#" class="bottom-tab active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="bottom-tab">
+            <i class="fas fa-chart-bar"></i>
+            <span>Analysis</span>
+        </a>
+        <a href="#" class="bottom-tab">
+            <i class="fas fa-file-alt"></i>
+            <span>Reports</span>
+        </a>
+        <a href="#" class="bottom-tab">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+    
+    <script>
+        // Chart for mobile
+        const ctx = document.getElementById('mobileChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Impact Trend',
+                    data: [-5, -8, -12, -15, -18, -20],
+                    borderColor: '#ff3b30',
+                    backgroundColor: 'rgba(255, 59, 48, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#ff3b30'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            borderDash: [2, 2],
+                            color: '#e5e5ea'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Pull to refresh functionality
+        let startY;
+        let currentY;
+        let refreshing = false;
+        
+        const mainContent = document.getElementById('mainContent');
+        const pullToRefresh = document.getElementById('pullToRefresh');
+        
+        mainContent.addEventListener('touchstart', (e) => {
+            if (mainContent.scrollTop === 0) {
+                startY = e.touches[0].pageY;
+            }
+        });
+        
+        mainContent.addEventListener('touchmove', (e) => {
+            if (!startY) return;
+            
+            currentY = e.touches[0].pageY;
+            const diff = currentY - startY;
+            
+            if (diff > 0 && mainContent.scrollTop === 0) {
+                e.preventDefault();
+                
+                if (diff > 50) {
+                    pullToRefresh.classList.add('active');
+                }
+                
+                if (diff > 100 && !refreshing) {
+                    refreshing = true;
+                    // Trigger haptic feedback (if available)
+                    if ('vibrate' in navigator) {
+                        navigator.vibrate(10);
+                    }
+                    
+                    setTimeout(() => {
+                        pullToRefresh.classList.remove('active');
+                        refreshing = false;
+                        startY = null;
+                    }, 2000);
+                }
+            }
+        });
+        
+        mainContent.addEventListener('touchend', () => {
+            if (!refreshing) {
+                pullToRefresh.classList.remove('active');
+            }
+            startY = null;
+        });
+        
+        // Add haptic feedback to interactive elements
+        document.querySelectorAll('.haptic').forEach(element => {
+            element.addEventListener('click', () => {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
+        
+        // Bottom navigation handling
+        document.querySelectorAll('.bottom-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

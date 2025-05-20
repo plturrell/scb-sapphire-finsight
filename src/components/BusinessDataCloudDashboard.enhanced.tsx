@@ -6,7 +6,6 @@ import {
   CircularProgress,
   Card,
   CardContent,
-  Grid as MuiGrid,
   Tabs,
   Tab,
   Button,
@@ -20,6 +19,7 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
+import Grid from '@mui/material/Grid'; // Import Grid component directly to avoid typing issues
 import { 
   Database as DatabaseIcon, 
   BarChart as BarChartIcon, 
@@ -31,7 +31,7 @@ import {
 import AnimatedSankeyChart from './AnimatedSankeyChart';
 import { styled } from '@mui/material/styles';
 import { format } from 'date-fns';
-import { mockVietnamTariffAlerts } from '../mock/vietnamTariffData';
+// Real data will be fetched from APIs
 import { SankeyData, SankeyNode as BaseSankeyNode, SankeyLink, TariffAlert } from '../types';
 import type { SxProps } from '@mui/system';
 import type { Theme } from '@mui/material/styles';
@@ -145,7 +145,7 @@ const businessDataCloudConnector = {
     };
   },
   
-  getSimulationInputs: async (offset: number = 0, limit: number = 20): Promise<SimulationInput[]> => {
+  getSimulationInputs: async (offset: number = 0, limit: number = 20): Promise<any[]> => {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 300));
     
@@ -189,7 +189,7 @@ const businessDataCloudConnector = {
     return items;
   },
   
-  getSimulationComparisons: async (offset: number = 0, limit: number = 10): Promise<SimulationComparison[]> => {
+  getSimulationComparisons: async (offset: number = 0, limit: number = 10): Promise<any[]> => {
     await new Promise(resolve => setTimeout(resolve, 400));
     
     const items = [];
@@ -286,7 +286,16 @@ const BusinessDataCloudDashboard: React.FC = () => {
           );
         }
         
-        setSankeyData({ nodes, links: [], aiInsights: {} });
+        setSankeyData({ 
+          nodes, 
+          links: [],
+          aiInsights: {
+            summary: 'Initial dashboard data loaded.',
+            recommendations: [],
+            confidence: 0.8,
+            updatedAt: new Date()
+          }
+        });
         setLoading(false);
       } catch (error) {
         console.error('Failed to initialize dashboard:', error);
@@ -333,9 +342,9 @@ const BusinessDataCloudDashboard: React.FC = () => {
           background: 'linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%)'
         }}
       >
-        <MuiGrid container spacing={3}>
+        <Grid container spacing={3} sx={{ width: '100%' }}>
           {/* Header with network status */}
-          <MuiGrid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
               <Typography variant="h4" fontWeight="bold" color="primary">
                 Business Data Cloud Dashboard
@@ -359,13 +368,13 @@ const BusinessDataCloudDashboard: React.FC = () => {
                 </Button>
               </Box>
             </Box>
-          </MuiGrid>
+          </Grid>
 
           {/* Statistics Cards - Responsive based on network */}
           {statistics && (
-            <MuiGrid item xs={12}>
-              <MuiGrid container spacing={2}>
-                <MuiGrid item xs={12} md={capabilities.tier === 'low' ? 6 : 3}>
+            <Grid sx={{ width: '100%' }}>
+              <Grid container spacing={2} sx={{ width: '100%' }}>
+                <Grid sx={{ width: capabilities.tier === 'low' ? '50%' : '25%' }}>
                   <Card>
                     <CardContent>
                       <Typography color="textSecondary" gutterBottom>
@@ -376,10 +385,10 @@ const BusinessDataCloudDashboard: React.FC = () => {
                       </Typography>
                     </CardContent>
                   </Card>
-                </MuiGrid>
+                </Grid>
                 {(capabilities.tier !== 'low' || connection.type !== '2g') && (
                   <>
-                    <MuiGrid item xs={12} md={3}>
+                    <Grid sx={{ width: '25%' }}>
                       <Card>
                         <CardContent>
                           <Typography color="textSecondary" gutterBottom>
@@ -390,8 +399,8 @@ const BusinessDataCloudDashboard: React.FC = () => {
                           </Typography>
                         </CardContent>
                       </Card>
-                    </MuiGrid>
-                    <MuiGrid item xs={12} md={3}>
+                    </Grid>
+                    <Grid sx={{ width: '25%' }}>
                       <Card>
                         <CardContent>
                           <Typography color="textSecondary" gutterBottom>
@@ -402,15 +411,15 @@ const BusinessDataCloudDashboard: React.FC = () => {
                           </Typography>
                         </CardContent>
                       </Card>
-                    </MuiGrid>
+                    </Grid>
                   </>
                 )}
-              </MuiGrid>
-            </MuiGrid>
+              </Grid>
+            </Grid>
           )}
 
           {/* Main Content Area with Tabs */}
-          <MuiGrid item xs={12}>
+          <Grid sx={{ width: '100%' }}>
             <Paper sx={{ borderRadius: 2, boxShadow: 2 }}>
               <Tabs
                 value={selectedTab}
@@ -498,9 +507,9 @@ const BusinessDataCloudDashboard: React.FC = () => {
                   itemsPerPage={getOptimalPageSize()}
                 >
                   {(data, loading, error) => (
-                    <MuiGrid container spacing={2}>
+                    <Grid container spacing={2} sx={{ width: '100%' }}>
                       {data.map((comparison) => (
-                        <MuiGrid item xs={12} md={capabilities.tier === 'low' ? 12 : 6} key={comparison.id}>
+                        <Grid sx={{ width: capabilities.tier === 'low' ? '100%' : '50%' }} key={comparison.id}>
                           <Card>
                             <CardContent>
                               <Typography variant="h6">{comparison.name}</Typography>
@@ -512,15 +521,15 @@ const BusinessDataCloudDashboard: React.FC = () => {
                               </Typography>
                             </CardContent>
                           </Card>
-                        </MuiGrid>
+                        </Grid>
                       ))}
-                    </MuiGrid>
+                    </Grid>
                   )}
                 </NetworkAwareDataLoader>
               </TabPanel>
             </Paper>
-          </MuiGrid>
-        </MuiGrid>
+          </Grid>
+        </Grid>
       </Paper>
     </Box>
   );

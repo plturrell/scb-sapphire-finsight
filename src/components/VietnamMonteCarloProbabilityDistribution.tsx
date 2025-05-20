@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -9,9 +9,16 @@ import {
   Slider,
   Tooltip,
   IconButton,
-  CircularProgress
+  CircularProgress,
+  useTheme,
+  useMediaQuery,
+  Collapse,
+  Button
 } from '@mui/material';
-import { Info, ZoomIn, ZoomOut, Download } from 'lucide-react';
+import { Info, ZoomIn, ZoomOut, Download, ChevronDown, ChevronUp, Move } from 'lucide-react';
+import { useResponsive } from '../hooks/useResponsive';
+import { useHaptic } from '../hooks/useMicroInteractions';
+import { SegmentedControl, FAB } from './TouchButton';
 import * as d3 from 'd3';
 
 interface ProbabilityDistributionProps {
@@ -67,7 +74,7 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
   }>({ value: null, percentile: null });
 
   // Format numbers for display
-  const formatNumber = (num: number): string => {
+  const formatNumber = useCallback((num: number): string => {
     if (Math.abs(num) >= 1_000_000) {
       return `${(num / 1_000_000).toFixed(1)}M`;
     } else if (Math.abs(num) >= 1_000) {
@@ -75,10 +82,10 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
     } else {
       return num.toFixed(2);
     }
-  };
+  }, []);
 
   // Format currency values
-  const formatCurrency = (num: number): string => {
+  const formatCurrency = useCallback((num: number): string => {
     if (metricUnit === '$M') {
       return `$${formatNumber(num)}`;
     } else if (metricUnit === '$K') {
@@ -86,12 +93,27 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
     } else {
       return `${formatNumber(num)}${metricUnit}`;
     }
-  };
+  }, [metricUnit, formatNumber]);
 
+  // Get device capabilities
+  const { isMobile, isTablet } = useResponsive();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const haptic = useHaptic();
+  const [expanded, setExpanded] = useState(!isSmallScreen);
+  const [isDragging, setIsDragging] = useState(false);
+  const [presetPercentiles, setPresetPercentiles] = useState<string>('50');
+  
   // Handle slider change
   const handleSliderChange = (_event: Event, newValue: number | number[]) => {
     const value = Array.isArray(newValue) ? newValue[0] : newValue;
     setSliderValue(value);
+    setPresetPercentiles(value.toString());
+    
+    // Provide haptic feedback on mobile devices
+    if (isMobile) {
+      haptic({ intensity: 'light' });
+    }
     
     if (onSliderChange) {
       onSliderChange(value);
@@ -105,6 +127,38 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
       setSliderMetric(metricValue);
     }
   };
+  
+  // Handle preset percentile selection
+  const handlePresetPercentileChange = (value: string) => {
+    const percentile = parseInt(value, 10);
+    setPresetPercentiles(value);
+    setSliderValue(percentile);
+    handleSliderChange(null as any, percentile);
+    
+    // Provide haptic feedback
+    if (isMobile) {
+      haptic({ intensity: 'medium' });
+    }
+  };
+  
+  // Handle touch-based pan and zoom
+  const handleTouchStart = (event: React.TouchEvent<SVGSVGElement>) => {
+    if (event.touches.length === 2) {
+      setIsDragging(true);
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Toggle expanded state for mobile view
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+    if (isMobile) {
+      haptic({ intensity: 'medium' });
+    }
+  };
 
   // Render the probability distribution visualization
   useEffect(() => {
@@ -113,10 +167,15 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
     // Clear previous visualization
     d3.select(svgRef.current).selectAll('*').remove();
 
-    // Set up dimensions
-    const margin = { top: 20, right: 30, bottom: 60, left: 50 };
+    // Set up dimensions - adjust for mobile screens
+    const margin = { 
+      top: 20, 
+      right: isSmallScreen ? 20 : 30, 
+      bottom: isSmallScreen ? 80 : 60, 
+      left: isSmallScreen ? 40 : 50 
+    };
     const width = svgRef.current.clientWidth - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const height = (isSmallScreen ? 300 : 400) - margin.top - margin.bottom;
 
     // Create SVG
     const svg = d3.select(svgRef.current)
@@ -151,28 +210,34 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
       .domain([0, d3.max(bins, d => d.length) || 0])
       .range([height, 0]);
 
-    // Create X axis
+    // Create X axis with fewer ticks on mobile
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x).tickFormat(d => formatCurrency(d as number)))
+      .call(d3.axisBottom(x)
+        .tickFormat(d => formatCurrency(d as number))
+        .ticks(isSmallScreen ? 5 : 10))
       .attr('color', colors.gridLines)
       .selectAll('text')
       .attr('transform', 'translate(-10,5)rotate(-45)')
       .style('text-anchor', 'end')
-      .style('font-size', '10px');
+      .style('font-size', isSmallScreen ? '8px' : '10px');
 
-    // Create Y axis
+    // Create Y axis with fewer ticks on mobile
     svg.append('g')
-      .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}`))
-      .attr('color', colors.gridLines);
+      .call(d3.axisLeft(y).ticks(isSmallScreen ? 3 : 5).tickFormat(d => `${d}`))
+      .attr('color', colors.gridLines)
+      .selectAll('text')
+      .style('font-size', isSmallScreen ? '8px' : '10px');
 
-    // Add X axis label
-    svg.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('x', width / 2)
-      .attr('y', height + margin.bottom - 5)
-      .style('font-size', '12px')
-      .text(metricName);
+    // Add X axis label, hide on very small screens
+    if (!isSmallScreen || width > 300) {
+      svg.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('x', width / 2)
+        .attr('y', height + margin.bottom - 5)
+        .style('font-size', isSmallScreen ? '10px' : '12px')
+        .text(metricName);
+    }
 
     // Add Y axis label
     svg.append('text')
@@ -311,8 +376,9 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
     drawCaseLine(boundaries.pessimistic[1], colors.pessimistic, 'Pessimistic');
     drawCaseLine(boundaries.realistic[1], colors.optimistic, 'Optimistic');
 
-    // Draw key percentile indicators
-    [5, 25, 50, 75, 95].forEach(percentile => {
+    // Draw key percentile indicators (fewer on mobile)
+    const percentilesToShow = isSmallScreen ? [25, 50, 75] : [5, 25, 50, 75, 95];
+    percentilesToShow.forEach(percentile => {
       const value = getPercentileValue(percentile);
       const xPos = x(value);
       
@@ -405,9 +471,9 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
         return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
       };
     }
-  }, [data, caseBoundaries, metricName, metricUnit, sliderMetric]);
+  }, [data, caseBoundaries, metricName, metricUnit, sliderMetric, formatCurrency, isSmallScreen, sliderValue]);
 
-  // Handle window resize
+  // Make chart responsive to orientation changes on mobile
   useEffect(() => {
     const handleResize = () => {
       // Redraw the chart on window resize
@@ -424,33 +490,57 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
   return (
     <Card elevation={2} sx={{ mb: 3, height: '100%' }}>
       <CardHeader
-        title={`Probability Distribution - ${metricName}`}
+        title={
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant={isSmallScreen ? 'subtitle1' : 'h6'} component="div" sx={{ mr: 1 }}>
+              {isSmallScreen ? 'Distribution' : `Probability Distribution - ${metricName}`}
+            </Typography>
+            {isSmallScreen && (
+              <IconButton size="small" onClick={toggleExpanded}>
+                {expanded ? <ChevronUp size={16} color="white" /> : <ChevronDown size={16} color="white" />}
+              </IconButton>
+            )}
+          </Box>
+        }
         action={
           <Box sx={{ display: 'flex' }}>
+            {isSmallScreen && (
+              <Tooltip title="Pan/Zoom">
+                <IconButton size="small" sx={{ mr: 1 }}>
+                  <Move size={16} />
+                </IconButton>
+              </Tooltip>
+            )}
             <Tooltip title="Download as PNG">
               <IconButton size="small" sx={{ mr: 1 }}>
                 <Download size={16} />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Zoom in">
-              <IconButton size="small" sx={{ mr: 1 }}>
-                <ZoomIn size={16} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Zoom out">
-              <IconButton size="small">
-                <ZoomOut size={16} />
-              </IconButton>
-            </Tooltip>
+            {!isSmallScreen && (
+              <>
+                <Tooltip title="Zoom in">
+                  <IconButton size="small" sx={{ mr: 1 }}>
+                    <ZoomIn size={16} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Zoom out">
+                  <IconButton size="small">
+                    <ZoomOut size={16} />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
           </Box>
         }
         sx={{ 
           bgcolor: '#042278', 
           color: 'white',
-          '& .MuiCardHeader-action': { color: 'white' }
+          '& .MuiCardHeader-action': { color: 'white' },
+          p: isSmallScreen ? 1 : 2
         }}
       />
-      <CardContent sx={{ position: 'relative', height: 'calc(100% - 72px)' }}>
+      <Collapse in={expanded} timeout="auto" unmountOnExit={false}>
+        <CardContent sx={{ position: 'relative', height: isSmallScreen ? 'auto' : 'calc(100% - 72px)', p: isSmallScreen ? 1 : 2 }}>
         {loading ? (
           <Box 
             sx={{ 
@@ -467,8 +557,14 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
           </Box>
         ) : data && data.length > 0 ? (
           <>
-            <Box sx={{ height: 400 }}>
-              <svg ref={svgRef} width="100%" height="400" />
+            <Box sx={{ height: isSmallScreen ? 300 : 400 }}>
+              <svg 
+                ref={svgRef} 
+                width="100%" 
+                height={isSmallScreen ? 300 : 400}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              />
               <div 
                 ref={tooltipRef} 
                 style={{
@@ -485,39 +581,99 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
               />
             </Box>
             
-            <Box sx={{ mt: 3 }}>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} md={3}>
-                  <Typography variant="body2">
-                    Percentile selector:
+            <Box sx={{ mt: isSmallScreen ? 2 : 3 }}>
+              {isSmallScreen ? (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="caption" sx={{ mb: 1, display: 'block', color: theme.palette.text.secondary }}>
+                    Percentile preset:
                   </Typography>
-                </Grid>
-                <Grid item xs={12} md={7}>
-                  <Slider
-                    value={sliderValue}
-                    onChange={handleSliderChange as any}
-                    aria-labelledby="percentile-slider"
-                    valueLabelDisplay="auto"
-                    step={1}
-                    min={0}
-                    max={100}
-                    valueLabelFormat={value => `P${value}`}
-                    sx={{ color: colors.primaryBlue }}
+                  <SegmentedControl
+                    options={[
+                      { value: "25", label: "P25" },
+                      { value: "50", label: "P50" },
+                      { value: "75", label: "P75" },
+                      { value: "90", label: "P90" }
+                    ]}
+                    value={presetPercentiles}
+                    onChange={handlePresetPercentileChange}
+                    fullWidth
                   />
+                  
+                  <Box 
+                    sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      mt: 1,
+                      backgroundColor: theme.palette.background.default,
+                      p: 1,
+                      borderRadius: '8px',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        fontWeight: 'medium',
+                        fontSize: '0.75rem',
+                        letterSpacing: '0.03em'
+                      }}
+                    >
+                      {sliderValue}th percentile
+                    </Typography>
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        fontWeight: 'bold',
+                        color: colors.primaryBlue,
+                        fontSize: '0.875rem'
+                      }}
+                    >
+                      {percentileInfo.value !== null ? formatCurrency(percentileInfo.value) : ''}
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12} md={3}>
+                    <Typography variant="body2">
+                      Percentile selector:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={7}>
+                    <Slider
+                      value={sliderValue}
+                      onChange={handleSliderChange as any}
+                      aria-labelledby="percentile-slider"
+                      valueLabelDisplay="auto"
+                      step={1}
+                      min={0}
+                      max={100}
+                      valueLabelFormat={value => `P${value}`}
+                      sx={{ 
+                        color: colors.primaryBlue,
+                        '& .MuiSlider-thumb': {
+                          height: 20,
+                          width: 20,
+                        }
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={2}>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', textAlign: 'right' }}>
+                      {percentileInfo.value !== null ? 
+                        `${formatCurrency(percentileInfo.value)}` : ''}
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={2}>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', textAlign: 'right' }}>
-                    {percentileInfo.value !== null ? 
-                      `${formatCurrency(percentileInfo.value)}` : ''}
-                  </Typography>
-                </Grid>
-              </Grid>
+              )}
               
-              <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>
-                At the {sliderValue}th percentile, the {metricName.toLowerCase()} is {
-                  percentileInfo.value !== null ? formatCurrency(percentileInfo.value) : ''
-                }
-              </Typography>
+              {!isSmallScreen && (
+                <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>
+                  At the {sliderValue}th percentile, the {metricName.toLowerCase()} is {
+                    percentileInfo.value !== null ? formatCurrency(percentileInfo.value) : ''
+                  }
+                </Typography>
+              )}
             </Box>
           </>
         ) : (
@@ -535,6 +691,30 @@ export const VietnamMonteCarloProbabilityDistribution: React.FC<ProbabilityDistr
           </Box>
         )}
       </CardContent>
+      </Collapse>
+      
+      {/* Mobile collapsed view summary */}
+      {isSmallScreen && !expanded && (
+        <CardContent sx={{ p: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="body2">
+              P50 (Median):
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+              {data && data.length > 0 ? formatCurrency(data.sort((a, b) => a - b)[Math.floor(data.length / 2)]) : '-'}
+            </Typography>
+          </Box>
+          <Button 
+            variant="text" 
+            fullWidth 
+            size="small" 
+            onClick={toggleExpanded}
+            sx={{ mt: 1 }}
+          >
+            Show Distribution
+          </Button>
+        </CardContent>
+      )}
     </Card>
   );
 };

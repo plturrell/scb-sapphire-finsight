@@ -233,7 +233,7 @@ export interface SimulationResult {
   flowData: SankeyData;
 }
 
-export interface TransactionSector {
+export interface TransactionSectorDetail {
   sector: string;
   percentage: number;
   value: number;
@@ -255,7 +255,7 @@ export interface VietnamAnnouncement {
   effectiveDate?: Date;
 }
 
-export interface VietnamNewsArticle {
+export interface VietnamNewsArticleDetail {
   id: string;
   title: string;
   content: string;
@@ -276,3 +276,7 @@ export interface SimulationProgress {
   confidence: number;
   isComplete: boolean;
 }
+
+// Import d3 types
+import './d3-sankey-module';
+import './d3-modules';

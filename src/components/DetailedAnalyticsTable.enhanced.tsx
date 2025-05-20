@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatCurrency, formatPercentage, formatNumber } from '@/lib/utils';
-import { TransactionSector } from '@/types';
+import type { TransactionSector } from '../types/TransactionTypes';
 import { useNetworkAwareLoading, useNetworkLazyLoad } from '@/hooks/useNetworkAwareLoading';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import LoadingSpinner from './LoadingSpinner';

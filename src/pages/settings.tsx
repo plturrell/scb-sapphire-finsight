@@ -1,46 +1,114 @@
 import React from 'react';
 import Layout from '@/components/Layout';
+import { motion } from 'framer-motion';
+import { Box } from '@mui/material';
 
 export default function Settings() {
+  // Apple-style staggered animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring", 
+        stiffness: 300, 
+        damping: 24
+      } 
+    }
+  };
+  
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="bg-white p-4 border border-[hsl(var(--border))] rounded shadow-sm">
-          <h1 className="text-xl font-normal text-[hsl(var(--foreground))]">Settings</h1>
-          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Configure your SCB Sapphire FinSight experience</p>
-        </div>
+      <motion.div 
+        className="space-y-6"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        {/* Page Header - Apple Style */}
+        <motion.div 
+          className="glass-panel p-5 border thin-border rounded-lg shadow-sm"
+          variants={itemVariants}
+        >
+          <h1 className="text-xl font-semibold text-[hsl(var(--foreground))] tracking-tight">Settings</h1>
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Configure your Finsight experience</p>
+        </motion.div>
 
-        {/* Settings Panel */}
-        <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
-            <h3 className="text-base font-normal">Account Settings</h3>
-          </div>
-          <div className="p-4">
-            <div className="space-y-6">
-              {/* Profile Settings */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">Profile Information</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Settings Panel - Apple Style with Glass morphism */}
+        <motion.div 
+          className="glass-panel border thin-border rounded-lg shadow-sm overflow-hidden"
+          variants={itemVariants}
+        >
+          <Box sx={{ 
+            px: 4, 
+            py: 3,
+            borderBottom: '0.5px solid rgba(0, 0, 0, 0.1)',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <div className="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-3 flex items-center justify-center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <h3 className="text-base font-medium tracking-tight">Account Settings</h3>
+          </Box>
+          <div className="p-5">
+            <div className="space-y-7">
+              {/* Profile Settings - Apple Style */}
+              <motion.div 
+                className="space-y-4"
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  mb: 2,
+                  '&::after': {
+                    content: '""',
+                    flexGrow: 1,
+                    height: '0.5px',
+                    backgroundColor: 'rgba(0,0,0,0.1)',
+                    ml: 2
+                  }
+                }}>
+                  <h4 className="text-sm font-medium tracking-tight">Profile Information</h4>
+                </Box>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Full Name</label>
+                    <label className="block text-xs font-medium text-[hsl(var(--muted-foreground))] mb-1.5">Full Name</label>
                     <input 
                       type="text" 
                       defaultValue="Administrator" 
-                      className="input-sapui5 w-full" 
+                      className="input-sapui5 w-full border-0 shadow-sm focus:ring-2 focus:ring-blue-500 rounded-md py-2.5"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Email Address</label>
+                    <label className="block text-xs font-medium text-[hsl(var(--muted-foreground))] mb-1.5">Email Address</label>
                     <input 
                       type="email" 
-                      defaultValue="admin@scbsapphire.com" 
-                      className="input-sapui5 w-full" 
+                      defaultValue="admin@standardchartered.com" 
+                      className="input-sapui5 w-full border-0 shadow-sm focus:ring-2 focus:ring-blue-500 rounded-md py-2.5" 
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Role</label>
-                    <select className="input-sapui5 w-full">
+                    <label className="block text-xs font-medium text-[hsl(var(--muted-foreground))] mb-1.5">Role</label>
+                    <select className="input-sapui5 w-full border-0 shadow-sm focus:ring-2 focus:ring-blue-500 bg-white rounded-md h-10 appearance-none px-3">
                       <option>Administrator</option>
                       <option>Analyst</option>
                       <option>Manager</option>
@@ -48,8 +116,8 @@ export default function Settings() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Department</label>
-                    <select className="input-sapui5 w-full">
+                    <label className="block text-xs font-medium text-[hsl(var(--muted-foreground))] mb-1.5">Department</label>
+                    <select className="input-sapui5 w-full border-0 shadow-sm focus:ring-2 focus:ring-blue-500 bg-white rounded-md h-10 appearance-none px-3">
                       <option>Finance</option>
                       <option>Sales</option>
                       <option>Operations</option>
@@ -57,7 +125,7 @@ export default function Settings() {
                     </select>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Notification Settings */}
               <div className="space-y-4">
@@ -107,10 +175,13 @@ export default function Settings() {
             <button className="btn-sapui5 btn-sapui5-secondary mr-2">Cancel</button>
             <button className="btn-sapui5 btn-sapui5-primary">Save Changes</button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Security Settings */}
-        <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
+        <motion.div 
+          className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden"
+          variants={itemVariants}
+        >
           <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
             <h3 className="text-base font-normal">Security Settings</h3>
           </div>
@@ -143,8 +214,8 @@ export default function Settings() {
           <div className="px-4 py-3 border-t border-[hsl(var(--border))] flex justify-end">
             <button className="btn-sapui5 btn-sapui5-primary">Update Security Settings</button>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </Layout>
   );
 }

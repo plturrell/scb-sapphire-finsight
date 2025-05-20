@@ -19,16 +19,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import PerplexityNewsBar from '../PerplexityNewsBar';
 import JouleAssistant from '../JouleAssistant';
-
-// Import SVG logo as a component
-const SCBLogo = () => (
-  <svg width="32" height="32" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M30 0C13.4315 0 0 13.4315 0 30C0 46.5685 13.4315 60 30 60C46.5685 60 60 46.5685 60 30C60 13.4315 46.5685 0 30 0Z" fill="white"/>
-    <path d="M30 55C43.8071 55 55 43.8071 55 30C55 16.1929 43.8071 5 30 5C16.1929 5 5 16.1929 5 30C5 43.8071 16.1929 55 30 55Z" fill="#0072AA"/>
-    <path d="M20 40C25.5228 40 30 35.5228 30 30C30 24.4772 25.5228 20 20 20C14.4772 20 10 24.4772 10 30C10 35.5228 14.4772 40 20 40Z" fill="#21AA47"/>
-    <path d="M40 40C45.5228 40 50 35.5228 50 30C50 24.4772 45.5228 20 40 20C34.4772 20 30 24.4772 30 30C30 35.5228 34.4772 40 40 40Z" fill="white"/>
-  </svg>
-);
+import EnhancedPerplexityPanel from '../EnhancedPerplexityPanel';
+import { Box } from '@mui/material';
+import { BrandingHeader } from '../common';
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -118,6 +111,15 @@ interface DashboardLayoutProps {
   title?: string;
   userRole?: 'executive' | 'analyst' | 'operations';
   onRoleChange?: (role: 'executive' | 'analyst' | 'operations') => void;
+  searchElement?: React.ReactNode;
+  showJoule?: boolean;
+  showNewsBar?: boolean;
+  showPerplexityPanel?: boolean;
+  onToggleNewsBar?: (value: boolean) => void;
+  onToggleJoule?: (value: boolean) => void;
+  onTogglePerplexityPanel?: (value: boolean) => void;
+  isJouleOpen?: boolean;
+  isPerplexityPanelOpen?: boolean;
 }
 
 /**
@@ -129,14 +131,30 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   title = 'FinSight Dashboard',
   userRole: externalUserRole,
-  onRoleChange: externalRoleChange
+  onRoleChange: externalRoleChange,
+  searchElement,
+  showJoule,
+  showNewsBar,
+  showPerplexityPanel,
+  onToggleNewsBar,
+  onToggleJoule,
+  onTogglePerplexityPanel,
+  isJouleOpen,
+  isPerplexityPanelOpen
 }) => {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [internalUserRole, setInternalUserRole] = useState<'executive' | 'analyst' | 'operations'>('analyst'); // Default to analyst view
-  const [showNewsBar, setShowNewsBar] = useState(false);
-  const [jouleOpen, setJouleOpen] = useState(false);
+  // Use internal state if external state handlers not provided
+  const [internalShowNewsBar, setInternalShowNewsBar] = useState(showNewsBar || false);
+  const [internalJouleOpen, setInternalJouleOpen] = useState(isJouleOpen || false);
+  const [internalPerplexityPanelOpen, setInternalPerplexityPanelOpen] = useState(isPerplexityPanelOpen || false);
+  
+  // Use external or internal state depending on what's provided
+  const newsBarVisible = typeof showNewsBar !== 'undefined' ? showNewsBar : internalShowNewsBar;
+  const jouleVisible = typeof isJouleOpen !== 'undefined' ? isJouleOpen : internalJouleOpen;
+  const perplexityPanelVisible = typeof isPerplexityPanelOpen !== 'undefined' ? isPerplexityPanelOpen : internalPerplexityPanelOpen;
   const [newsItem, setNewsItem] = useState<{
     title: string;
     summary: string;
@@ -173,12 +191,31 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       category: item.category,
       source: item.source
     });
-    setJouleOpen(true);
+    
+    // Use callback if provided
+    if (onToggleJoule) {
+      onToggleJoule(true);
+    } else {
+      setInternalJouleOpen(true);
+    }
   };
   
   // Toggle news bar
   const toggleNewsBar = () => {
-    setShowNewsBar(!showNewsBar);
+    if (onToggleNewsBar) {
+      onToggleNewsBar(!newsBarVisible);
+    } else {
+      setInternalShowNewsBar(!internalShowNewsBar);
+    }
+  };
+  
+  // Toggle Perplexity panel
+  const togglePerplexityPanel = () => {
+    if (onTogglePerplexityPanel) {
+      onTogglePerplexityPanel(!perplexityPanelVisible);
+    } else {
+      setInternalPerplexityPanelOpen(!internalPerplexityPanelOpen);
+    }
   };
   
   return (
@@ -200,8 +237,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Logo */}
         <div className={`flex items-center h-16 px-4 border-b border-[rgb(var(--scb-border))] ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
           <div className="flex items-center gap-2">
-            <SCBLogo />
-            {sidebarOpen && <span className="scb-section-header">SCB Sapphire</span>}
+            {sidebarOpen ? (
+              <BrandingHeader compact={true} showSapFiori={false} />
+            ) : (
+              <Box
+                component="img"
+                src="/images/sc-logo.png"
+                alt="Standard Chartered Bank"
+                sx={{
+                  height: 30
+                }}
+              />
+            )}
           </div>
           
           {sidebarOpen && (
@@ -308,18 +355,27 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* News Bar */}
-        {showNewsBar && (
+        {newsBarVisible && (
           <div className="fixed right-0 top-16 bottom-0 z-20">
             <PerplexityNewsBar onAnalyzeNews={handleAnalyzeNews} />
           </div>
         )}
+        
+        {/* Enhanced Perplexity Panel */}
+        {(showPerplexityPanel !== false) && perplexityPanelVisible && (
+          <div className="fixed right-0 top-16 bottom-0 z-30">
+            <EnhancedPerplexityPanel />
+          </div>
+        )}
       
         {/* Joule Assistant */}
-        <JouleAssistant 
-          open={jouleOpen} 
-          onOpenChange={setJouleOpen} 
-          initialNewsItem={newsItem}
-        />
+        {(showJoule !== false) && (
+          <JouleAssistant 
+            open={jouleVisible} 
+            onOpenChange={onToggleJoule || setInternalJouleOpen} 
+            initialNewsItem={newsItem}
+          />
+        )}
         
         {/* Header */}
         <header className="fiori-shell-header flex items-center justify-between px-4 h-16 bg-[rgb(var(--scb-honolulu-blue))] text-white shadow-md">
@@ -335,6 +391,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <h1 className="scb-title text-white">{title}</h1>
           </div>
           
+          {/* Search element */}
+          {searchElement && (
+            <div className="ml-4 flex-1 max-w-2xl hidden md:block">
+              {searchElement}
+            </div>
+          )}
+          
           <div className="flex items-center gap-4">
             <button 
               className="p-2 rounded-md hover:bg-[rgba(255,255,255,0.1)] flex items-center"
@@ -342,23 +405,43 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               title="Toggle market news"
             >
               <span className="mr-2 text-sm font-medium hidden md:block">Market News</span>
-              <span className={`flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold ${showNewsBar ? 'bg-white text-[rgb(var(--scb-honolulu-blue))]' : 'bg-[rgba(255,255,255,0.2)]'}`}>
+              <span className={`flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold ${newsBarVisible ? 'bg-white text-[rgb(var(--scb-honolulu-blue))]' : 'bg-[rgba(255,255,255,0.2)]'}`}>
                 P
               </span>
             </button>
             <button 
               className="p-2 rounded-md hover:bg-[rgba(255,255,255,0.1)] flex items-center"
-              onClick={() => setJouleOpen(true)}
-              title="Open Joule AI Assistant"
+              onClick={togglePerplexityPanel}
+              title="Toggle Perplexity panel"
             >
-              <span className="mr-2 text-sm font-medium hidden md:block">Joule Assistant</span>
-              <Sparkles size={18} />
+              <span className="mr-2 text-sm font-medium hidden md:block">Perplexity</span>
+              <span className={`flex items-center justify-center h-5 w-5 rounded-full text-[10px] font-bold ${perplexityPanelVisible ? 'bg-white text-[rgb(var(--scb-honolulu-blue))]' : 'bg-[rgba(255,255,255,0.2)]'}`}>
+                AI
+              </span>
             </button>
+            {showJoule !== false && (
+              <button 
+                className="p-2 rounded-md hover:bg-[rgba(255,255,255,0.1)] flex items-center"
+                onClick={() => {
+                  if (onToggleJoule) {
+                    onToggleJoule(true);
+                  } else {
+                    setInternalJouleOpen(true);
+                  }
+                }}
+                title="Open Joule AI Assistant"
+              >
+                <span className="mr-2 text-sm font-medium hidden md:block">Joule Assistant</span>
+                <Sparkles size={18} />
+              </button>
+            )}
           </div>
         </header>
         
         {/* Page Content */}
-        <main className={`flex-1 overflow-auto p-6 ${showNewsBar ? 'mr-80' : ''} transition-all duration-300`}>
+        <main className={`flex-1 overflow-auto p-6 ${
+          perplexityPanelVisible ? 'mr-96' : newsBarVisible ? 'mr-80' : ''
+        } transition-all duration-300`}>
           {/* Breadcrumbs */}
           <div className="fiori-breadcrumbs mb-4 text-sm text-[rgb(var(--scb-dark-gray))]">
             {/* Dynamic breadcrumbs would go here */}

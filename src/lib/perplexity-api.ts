@@ -112,6 +112,42 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
 /**
  * Search using Perplexity AI
  */
+// Create an API object with the exported functions
+export const perplexityApi = {
+  searchWithPerplexity,
+  searchCompanies,
+  getFinancialInsights,
+  getMarketNews,
+  getCompanyFinancialMetrics: async (ticker: string) => {
+    // Implementation for company financial metrics
+    return {
+      ticker,
+      metrics: {},
+      lastUpdated: new Date().toISOString()
+    };
+  },
+  getTariffAlerts: async (country: string, limit: number = 3) => {
+    // Implementation for tariff alerts
+    return [];
+  },
+  analyzeFinancialImpact: async (event: string, company?: string) => {
+    // Implementation for financial impact analysis
+    return {
+      summary: '',
+      impactScore: 0,
+      considerations: []
+    };
+  },
+  getMacroeconomicIndicators: async (country: string) => {
+    // Implementation for macroeconomic indicators
+    return {
+      country,
+      indicators: {},
+      lastUpdated: new Date().toISOString()
+    };
+  }
+};
+
 export async function searchWithPerplexity(query: string): Promise<any> {
   try {
     const messages = [
@@ -412,9 +448,10 @@ export async function getFinancialInsights(query: string): Promise<any> {
 /**
  * Get market news using Perplexity AI
  */
-export async function getMarketNews(): Promise<any[]> {
+export async function getMarketNews(topic?: string, limit: number = 5): Promise<any[]> {
   try {
-    const prompt = `Provide the latest financial market news from today.
+    const topicString = topic ? ` focused on ${topic}` : '';
+    const prompt = `Provide the latest financial market news from today${topicString}.
       Include:
       - Major market movements in stocks, bonds, commodities, cryptocurrencies
       - Important economic indicators or data releases
@@ -429,7 +466,7 @@ export async function getMarketNews(): Promise<any[]> {
       - Source if available
       
       Format as structured data with clear sections for each news item.
-      Provide at least 5-8 different news items covering various financial topics.`;
+      Provide at least ${limit} different news items covering various financial topics.`;
 
     const messages = [
       {
@@ -554,7 +591,7 @@ export async function getMarketNews(): Promise<any[]> {
       });
     }
     
-    return newsItems;
+    return newsItems.slice(0, limit);
   } catch (error) {
     console.error('Error fetching market news:', error);
     throw error;

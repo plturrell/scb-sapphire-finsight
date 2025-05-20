@@ -232,7 +232,7 @@ export const TariffAlertDashboard: React.FC<TariffAlertDashboardProps> = ({
                       {simulationData.results.riskMetrics && Object.entries(simulationData.results.riskMetrics).map(([key, value]) => (
                         <div key={key} className="flex justify-between">
                           <span>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</span>
-                          <span className="font-medium">{typeof value === 'number' ? value.toFixed(2) : value}</span>
+                          <span className="font-medium">{typeof value === 'number' ? value.toFixed(2) : String(value)}</span>
                         </div>
                       ))}
                     </div>

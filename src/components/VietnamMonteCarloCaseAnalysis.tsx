@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -8,9 +8,19 @@ import {
   Grid,
   Tooltip,
   IconButton,
-  Divider
+  Divider,
+  useTheme,
+  useMediaQuery,
+  Collapse,
+  Tabs,
+  Tab
 } from '@mui/material';
-import { Info } from 'lucide-react';
+// SwipeableViews is not part of @mui/material, it needs to be imported separately
+// For now, we'll comment it out and replace usages with conditional rendering
+// import SwipeableViews from 'react-swipeable-views';
+import { Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { useResponsive } from '../hooks/useResponsive';
+import { useHaptic, useSwipeGesture } from '../hooks/useMicroInteractions';
 
 interface CaseAnalysisProps {
   data: number[] | null;
@@ -48,6 +58,45 @@ export const VietnamMonteCarloCaseAnalysis: React.FC<CaseAnalysisProps> = ({
   metricUnit = '$M',
   caseBoundaries = defaultCaseBoundaries
 }) => {
+  // Get device capabilities
+  const { isMobile, isTablet } = useResponsive();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const haptic = useHaptic();
+  
+  // Mobile-specific state
+  const [expanded, setExpanded] = useState(!isSmallScreen);
+  const [activeTab, setActiveTab] = useState(0);
+  
+  // Toggle expanded state for mobile view
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+    if (isMobile) {
+      haptic({ intensity: 'medium' });
+    }
+  };
+  
+  // Handle tab change
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+    if (isMobile) {
+      haptic({ intensity: 'light' });
+    }
+  };
+  
+  // Handle swipe between cases on mobile
+  const handleSwipe = (direction: 'left' | 'right' | 'up' | 'down') => {
+    if (direction === 'left' && activeTab < 2) {
+      setActiveTab(activeTab + 1);
+      haptic({ intensity: 'light' });
+    } else if (direction === 'right' && activeTab > 0) {
+      setActiveTab(activeTab - 1);
+      haptic({ intensity: 'light' });
+    }
+  };
+  
+  // Get swipe props
+  const swipeProps = useSwipeGesture(handleSwipe);
   // Format numbers for display
   const formatNumber = (num: number): string => {
     if (Math.abs(num) >= 1_000_000) {
@@ -182,19 +231,24 @@ export const VietnamMonteCarloCaseAnalysis: React.FC<CaseAnalysisProps> = ({
           borderRadius: '4px',
           transition: 'transform 0.2s',
           '&:hover': {
-            transform: 'translateY(-5px)',
-            boxShadow: 3
-          }
+            transform: !isMobile ? 'translateY(-5px)' : 'none',
+            boxShadow: !isMobile ? 3 : 1
+          },
+          // Better touch feedback for mobile
+          '&:active': isMobile ? {
+            transform: 'scale(0.98)',
+            transition: 'transform 0.1s'
+          } : {}
         }}
       >
         <CardHeader
           title={title}
           subheader={`${type === 'pessimistic' ? 'Bottom' : type === 'optimistic' ? 'Top' : 'Middle'} ${caseData.probability}%`}
-          titleTypographyProps={{ variant: 'h6', sx: { color } }}
+          titleTypographyProps={{ variant: isSmallScreen ? 'subtitle1' : 'h6', sx: { color } }}
           subheaderTypographyProps={{ variant: 'caption' }}
-          sx={{ pb: 0 }}
+          sx={{ pb: 0, p: isSmallScreen ? '12px 16px' : undefined }}
         />
-        <CardContent>
+        <CardContent sx={{ p: isSmallScreen ? '12px 16px' : undefined }}>
           <Box sx={{ mb: 2 }}>
             <Typography variant="subtitle2" color="text.secondary">
               Range:
@@ -244,7 +298,18 @@ export const VietnamMonteCarloCaseAnalysis: React.FC<CaseAnalysisProps> = ({
   return (
     <Card elevation={2} sx={{ mb: 3 }}>
       <CardHeader
-        title="Case Analysis"
+        title={
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant={isSmallScreen ? 'subtitle1' : 'h6'} component="div">
+              Case Analysis
+            </Typography>
+            {isSmallScreen && (
+              <IconButton size="small" onClick={toggleExpanded}>
+                {expanded ? <ChevronUp size={16} color="white" /> : <ChevronDown size={16} color="white" />}
+              </IconButton>
+            )}
+          </Box>
+        }
         action={
           <Tooltip title="Analysis of pessimistic, realistic, and optimistic cases based on simulation results">
             <IconButton size="small">
@@ -255,37 +320,115 @@ export const VietnamMonteCarloCaseAnalysis: React.FC<CaseAnalysisProps> = ({
         sx={{ 
           bgcolor: colors.primaryBlue, 
           color: 'white',
-          '& .MuiCardHeader-action': { color: 'white' }
+          '& .MuiCardHeader-action': { color: 'white' },
+          p: isSmallScreen ? 1 : 2
         }}
       />
-      <CardContent>
+      <Collapse in={expanded} timeout="auto" unmountOnExit={false}>
+        <CardContent sx={{ p: isSmallScreen ? 1 : 2 }}>
         {data && data.length > 0 ? (
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
-              <CaseBox
-                type="pessimistic"
-                color={colors.pessimistic}
-                title="Pessimistic"
-                caseData={caseStats.pessimistic}
-              />
+          isSmallScreen ? (
+            <Box>
+              {/* Mobile tabs for case switching */}
+              <Tabs
+                value={activeTab}
+                onChange={handleTabChange}
+                variant="fullWidth"
+                sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
+              >
+                <Tab label="Pessimistic" sx={{ color: colors.pessimistic }} />
+                <Tab label="Realistic" sx={{ color: colors.realistic }} />
+                <Tab label="Optimistic" sx={{ color: colors.optimistic }} />
+              </Tabs>
+              
+              {/* Conditional case views for mobile */}
+              <Box {...swipeProps} sx={{ 
+                position: 'relative',
+                overflow: 'hidden',
+                height: '100%',
+                minHeight: '280px'
+              }}>
+                {/* Pessimistic Case */}
+                <Box 
+                  sx={{ 
+                    display: activeTab === 0 ? 'block' : 'none',
+                    px: 0.5,
+                    animation: activeTab === 0 ? 'fadeIn 0.3s' : 'none'
+                  }}
+                >
+                  <CaseBox
+                    type="pessimistic"
+                    color={colors.pessimistic}
+                    title="Pessimistic"
+                    caseData={caseStats.pessimistic}
+                  />
+                </Box>
+                
+                {/* Realistic Case */}
+                <Box 
+                  sx={{ 
+                    display: activeTab === 1 ? 'block' : 'none',
+                    px: 0.5,
+                    animation: activeTab === 1 ? 'fadeIn 0.3s' : 'none'
+                  }}
+                >
+                  <CaseBox
+                    type="realistic"
+                    color={colors.realistic}
+                    title="Realistic"
+                    caseData={caseStats.realistic}
+                  />
+                </Box>
+                
+                {/* Optimistic Case */}
+                <Box 
+                  sx={{ 
+                    display: activeTab === 2 ? 'block' : 'none',
+                    px: 0.5,
+                    animation: activeTab === 2 ? 'fadeIn 0.3s' : 'none'
+                  }}
+                >
+                  <CaseBox
+                    type="optimistic"
+                    color={colors.optimistic}
+                    title="Optimistic"
+                    caseData={caseStats.optimistic}
+                  />
+                </Box>
+                
+                <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mt: 1, color: 'text.secondary' }}>
+                  Swipe left/right to view different cases
+                </Typography>
+              </Box>
+            </Box>
+          ) : (
+            <Grid container spacing={3} sx={{ width: '100%' }}>
+              <Grid sx={{ width: { xs: '100%', md: '33.33%' } }}>
+                <CaseBox
+                  type="pessimistic"
+                  color={colors.pessimistic}
+                  title="Pessimistic"
+                  caseData={caseStats.pessimistic}
+                />
+              </Grid>
+              <Grid sx={{ width: { xs: '100%', md: '33.33%' } }}>
+                <CaseBox
+                  type="realistic"
+                  color={colors.realistic}
+                  title="Realistic"
+                  caseData={caseStats.realistic}
+                />
+              </Grid>
+              <Grid sx={{ width: { xs: '100%', md: '33.33%' } }}>
+                <CaseBox
+                  type="optimistic"
+                  color={colors.optimistic}
+                  title="Optimistic"
+                  caseData={caseStats.optimistic}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <CaseBox
-                type="realistic"
-                color={colors.realistic}
-                title="Realistic"
-                caseData={caseStats.realistic}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <CaseBox
-                type="optimistic"
-                color={colors.optimistic}
-                title="Optimistic"
-                caseData={caseStats.optimistic}
-              />
-            </Grid>
-          </Grid>
+          )
         ) : (
           <Box sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="body1">
@@ -294,6 +437,36 @@ export const VietnamMonteCarloCaseAnalysis: React.FC<CaseAnalysisProps> = ({
           </Box>
         )}
       </CardContent>
+      </Collapse>
+      
+      {/* Mobile collapsed view summary */}
+      {isSmallScreen && !expanded && data && data.length > 0 && (
+        <CardContent sx={{ p: 1 }}>
+          <Grid container spacing={1} sx={{ width: '100%' }}>
+            <Grid sx={{ width: '33.33%' }}>
+              <Box sx={{ textAlign: 'center', p: 0.5, borderRadius: 1, bgcolor: 'rgba(214, 5, 66, 0.1)' }}>
+                <Typography variant="caption" sx={{ color: colors.pessimistic, fontWeight: 'bold' }}>
+                  {formatCurrency(caseStats.pessimistic.mean)}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid sx={{ width: '33.33%' }}>
+              <Box sx={{ textAlign: 'center', p: 0.5, borderRadius: 1, bgcolor: 'rgba(50, 103, 212, 0.1)' }}>
+                <Typography variant="caption" sx={{ color: colors.realistic, fontWeight: 'bold' }}>
+                  {formatCurrency(caseStats.realistic.mean)}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid sx={{ width: '33.33%' }}>
+              <Box sx={{ textAlign: 'center', p: 0.5, borderRadius: 1, bgcolor: 'rgba(49, 221, 193, 0.1)' }}>
+                <Typography variant="caption" sx={{ color: colors.optimistic, fontWeight: 'bold' }}>
+                  {formatCurrency(caseStats.optimistic.mean)}
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </CardContent>
+      )}
     </Card>
   );
 };

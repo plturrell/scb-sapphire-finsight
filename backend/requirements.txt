@@ -1,0 +1,39 @@
+# Core dependencies
+fastapi>=0.100.0
+uvicorn>=0.22.0
+numpy>=1.24.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+requests>=2.31.0
+
+# RDF and semantic web
+rdflib>=6.3.2
+SPARQLWrapper>=2.0.0
+pyshacl>=0.23.0
+
+# GPU acceleration
+torch>=2.0.0
+accelerate>=0.23.0
+transformers>=4.30.0
+bitsandbytes>=0.40.0
+
+# API and web
+aiohttp>=3.8.5
+httpx>=0.24.1
+python-multipart>=0.0.6
+pydantic>=2.0.0
+
+# Data processing
+scipy>=1.10.0
+scikit-learn>=1.2.0
+
+# Visualization
+plotly>=5.15.0
+networkx>=3.0
+
+# AIQtoolkit (optional - uncomment if available)
+# aiq
+
+# Development
+pytest>=7.3.1
+black>=23.3.0

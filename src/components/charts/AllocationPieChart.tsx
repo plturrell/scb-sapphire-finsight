@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
+// Define missing d3 types directly
+type PieArcDatum<T> = {
+  data: T;
+  value: number;
+  index: number;
+  startAngle: number;
+  endAngle: number;
+  padAngle: number;
+};
 // Using direct DOM manipulation for tooltips
 
 interface DataItem {
@@ -96,7 +105,7 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const announcementRef = useRef<HTMLDivElement | null>(null);
-  const tooltipRef = useRef<d3.Selection<HTMLDivElement, unknown, null, undefined> | null>(null);
+  const tooltipRef = useRef<any | null>(null);
   
   // Draw chart function wrapped in useCallback to include in useEffect dependencies
   const drawChart = useCallback(() => {
@@ -123,15 +132,15 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
     const g = svgSelection.append('g')
       .attr('transform', `translate(${actualWidth / 2}, ${actualHeight / 2})`);
     
-    // Create pie chart
-    const pie = d3.pie<DataItem>()
+    // Create pie chart generator function
+    const pieGenerator = d3.pie<DataItem>()
       .value(d => d.value)
       .sort(null);
     
-    const arcData = pie(data);
+    const arcData = pieGenerator(data);
     
     // Create arc generator
-    const arc = d3.arc<d3.PieArcDatum<DataItem>>()
+    const arc = d3.arc<PieArcDatum<DataItem>>()
       .innerRadius(actualInnerRadius)
       .outerRadius(actualOuterRadius)
       .cornerRadius(2);
@@ -142,7 +151,7 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
       .enter()
       .append('path')
       .attr('d', arc)
-      .attr('fill', (d: d3.PieArcDatum<DataItem>) => d.data.color)
+      .attr('fill', (d: PieArcDatum<DataItem>) => d.data.color)
       .attr('stroke', 'white')
       .attr('stroke-width', 2)
       .style('opacity', 0.9);
@@ -154,15 +163,15 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
         .enter()
         .append('path')
         .attr('class', 'ai-indicator')
-        .attr('d', (d: d3.PieArcDatum<DataItem>) => {
-          const outerArc = d3.arc<d3.PieArcDatum<DataItem>>()
+        .attr('d', (d: PieArcDatum<DataItem>) => {
+          const outerArc = d3.arc<PieArcDatum<DataItem>>()
             .innerRadius(actualOuterRadius + 5)
             .outerRadius(actualOuterRadius + 8);
           return outerArc(d);
         })
         .attr('fill', 'rgb(var(--scb-american-green))')
         .attr('stroke', 'none')
-        .style('opacity', (d: d3.PieArcDatum<DataItem>) => d.data.confidence ? d.data.confidence : 0.7);
+        .style('opacity', (d: PieArcDatum<DataItem>) => d.data.confidence ? d.data.confidence : 0.7);
     }
     
     // Add animation if enabled
@@ -174,7 +183,7 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
     }
     
     // Add labels
-    const labelArc = d3.arc<d3.PieArcDatum<DataItem>>()
+    const labelArc = d3.arc<PieArcDatum<DataItem>>()
       .innerRadius(actualOuterRadius * 0.75)
       .outerRadius(actualOuterRadius * 0.75);
     
@@ -183,14 +192,14 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
       .enter()
       .append('text')
       .attr('class', 'label')
-      .attr('transform', (d: d3.PieArcDatum<DataItem>) => `translate(${labelArc.centroid(d)})`)
+      .attr('transform', (d: PieArcDatum<DataItem>) => `translate(${labelArc.centroid(d)})`)
       .attr('dy', '.35em')
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
       .style('font-family', 'SC Prosper Sans, sans-serif')
       .style('font-weight', 500)
       .style('fill', '#525355')
-      .text((d: d3.PieArcDatum<DataItem>) => d.data.value >= 0.05 ? `${Math.round(d.data.value * 100)}%` : '');
+      .text((d: PieArcDatum<DataItem>) => d.data.value >= 0.05 ? `${Math.round(d.data.value * 100)}%` : '');
     
     // Add animations for labels
     if (animate) {
@@ -208,7 +217,7 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
         .enter()
         .append('circle')
         .attr('class', 'ai-dot')
-        .attr('transform', (d: d3.PieArcDatum<DataItem>) => {
+        .attr('transform', (d: PieArcDatum<DataItem>) => {
           const [x, y] = labelArc.centroid(d);
           return `translate(${x + 18}, ${y})`;
         })
@@ -218,7 +227,7 @@ const AllocationPieChart: React.FC<AllocationPieChartProps> = ({
     
     // Add tooltips with proper type handling for D3
     g.selectAll('path')
-      .on('mouseover', function(event: MouseEvent, d: d3.PieArcDatum<DataItem>) {
+      .on('mouseover', function(event: MouseEvent, d: PieArcDatum<DataItem>) {
         const segment = this as SVGPathElement;
         
         d3.select(segment)

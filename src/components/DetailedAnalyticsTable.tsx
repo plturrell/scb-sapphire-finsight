@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatCurrency, formatPercentage, formatNumber } from '@/lib/utils';
-import { TransactionSector } from '@/types';
+import type { TransactionSector } from '../types/TransactionTypes';
 
 interface DetailedAnalyticsTableProps {
   data: TransactionSector[];

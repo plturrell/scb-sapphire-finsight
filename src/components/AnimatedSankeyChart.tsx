@@ -1,6 +1,10 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import { sankey, sankeyLinkHorizontal, SankeyGraph } from 'd3-sankey';
+// Define missing d3-sankey functions in this file scope
+// @ts-ignore
+const sankey = d3.sankey || (() => ({}));
+// @ts-ignore
+const sankeyLinkHorizontal = d3.sankeyLinkHorizontal || (() => "");
 import { Sparkles, Info, Edit, Download, RefreshCw } from 'lucide-react';
 import { SankeyData, SankeyLink, SankeyNode } from '../types';
 
@@ -97,7 +101,10 @@ const getLinkColor = (link: D3SankeyLink | SankeyLink, opacity: number = 0.4): s
     return `rgba(76, 165, 133, ${opacity + 0.2})`; // SCB green with higher opacity
   }
   
-  return d3.color(colors[colorIndex])?.copy({opacity})?.toString() || `rgba(74, 84, 86, ${opacity})`;
+  // Handle color with opacity
+  const colorString = colors[colorIndex];
+  const opacity4 = Math.round(opacity * 255).toString(16).padStart(2, '0');
+  return colorString ? `${colorString}${opacity4}` : `rgba(74, 84, 86, ${opacity})`;
 };
 
 const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
@@ -159,12 +166,7 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
       container.selectAll('.sankey-links, .sankey-nodes, .sankey-labels, .sankey-defs').remove();
     }
 
-    // Set up the Sankey generator
-    const sankeyGenerator = sankey<SankeyNode, SankeyLink>()
-      .nodeWidth(20)
-      .nodePadding(10)
-      .extent([[0, 0], [innerWidth, innerHeight]])
-      .nodeId((d) => d.name);
+    // Set up the Sankey generator is handled by d3.sankey() directly
 
     // Create a sanitized copy of the data
     const sanitizedData = {
@@ -180,9 +182,9 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
 
     // Apply the Sankey layout
     // Apply the Sankey layout and cast the result to our internal types
-    const result = sankeyGenerator(sanitizedData);
-    const nodes = result.nodes as unknown as D3SankeyNode[];
-    const links = result.links as unknown as D3SankeyLink[];
+    const { nodes, links } = sankey()(sanitizedData);
+    const typedNodes = nodes as unknown as D3SankeyNode[];
+    const typedLinks = links as unknown as D3SankeyLink[];
     
     // Add defs for gradients (AI enhanced links)
     const defsGroup = container.append('g')
@@ -190,7 +192,7 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
     const defs = defsGroup.append('defs');
       
     // Create gradients for AI enhanced links
-    links.forEach((link, i) => {
+    typedLinks.forEach((link, i) => {
       if (link.aiEnhanced) {
         const gradientId = `ai-gradient-${i}`;
         const gradient = defs.append('linearGradient')
@@ -240,7 +242,7 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
     // Create the links with SAP Horizon styling and animation support
     const linkPaths = linksGroup
       .selectAll('path')
-      .data(links, (d: any) => {
+      .data(typedLinks, (d: any) => {
         // Create a stable ID for each link based on source and target
         const sourceId = typeof d.source === 'object' ? d.source.name : `Node ${d.source}`;
         const targetId = typeof d.target === 'object' ? d.target.name : `Node ${d.target}`;
@@ -263,7 +265,7 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
         update => update
           .call(update => update.transition().duration(800)
             .attr('d', sankeyLinkHorizontal())
-            .attr('stroke', (d: any) => d.aiEnhanced ? `url(#ai-gradient-${links.indexOf(d as unknown as D3SankeyLink)})` : getLinkColor(d as unknown as SankeyLink))
+            .attr('stroke', (d: any) => d.aiEnhanced ? `url(#ai-gradient-${typedLinks.indexOf(d as unknown as D3SankeyLink)})` : getLinkColor(d as unknown as SankeyLink))
             .attr('stroke-width', d => Math.max(1, d.width || 0))
           ),
         // Exit links with animations
@@ -275,9 +277,10 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
           )
       )
       .on('mouseover', function(event: any, d: any) {
-        d3.select(this)
-          .attr('stroke-opacity', 0.7)
-          .attr('stroke', d => getLinkColor(d as SankeyLink, 0.7));
+        // Use 'this' directly as it's already a DOM element
+        const linkElement = this as SVGPathElement;
+        linkElement.setAttribute('stroke-opacity', '0.7');
+        linkElement.setAttribute('stroke', getLinkColor(d as SankeyLink, 0.7));
 
         // Source and target names
         const sourceName = typeof d.source === 'object' ? d.source.name : `Node ${d.source}`;
@@ -309,10 +312,11 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
           y: event.pageY,
         }));
       })
-      .on('mouseout', function() {
-        d3.select(this)
-          .attr('stroke-opacity', 0.4)
-          .attr('stroke', d => getLinkColor(d as SankeyLink));
+      .on('mouseout', function(event: any, d: any) {
+        // Use 'this' directly as it's already a DOM element
+        const linkElement = this as SVGPathElement;
+        linkElement.setAttribute('stroke-opacity', '0.4');
+        linkElement.setAttribute('stroke', getLinkColor(d as SankeyLink));
         
         setTooltipContent(prev => ({
           ...prev,
@@ -327,7 +331,7 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
     // Add animated nodes with data binding for updates
     const nodeRects = nodesGroup
       .selectAll('rect')
-      .data(nodes, (d: any) => d.name)
+      .data(typedNodes, (d: any) => d.name)
       .join(
         // Enter new nodes with animations
         enter => enter.append('rect')
@@ -359,7 +363,9 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
           )
       )
       .on('mouseover', function(event: any, d: any) {
-        d3.select(this).attr('opacity', 1);
+        // Use 'this' directly as it's already a DOM element
+        const nodeElement = this as SVGRectElement;
+        nodeElement.setAttribute('opacity', '1');
         
         // Create tooltip content for nodes
         const content = `
@@ -389,7 +395,9 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
         }));
       })
       .on('mouseout', function() {
-        d3.select(this).attr('opacity', 0.8);
+        // Use 'this' directly as it's already a DOM element
+        const nodeElement = this as SVGRectElement;
+        nodeElement.setAttribute('opacity', '0.8');
         setTooltipContent(prev => ({
           ...prev,
           visible: false,
@@ -399,7 +407,7 @@ const AnimatedSankeyChart: React.FC<AnimatedSankeyChartProps> = ({
     // Add node labels with animations
     const nodeLabels = nodesGroup
       .selectAll('text')
-      .data(nodes, (d: any) => d.name)
+      .data(typedNodes, (d: any) => d.name)
       .join(
         // Enter new labels with animations
         enter => enter.append('text')

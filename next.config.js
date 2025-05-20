@@ -13,6 +13,46 @@ const nextConfig = {
   // Optimize production builds
   productionBrowserSourceMaps: false,
   
+  // Optimize serverless function size
+  serverRuntimeConfig: {
+    projectRoot: __dirname,
+  },
+  
+  // Optimize bundle by excluding large packages from server bundle
+  experimental: {
+    // CSS optimization
+    optimizeCss: true,
+    // External packages that should be bundled separately
+    serverComponentsExternalPackages: [
+      'd3',
+      'd3-sankey',
+      'recharts',
+      '@mui/material',
+      '@chakra-ui/react',
+      'framer-motion',
+      'puppeteer'
+    ],
+    // Enable output file tracing but exclude large modules
+    outputFileTracingExcludes: {
+      '*': [
+        'node_modules/@swc/core-linux-x64-gnu',
+        'node_modules/@swc/core-linux-x64-musl',
+        'node_modules/@esbuild/linux-x64',
+        'node_modules/puppeteer',
+        'node_modules/playwright',
+        '.git',
+      ],
+    },
+    // Improve code generation
+    turbotrace: {
+      contextDirectory: __dirname,
+    },
+    // Optimize serverless function size by chunking
+    optimizeServerReact: true,
+    // Improve output structure
+    outputStandalone: true,
+  },
+  
   webpack: (config, { isServer, dev }) => {
     // Fixes lexical declaration issues in generated bundle
     config.optimization.moduleIds = 'named';
@@ -44,10 +84,29 @@ const nextConfig = {
       });
     }
     
+    // Optimize bundle size by excluding large dependencies from the serverless bundle
+    if (isServer) {
+      config.externals = [
+        ...config.externals || [],
+        // Add packages that are causing bloat to the externals list
+        'd3',
+        'recharts',
+        'puppeteer',
+        '@chakra-ui/react',
+        '@mui/material',
+        'canvas',
+        'jsdom'
+      ];
+    }
+    
+    // Improve tree-shaking
+    config.optimization.usedExports = true;
+    config.optimization.providedExports = true;
+    
     return config;
   },
   
-  // Add custom export config
+  // Custom export config
   exportPathMap: async function(
     defaultPathMap,
     { dev, dir, outDir, distDir, buildId }
@@ -59,15 +118,14 @@ const nextConfig = {
     };
   },
   
-  // Advanced configuration options
-  experimental: {
-    optimizeCss: true
-  },
-  
   // Disable checks that might fail build
   eslint: {
     ignoreDuringBuilds: true
   },
+  
+  // Set up output minification
+  compress: true,
+  poweredByHeader: false,
   
   // Environment variables for build
   env: {
