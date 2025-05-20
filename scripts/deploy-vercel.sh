@@ -13,7 +13,7 @@ npm run build
 
 # Deploy to Vercel with additional options
 echo "🚀 Deploying to Vercel..."
-npx vercel deploy --prebuilt --yes --prod
+npx vercel deploy --yes --prod
 
 echo "✅ Deployment command completed!"
 echo "📝 Note: If prompted for authentication, please follow the instructions in your browser."

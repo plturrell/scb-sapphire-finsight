@@ -1,11 +1,9 @@
 {
   "version": 2,
-  "framework": "nextjs",
-  "installCommand": "npm install --force",
-  "buildCommand": "npm run build",
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "trailingSlash": false,
+  "buildCommand": null,
+  "devCommand": null,
+  "installCommand": "npm install",
+  "framework": null,
+  "outputDirectory": ".next",
   "cleanUrls": true
 }
