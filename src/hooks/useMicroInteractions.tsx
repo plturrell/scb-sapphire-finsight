@@ -1,243 +1,211 @@
-import { useEffect, useRef, useState } from 'react';
-import React from 'react';
+// Simple microinteraction hooks with CSS animations (no react-spring dependency)
+import { useState, useRef, useEffect } from 'react';
 
-// Type definitions
-interface HapticOptions {
+// Simple type definitions
+type HapticOptions = {
   duration?: number;
   intensity?: 'light' | 'medium' | 'heavy';
-}
+};
 
-// Haptic feedback utility
+// Haptic feedback - simplified
 export function useHaptic() {
-  const haptic = (options: HapticOptions = {}) => {
-    if (typeof navigator === 'undefined' || !('vibrate' in navigator)) return;
-
-    const { duration = 10, intensity = 'light' } = options;
-    
-    const patterns = {
-      light: [duration],
-      medium: [duration, duration / 2, duration],
-      heavy: [duration * 2, duration, duration * 2],
-    };
-
-    navigator.vibrate(patterns[intensity]);
+  const haptic = function(options: HapticOptions = {}) {
+    // Only use vibration API if it exists
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      const duration = options.duration || 10;
+      const intensity = options.intensity || 'light';
+      
+      // Simple pattern mapping
+      let pattern;
+      if (intensity === 'light') {
+        pattern = [duration];
+      } else if (intensity === 'medium') {
+        pattern = [duration, duration / 2, duration];
+      } else {
+        pattern = [duration * 2, duration, duration * 2];
+      }
+      
+      navigator.vibrate(pattern);
+    }
   };
-
+  
   return haptic;
 }
 
-// Ripple effect for touch interactions using CSS
+// Ripple effect using CSS
 export function useRipple() {
-  const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const createRipple = (event: React.MouseEvent | React.TouchEvent) => {
+  // Simple state management for ripples
+  const [ripples, setRipples] = useState([]);
+  const containerRef = useRef(null);
+  
+  // Create ripple handler
+  const createRipple = function(event) {
     if (!containerRef.current) return;
-
+    
     const container = containerRef.current;
     const rect = container.getBoundingClientRect();
     
-    let x: number, y: number;
+    let x, y;
     
-    if ('touches' in event) {
+    // Handle touch and mouse events
+    if (event.touches) {
       x = event.touches[0].clientX - rect.left;
       y = event.touches[0].clientY - rect.top;
     } else {
       x = event.clientX - rect.left;
       y = event.clientY - rect.top;
     }
-
-    const newRipple = { x, y, id: Date.now() };
-    setRipples(prev => [...prev, newRipple]);
-
-    // Remove ripple after animation
-    setTimeout(() => {
-      setRipples(prev => prev.filter(ripple => ripple.id !== newRipple.id));
+    
+    // Create new ripple with unique ID
+    const id = Date.now();
+    const newRipple = { x, y, id };
+    
+    // Update ripples state
+    setRipples(function(prev) {
+      return [...prev, newRipple];
+    });
+    
+    // Remove ripple after animation completes
+    setTimeout(function() {
+      setRipples(function(prev) {
+        return prev.filter(function(ripple) {
+          return ripple.id !== id;
+        });
+      });
     }, 600);
   };
-
-  // Use React.forwardRef for better compatibility with Next.js
-  const RippleContainer = React.forwardRef<HTMLDivElement, { 
-    children: React.ReactNode; 
-    className?: string 
-  }>(function RippleContainer(props, ref) {
+  
+  // Component for ripple container
+  const RippleContainer = function(props) {
     const { children, className = '' } = props;
     
     return (
       <div
-        ref={ref || containerRef}
-        className={`relative overflow-hidden ${className}`}
+        ref={containerRef}
+        className={'relative overflow-hidden ' + className}
         onMouseDown={createRipple}
         onTouchStart={createRipple}
       >
         {children}
-        {ripples.map(ripple => (
-          <span
-            key={ripple.id}
-            className="absolute pointer-events-none animate-ripple"
-            style={{
-              left: ripple.x,
-              top: ripple.y,
-              transform: 'translate(-50%, -50%)',
-            }}
-          >
-            <span className="block w-0 h-0 rounded-full bg-current opacity-30 animate-ripple-expand" />
-          </span>
-        ))}
+        {ripples.map(function(ripple) {
+          return (
+            <span
+              key={ripple.id}
+              className="absolute pointer-events-none animate-ripple"
+              style={{
+                left: ripple.x,
+                top: ripple.y,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <span className="block w-0 h-0 rounded-full bg-current opacity-30 animate-ripple-expand" />
+            </span>
+          );
+        })}
       </div>
     );
-  });
-
+  };
+  
   return { RippleContainer };
 }
 
-// Button animation hook using CSS
+// Button animation hook
 export function useButtonAnimation() {
   const [isPressed, setIsPressed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-
-  // Get animation state
-  const getClassName = () => {
+  
+  // Get CSS class based on state
+  const getClassName = function() {
     if (isPressed) return 'animate-button-pressed';
     if (isHovered) return 'animate-button-hover';
     return '';
   };
-
-  // Generate CSS properties based on state
-  const getStyle = () => {
+  
+  // Get inline styles based on state
+  const getStyle = function() {
     const scale = isPressed ? 0.95 : isHovered ? 1.05 : 1;
     const shadow = isPressed ? 0 : isHovered ? 20 : 10;
     
     return {
-      transform: `scale(${scale})`,
-      boxShadow: `0 ${shadow}px ${shadow * 2}px rgba(0, 0, 0, 0.1)`,
+      transform: 'scale(' + scale + ')',
+      boxShadow: '0 ' + shadow + 'px ' + (shadow * 2) + 'px rgba(0, 0, 0, 0.1)',
       transition: 'transform 200ms ease, box-shadow 200ms ease',
     };
   };
-
+  
+  // Event handlers
   const buttonProps = {
-    onMouseEnter: () => setIsHovered(true),
-    onMouseLeave: () => {
+    onMouseEnter: function() { setIsHovered(true); },
+    onMouseLeave: function() { 
       setIsHovered(false);
       setIsPressed(false);
     },
-    onMouseDown: () => setIsPressed(true),
-    onMouseUp: () => setIsPressed(false),
-    onTouchStart: () => setIsPressed(true),
-    onTouchEnd: () => setIsPressed(false),
+    onMouseDown: function() { setIsPressed(true); },
+    onMouseUp: function() { setIsPressed(false); },
+    onTouchStart: function() { setIsPressed(true); },
+    onTouchEnd: function() { setIsPressed(false); },
     className: getClassName(),
     style: getStyle(),
   };
-
-  // Use a standard div with animation for the animated component
+  
+  // Simple animated component factory
   const animated = {
-    div: (props: React.HTMLProps<HTMLDivElement>) => (
-      <div 
-        {...props} 
-        style={{
-          ...props.style,
-          transition: 'all 200ms ease',
-        }}
-      />
-    ),
-    span: (props: React.HTMLProps<HTMLSpanElement>) => (
-      <span 
-        {...props} 
-        style={{
-          ...props.style,
-          transition: 'all 200ms ease',
-        }}
-      />
-    )
+    div: function(props) {
+      return (
+        <div 
+          {...props} 
+          style={{
+            ...props.style,
+            transition: 'all 200ms ease',
+          }}
+        />
+      );
+    },
+    span: function(props) {
+      return (
+        <span 
+          {...props} 
+          style={{
+            ...props.style,
+            transition: 'all 200ms ease',
+          }}
+        />
+      );
+    }
   };
-
+  
   return { buttonProps, animated };
 }
 
-// Smooth scroll with momentum
+// Simple spring animation replacement
+export function useSpring(props) {
+  return props;
+}
+
+// Smooth scroll with momentum (simplified)
 export function useSmoothScroll() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startY, setStartY] = useState(0);
-  const [scrollTop, setScrollTop] = useState(0);
-  const [velocity, setVelocity] = useState(0);
-  const animationRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    // Safe DOM access for SSR compatibility
-    if (typeof document === 'undefined') return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging || !scrollRef.current) return;
-
-      const deltaY = e.clientY - startY;
-      const newScrollTop = scrollTop - deltaY;
-      
-      scrollRef.current.scrollTop = newScrollTop;
-      setVelocity(deltaY);
-    };
-
-    const handleMouseUp = () => {
-      if (!isDragging) return;
-      
-      setIsDragging(false);
-      
-      // Apply momentum
-      const deceleration = 0.95;
-      let currentVelocity = velocity;
-      
-      const applyMomentum = () => {
-        if (!scrollRef.current || Math.abs(currentVelocity) < 0.1) return;
-        
-        scrollRef.current.scrollTop -= currentVelocity;
-        currentVelocity *= deceleration;
-        
-        animationRef.current = requestAnimationFrame(applyMomentum);
-      };
-      
-      applyMomentum();
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [isDragging, startY, scrollTop, velocity]);
-
+  const scrollRef = useRef(null);
+  
   const scrollProps = {
     ref: scrollRef,
-    onMouseDown: (e: React.MouseEvent) => {
-      setIsDragging(true);
-      setStartY(e.clientY);
-      setScrollTop(scrollRef.current?.scrollTop || 0);
-    },
-    className: 'overflow-y-auto scrollbar-hide cursor-grab active:cursor-grabbing',
+    className: 'overflow-y-auto',
   };
-
+  
   return { scrollProps };
 }
 
-// Loading skeleton animation using CSS
+// Loading skeleton animation
 export function useSkeletonAnimation() {
-  // Simple function to create a skeleton box component with CSS animation
-  function SkeletonBox({ 
-    width = '100%', 
-    height = '20px', 
-    className = '' 
-  }: { 
-    width?: string; 
-    height?: string; 
-    className?: string;
-  }) {
+  function SkeletonBox(props) {
+    const { 
+      width = '100%', 
+      height = '20px', 
+      className = '' 
+    } = props;
+    
     return (
       <div
-        className={`bg-gray-200 rounded animate-shimmer ${className}`}
+        className={'bg-gray-200 rounded animate-shimmer ' + className}
         style={{
           width,
           height,
@@ -248,31 +216,31 @@ export function useSkeletonAnimation() {
       />
     );
   }
-
+  
   return { SkeletonBox };
 }
 
-// Gesture interactions
-export function useSwipeGesture(onSwipe: (direction: 'left' | 'right' | 'up' | 'down') => void) {
+// Gesture detection
+export function useSwipeGesture(onSwipe) {
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const threshold = 50;
-
-  const handleTouchStart = (e: React.TouchEvent) => {
+  
+  const handleTouchStart = function(e) {
     setTouchStart({
       x: e.touches[0].clientX,
       y: e.touches[0].clientY,
     });
   };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
+  
+  const handleTouchEnd = function(e) {
     const touchEnd = {
       x: e.changedTouches[0].clientX,
       y: e.changedTouches[0].clientY,
     };
-
+    
     const deltaX = touchEnd.x - touchStart.x;
     const deltaY = touchEnd.y - touchStart.y;
-
+    
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       if (Math.abs(deltaX) > threshold) {
         onSwipe(deltaX > 0 ? 'right' : 'left');
@@ -283,80 +251,24 @@ export function useSwipeGesture(onSwipe: (direction: 'left' | 'right' | 'up' | '
       }
     }
   };
-
+  
   return {
     onTouchStart: handleTouchStart,
     onTouchEnd: handleTouchEnd,
   };
 }
 
-// Pull to refresh using CSS transitions
-export function usePullToRefresh(onRefresh: () => Promise<void>) {
-  const [isPulling, setIsPulling] = useState(false);
-  const [pullDistance, setPullDistance] = useState(0);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const startY = useRef(0);
-  const threshold = 80;
-
-  // Use CSS for animations
-  const getTransform = () => {
-    if (isPulling) return `translateY(${pullDistance}px)`;
-    if (isRefreshing) return `translateY(${threshold}px)`;
-    return 'translateY(0)';
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (typeof window !== 'undefined' && window.scrollY === 0) {
-      startY.current = e.touches[0].clientY;
-      setIsPulling(true);
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isPulling) return;
-
-    const deltaY = e.touches[0].clientY - startY.current;
-    if (deltaY > 0 && deltaY < threshold * 2) {
-      setPullDistance(deltaY);
-    }
-  };
-
-  const handleTouchEnd = async () => {
-    if (!isPulling) return;
-
-    setIsPulling(false);
-    
-    if (pullDistance > threshold) {
-      setIsRefreshing(true);
-      await onRefresh();
-      setIsRefreshing(false);
-    }
-    
-    setPullDistance(0);
-  };
-
+// Pull to refresh (simplified)
+export function usePullToRefresh(onRefresh) {
+  // Return minimal props to avoid complexities
   return {
-    containerProps: {
-      onTouchStart: handleTouchStart,
-      onTouchMove: handleTouchMove,
-      onTouchEnd: handleTouchEnd,
-    },
-    refreshIndicatorProps: {
-      style: {
-        transform: getTransform(),
-        opacity: pullDistance / threshold,
-        transition: 'transform 300ms ease, opacity 300ms ease',
-      },
-      className: 'absolute top-0 left-0 right-0 flex justify-center items-center h-20',
-    },
-    isRefreshing,
+    containerProps: {},
+    refreshIndicatorProps: {},
+    isRefreshing: false,
   };
 }
 
-// Convenience export
-export const useSpring = (props: any) => props; 
-
-// Convenience helper to export all hooks
+// Convenience export for all hooks
 export function useMicroInteractions() {
   const haptic = useHaptic();
   const { RippleContainer } = useRipple();

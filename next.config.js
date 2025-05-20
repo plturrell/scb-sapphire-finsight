@@ -5,37 +5,27 @@ const nextConfig = {
   // Basic configuration
   images: {
     domains: [],
-    unoptimized: true, // Avoid image optimization issues
+    unoptimized: true,
   },
+  
+  // Skip validation during build
   typescript: {
-    ignoreBuildErrors: true, // Skip TypeScript errors during build
+    ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: true, // Skip ESLint errors during build
+    ignoreDuringBuilds: true, 
   },
   
-  // Prevent production optimizations
-  swcMinify: false, // Don't use SWC minification
-  optimizeFonts: false, // Don't optimize fonts
-  productionBrowserSourceMaps: false, // No source maps in production
+  // Use the SWC minifier instead of Terser
+  swcMinify: true,
   
-  // Force production to behave like development
-  webpack: (config, { isServer, dev }) => {
-    // Force development mode for client-side bundle
+  // Completely disable optimization
+  webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Force development mode to skip Terser entirely
-      config.mode = 'development';
-      
-      // Completely disable minimization
+      // Disable Terser
       config.optimization.minimize = false;
-      config.optimization.minimizer = [];
       
-      // Disable other optimizations that could cause issues
-      config.optimization.splitChunks = { cacheGroups: {} };
-      config.optimization.concatenateModules = false;
-      config.optimization.usedExports = false;
-      
-      // Use named chunks for better debugging
+      // Use named modules for easier debugging
       config.optimization.moduleIds = 'named';
       config.optimization.chunkIds = 'named';
     }
@@ -43,16 +33,8 @@ const nextConfig = {
     return config;
   },
   
-  // Generate a standalone build for better compatibility
+  // Generate a standalone build
   output: 'standalone',
-  
-  // Experimental features
-  experimental: {
-    // Better compatibility for ESM packages
-    esmExternals: 'loose',
-    // Optimize specific large packages
-    optimizePackageImports: ['@mui/material', 'framer-motion'],
-  },
   
   // Environment variables for build
   env: {
