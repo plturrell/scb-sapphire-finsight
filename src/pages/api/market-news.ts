@@ -79,14 +79,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     console.log('Sending market news API request with payload:', JSON.stringify(payload));
     
-    const response = await fetch(PERPLEXITY_API_URL, {
+    // Use the exact fetch format from documentation
+    const options = {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload)
+    };
+    
+    console.log('Request options:', {
+      ...options,
+      headers: {...options.headers, Authorization: 'Bearer <redacted>'}
     });
+    
+    const response = await fetch(PERPLEXITY_API_URL, options);
 
     // Check if the API call was successful
     if (!response.ok) {

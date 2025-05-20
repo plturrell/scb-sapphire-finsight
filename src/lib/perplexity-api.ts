@@ -7,12 +7,12 @@ import { PerplexityRequest, PerplexityResponse, SearchResult, CompanySearchResul
 // Using our proxy endpoint instead of direct API call to avoid CORS issues
 const PERPLEXITY_API_URL = '/api/perplexity-proxy';
 
-// API models - see https://docs.perplexity.ai/docs/model-cards
+// API models - per Perplexity API docs
 const MODELS = {
-  SMALL: 'mistral-7b-instruct',
-  MEDIUM: 'mixtral-8x7b-instruct',
-  LARGE: 'llama-2-70b-chat',
-  DEFAULT: 'sonar-small-chat'
+  SMALL: 'sonar',
+  MEDIUM: 'sonar',
+  LARGE: 'sonar',
+  DEFAULT: 'sonar'
 };
 
 // Delay between retries in milliseconds

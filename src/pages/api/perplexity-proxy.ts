@@ -78,7 +78,8 @@ export default async function handler(
       
       console.log('Sending API request with payload:', JSON.stringify(payload));
       
-      const response = await fetch(PERPLEXITY_API_URL, {
+      // Use the exact fetch format from documentation
+      const options = {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
@@ -86,7 +87,14 @@ export default async function handler(
         },
         body: JSON.stringify(payload),
         signal: controller.signal
+      };
+      
+      console.log('Request options:', {
+        ...options,
+        headers: {...options.headers, Authorization: 'Bearer <redacted>'}
       });
+      
+      const response = await fetch(PERPLEXITY_API_URL, options);
       
       clearTimeout(timeoutId);
 
