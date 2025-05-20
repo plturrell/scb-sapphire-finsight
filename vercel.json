@@ -7,5 +7,7 @@
     "NODE_ENV": "production"
   },
   "trailingSlash": false,
-  "cleanUrls": true
+  "cleanUrls": true,
+  "public": true,
+  "protection": false
 }
