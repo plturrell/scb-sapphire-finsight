@@ -5,6 +5,7 @@
   "framework": "nextjs",
   "outputDirectory": ".next",
   "cleanUrls": true,
+  "buildVersion": "1.0.1-20250520",
   "env": {
     "PERPLEXITY_API_KEY": "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",
     "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
