@@ -112,6 +112,7 @@ export default async function handler(
           }));
           console.error('Request payload:', JSON.stringify(payload));
           
+          // Return the actual error status and details
           return res.status(response.status).json({ 
             error: `Perplexity API error: ${response.status} ${response.statusText}`,
             details: errorData

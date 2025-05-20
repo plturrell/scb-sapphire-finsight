@@ -7,13 +7,8 @@ import { PerplexityRequest, PerplexityResponse, SearchResult, CompanySearchResul
 // Using our proxy endpoint instead of direct API call to avoid CORS issues
 const PERPLEXITY_API_URL = '/api/perplexity-proxy';
 
-// API models - per Perplexity API docs
-const MODELS = {
-  SMALL: 'sonar',
-  MEDIUM: 'sonar',
-  LARGE: 'sonar',
-  DEFAULT: 'sonar'
-};
+// Model name must be 'sonar' for the Perplexity API
+const MODEL_NAME = 'sonar';
 
 // Delay between retries in milliseconds
 const RETRY_DELAY = 1000;
@@ -22,20 +17,17 @@ const MAX_RETRIES = 2;
 /**
  * Core function to call Perplexity API with retries and rate limiting
  */
-async function callPerplexityAPI(messages: Array<{role: string, content: string}>, model = MODELS.DEFAULT): Promise<string> {
-  const request: PerplexityRequest = {
-    model: model,
-    messages: messages,
-    temperature: 0.2,
-    top_p: 0.9,
-    max_tokens: 2000,
-    stream: false
+async function callPerplexityAPI(messages: Array<{role: string, content: string}>): Promise<string> {
+  // Always make request to our server-side proxy, never direct to Perplexity
+  const request = {
+    model: MODEL_NAME, // Always use 'sonar' as the model name
+    messages: messages
   };
 
   let retries = 0;
   let lastError: Error | null = null;
   const startTime = Date.now();
-  const endpoint = 'chat/completions';
+  const endpoint = 'perplexity-proxy';
   let tokenUsage = 0;
 
   // Check if we can make a request based on rate limits
@@ -49,6 +41,9 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
 
   while (retries <= MAX_RETRIES) {
     try {
+      // Client side makes request to our server-side proxy, not directly to Perplexity
+      console.log('Making request to server-side proxy:', PERPLEXITY_API_URL);
+      
       const response = await fetch(PERPLEXITY_API_URL, {
         method: 'POST',
         headers: {
@@ -58,26 +53,24 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
       });
 
       if (!response.ok) {
-        // Try alternative model if the current one fails
+        // Try again with the same model if needed
         if (retries < MAX_RETRIES) {
           retries++;
-          const fallbackModel = retries === 1 ? MODELS.MEDIUM : MODELS.SMALL;
-          console.warn(`Perplexity API error (${response.status}), retrying with model: ${fallbackModel}`);
-          request.model = fallbackModel;
+          console.warn(`Perplexity API error (${response.status}), retrying...`);
           await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
           continue;
         }
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
-      const data: PerplexityResponse = await response.json();
+      const data = await response.json();
       tokenUsage = data.usage?.total_tokens || 0;
 
       // Record successful API call in rate limiter
       perplexityRateLimiter.recordRequest({
         endpoint,
         tokens: tokenUsage,
-        model: request.model,
+        model: request.model, 
         startTime,
         success: true
       });
@@ -87,9 +80,7 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
       lastError = error as Error;
       if (retries < MAX_RETRIES) {
         retries++;
-        const fallbackModel = retries === 1 ? MODELS.MEDIUM : MODELS.SMALL;
-        console.warn(`Perplexity API error, retrying with model: ${fallbackModel}`, error);
-        request.model = fallbackModel;
+        console.warn(`Perplexity API error, retrying...`, error);
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       } else {
         // Record failed API call
@@ -335,7 +326,7 @@ export async function searchCompanies(query: string): Promise<any[]> {
       }
     ];
 
-    const content = await callPerplexityAPI(messages, MODELS.MEDIUM);
+    const content = await callPerplexityAPI(messages);
     
     // Extract companies with a combination of regex and text parsing
     const companies: any[] = [];
@@ -447,7 +438,7 @@ export async function getFinancialInsights(query: string): Promise<any> {
       }
     ];
 
-    const content = await callPerplexityAPI(messages, MODELS.SMALL);
+    const content = await callPerplexityAPI(messages);
     
     // Extract insights with advanced parsing
     const summary = content.split('\n\n')[0] || content.substring(0, 300);

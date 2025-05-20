@@ -109,6 +109,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }));
         console.error('Request payload:', JSON.stringify(payload));
         
+        // Return the actual error status and details
         return res.status(response.status).json({
           success: false,
           error: `Perplexity API error: ${response.status} ${response.statusText}`,
@@ -116,7 +117,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       } catch (parseError) {
         console.error('Error parsing API error response:', parseError);
-        throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
+        return res.status(response.status).json({
+          success: false,
+          error: `Perplexity API error: ${response.status} ${response.statusText}`
+        });
       }
     }
 
