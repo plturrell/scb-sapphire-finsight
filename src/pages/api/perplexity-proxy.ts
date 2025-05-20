@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// This should be a server-side environment variable, not exposed to the client
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
+// Using the new API key directly on the server side
+const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || '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';
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 /**
@@ -63,8 +63,8 @@ export default async function handler(
     
     try {
       // Ensure we're matching the exact format from Perplexity documentation
-      // Make sure the model name is valid
-      const validModelName = model.startsWith('sonar') ? model : 'sonar-small-chat';
+      // Make sure the model name is valid - must use 'sonar' for new API key
+      const validModelName = 'sonar';
       
       const payload = {
         model: validModelName,

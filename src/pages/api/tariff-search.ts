@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// Use environment variable with fallback
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
+// Using the new API key directly on the server side
+const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || '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';
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 /**
@@ -88,21 +88,26 @@ Multiple entries are possible if there are different categories or conditions. E
       { role: 'user', content: queryText }
     ];
 
-    // Call Perplexity API from server side
-    const response = await fetch(PERPLEXITY_API_URL, {
+    // Prepare the payload according to Perplexity API requirements
+    const payload = {
+      model: 'sonar',
+      messages: messages
+    };
+    
+    console.log('Sending tariff API request with payload:', JSON.stringify(payload));
+    
+    // Use the exact fetch format from documentation
+    const options = {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: 'sonar-medium-chat',
-        messages,
-        temperature: 0.2,
-        max_tokens: 2000,
-        stream: false
-      })
-    });
+      body: JSON.stringify(payload)
+    };
+    
+    // Call Perplexity API from server side
+    const response = await fetch(PERPLEXITY_API_URL, options);
 
     // Check if the API call was successful
     if (!response.ok) {

@@ -6,8 +6,8 @@
   "outputDirectory": ".next",
   "cleanUrls": true,
   "env": {
-    "PERPLEXITY_API_KEY": "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",
-    "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
+    "PERPLEXITY_API_KEY": "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",
+    "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
   },
   "headers": [
     {
