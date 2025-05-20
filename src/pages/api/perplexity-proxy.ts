@@ -49,8 +49,13 @@ export default async function handler(
     // Validate API key
     if (!PERPLEXITY_API_KEY) {
       console.error('Missing Perplexity API key');
-      return res.status(500).json({ error: 'Server configuration error' });
+      return res.status(500).json({ error: 'Server configuration error: Missing API key' });
     }
+    
+    // Log the API key format (first 8 chars) for debugging
+    console.log(`Using Perplexity API key format: ${PERPLEXITY_API_KEY.substring(0, 8)}...`);
+    console.log(`Request model: ${model}, tokens: ${max_tokens}`);
+    console.log(`Request body length: ${JSON.stringify(req.body).length} chars`);
 
     // Call Perplexity API from the server side (no CORS issues here)
     const controller = new AbortController();
@@ -78,9 +83,20 @@ export default async function handler(
       // Check if the API call was successful
       if (!response.ok) {
         console.error('Perplexity API error:', response.status, response.statusText);
-        return res.status(response.status).json({ 
-          error: `Perplexity API error: ${response.status} ${response.statusText}` 
-        });
+        
+        // Get more detailed error information if available
+        try {
+          const errorData = await response.text();
+          console.error('Perplexity API error details:', errorData);
+          return res.status(response.status).json({ 
+            error: `Perplexity API error: ${response.status} ${response.statusText}`,
+            details: errorData
+          });
+        } catch (e) {
+          return res.status(response.status).json({ 
+            error: `Perplexity API error: ${response.status} ${response.statusText}` 
+          });
+        }
       }
 
       // Handle streaming response if requested

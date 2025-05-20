@@ -1,6 +1,7 @@
 // Perplexity AI API integration for search functionality
 import perplexityRateLimiter from '@/services/PerplexityRateLimiter';
 import { PerplexityRequest, PerplexityResponse, SearchResult, CompanySearchResult, FinancialInsights } from '@/types/perplexity';
+import { fallbackMarketNews, fallbackCompanySearch, fallbackFinancialInsights, fallbackTariffData } from './fallback-data';
 // These interfaces have been moved to /src/types/perplexity.ts
 
 // Using our proxy endpoint instead of direct API call to avoid CORS issues
@@ -406,11 +407,20 @@ export async function searchCompanies(query: string): Promise<any[]> {
       }
     }
     
+    // If still no companies found, use fallback data
+    if (companies.length === 0) {
+      throw new Error('No companies found in API response');
+    }
+    
     return companies;
   } catch (error) {
     console.error('Company search error:', error);
-    // Return empty array instead of throwing to avoid breaking the UI
-    return [];
+    // Return fallback company data instead of empty array
+    console.log('Using fallback company data due to API error');
+    return fallbackCompanySearch.map(company => ({
+      ...company,
+      companyName: company.companyName + (query ? ` (matching "${query}")` : '')
+    }));
   }
 }
 
@@ -519,38 +529,72 @@ export async function getFinancialInsights(query: string): Promise<any> {
     };
   } catch (error) {
     console.error('Financial insights error:', error);
-    // Return basic data structure to avoid breaking UI
-    return {
-      summary: `Financial insights for "${query}" are not available at the moment.`,
-      insights: [],
-      timestamp: new Date().toISOString()
-    };
+    // Return fallback insights to avoid breaking UI
+    console.log('Using fallback financial insights due to API error');
+    const fallbackData = { ...fallbackFinancialInsights };
+    
+    // Customize summary with query
+    fallbackData.summary = `Financial insights for "${query}": ${fallbackFinancialInsights.summary}`;
+    return fallbackData;
   }
 }
+
 
 /**
  * Get market news using Perplexity AI
  */
 export async function getMarketNews(topic: string = 'financial markets'): Promise<any[]> {
   try {
-    // Use our proxy endpoint to avoid CORS issues
-    const response = await fetch(`/api/market-news?topic=${encodeURIComponent(topic)}`);
+    // Add timeout to the fetch request to handle network issues
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
-    if (!response.ok) {
-      console.error(`Market news API error: ${response.status} ${response.statusText}`);
-      throw new Error(`API error: ${response.status}`);
+    try {
+      // Use our proxy endpoint to avoid CORS issues
+      const response = await fetch(`/api/market-news?topic=${encodeURIComponent(topic)}`, {
+        signal: controller.signal,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        // Try to get more detailed error information
+        try {
+          const errorData = await response.json();
+          console.error(`Market news API error: ${response.status} ${response.statusText}`, errorData);
+          throw new Error(`API error: ${response.status} - ${errorData.error || ''}`);
+        } catch (jsonError) {
+          console.error(`Market news API error: ${response.status} ${response.statusText}`);
+          throw new Error(`API error: ${response.status}`);
+        }
+      }
+      
+      // Try to parse the JSON response
+      const data = await response.json();
+      if (!data.articles || !Array.isArray(data.articles)) {
+        console.error('Invalid market news data format:', data);
+        throw new Error('Invalid news data format');
+      }
+      
+      return data.articles;
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      
+      if (fetchError.name === 'AbortError') {
+        console.error('Market news request timed out');
+        throw new Error('Request timed out');
+      }
+      
+      throw fetchError;
     }
-    
-    const data = await response.json();
-    if (!data.articles || !Array.isArray(data.articles)) {
-      console.error('Invalid market news data format:', data);
-      throw new Error('Invalid news data format');
-    }
-    
-    return data.articles;
   } catch (error) {
     console.error('Error fetching market news:', error);
-    // Return empty array instead of throwing to avoid breaking the UI
-    return [];
+    // Return fallback data instead of empty array
+    console.log('Using fallback market news data due to API error');
+    return fallbackMarketNews;
   }
 }

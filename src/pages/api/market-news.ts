@@ -47,6 +47,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
     
+    // Validate API key
+    if (!PERPLEXITY_API_KEY) {
+      console.error('Missing Perplexity API key in market-news endpoint');
+      return res.status(500).json({ 
+        error: 'Server configuration error: Missing API key',
+        success: false
+      });
+    }
+    
+    // Log the API key format (first 8 chars) for debugging
+    console.log(`Using Perplexity API key in market-news: ${PERPLEXITY_API_KEY.substring(0, 8)}...`);
+    
     // Call Perplexity API to get market news
     const response = await fetch(PERPLEXITY_API_URL, {
       method: 'POST',
@@ -73,7 +85,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if the API call was successful
     if (!response.ok) {
-      throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
+      // Get more detailed error information if available
+      try {
+        const errorData = await response.text();
+        console.error('Perplexity API error in market-news:', response.status, response.statusText);
+        console.error('Error details:', errorData);
+        return res.status(500).json({
+          success: false,
+          error: `Perplexity API error: ${response.status} ${response.statusText}`,
+          details: errorData
+        });
+      } catch (parseError) {
+        throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
+      }
     }
 
     // Parse the API response
