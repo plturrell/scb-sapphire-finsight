@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import PerplexitySearchBar from './PerplexitySearchBar';
-import JouleAssistant from './JouleAssistant';
+import JouleAssistantWrapper from './JouleAssistantWrapper';
 import {
   LayoutDashboard,
   BarChart3,
@@ -774,7 +774,7 @@ export default function ModernLayout({ children }: LayoutProps) {
 
           {/* Joule Content */}
           <div className="flex-1 overflow-hidden">
-            <JouleAssistant open={jouleOpen} onOpenChange={setJouleOpen} />
+            <JouleAssistantWrapper open={jouleOpen} onOpenChange={setJouleOpen} />
           </div>
         </div>
       )}

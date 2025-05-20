@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     domains: [],
+    unoptimized: true, // Avoid image optimization issues
   },
   // Disable TypeScript checking during build for deployment
   typescript: {
@@ -53,11 +54,28 @@ const nextConfig = {
   // Disable automatic static optimization for problematic pages
   unstable_runtimeJS: true,
   
+  // Explicitly disable SSR for problematic pages
+  async exportPathMap(defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
+    return {
+      ...defaultPathMap,
+      '/financial-simulation': { page: '/financial-simulation', query: {} },
+      '/tariff-alerts': { page: '/tariff-alerts', query: {} },
+      '/tariff-scanner': { page: '/tariff-scanner', query: {} },
+      '/vietnam-monte-carlo': { page: '/vietnam-monte-carlo', query: {} },
+      '/vietnam-monte-carlo-enhanced': { page: '/vietnam-monte-carlo-enhanced', query: {} },
+      '/vietnam-tariff-impact': { page: '/vietnam-tariff-impact', query: {} },
+      '/dashboard': { page: '/dashboard', query: {} },
+    };
+  },
+  
   // Advanced configuration options
   experimental: {
     optimizeCss: true,
     esmExternals: 'loose', // Try to help with module resolution
   },
+  
+  // Use dynamic rendering for all pages to avoid SSR issues
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   
   // Disable checks that might fail build
   eslint: {

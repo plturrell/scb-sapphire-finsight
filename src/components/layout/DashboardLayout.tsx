@@ -18,7 +18,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import PerplexityNewsBar from '../PerplexityNewsBar';
-import JouleAssistant from '../JouleAssistant';
+import JouleAssistantWrapper from '../JouleAssistantWrapper';
 
 // Import SVG logo as a component
 const SCBLogo = () => (
@@ -315,7 +315,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         )}
       
         {/* Joule Assistant */}
-        <JouleAssistant 
+        <JouleAssistantWrapper 
           open={jouleOpen} 
           onOpenChange={setJouleOpen} 
           initialNewsItem={newsItem}
