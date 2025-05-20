@@ -1,31 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import React from 'react';
 
-// We'll need to handle the case where @react-spring/web might not be available
-let useSpring: any;
-let animated: any;
-let config: any;
-
-// Try to import react-spring safely
-try {
-  // This approach helps with tree-shaking and avoids direct imports
-  const reactSpring = require('@react-spring/web');
-  useSpring = reactSpring.useSpring;
-  animated = reactSpring.animated;
-  config = reactSpring.config;
-} catch (e) {
-  // Provide minimal fallbacks if the module fails to load
-  useSpring = (props: any) => props;
-  animated = { div: 'div' };
-  config = { 
-    wobbly: { tension: 180, friction: 12 },
-    stiff: { tension: 300, friction: 20 }
-  };
-  
-  // Log error silently - don't break the build
-  console.warn('Could not load @react-spring/web, using fallbacks');
-}
-
 // Type definitions
 interface HapticOptions {
   duration?: number;
@@ -51,7 +26,7 @@ export function useHaptic() {
   return haptic;
 }
 
-// Ripple effect for touch interactions
+// Ripple effect for touch interactions using CSS
 export function useRipple() {
   const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -116,26 +91,29 @@ export function useRipple() {
   return { RippleContainer };
 }
 
-// Button animation hook using react-spring when available
+// Button animation hook using CSS
 export function useButtonAnimation() {
   const [isPressed, setIsPressed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Safe use of spring animation with fallbacks
-  const springProps = useSpring({
-    scale: isPressed ? 0.95 : isHovered ? 1.05 : 1,
-    shadow: isPressed ? 0 : isHovered ? 20 : 10,
-    config: config.wobbly,
-  });
+  // Get animation state
+  const getClassName = () => {
+    if (isPressed) return 'animate-button-pressed';
+    if (isHovered) return 'animate-button-hover';
+    return '';
+  };
 
-  // Safe .to() method with fallback
-  const transform = typeof springProps.scale?.to === 'function' 
-    ? springProps.scale.to((s: number) => `scale(${s})`)
-    : `scale(${springProps.scale})`;
-  
-  const boxShadow = typeof springProps.shadow?.to === 'function' 
-    ? springProps.shadow.to((s: number) => `0 ${s}px ${s * 2}px rgba(0, 0, 0, 0.1)`)
-    : `0 ${springProps.shadow}px ${springProps.shadow * 2}px rgba(0, 0, 0, 0.1)`;
+  // Generate CSS properties based on state
+  const getStyle = () => {
+    const scale = isPressed ? 0.95 : isHovered ? 1.05 : 1;
+    const shadow = isPressed ? 0 : isHovered ? 20 : 10;
+    
+    return {
+      transform: `scale(${scale})`,
+      boxShadow: `0 ${shadow}px ${shadow * 2}px rgba(0, 0, 0, 0.1)`,
+      transition: 'transform 200ms ease, box-shadow 200ms ease',
+    };
+  };
 
   const buttonProps = {
     onMouseEnter: () => setIsHovered(true),
@@ -147,10 +125,30 @@ export function useButtonAnimation() {
     onMouseUp: () => setIsPressed(false),
     onTouchStart: () => setIsPressed(true),
     onTouchEnd: () => setIsPressed(false),
-    style: {
-      transform,
-      boxShadow,
-    },
+    className: getClassName(),
+    style: getStyle(),
+  };
+
+  // Use a standard div with animation for the animated component
+  const animated = {
+    div: (props: React.HTMLProps<HTMLDivElement>) => (
+      <div 
+        {...props} 
+        style={{
+          ...props.style,
+          transition: 'all 200ms ease',
+        }}
+      />
+    ),
+    span: (props: React.HTMLProps<HTMLSpanElement>) => (
+      <span 
+        {...props} 
+        style={{
+          ...props.style,
+          transition: 'all 200ms ease',
+        }}
+      />
+    )
   };
 
   return { buttonProps, animated };
@@ -225,17 +223,9 @@ export function useSmoothScroll() {
   return { scrollProps };
 }
 
-// Loading skeleton animation - with react-spring if available
+// Loading skeleton animation using CSS
 export function useSkeletonAnimation() {
-  // Simple shimmer effect with react-spring
-  const shimmerProps = useSpring({
-    from: { backgroundPosition: '-200% 0' },
-    to: { backgroundPosition: '200% 0' },
-    config: { duration: 1500 },
-    loop: true,
-  });
-
-  // Simple skeleton box component
+  // Simple function to create a skeleton box component with CSS animation
   function SkeletonBox({ 
     width = '100%', 
     height = '20px', 
@@ -245,16 +235,15 @@ export function useSkeletonAnimation() {
     height?: string; 
     className?: string;
   }) {
-    // Use normal React component for compatibility
     return (
       <div
-        className={`bg-gray-200 rounded ${className}`}
+        className={`bg-gray-200 rounded animate-shimmer ${className}`}
         style={{
           width,
           height,
           backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
           backgroundSize: '200% 100%',
-          backgroundPosition: shimmerProps.backgroundPosition || '-200% 0',
+          backgroundPosition: '-200% 0',
         }}
       />
     );
@@ -301,7 +290,7 @@ export function useSwipeGesture(onSwipe: (direction: 'left' | 'right' | 'up' | '
   };
 }
 
-// Pull to refresh
+// Pull to refresh using CSS transitions
 export function usePullToRefresh(onRefresh: () => Promise<void>) {
   const [isPulling, setIsPulling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
@@ -309,12 +298,12 @@ export function usePullToRefresh(onRefresh: () => Promise<void>) {
   const startY = useRef(0);
   const threshold = 80;
 
-  // Safe use of spring props with fallbacks
-  const springProps = useSpring({
-    transform: `translateY(${isPulling ? pullDistance : isRefreshing ? threshold : 0}px)`,
-    opacity: pullDistance / threshold,
-    config: config.stiff,
-  });
+  // Use CSS for animations
+  const getTransform = () => {
+    if (isPulling) return `translateY(${pullDistance}px)`;
+    if (isRefreshing) return `translateY(${threshold}px)`;
+    return 'translateY(0)';
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (typeof window !== 'undefined' && window.scrollY === 0) {
@@ -353,9 +342,10 @@ export function usePullToRefresh(onRefresh: () => Promise<void>) {
       onTouchEnd: handleTouchEnd,
     },
     refreshIndicatorProps: {
-      style: springProps || {
-        transform: `translateY(${isPulling ? pullDistance : isRefreshing ? threshold : 0}px)`,
+      style: {
+        transform: getTransform(),
         opacity: pullDistance / threshold,
+        transition: 'transform 300ms ease, opacity 300ms ease',
       },
       className: 'absolute top-0 left-0 right-0 flex justify-center items-center h-20',
     },
@@ -363,11 +353,14 @@ export function usePullToRefresh(onRefresh: () => Promise<void>) {
   };
 }
 
+// Convenience export
+export const useSpring = (props: any) => props; 
+
 // Convenience helper to export all hooks
 export function useMicroInteractions() {
   const haptic = useHaptic();
   const { RippleContainer } = useRipple();
-  const { buttonProps, animated: buttonAnimated } = useButtonAnimation();
+  const { buttonProps, animated } = useButtonAnimation();
   const { scrollProps } = useSmoothScroll();
   const { SkeletonBox } = useSkeletonAnimation();
   
@@ -375,7 +368,7 @@ export function useMicroInteractions() {
     haptic,
     RippleContainer,
     buttonProps,
-    animated: buttonAnimated,
+    animated,
     scrollProps,
     SkeletonBox,
   };

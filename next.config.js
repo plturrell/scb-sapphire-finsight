@@ -14,20 +14,9 @@ const nextConfig = {
   // Optimize production builds
   productionBrowserSourceMaps: false,
   
-  // Add packages that need transpiling - moved from experimental section
-  transpilePackages: ['@react-spring/web'],
-  
   webpack: (config, { isServer, dev }) => {
     // Fixes lexical declaration issues in generated bundle
     config.optimization.moduleIds = 'named';
-    
-    // Special handling for @react-spring/web
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@react-spring/web': '@react-spring/web/dist/web.cjs',
-      };
-    }
     
     // Configure Terser for compatibility with complex libraries
     if (!isServer && !dev) {
@@ -69,7 +58,7 @@ const nextConfig = {
   experimental: {
     esmExternals: 'loose', // Help with module resolution
     // Modern config approach for runtime JS options
-    optimizePackageImports: ['@mui/material', 'framer-motion', '@react-spring/web'],
+    optimizePackageImports: ['@mui/material', 'framer-motion'],
   },
   
   // Explicitly disable SSR for problematic pages
