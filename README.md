@@ -2,6 +2,8 @@
 
 A modern financial insights and analytics platform built with Next.js, React, and TypeScript.
 
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/plturrell/scb-sapphire-finsight)
+
 ## Features
 
 - **Dashboard**: Real-time financial metrics and KPIs
