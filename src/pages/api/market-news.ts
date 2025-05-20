@@ -60,42 +60,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`Using Perplexity API key in market-news: ${PERPLEXITY_API_KEY.substring(0, 8)}...`);
     
     // Call Perplexity API to get market news
+    const messages = [
+      {
+        role: 'system',
+        content: 'You are a financial news reporter providing concise, accurate summaries of the latest market developments. Focus on factual information and provide a diverse range of important financial news.'
+      },
+      {
+        role: 'user',
+        content: `Provide the latest financial market news about ${topic}. Include major market movements, significant events, and relevant information. For each news item, include a concise headline, brief summary, category, and source if available. Provide ${newsLimit} different news items.`
+      }
+    ];
+    
+    // Using exact format from Perplexity API documentation
+    const payload = {
+      model: 'sonar',
+      messages: messages
+    };
+    
+    console.log('Sending market news API request with payload:', JSON.stringify(payload));
+    
     const response = await fetch(PERPLEXITY_API_URL, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: 'sonar-small-chat',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a financial news reporter providing concise, accurate summaries of the latest market developments. Focus on factual information and provide a diverse range of important financial news.'
-          },
-          {
-            role: 'user',
-            content: `Provide the latest financial market news about ${topic}. Include major market movements, significant events, and relevant information. For each news item, include a concise headline, brief summary, category, and source if available. Provide ${newsLimit} different news items.`
-          }
-        ],
-        temperature: 0.2,
-        max_tokens: 2000
-      })
+      body: JSON.stringify(payload)
     });
 
     // Check if the API call was successful
     if (!response.ok) {
       // Get more detailed error information if available
       try {
-        const errorData = await response.text();
+        const errorText = await response.text();
         console.error('Perplexity API error in market-news:', response.status, response.statusText);
-        console.error('Error details:', errorData);
-        return res.status(500).json({
+        console.error('Error details:', errorText);
+        console.error('Request headers:', JSON.stringify({
+          'Authorization': 'Bearer [REDACTED]',
+          'Content-Type': 'application/json'
+        }));
+        console.error('Request payload:', JSON.stringify(payload));
+        
+        return res.status(response.status).json({
           success: false,
           error: `Perplexity API error: ${response.status} ${response.statusText}`,
-          details: errorData
+          details: errorText
         });
       } catch (parseError) {
+        console.error('Error parsing API error response:', parseError);
         throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
       }
     }

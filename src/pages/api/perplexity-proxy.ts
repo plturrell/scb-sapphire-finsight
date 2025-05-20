@@ -62,19 +62,29 @@ export default async function handler(
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
     
     try {
+      // Ensure we're matching the exact format from Perplexity documentation
+      // Make sure the model name is valid
+      const validModelName = model.startsWith('sonar') ? model : 'sonar-small-chat';
+      
+      const payload = {
+        model: validModelName,
+        messages: messages
+      };
+      
+      // Only add optional parameters if they're provided and needed
+      if (temperature !== 0.2) payload['temperature'] = temperature;
+      if (max_tokens !== 2000) payload['max_tokens'] = max_tokens;
+      if (stream) payload['stream'] = stream;
+      
+      console.log('Sending API request with payload:', JSON.stringify(payload));
+      
       const response = await fetch(PERPLEXITY_API_URL, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          model,
-          messages,
-          temperature,
-          max_tokens,
-          stream
-        }),
+        body: JSON.stringify(payload),
         signal: controller.signal
       });
       
@@ -88,6 +98,12 @@ export default async function handler(
         try {
           const errorData = await response.text();
           console.error('Perplexity API error details:', errorData);
+          console.error('Request headers:', JSON.stringify({
+            'Authorization': 'Bearer [REDACTED]',
+            'Content-Type': 'application/json'
+          }));
+          console.error('Request payload:', JSON.stringify(payload));
+          
           return res.status(response.status).json({ 
             error: `Perplexity API error: ${response.status} ${response.statusText}`,
             details: errorData

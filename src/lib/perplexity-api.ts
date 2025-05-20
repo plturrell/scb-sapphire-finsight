@@ -1,7 +1,7 @@
 // Perplexity AI API integration for search functionality
 import perplexityRateLimiter from '@/services/PerplexityRateLimiter';
 import { PerplexityRequest, PerplexityResponse, SearchResult, CompanySearchResult, FinancialInsights } from '@/types/perplexity';
-import { fallbackMarketNews, fallbackCompanySearch, fallbackFinancialInsights, fallbackTariffData } from './fallback-data';
+// No fallback data imports
 // These interfaces have been moved to /src/types/perplexity.ts
 
 // Using our proxy endpoint instead of direct API call to avoid CORS issues
@@ -415,12 +415,8 @@ export async function searchCompanies(query: string): Promise<any[]> {
     return companies;
   } catch (error) {
     console.error('Company search error:', error);
-    // Return fallback company data instead of empty array
-    console.log('Using fallback company data due to API error');
-    return fallbackCompanySearch.map(company => ({
-      ...company,
-      companyName: company.companyName + (query ? ` (matching "${query}")` : '')
-    }));
+    // Return empty array instead of fallback data
+    return [];
   }
 }
 
@@ -529,13 +525,12 @@ export async function getFinancialInsights(query: string): Promise<any> {
     };
   } catch (error) {
     console.error('Financial insights error:', error);
-    // Return fallback insights to avoid breaking UI
-    console.log('Using fallback financial insights due to API error');
-    const fallbackData = { ...fallbackFinancialInsights };
-    
-    // Customize summary with query
-    fallbackData.summary = `Financial insights for "${query}": ${fallbackFinancialInsights.summary}`;
-    return fallbackData;
+    // Return basic data structure to avoid breaking UI
+    return {
+      summary: `Financial insights for "${query}" are not available at the moment.`,
+      insights: [],
+      timestamp: new Date().toISOString()
+    };
   }
 }
 
@@ -593,8 +588,7 @@ export async function getMarketNews(topic: string = 'financial markets'): Promis
     }
   } catch (error) {
     console.error('Error fetching market news:', error);
-    // Return fallback data instead of empty array
-    console.log('Using fallback market news data due to API error');
-    return fallbackMarketNews;
+    // Return empty array instead of throwing to avoid breaking the UI
+    return [];
   }
 }
