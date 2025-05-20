@@ -30,6 +30,35 @@ export default function Document() {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        {/* Custom SC Prosper Sans Preload */}
+        <link 
+          rel="preload" 
+          href="/fonts/SCProsperSans-Regular.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/SCProsperSans-Medium.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/SCProsperSans-Bold.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
+        />
+        <link 
+          rel="preload" 
+          href="/fonts/SCProsperSans-Light.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
+        />
         
         {/* Prevent zoom on input focus for iOS */}
         <meta name="format-detection" content="telephone=no" />
