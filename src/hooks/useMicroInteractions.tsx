@@ -1,38 +1,45 @@
 import { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
-// Import react-spring in a more compatible way
-// This technique helps avoid Terser minification issues by importing just what we need
-import * as reactSpring from '@react-spring/web';
-const { useSpring, config } = reactSpring;
+// We'll need to handle the case where @react-spring/web might not be available
+let useSpring: any;
+let animated: any;
+let config: any;
 
-// Define animated as a separate import to help with tree-shaking
-const animated = reactSpring.animated;
+// Try to import react-spring safely
+try {
+  // This approach helps with tree-shaking and avoids direct imports
+  const reactSpring = require('@react-spring/web');
+  useSpring = reactSpring.useSpring;
+  animated = reactSpring.animated;
+  config = reactSpring.config;
+} catch (e) {
+  // Provide minimal fallbacks if the module fails to load
+  useSpring = (props: any) => props;
+  animated = { div: 'div' };
+  config = { 
+    wobbly: { tension: 180, friction: 12 },
+    stiff: { tension: 300, friction: 20 }
+  };
+  
+  // Log error silently - don't break the build
+  console.warn('Could not load @react-spring/web, using fallbacks');
+}
 
-// Type definitions for better compatibility
+// Type definitions
 interface HapticOptions {
   duration?: number;
   intensity?: 'light' | 'medium' | 'heavy';
 }
 
-interface SpringConfig {
-  tension?: number;
-  friction?: number;
-  precision?: number;
-  mass?: number;
-  velocity?: number;
-  duration?: number;
-  easing?: (t: number) => number;
-}
-
-// Haptic feedback utility - simplified for compatibility
+// Haptic feedback utility
 export function useHaptic() {
-  // Check if navigator and vibrate exist at runtime
   const haptic = (options: HapticOptions = {}) => {
     if (typeof navigator === 'undefined' || !('vibrate' in navigator)) return;
 
     const { duration = 10, intensity = 'light' } = options;
     
-    const patterns: Record<string, number[]> = {
+    const patterns = {
       light: [duration],
       medium: [duration, duration / 2, duration],
       heavy: [duration * 2, duration, duration * 2],
@@ -44,7 +51,7 @@ export function useHaptic() {
   return haptic;
 }
 
-// Ripple effect for touch interactions - simplified JSX for compatibility
+// Ripple effect for touch interactions
 export function useRipple() {
   const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,56 +81,61 @@ export function useRipple() {
     }, 600);
   };
 
-  // Create a function component instead of inline JSX for better compatibility
-  function RippleContainer({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-    return React.createElement(
-      'div',
-      {
-        ref: containerRef,
-        className: `relative overflow-hidden ${className}`,
-        onMouseDown: createRipple,
-        onTouchStart: createRipple
-      },
-      [
-        children,
-        ...ripples.map(ripple => {
-          return React.createElement(
-            'span',
-            {
-              key: ripple.id,
-              className: "absolute pointer-events-none animate-ripple",
-              style: {
-                left: ripple.x,
-                top: ripple.y,
-                transform: 'translate(-50%, -50%)'
-              }
-            },
-            React.createElement(
-              'span',
-              {
-                className: "block w-0 h-0 rounded-full bg-current opacity-30 animate-ripple-expand"
-              }
-            )
-          );
-        })
-      ]
+  // Use React.forwardRef for better compatibility with Next.js
+  const RippleContainer = React.forwardRef<HTMLDivElement, { 
+    children: React.ReactNode; 
+    className?: string 
+  }>(function RippleContainer(props, ref) {
+    const { children, className = '' } = props;
+    
+    return (
+      <div
+        ref={ref || containerRef}
+        className={`relative overflow-hidden ${className}`}
+        onMouseDown={createRipple}
+        onTouchStart={createRipple}
+      >
+        {children}
+        {ripples.map(ripple => (
+          <span
+            key={ripple.id}
+            className="absolute pointer-events-none animate-ripple"
+            style={{
+              left: ripple.x,
+              top: ripple.y,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <span className="block w-0 h-0 rounded-full bg-current opacity-30 animate-ripple-expand" />
+          </span>
+        ))}
+      </div>
     );
-  }
+  });
 
   return { RippleContainer };
 }
 
-// Spring animations for micro-interactions - compatibility improvements
+// Button animation hook using react-spring when available
 export function useButtonAnimation() {
   const [isPressed, setIsPressed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Use a more compatible approach for useSpring
+  // Safe use of spring animation with fallbacks
   const springProps = useSpring({
     scale: isPressed ? 0.95 : isHovered ? 1.05 : 1,
     shadow: isPressed ? 0 : isHovered ? 20 : 10,
     config: config.wobbly,
   });
+
+  // Safe .to() method with fallback
+  const transform = typeof springProps.scale?.to === 'function' 
+    ? springProps.scale.to((s: number) => `scale(${s})`)
+    : `scale(${springProps.scale})`;
+  
+  const boxShadow = typeof springProps.shadow?.to === 'function' 
+    ? springProps.shadow.to((s: number) => `0 ${s}px ${s * 2}px rgba(0, 0, 0, 0.1)`)
+    : `0 ${springProps.shadow}px ${springProps.shadow * 2}px rgba(0, 0, 0, 0.1)`;
 
   const buttonProps = {
     onMouseEnter: () => setIsHovered(true),
@@ -136,15 +148,15 @@ export function useButtonAnimation() {
     onTouchStart: () => setIsPressed(true),
     onTouchEnd: () => setIsPressed(false),
     style: {
-      transform: springProps.scale.to((s: number) => `scale(${s})`),
-      boxShadow: springProps.shadow.to((s: number) => `0 ${s}px ${s * 2}px rgba(0, 0, 0, 0.1)`),
+      transform,
+      boxShadow,
     },
   };
 
   return { buttonProps, animated };
 }
 
-// Smooth scroll with momentum - compatibility improvements
+// Smooth scroll with momentum
 export function useSmoothScroll() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -154,6 +166,9 @@ export function useSmoothScroll() {
   const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
+    // Safe DOM access for SSR compatibility
+    if (typeof document === 'undefined') return;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDragging || !scrollRef.current) return;
 
@@ -185,21 +200,16 @@ export function useSmoothScroll() {
       applyMomentum();
     };
 
-    // Add event listeners safely with null checks
-    if (typeof document !== 'undefined') {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
 
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-      };
-    }
-    
-    return undefined;
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
   }, [isDragging, startY, scrollTop, velocity]);
 
   const scrollProps = {
@@ -215,9 +225,9 @@ export function useSmoothScroll() {
   return { scrollProps };
 }
 
-// Loading skeleton animation - Vercel/Terser compatibility improvements
+// Loading skeleton animation - with react-spring if available
 export function useSkeletonAnimation() {
-  // Use a more compatible approach for shimmer props
+  // Simple shimmer effect with react-spring
   const shimmerProps = useSpring({
     from: { backgroundPosition: '-200% 0' },
     to: { backgroundPosition: '200% 0' },
@@ -225,7 +235,7 @@ export function useSkeletonAnimation() {
     loop: true,
   });
 
-  // Use a declared function instead of an arrow function for better compatibility
+  // Simple skeleton box component
   function SkeletonBox({ 
     width = '100%', 
     height = '20px', 
@@ -235,23 +245,25 @@ export function useSkeletonAnimation() {
     height?: string; 
     className?: string;
   }) {
-    // Return the element with createElement instead of JSX for better compatibility
-    return React.createElement(animated.div, {
-      className: `bg-gray-200 rounded ${className}`,
-      style: {
-        width,
-        height,
-        backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-        backgroundSize: '200% 100%',
-        ...shimmerProps
-      }
-    });
+    // Use normal React component for compatibility
+    return (
+      <div
+        className={`bg-gray-200 rounded ${className}`}
+        style={{
+          width,
+          height,
+          backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+          backgroundSize: '200% 100%',
+          backgroundPosition: shimmerProps.backgroundPosition || '-200% 0',
+        }}
+      />
+    );
   }
 
   return { SkeletonBox };
 }
 
-// Gesture interactions - compatibility improvements
+// Gesture interactions
 export function useSwipeGesture(onSwipe: (direction: 'left' | 'right' | 'up' | 'down') => void) {
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const threshold = 50;
@@ -289,7 +301,7 @@ export function useSwipeGesture(onSwipe: (direction: 'left' | 'right' | 'up' | '
   };
 }
 
-// Pull to refresh - compatibility improvements
+// Pull to refresh
 export function usePullToRefresh(onRefresh: () => Promise<void>) {
   const [isPulling, setIsPulling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
@@ -297,7 +309,7 @@ export function usePullToRefresh(onRefresh: () => Promise<void>) {
   const startY = useRef(0);
   const threshold = 80;
 
-  // Use a more compatible approach for spring props
+  // Safe use of spring props with fallbacks
   const springProps = useSpring({
     transform: `translateY(${isPulling ? pullDistance : isRefreshing ? threshold : 0}px)`,
     opacity: pullDistance / threshold,
@@ -341,14 +353,17 @@ export function usePullToRefresh(onRefresh: () => Promise<void>) {
       onTouchEnd: handleTouchEnd,
     },
     refreshIndicatorProps: {
-      style: springProps,
+      style: springProps || {
+        transform: `translateY(${isPulling ? pullDistance : isRefreshing ? threshold : 0}px)`,
+        opacity: pullDistance / threshold,
+      },
       className: 'absolute top-0 left-0 right-0 flex justify-center items-center h-20',
     },
     isRefreshing,
   };
 }
 
-// Export a combined hook for convenience
+// Convenience helper to export all hooks
 export function useMicroInteractions() {
   const haptic = useHaptic();
   const { RippleContainer } = useRipple();
