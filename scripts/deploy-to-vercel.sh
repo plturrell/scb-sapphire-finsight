@@ -21,6 +21,10 @@ npm install
 # Skip linting for now
 echo "🔍 Skipping linting checks to proceed with deployment..."
 
+# Apply styling force script
+echo "🎨 Enforcing our beautiful UI styling..."
+node scripts/force-styling.js
+
 # Build the project
 echo "🏗️ Building project..."
 npm run build || { echo "❌ Build failed. Please fix the build issues before deploying."; exit 1; }

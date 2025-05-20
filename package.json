@@ -5,12 +5,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
+    "prebuild": "node scripts/force-styling.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "generate-docs": "node scripts/generate-docs-pdf.js",
-    "deploy-vercel": "bash scripts/deploy-to-vercel.sh"
+    "deploy-vercel": "node scripts/force-styling.js && bash scripts/deploy-to-vercel.sh",
+    "apply-styling": "node scripts/force-styling.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",

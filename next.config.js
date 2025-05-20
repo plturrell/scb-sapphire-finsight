@@ -70,8 +70,9 @@ const nextConfig = {
   
   // Advanced configuration options
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false, // Disable CSS optimization to preserve our styling
     esmExternals: 'loose', // Try to help with module resolution
+    optimizeFonts: false, // Disable font optimization
   },
   
   // Use dynamic rendering for all pages to avoid SSR issues
