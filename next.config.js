@@ -11,51 +11,90 @@ const nextConfig = {
   },
   // Handle trailing slashes consistently
   trailingSlash: false,
-  // Optimize production builds
+  // Disable source maps in production to improve build performance and reduce errors
   productionBrowserSourceMaps: false,
   
+  // Externalize dependencies that might be causing issues
   webpack: (config, { isServer, dev }) => {
-    // Fixes lexical declaration issues in generated bundle
+    // Use named modules for better debugging
     config.optimization.moduleIds = 'named';
     
-    // Completely disable Terser minification to avoid build errors
+    // Special handling for production builds
     if (!isServer && !dev) {
-      // Disable minimization entirely for the build to succeed
-      config.optimization.minimize = false;
+      // Disable chunk splitting to reduce complexity
+      config.optimization.splitChunks = {
+        cacheGroups: {
+          default: false,
+        },
+      };
       
-      // Clear existing minimizers
-      config.optimization.minimizer = [];
+      // Modify Terser options for compatibility
+      config.optimization.minimizer.forEach((minimizer) => {
+        if (minimizer.constructor.name === 'TerserPlugin') {
+          minimizer.options.terserOptions = {
+            parse: {
+              // Enable terser to parse modern syntax
+              ecma: 2020,
+            },
+            compress: {
+              // Disable compressing arrow functions which can cause issues
+              arrows: false,
+              // Preserve function arguments
+              keep_fargs: true,
+              // More compatible but less aggressive optimization
+              passes: 1,
+              // Avoid sequence optimizations which can cause problems
+              sequences: false
+            },
+            mangle: {
+              // Keep class and function names
+              keep_classnames: true,
+              keep_fnames: true
+            },
+            format: {
+              // Remove all comments
+              comments: false,
+              // Don't beautify to save space
+              beautify: false,
+              // Preserve important annotations
+              annotations: true
+            },
+            // Use more compatible ES5 syntax
+            ecma: 5,
+            // Avoid Safari 10 bugs
+            safari10: true,
+          };
+        }
+      });
+    }
+    
+    // Add specific transpilation rules
+    if (!isServer) {
+      // Update the rule for external dependencies
+      config.module.rules.push({
+        test: /node_modules[\\/](?!@react-spring[\\/]web)/,
+        use: 'babel-loader',
+      });
     }
     
     return config;
   },
   
-  // Disable static export to prevent SSR issues
+  // Generate a standalone build for better compatibility
   output: 'standalone',
   
-  // Configure runtime options for client-side rendering
+  // Experimental features
   experimental: {
-    esmExternals: 'loose', // Help with module resolution
-    // Modern config approach for runtime JS options
+    // Better compatibility for ESM packages
+    esmExternals: 'loose',
+    // Optimize specific large packages
     optimizePackageImports: ['@mui/material', 'framer-motion'],
+    // Try the modern app directory for better SSR
+    appDir: false,
   },
   
-  // Explicitly disable SSR for problematic pages
-  async exportPathMap(defaultPathMap, { dev, dir, outDir, distDir, buildId }) {
-    return {
-      ...defaultPathMap,
-      '/financial-simulation': { page: '/financial-simulation', query: {} },
-      '/tariff-alerts': { page: '/tariff-alerts', query: {} },
-      '/tariff-scanner': { page: '/tariff-scanner', query: {} },
-      '/vietnam-monte-carlo': { page: '/vietnam-monte-carlo', query: {} },
-      '/vietnam-monte-carlo-enhanced': { page: '/vietnam-monte-carlo-enhanced', query: {} },
-      '/vietnam-tariff-impact': { page: '/vietnam-tariff-impact', query: {} },
-      '/dashboard': { page: '/dashboard', query: {} },
-    };
-  },
-  
-  // Configure optimization to preserve our beautiful styling
-  swcMinify: false, // Don't use SWC minification either
+  // Configure optimization settings
+  swcMinify: false, // Use Terser instead of SWC for minification
   
   // Disable checks that might fail build
   eslint: {

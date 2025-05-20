@@ -2,7 +2,8 @@
   "version": 2,
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
-  "outputDirectory": "out",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
   "cleanUrls": true,
   "env": {
     "PERPLEXITY_API_KEY": "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",
@@ -25,16 +26,6 @@
           "value": "X-Requested-With, Content-Type, Accept"
         }
       ]
-    }
-  ],
-  "routes": [
-    { 
-      "src": "/(dashboard|financial-simulation|tariff-alerts|vietnam-monte-carlo|reports|analytics)(.*)", 
-      "dest": "/dashboard/index.html" 
-    },
-    { 
-      "src": "/(.*)", 
-      "dest": "/index.html" 
     }
   ]
 }
