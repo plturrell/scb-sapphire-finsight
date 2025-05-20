@@ -8,6 +8,7 @@ A modern financial insights and analytics platform built with Next.js, React, an
 - **Analytics**: Detailed transaction banking performance analysis
 - **Mobile App**: Responsive mobile interface
 - **Joule AI Assistant**: Integrated AI assistant for financial insights
+- **Semantic Tariff Engine**: Perplexity + Jena + LangChain integration for tariff analysis
 - **Data Visualization**: Interactive charts and graphs using Recharts
 
 ## Tech Stack
@@ -76,6 +77,7 @@ This project is optimized for deployment on Vercel. We've provided a deployment 
 - `/analytics` - Detailed analytics view
 - `/knowledge-dashboard` - Knowledge graph visualization
 - `/sankey-demo` - Financial flow visualization with Sankey charts
+- `/semantic-tariff-engine` - Semantic tariff analysis with Perplexity AI
 
 ## Project Structure
 
@@ -113,8 +115,9 @@ scripts/
 2. Interactive charts and data visualizations
 3. Mobile app interface with tabbed navigation
 4. AI assistant (Joule) with chat interface
-5. Detailed analytics table with sector performance
-6. Modern UI with Tailwind CSS styling
+5. Semantic Tariff Engine with Perplexity+Jena+LangChain integration
+6. Detailed analytics table with sector performance
+7. Modern UI with Tailwind CSS styling
 
 ## Future Enhancements
 
