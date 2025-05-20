@@ -1,111 +1,74 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { v4 as uuidv4 } from 'uuid';
+import { NewsItem } from '../../types';
+import perplexityApiClient from '../../services/PerplexityApiClient';
 
-// Fetch from another API or database in a production environment
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Set a longer timeout for this endpoint
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Keep-Alive', 'timeout=30');
+  
+  // Get query parameters
+  const { topic = 'financial markets', limit = 5 } = req.query;
+  
   try {
-    // Current timestamp for relative timing
-    const now = Date.now();
+    // Validate topic parameter
+    if (Array.isArray(topic)) {
+      return res.status(400).json({ 
+        error: 'Topic must be a single string' 
+      });
+    }
     
-    const newsItems = [
-      {
-        id: uuidv4(),
-        title: "Asian Stocks Edge Higher on Strong Regional Manufacturing Data",
-        summary: "Asian stocks climbed higher following strong PMI data from Vietnam and Thailand. Regional supply chain stability is improving, leading to positive industrial output projections.",
-        category: "Markets",
-        timestamp: new Date(now - 25 * 60000).toISOString(), // 25 minutes ago
-        source: "Financial Times",
-        url: "https://www.ft.com/content/market-news"
-      },
-      {
-        id: uuidv4(),
-        title: "Vietnam's Exports Surge 15% in Q1 Amid Tariff Uncertainty",
-        summary: "Vietnam's exports grew significantly in Q1 2025 despite ongoing trade tensions. Electronics and textiles led the growth with major shipments to ASEAN partners and the EU.",
-        category: "Trade",
-        timestamp: new Date(now - 2 * 3600000).toISOString(), // 2 hours ago
-        source: "Bloomberg",
-        url: "https://www.bloomberg.com/news/vietnam"
-      },
-      {
-        id: uuidv4(),
-        title: "US Federal Reserve Holds Rates, Signals Future Cut",
-        summary: "The Federal Reserve maintained interest rates at current levels but hinted at potential cuts in the next quarter. Markets responded positively with Treasury yields declining.",
-        category: "Economy",
-        timestamp: new Date(now - 5 * 3600000).toISOString(), // 5 hours ago
-        source: "The Wall Street Journal",
-        url: "https://www.wsj.com/fed-news"
-      },
-      {
-        id: uuidv4(),
-        title: "SCB Reports Record Quarterly Profit, Boosts Investment in Vietnam",
-        summary: "Standard Chartered Bank reported exceptional Q1 earnings and announced increased investments in Vietnam's growing market, focusing on digital banking and sustainable financing options.",
-        category: "Banking",
-        timestamp: new Date(now - 8 * 3600000).toISOString(), // 8 hours ago
-        source: "Reuters",
-        url: "https://www.reuters.com/business/finance/scb-reports"
-      },
-      {
-        id: uuidv4(),
-        title: "Vietnam Government Announces New Incentives for Foreign Investors",
-        summary: "Vietnam's Ministry of Planning and Investment unveiled a comprehensive package of tax incentives and regulatory reforms designed to attract foreign direct investment in high-tech manufacturing and renewable energy.",
-        category: "Policy",
-        timestamp: new Date(now - 16 * 3600000).toISOString(), // 16 hours ago
-        source: "Nikkei Asia",
-        url: "https://asia.nikkei.com/vietnam-investment"
-      },
-      {
-        id: uuidv4(),
-        title: "Tech Stocks Rally on Strong Cloud Computing Demand",
-        summary: "Major technology companies saw significant gains as quarterly reports showed stronger-than-expected growth in cloud services revenue. Enterprise digitalization continues to drive the sector.",
-        category: "Technology",
-        timestamp: new Date(now - 12 * 3600000).toISOString(), // 12 hours ago
-        source: "CNBC",
-        url: "https://www.cnbc.com/tech"
-      },
-      {
-        id: uuidv4(),
-        title: "ASEAN Economic Ministers Agree on Digital Trade Framework",
-        summary: "ASEAN members reached consensus on a common framework for digital trade regulations, expected to boost regional e-commerce and fintech growth while harmonizing cross-border transactions.",
-        category: "Trade",
-        timestamp: new Date(now - 26 * 3600000).toISOString(), // 26 hours ago
-        source: "The Straits Times",
-        url: "https://www.straitstimes.com/asean"
-      },
-      {
-        id: uuidv4(),
-        title: "Global Supply Chain Disruptions Easing, Report Suggests",
-        summary: "A new industry report indicates significant improvements in global supply chain resilience, with shipping times normalizing and component shortages resolving across multiple manufacturing sectors.",
-        category: "Logistics",
-        timestamp: new Date(now - 20 * 3600000).toISOString(), // 20 hours ago
-        source: "Financial Times",
-        url: "https://www.ft.com/supply-chain"
-      },
-      {
-        id: uuidv4(),
-        title: "Vietnam's Manufacturing Sector Leads Southeast Asian Growth",
-        summary: "Vietnam continues to outperform regional competitors in manufacturing output, with 18% year-over-year growth in high-tech sectors. Foreign investment in electronics manufacturing reached record levels.",
-        category: "Manufacturing",
-        timestamp: new Date(now - 3 * 3600000).toISOString(), // 3 hours ago
-        source: "Vietnam Economic Times",
-        url: "https://vietnameconomictimes.com/manufacturing"
-      },
-      {
-        id: uuidv4(),
-        title: "SCB Sapphire Platform Expands Financial Analytics Offerings",
-        summary: "Standard Chartered Bank announced major enhancements to its Sapphire platform, adding advanced Monte Carlo simulations and AI-powered market insights to help clients navigate complex financial landscapes.",
-        category: "Financial Technology",
-        timestamp: new Date(now - 1 * 3600000).toISOString(), // 1 hour ago
-        source: "FinTech Insider",
-        url: "https://fintechinsider.co/scb-sapphire"
+    // Validate limit parameter
+    const newsLimit = Array.isArray(limit) ? 
+      parseInt(limit[0], 10) : 
+      typeof limit === 'string' ? 
+        parseInt(limit, 10) : 5;
+    
+    if (isNaN(newsLimit) || newsLimit < 1 || newsLimit > 20) {
+      return res.status(400).json({ 
+        error: 'Limit must be a number between 1 and 20' 
+      });
+    }
+    
+    // Fetch news from Perplexity API
+    const newsItems = await perplexityApiClient.getMarketNews({
+      topic: topic,
+      limit: newsLimit
+    });
+    
+    // Use the results from API
+    const results = newsItems.map(item => ({
+      id: item.id || `news-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      title: item.title,
+      source: item.url || '',
+      sourceName: item.source,
+      isPremium: item.isPremium || false,
+      publishDate: new Date(item.publishDate || new Date())
+    }));
+    
+    // Return news items with timestamp
+    return res.status(200).json({
+      success: true,
+      data: results,
+      timestamp: new Date().toISOString(),
+      source: 'Perplexity API',
+      params: {
+        topic,
+        limit: newsLimit
       }
-    ];
-    
-    res.status(200).json(newsItems);
+    });
   } catch (error) {
-    console.error('API Error:', error);
-    res.status(500).json({ message: 'Error fetching market news' });
+    console.error('Error fetching market news:', error);
+    
+    // Return error message
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      timestamp: new Date().toISOString(),
+      params: {
+        topic,
+        limit: typeof limit === 'string' ? parseInt(limit, 10) : 5
+      }
+    });
   }
 }

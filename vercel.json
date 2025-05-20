@@ -1,9 +1,31 @@
 {
   "version": 2,
-  "buildCommand": null,
-  "devCommand": null,
-  "installCommand": "npm install",
-  "framework": null,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs",
   "outputDirectory": ".next",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "env": {
+    "PERPLEXITY_API_KEY": "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",
+    "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Accept"
+        }
+      ]
+    }
+  ]
 }
