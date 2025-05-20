@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { NewsItem } from '../../types';
-import perplexityApiClient from '../../services/PerplexityApiClient';
+import { v4 as uuidv4 } from 'uuid';
+
+const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
+const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Set a longer timeout for this endpoint
@@ -30,26 +32,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
     
-    // Fetch news from Perplexity API
-    const newsItems = await perplexityApiClient.getMarketNews({
-      topic: topic,
-      limit: newsLimit
+    // Call Perplexity API to get market news
+    const response = await fetch(PERPLEXITY_API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'sonar-small-chat',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a financial news reporter providing concise, accurate summaries of the latest market developments. Focus on factual information and provide a diverse range of important financial news.'
+          },
+          {
+            role: 'user',
+            content: `Provide the latest financial market news about ${topic}. Include major market movements, significant events, and relevant information. For each news item, include a concise headline, brief summary, category, and source if available. Provide ${newsLimit} different news items.`
+          }
+        ],
+        temperature: 0.2,
+        max_tokens: 2000
+      })
     });
+
+    // Check if the API call was successful
+    if (!response.ok) {
+      throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
+    }
+
+    // Parse the API response
+    const data = await response.json();
+    const newsContent = data.choices[0]?.message?.content || '';
     
-    // Use the results from API
-    const results = newsItems.map(item => ({
-      id: item.id || `news-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      title: item.title,
-      source: item.url || '',
-      sourceName: item.source,
-      isPremium: item.isPremium || false,
-      publishDate: new Date(item.publishDate || new Date())
-    }));
+    // Process the news content to extract news items
+    const newsItems = processNewsContent(newsContent);
     
     // Return news items with timestamp
     return res.status(200).json({
       success: true,
-      data: results,
+      articles: newsItems,
       timestamp: new Date().toISOString(),
       source: 'Perplexity API',
       params: {
@@ -72,3 +94,105 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 }
+
+// Helper function to process news content into structured format
+function processNewsContent(content: string): any[] {
+  try {
+    // Split content into news blocks
+    const newsBlocks = content.split(/(?=\#\#|\d+\.\s+|\*\*News Item)/gi)
+      .filter(block => block && block.trim().length > 30);
+    
+    const newsItems: any[] = [];
+    
+    newsBlocks.forEach((block, index) => {
+      // Try to extract headline/title
+      const titleMatch = block.match(/(?:\#\#|\d+\.\s+|\*\*)(.*?)(?:\*\*|\n|:)/);
+      if (!titleMatch) return;
+      
+      const title = titleMatch[1].trim();
+      
+      // Try to extract summary and other details
+      let summary = '';
+      let category = '';
+      let source = '';
+      
+      const summaryMatch = block.match(/(?:Summary|:)\s*(.*?)(?=\n\n|\n(?=Category:|Source:)|\n\-|\n\*|$)/is);
+      if (summaryMatch) {
+        summary = summaryMatch[1].trim();
+      } else {
+        // If no explicit summary, take the first paragraph after the title
+        const lines = block.split('\n').filter(line => line.trim().length > 0);
+        if (lines.length > 1) {
+          summary = lines[1].trim();
+        }
+      }
+      
+      const categoryMatch = block.match(/(?:Category|Type):\s*(.*?)(?:\n|$)/i);
+      if (categoryMatch) {
+        category = categoryMatch[1].trim();
+      } else {
+        // Try to determine category from content
+        const categories = [
+          { name: 'Markets', keywords: ['stock', 'index', 'market', 'dow', 'nasdaq', 's&p'] },
+          { name: 'Economy', keywords: ['gdp', 'inflation', 'economic', 'unemployment', 'fed'] },
+          { name: 'Technology', keywords: ['tech', 'technology', 'software', 'ai', 'digital'] },
+          { name: 'Banking', keywords: ['bank', 'financial', 'lending', 'loan', 'credit'] },
+          { name: 'Commodities', keywords: ['oil', 'gold', 'commodity', 'gas', 'energy'] },
+          { name: 'Asia', keywords: ['vietnam', 'asia', 'asean', 'japan', 'china'] }
+        ];
+        
+        const blockText = block.toLowerCase();
+        for (const cat of categories) {
+          if (cat.keywords.some(word => blockText.includes(word))) {
+            category = cat.name;
+            break;
+          }
+        }
+        
+        if (!category) {
+          category = 'Finance';
+        }
+      }
+      
+      const sourceMatch = block.match(/(?:Source|From):\s*(.*?)(?:\n|$)/i);
+      if (sourceMatch) {
+        source = sourceMatch[1].trim();
+      } else {
+        // List of common financial news sources
+        const sources = ['Bloomberg', 'Reuters', 'CNBC', 'Financial Times', 'Wall Street Journal', 'MarketWatch'];
+        // Look for source mentions in the text
+        for (const potentialSource of sources) {
+          if (block.includes(potentialSource)) {
+            source = potentialSource;
+            break;
+          }
+        }
+        
+        if (!source) {
+          source = 'Financial News';
+        }
+      }
+      
+      newsItems.push({
+        id: `news-${uuidv4()}`,
+        title: title,
+        summary: summary || title,
+        category: category,
+        timestamp: new Date(Date.now() - (index * 3600000)).toISOString(),
+        source: source,
+        url: '#'
+      });
+    });
+    
+    // If no structured news found, return empty array
+    if (newsItems.length === 0) {
+      return [];
+    }
+    
+    return newsItems;
+  } catch (error) {
+    console.error('Error parsing news content:', error);
+    throw new Error('Failed to parse news data');
+  }
+}
+

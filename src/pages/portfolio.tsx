@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '@/components/Layout';
+import ModernLayout from '@/components/ModernLayout';
 import MetricCard from '@/components/MetricCard';
 import {
   BarChart,
@@ -31,11 +31,11 @@ const taskData = [
 
 export default function Portfolio() {
   return (
-    <Layout>
+    <ModernLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Asia Portfolio</h1>
-          <p className="text-gray-600 mt-1">Sofia - Transaction Banking CFO</p>
+          <h1 className="scb-title text-2xl font-bold text-[rgb(var(--scb-honolulu-blue))]">Asia Portfolio</h1>
+          <p className="scb-data-label text-[rgb(var(--scb-dark-gray))] mt-1">Sofia - Transaction Banking CFO</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -68,8 +68,8 @@ export default function Portfolio() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">Regional Performance</h3>
+          <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6 fiori-tile">
+            <h3 className="scb-section-header text-lg font-medium mb-4">Regional Performance</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={portfolioData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -83,8 +83,8 @@ export default function Portfolio() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-4">Tasks</h3>
+          <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6 fiori-tile">
+            <h3 className="scb-section-header text-lg font-medium mb-4">Tasks</h3>
             <div className="space-y-3">
               {taskData.map((task) => (
                 <div key={task.id} className="flex items-center justify-between p-3 border rounded-lg">
@@ -95,10 +95,10 @@ export default function Portfolio() {
                   <span
                     className={`px-2 py-1 text-xs rounded-full ${
                       task.status === 'completed'
-                        ? 'bg-green-100 text-green-800'
+                        ? 'bg-[rgba(var(--scb-american-green),0.1)] text-[rgb(var(--scb-american-green))] scb-badge scb-badge-positive'
                         : task.status === 'overdue'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-[rgba(var(--scb-muted-red),0.1)] text-[rgb(var(--scb-muted-red))] scb-badge scb-badge-negative'
+                        : 'bg-[rgba(var(--scb-honolulu-blue),0.1)] text-[rgb(var(--scb-honolulu-blue))] scb-badge scb-badge-neutral'
                     }`}
                   >
                     {task.status}
@@ -109,15 +109,15 @@ export default function Portfolio() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Personal & Additional Data Collection</h3>
+        <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6 fiori-tile">
+          <h3 className="scb-section-header text-lg font-medium mb-4">Personal & Additional Data Collection</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
               <div>
                 <p className="font-medium text-gray-900">Personal Data Collection</p>
                 <p className="text-sm text-gray-600">Provide personal details for company records</p>
               </div>
-              <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+              <button className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg hover:opacity-90 transition-opacity fiori-btn fiori-btn-primary">
                 Start
               </button>
             </div>
@@ -126,7 +126,7 @@ export default function Portfolio() {
                 <p className="font-medium text-gray-900">Compliance Data Collection</p>
                 <p className="text-sm text-gray-600">Complete mandatory compliance questionnaire</p>
               </div>
-              <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+              <button className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg hover:opacity-90 transition-opacity fiori-btn fiori-btn-primary">
                 Start
               </button>
             </div>
@@ -135,13 +135,13 @@ export default function Portfolio() {
                 <p className="font-medium text-gray-900">Update Profile</p>
                 <p className="text-sm text-gray-600">Update your professional and contact details</p>
               </div>
-              <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+              <button className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg hover:opacity-90 transition-opacity fiori-btn fiori-btn-primary">
                 Start
               </button>
             </div>
           </div>
         </div>
       </div>
-    </Layout>
+    </ModernLayout>
   );
 }

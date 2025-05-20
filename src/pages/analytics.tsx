@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '@/components/Layout';
+import ModernLayout from '@/components/ModernLayout';
 import DetailedAnalyticsTable from '@/components/DetailedAnalyticsTable.enhanced';
 import {
   BarChart,
@@ -49,7 +49,7 @@ const pieData = [
 
 export default function Analytics() {
   return (
-    <Layout>
+    <ModernLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
@@ -115,6 +115,6 @@ export default function Analytics() {
           </div>
         </div>
       </div>
-    </Layout>
+    </ModernLayout>
   );
 }

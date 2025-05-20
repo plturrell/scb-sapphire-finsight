@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || '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';
+const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 /**
@@ -30,34 +30,68 @@ export default async function handler(
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: 'Messages array is required' });
     }
-
-    // Call Perplexity API from the server side (no CORS issues here)
-    const response = await fetch(PERPLEXITY_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model,
-        messages,
-        temperature,
-        max_tokens,
-        stream
-      })
-    });
-
-    // Check if the API call was successful
-    if (!response.ok) {
-      console.error('Perplexity API error:', response.status, response.statusText);
-      return res.status(response.status).json({ 
-        error: `Perplexity API error: ${response.status} ${response.statusText}` 
-      });
+    
+    // Validate API key
+    if (!PERPLEXITY_API_KEY) {
+      console.error('Missing Perplexity API key');
+      return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    // Parse and return the API response
-    const data = await response.json();
-    return res.status(200).json(data);
+    // Call Perplexity API from the server side (no CORS issues here)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    
+    try {
+      const response = await fetch(PERPLEXITY_API_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature,
+          max_tokens,
+          stream
+        }),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+
+      // Check if the API call was successful
+      if (!response.ok) {
+        console.error('Perplexity API error:', response.status, response.statusText);
+        return res.status(response.status).json({ 
+          error: `Perplexity API error: ${response.status} ${response.statusText}` 
+        });
+      }
+
+      // Handle streaming response if requested
+      if (stream) {
+        // For streaming responses, we need to pipe the response
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive'
+        });
+        
+        // Pipe the stream through
+        response.body?.pipe(res);
+        return;
+      } else {
+        // For non-streaming responses, parse and return the data
+        const data = await response.json();
+        return res.status(200).json(data);
+      }
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      if (fetchError.name === 'AbortError') {
+        return res.status(504).json({ error: 'Request to Perplexity API timed out' });
+      }
+      throw fetchError; // rethrow to be caught by outer try/catch
+    }
 
   } catch (error) {
     console.error('Error in Perplexity proxy:', error);

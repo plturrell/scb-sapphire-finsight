@@ -68,15 +68,11 @@ const nextConfig = {
     };
   },
   
-  // Advanced configuration options
+  // Configure optimization to preserve our beautiful styling
+  swcMinify: false, // Use Terser for minification instead of SWC to preserve our styling
   experimental: {
-    optimizeCss: false, // Disable CSS optimization to preserve our styling
-    esmExternals: 'loose', // Try to help with module resolution
-    optimizeFonts: false, // Disable font optimization
+    esmExternals: 'loose', // Help with module resolution
   },
-  
-  // Use dynamic rendering for all pages to avoid SSR issues
-  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   
   // Disable checks that might fail build
   eslint: {

@@ -8,11 +8,18 @@ import {
   Sparkles,
   FileText,
   Globe,
-  AlertCircle
+  AlertCircle,
+  RefreshCw,
+  Info,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { searchWithPerplexity, searchCompanies, getFinancialInsights } from '@/lib/perplexity-api';
+import { useCache } from '@/hooks';
+import SkeletonLoader from './SkeletonLoader';
+import { SearchResult, CompanySearchResult, FinancialInsights, SearchOptions } from '@/types/perplexity';
+import perplexityAnalytics from '@/services/PerplexityAnalytics';
 
 // Debounce function
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
@@ -29,7 +36,7 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
   }) as T;
 }
 
-interface SearchResult {
+interface SearchResultItem {
   id: string;
   type: 'company' | 'insight' | 'news' | 'general';
   title: string;
@@ -40,13 +47,31 @@ interface SearchResult {
   action?: () => void;
 }
 
-export default function PerplexitySearchBar() {
+interface SearchCache {
+  query: string;
+  results: SearchResultItem[];
+  summary: string;
+}
+
+interface PerplexitySearchBarProps {
+  placeholder?: string;
+  autoFocus?: boolean;
+  onResultSelect?: (result: SearchResultItem) => void;
+  className?: string;
+}
+
+export default function PerplexitySearchBar({
+  placeholder = 'Search companies, insights, news...',
+  autoFocus = false,
+  onResultSelect,
+  className = ''
+}: PerplexitySearchBarProps) {
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -54,6 +79,7 @@ export default function PerplexitySearchBar() {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [aiInsight, setAiInsight] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
+  const [skeletonVisible, setSkeletonVisible] = useState<boolean>(false);
 
   // Load recent searches from localStorage
   useEffect(() => {
@@ -75,69 +101,155 @@ export default function PerplexitySearchBar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Use caching hook for search results
+  const [cachedResults, cacheLoading, cacheError, performCachedSearch] = useCache<SearchCache>(
+    `search:${searchQuery}:${searchType}`,
+    async () => {
+      // Create a wrapper function to execute the actual search
+      const executeSearch = async (): Promise<SearchCache> => {
+        let results: SearchResultItem[] = [];
+        let summaryText = '';
+        let promises = [];
+
+        // Create a controller for aborting requests if they take too long
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const signal = controller.signal;
+
+        try {
+          // Prepare all the search requests based on type
+          if (searchType === 'all' || searchType === 'companies') {
+            // Search for companies
+            promises.push(
+              searchCompanies(searchQuery).then(companies => {
+                const companyResults = companies.map(company => ({
+                  id: company.companyId,
+                  type: 'company' as const,
+                  title: company.companyName,
+                  subtitle: `${company.industry} • ${company.country}`,
+                  description: company.description,
+                  confidence: company.matchScore,
+                  icon: Building2,
+                  action: () => {
+                    // Navigate to company page or load company data
+                    router.push(`/company/${company.companyCode}`);
+                  }
+                }));
+                results = [...results, ...companyResults];
+              }).catch(err => {
+                console.error('Company search error:', err);
+                // Continue with other searches even if this one fails
+              })
+            );
+          }
+
+          if (searchType === 'all' || searchType === 'insights') {
+            // Get financial insights
+            promises.push(
+              getFinancialInsights(searchQuery).then(insights => {
+                summaryText = insights.summary;
+                
+                if (insights.insights && Array.isArray(insights.insights)) {
+                  insights.insights.forEach((insight: string, index: number) => {
+                    results.push({
+                      id: `insight-${index}`,
+                      type: 'insight',
+                      title: insight,
+                      icon: Brain,
+                      confidence: 0.9
+                    });
+                  });
+                }
+              }).catch(err => {
+                console.error('Insights search error:', err);
+                // Continue with other searches even if this one fails
+              })
+            );
+          }
+
+          // General search results
+          promises.push(
+            searchWithPerplexity(searchQuery).then(generalResults => {
+              if (generalResults && generalResults.summary) {
+                results.push({
+                  id: 'general-summary',
+                  type: 'general',
+                  title: 'AI Summary',
+                  description: generalResults.summary,
+                  icon: Sparkles,
+                  confidence: 1.0
+                });
+              }
+            }).catch(err => {
+              console.error('General search error:', err);
+              // Continue anyway
+            })
+          );
+
+          // Wait for all promises to settle (either resolve or reject)
+          await Promise.allSettled(promises);
+          clearTimeout(timeoutId);
+
+          return {
+            query: searchQuery,
+            results: results,
+            summary: summaryText
+          };
+        } catch (error) {
+          clearTimeout(timeoutId);
+          throw error;
+        }
+      };
+
+      // Execute the search with a timeout
+      return executeSearch();
+    },
+    { ttl: 5 * 60 * 1000, namespace: 'perplexity_searches' } // 5 minute TTL
+  );
+  
   // Perform search with Perplexity AI
   const performSearch = useCallback(
     debounce(async (query: string) => {
       if (query.length < 2) {
         setSearchResults([]);
         setAiInsight('');
+        setError(false);
+        setSkeletonVisible(false);
         return;
       }
 
+      // Track search start in analytics
+      const searchStartTime = Date.now();
+      perplexityAnalytics.trackSearch(query, { type: searchType });
+
       setIsLoading(true);
+      setError(false);
+      setSkeletonVisible(true);
       
       try {
-        let results: SearchResult[] = [];
-
-        if (searchType === 'all' || searchType === 'companies') {
-          // Search for companies
-          const companies = await searchCompanies(query);
-          const companyResults = companies.map(company => ({
-            id: company.companyId,
-            type: 'company' as const,
-            title: company.companyName,
-            subtitle: `${company.industry} • ${company.country}`,
-            description: company.description,
-            confidence: company.matchScore,
-            icon: Building2,
-            action: () => {
-              // Navigate to company page or load company data
-              router.push(`/company/${company.companyCode}`);
-            }
-          }));
-          results = [...results, ...companyResults];
-        }
-
-        if (searchType === 'all' || searchType === 'insights') {
-          // Get financial insights
-          const insights = await getFinancialInsights(query);
-          setAiInsight(insights.summary);
+        // Try to get cached or fresh results
+        const result = await performCachedSearch(false); // Don't force fresh by default
+        
+        if (result && result.results.length > 0) {
+          setSearchResults(result.results);
+          setAiInsight(result.summary);
           
-          insights.insights.forEach((insight: string, index: number) => {
-            results.push({
-              id: `insight-${index}`,
-              type: 'insight',
-              title: insight,
-              icon: Brain,
-              confidence: 0.9
-            });
-          });
-        }
-
-        // General search results
-        const generalResults = await searchWithPerplexity(query);
-        if (generalResults.summary) {
-          results.push({
-            id: 'general-summary',
+          // Track search completion with metrics
+          const searchDuration = Date.now() - searchStartTime;
+          perplexityAnalytics.trackSearchCompleted(query, result.results.length, searchDuration);
+        } else {
+          setError(true);
+          setSearchResults([{
+            id: 'error',
             type: 'general',
-            title: 'AI Summary',
-            description: generalResults.summary,
-            icon: Sparkles,
-            confidence: 1.0
-          });
+            title: 'No Results Found',
+            description: 'No matching results were found. Please try a different search query.',
+            icon: AlertCircle
+          }]);
+          
+          // Track no results event
+          perplexityAnalytics.trackEvent('search:no_results', { query });
         }
-
-        setSearchResults(results);
       } catch (error) {
         console.error('Search error:', error);
         setError(true);
@@ -148,11 +260,17 @@ export default function PerplexitySearchBar() {
           description: 'Failed to perform search. Please try again.',
           icon: AlertCircle
         }]);
+        
+        // Track search error
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        perplexityAnalytics.trackSearchError(query, errorMessage);
       } finally {
         setIsLoading(false);
+        // Small delay before hiding skeleton for smooth transition
+        setTimeout(() => setSkeletonVisible(false), 300);
       }
     }, 300),
-    [searchType, router]
+    [searchType, router, performCachedSearch]
   );
 
   // Handle search input change
@@ -164,7 +282,7 @@ export default function PerplexitySearchBar() {
   };
 
   // Select result
-  const selectResult = (result: SearchResult) => {
+  const selectResult = (result: SearchResultItem, index: number = -1) => {
     if (result.action) {
       result.action();
     }
@@ -173,6 +291,13 @@ export default function PerplexitySearchBar() {
     const newRecent = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5);
     setRecentSearches(newRecent);
     localStorage.setItem('recentPerplexitySearches', JSON.stringify(newRecent));
+    
+    // Track result selection in analytics
+    perplexityAnalytics.trackResultSelected(
+      result.id,
+      index >= 0 ? index : searchResults.findIndex(r => r.id === result.id),
+      result.type
+    );
     
     setShowResults(false);
   };
@@ -204,7 +329,7 @@ export default function PerplexitySearchBar() {
     }
   };
 
-  const getResultIcon = (result: SearchResult) => {
+  const getResultIcon = (result: SearchResultItem) => {
     const Icon = result.icon || Globe;
     return <Icon className="w-5 h-5 flex-shrink-0" />;
   };
@@ -239,7 +364,7 @@ export default function PerplexitySearchBar() {
             </select>
             
             {isLoading ? (
-              <Loader className="w-5 h-5 text-purple-500 animate-spin" />
+              <Loader data-testid="loading-indicator" className="w-5 h-5 text-purple-500 animate-spin" />
             ) : error ? (
               <AlertCircle className="w-5 h-5 text-red-500" />
             ) : (
@@ -291,7 +416,7 @@ export default function PerplexitySearchBar() {
       )}
 
       {/* Search Results Dropdown */}
-      {showResults && !error && (searchResults.length > 0 || (searchQuery.length === 0 && recentSearches.length > 0)) && (
+      {showResults && (searchResults.length > 0 || (searchQuery.length === 0 && recentSearches.length > 0) || skeletonVisible) && (
         <div className={`absolute top-full ${aiInsight ? 'mt-16' : 'mt-2'} w-full bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-gray-200`}>
           {/* Recent Searches */}
           {searchQuery.length === 0 && recentSearches.length > 0 && (
@@ -315,8 +440,23 @@ export default function PerplexitySearchBar() {
             </>
           )}
 
+          {/* Skeleton Loading State */}
+          {searchQuery.length > 0 && skeletonVisible && (
+            <>
+              <div className="px-4 py-2 bg-gray-50 border-b">
+                <h4 className="text-xs font-medium text-gray-600 uppercase">
+                  Loading Results...
+                </h4>
+              </div>
+              
+              <div className="max-h-96 overflow-y-auto px-4 py-2">
+                <SkeletonLoader type="search" count={3} />
+              </div>
+            </>
+          )}
+          
           {/* Search Results */}
-          {searchQuery.length > 0 && searchResults.length > 0 && (
+          {searchQuery.length > 0 && searchResults.length > 0 && !skeletonVisible && (
             <>
               <div className="px-4 py-2 bg-gray-50 border-b">
                 <h4 className="text-xs font-medium text-gray-600 uppercase">
@@ -331,7 +471,7 @@ export default function PerplexitySearchBar() {
                     className={`px-4 py-3 hover:bg-gray-50 cursor-pointer ${
                       selectedIndex === idx ? 'bg-gray-50' : ''
                     }`}
-                    onClick={() => selectResult(result)}
+                    onClick={() => selectResult(result, idx)}
                   >
                     <div className="flex items-start gap-3">
                       <div className={`mt-0.5 ${result.type === 'company' ? 'text-blue-500' : result.type === 'insight' ? 'text-purple-500' : 'text-gray-500'}`}>
@@ -349,8 +489,34 @@ export default function PerplexitySearchBar() {
                       </div>
                       
                       {result.confidence && (
-                        <div className="text-xs text-gray-400">
-                          {Math.round(result.confidence * 100)}%
+                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                          <span>{Math.round(result.confidence * 100)}%</span>
+                          <button 
+                            className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-green-500 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              perplexityAnalytics.trackFeedback('positive', result.id);
+                              // Show feedback received
+                              e.currentTarget.classList.add('text-green-500');
+                              e.currentTarget.classList.add('bg-green-50');
+                            }}
+                            title="Good result"
+                          >
+                            <ThumbsUp className="w-3 h-3" />
+                          </button>
+                          <button 
+                            className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-red-500 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              perplexityAnalytics.trackFeedback('negative', result.id);
+                              // Show feedback received
+                              e.currentTarget.classList.add('text-red-500');
+                              e.currentTarget.classList.add('bg-red-50');
+                            }}
+                            title="Not relevant"
+                          >
+                            <ThumbsDown className="w-3 h-3" />
+                          </button>
                         </div>
                       )}
                     </div>

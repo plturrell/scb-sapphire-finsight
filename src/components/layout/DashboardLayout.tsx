@@ -18,7 +18,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import PerplexityNewsBar from '../PerplexityNewsBar';
-import JouleAssistantWrapper from '../JouleAssistantWrapper';
+// Removed JouleAssistantWrapper import as we're using GlobalJouleAssistant
 
 // Import SVG logo as a component
 const SCBLogo = () => (
@@ -136,7 +136,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [internalUserRole, setInternalUserRole] = useState<'executive' | 'analyst' | 'operations'>('analyst'); // Default to analyst view
   const [showNewsBar, setShowNewsBar] = useState(false);
-  const [jouleOpen, setJouleOpen] = useState(false);
+  // We're now using GlobalJouleAssistant instead
+  // const [jouleOpen, setJouleOpen] = useState(false);
   const [newsItem, setNewsItem] = useState<{
     title: string;
     summary: string;
@@ -165,15 +166,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
   };
   
-  // Handle news analysis with Joule
+  // This functionality now uses the GlobalJouleAssistant
   const handleAnalyzeNews = (item: any) => {
-    setNewsItem({
-      title: item.title,
-      summary: item.summary,
-      category: item.category,
-      source: item.source
-    });
-    setJouleOpen(true);
+    // This will be handled by the GlobalJouleAssistant
+    console.log('News analysis request will be handled by GlobalJouleAssistant', item);
+    // The actual implementation would involve calling the GlobalJouleAssistant API
   };
   
   // Toggle news bar
@@ -314,12 +311,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
         )}
       
-        {/* Joule Assistant */}
-        <JouleAssistantWrapper 
-          open={jouleOpen} 
-          onOpenChange={setJouleOpen} 
-          initialNewsItem={newsItem}
-        />
+        {/* Joule Assistant moved to GlobalJouleAssistant */}
         
         {/* Header */}
         <header className="fiori-shell-header flex items-center justify-between px-4 h-16 bg-[rgb(var(--scb-honolulu-blue))] text-white shadow-md">
@@ -346,14 +338,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 P
               </span>
             </button>
-            <button 
-              className="p-2 rounded-md hover:bg-[rgba(255,255,255,0.1)] flex items-center"
-              onClick={() => setJouleOpen(true)}
-              title="Open Joule AI Assistant"
-            >
-              <span className="mr-2 text-sm font-medium hidden md:block">Joule Assistant</span>
-              <Sparkles size={18} />
-            </button>
+            {/* Joule button moved to GlobalJouleAssistant */}
           </div>
         </header>
         

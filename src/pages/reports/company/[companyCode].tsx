@@ -13,7 +13,7 @@ import {
   Download, 
   Share2,
   Loader,
-  ChartLine,
+  LineChart, // Changed from ChartLine to LineChart
   PieChart,
   Calendar,
   DollarSign
@@ -286,7 +286,7 @@ const CompanyReportPage: React.FC = () => {
                 <ul className="space-y-2">
                   {report.tariffAnalysis.recommendations.map((rec, idx) => (
                     <li key={idx} className="flex items-start">
-                      <ChartLine className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
+                      <LineChart className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
                       <span className="text-gray-700">{rec}</span>
                     </li>
                   ))}
@@ -305,7 +305,7 @@ const CompanyReportPage: React.FC = () => {
                   disabled={generating}
                   className="flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
                 >
-                  <ChartLine className="w-6 h-6 text-blue-500 mr-2" />
+                  <LineChart className="w-6 h-6 text-blue-500 mr-2" />
                   <span className="font-medium">Financial Analysis</span>
                 </button>
 

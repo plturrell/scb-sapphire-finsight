@@ -35,19 +35,19 @@ export default function MetricCard({
   const isPositive = change && change > 0;
 
   return (
-    <div className={`bg-white border border-[hsl(var(--border))] shadow-sm rounded ${className}`}>
-      <div className="px-4 py-3 border-b border-[hsl(var(--border))] flex justify-between items-center">
-        <h3 className="text-xs font-medium text-[hsl(var(--foreground))]">{title}</h3>
+    <div className={`fiori-tile ${className}`}>
+      <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] flex justify-between items-center">
+        <h3 className="text-sm font-medium text-[rgb(var(--scb-dark-gray))]">{title}</h3>
         {change !== undefined && (
           <div className="flex items-center space-x-1 text-xs">
             {isPositive ? (
-              <ChevronUp className="w-3 h-3 text-[hsl(var(--success))]" />
+              <ChevronUp className="w-3 h-3 text-[rgb(var(--scb-american-green))]" />
             ) : (
-              <ChevronDown className="w-3 h-3 text-[hsl(var(--destructive))]" />
+              <ChevronDown className="w-3 h-3 text-[rgb(var(--scb-muted-red))]" />
             )}
             <span
-              className={`font-normal ${
-                isPositive ? 'text-[hsl(var(--success))]' : 'text-[hsl(var(--destructive))]'
+              className={`font-medium ${
+                isPositive ? 'text-[rgb(var(--scb-american-green))]' : 'text-[rgb(var(--scb-muted-red))]'
               }`}
             >
               {formatPercentage(change)}
@@ -56,9 +56,9 @@ export default function MetricCard({
         )}
       </div>
       <div className="px-4 py-5">
-        <p className="text-xl font-normal text-[hsl(var(--foreground))]">{formatValue()}</p>
+        <p className="text-2xl font-medium text-[rgb(var(--scb-honolulu-blue))]">{formatValue()}</p>
         {period && (
-          <p className="text-xs text-[hsl(var(--muted-foreground))] mt-2">{period}</p>
+          <p className="text-xs text-[rgba(var(--scb-dark-gray),0.7)] mt-2">{period}</p>
         )}
       </div>
     </div>

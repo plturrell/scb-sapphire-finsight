@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Newspaper, TrendingUp, Clock, ExternalLink, RefreshCw, Sparkles } from 'lucide-react';
-import Image from 'next/image';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Newspaper, TrendingUp, Clock, ExternalLink, RefreshCw, Sparkles, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { perplexityApi } from '../lib/market-news-service';
+import { useCache } from '@/hooks';
+import SkeletonLoader from './SkeletonLoader';
+import { NewsItem } from '@/types/perplexity';
+import perplexityAnalytics from '@/services/PerplexityAnalytics';
 
-interface NewsItem {
-  id: string;
-  title: string;
-  summary: string;
-  category: string;
-  timestamp: string;
-  source: string;
-  url?: string;
-}
 
 interface PerplexityNewsBarProps {
   onAnalyzeNews?: (newsItem: NewsItem) => void;
@@ -22,32 +16,125 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [selectedNewsItem, setSelectedNewsItem] = useState<NewsItem | null>(null);
+  const [error, setError] = useState<boolean>(false);
+  
+  // Use caching hook for market news
+  const [cachedNews, cacheLoading, cacheError, refreshNews] = useCache<NewsItem[]>(
+    'market-news',
+    async () => {
+      // Add timeout handling to the API call
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      try {
+        // Use a wrapper to ensure we get proper error handling
+        const response = await fetch('/api/market-news', { 
+          signal: controller.signal,
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (!data.articles || !Array.isArray(data.articles)) {
+          throw new Error('Invalid news data format');
+        }
+        
+        return data.articles;
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          console.error('News fetch timed out');
+        }
+        throw fetchError; // rethrow to outer catch
+      }
+    },
+    {
+      ttl: 5 * 60 * 1000, // 5 minute TTL for news
+      namespace: 'perplexity'
+    }
+  );
+
+  // Effect to update news from cache
+  useEffect(() => {
+    if (cachedNews) {
+      setNews(cachedNews);
+      setLoading(false);
+    }
+    if (cacheError) {
+      console.error('Cache error:', cacheError);
+      setError(true);
+      setLoading(false);
+    }
+  }, [cachedNews, cacheError]);
 
   // Fetch news on component mount
   useEffect(() => {
-    fetchNews();
-    const interval = setInterval(fetchNews, 300000); // Refresh every 5 minutes
+    const fetchInitialNews = async () => {
+      try {
+        setLoading(true);
+        setError(false);
+        await refreshNews(false); // Don't force refresh initially
+        
+        // Track news viewed event in analytics
+        perplexityAnalytics.trackEvent('news:viewed', {
+          source: 'initial_load',
+          count: news.length
+        });
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        setError(true);
+        
+        // Track error event
+        perplexityAnalytics.trackEvent('api:error', {
+          endpoint: 'market-news',
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialNews();
+    
+    // Set up interval for periodic refreshing
+    const interval = setInterval(() => refreshNews(true), 300000); // Refresh every 5 minutes
     return () => clearInterval(interval);
-  }, []);
+  }, [refreshNews, news.length]);
 
-  const fetchNews = async () => {
-    try {
-      setLoading(true);
-      const newsData = await perplexityApi.getMarketNews();
-      setNews(newsData);
-    } catch (error) {
-      console.error('Error fetching news:', error);
-      setNews([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const refreshNews = async () => {
+  // Function to manually refresh news
+  const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    await fetchNews();
-    setTimeout(() => setIsRefreshing(false), 500);
-  };
+    setError(false);
+    
+    // Track refresh event in analytics
+    perplexityAnalytics.trackEvent('news:refreshed', {
+      source: 'manual_refresh',
+      previous_count: news.length
+    });
+    
+    try {
+      await refreshNews(true); // Force a fresh fetch
+    } catch (error) {
+      console.error('Error refreshing news:', error);
+      setError(true);
+      
+      // Track error event
+      perplexityAnalytics.trackEvent('api:error', {
+        endpoint: 'market-news',
+        action: 'refresh',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } finally {
+      // Short delay for UI feedback
+      setTimeout(() => setIsRefreshing(false), 500);
+    }
+  }, [refreshNews, news.length]);
+
 
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -74,6 +161,16 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
   
   const handleAnalyzeWithJoule = (item: NewsItem, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent the news item click from opening the URL
+    
+    // Track analyze with Joule event
+    perplexityAnalytics.trackEvent('news:item_clicked', {
+      newsId: item.id,
+      title: item.title,
+      category: item.category,
+      source: item.source,
+      action: 'analyze'
+    });
+    
     if (onAnalyzeNews) {
       onAnalyzeNews(item);
     }
@@ -93,7 +190,7 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
             <h2 className="text-lg font-semibold text-gray-800">Market News</h2>
           </div>
           <button
-            onClick={refreshNews}
+            onClick={handleRefresh}
             className={`p-1.5 hover:bg-gray-100 rounded transition-all ${
               isRefreshing ? 'animate-spin' : ''
             }`}
@@ -108,21 +205,29 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
       {/* News List */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-2"></div>
-              <p className="text-sm text-gray-500">Loading market news...</p>
-            </div>
+          <div className="p-4">
+            <SkeletonLoader type="news" count={5} />
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-64 px-4 text-center">
+            <AlertCircle className="w-12 h-12 text-red-300 mb-3" />
+            <p className="text-sm text-gray-500 mb-2">Could not retrieve market news</p>
+            <button 
+              onClick={handleRefresh}
+              className="px-4 py-2 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700 transition-colors"
+            >
+              Retry
+            </button>
           </div>
         ) : news.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 px-4 text-center">
             <Newspaper className="w-12 h-12 text-gray-300 mb-3" />
-            <p className="text-sm text-gray-500 mb-2">Could not retrieve market news</p>
+            <p className="text-sm text-gray-500 mb-2">No market news available</p>
             <button 
-              onClick={refreshNews}
+              onClick={handleRefresh}
               className="px-4 py-2 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700 transition-colors"
             >
-              Retry
+              Refresh
             </button>
           </div>
         ) : (

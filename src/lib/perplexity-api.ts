@@ -1,41 +1,9 @@
 // Perplexity AI API integration for search functionality
-interface PerplexityRequest {
-  model: string;
-  messages: Array<{
-    role: 'system' | 'user' | 'assistant';
-    content: string;
-  }>;
-  temperature?: number;
-  top_p?: number;
-  max_tokens?: number;
-  stream?: boolean;
-}
+import perplexityRateLimiter from '@/services/PerplexityRateLimiter';
+import { PerplexityRequest, PerplexityResponse, SearchResult, CompanySearchResult, FinancialInsights } from '@/types/perplexity';
+// These interfaces have been moved to /src/types/perplexity.ts
 
-interface PerplexityResponse {
-  id: string;
-  model: string;
-  object: string;
-  created: number;
-  choices: Array<{
-    index: number;
-    finish_reason: string;
-    message: {
-      role: string;
-      content: string;
-    };
-    delta?: {
-      role?: string;
-      content?: string;
-    };
-  }>;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
-
-const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || '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';
+const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 // API models - see https://docs.perplexity.ai/docs/model-cards
@@ -51,7 +19,7 @@ const RETRY_DELAY = 1000;
 const MAX_RETRIES = 2;
 
 /**
- * Core function to call Perplexity API with retries
+ * Core function to call Perplexity API with retries and rate limiting
  */
 async function callPerplexityAPI(messages: Array<{role: string, content: string}>, model = MODELS.DEFAULT): Promise<string> {
   const request: PerplexityRequest = {
@@ -65,6 +33,18 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
 
   let retries = 0;
   let lastError: Error | null = null;
+  const startTime = Date.now();
+  const endpoint = 'chat/completions';
+  let tokenUsage = 0;
+
+  // Check if we can make a request based on rate limits
+  if (!perplexityRateLimiter.canMakeRequest()) {
+    const timeToWait = perplexityRateLimiter.getTimeToWaitMs();
+    if (timeToWait > 0) {
+      console.warn(`Rate limit reached for Perplexity API. Waiting ${timeToWait}ms before next request.`);
+      await new Promise(resolve => setTimeout(resolve, timeToWait));
+    }
+  }
 
   while (retries <= MAX_RETRIES) {
     try {
@@ -91,6 +71,17 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
       }
 
       const data: PerplexityResponse = await response.json();
+      tokenUsage = data.usage?.total_tokens || 0;
+
+      // Record successful API call in rate limiter
+      perplexityRateLimiter.recordRequest({
+        endpoint,
+        tokens: tokenUsage,
+        model: request.model,
+        startTime,
+        success: true
+      });
+
       return data.choices[0]?.message?.content || '';
     } catch (error) {
       lastError = error as Error;
@@ -101,6 +92,14 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
         request.model = fallbackModel;
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       } else {
+        // Record failed API call
+        perplexityRateLimiter.recordRequest({
+          endpoint,
+          tokens: 0, // We don't know how many tokens were used in failed request
+          model: request.model,
+          startTime,
+          success: false
+        });
         break;
       }
     }
@@ -147,65 +146,149 @@ function parseSearchResults(content: string, query: string): any {
   };
 
   try {
+    // Safety check for empty content
+    if (!content || typeof content !== 'string' || content.trim().length === 0) {
+      results.summary = 'No results found for this query.';
+      return results;
+    }
+
     // Extract summary (first paragraph)
-    const paragraphs = content.split('\n\n');
+    const paragraphs = content.split('\n\n').filter(p => p.trim().length > 0);
     results.summary = paragraphs[0] || content.substring(0, 300);
 
-    // Extract company mentions using regex
-    const companyRegex = /\b([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*)\b(?=.*\b(?:company|corporation|inc|ltd|plc|group|holdings)\b)/gi;
-    const companyMatches = content.match(companyRegex);
-    
-    if (companyMatches) {
-      const uniqueCompanies = [...new Set(companyMatches)];
-      uniqueCompanies.forEach(company => {
-        const contextRegex = new RegExp(`[^.]*${company}[^.]*\\.`, 'i');
-        const contextMatch = content.match(contextRegex);
-        const context = contextMatch ? contextMatch[0].trim() : '';
+    // Extract company mentions using regex (with safer regex that won't cause backtracking issues)
+    try {
+      // Try to extract company names with contextual validation
+      const companyRegex = /\b([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*){0,4})\b/g;
+      const companyMatches = [];
+      let match;
+      
+      // Get all potential company names
+      while ((match = companyRegex.exec(content)) !== null) {
+        const potentialCompany = match[1].trim();
+        // Only consider if it's likely a company (check nearby context for company indicators)
+        const context = content.substring(
+          Math.max(0, match.index - 50), 
+          Math.min(content.length, match.index + potentialCompany.length + 50)
+        );
         
-        results.companies.push({
-          name: company.trim(),
-          context: context,
-          confidence: 0.9
+        if (/company|corporation|inc|ltd|plc|group|holdings|tech|bank|enterprise|corporation/i.test(context)) {
+          companyMatches.push(potentialCompany);
+        }
+      }
+      
+      if (companyMatches.length > 0) {
+        // Filter out duplicates and very common false positives
+        const commonWords = ['The', 'This', 'That', 'These', 'Those', 'It', 'We', 'They', 'He', 'She', 'I', 'You', 'A', 'An'];
+        const uniqueCompanies = [...new Set(companyMatches)]
+          .filter(company => !commonWords.includes(company));
+          
+        uniqueCompanies.forEach(company => {
+          // Get context for this company
+          let context = '';
+          try {
+            const safeCompany = company.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape regex special chars
+            const contextRegex = new RegExp(`[^.]{0,100}${safeCompany}[^.]{0,100}\.`, 'i');
+            const contextMatch = content.match(contextRegex);
+            context = contextMatch ? contextMatch[0].trim() : '';
+          } catch (regexError) {
+            console.error('Regex error for company context:', regexError);
+            context = 'Context extraction failed';
+          }
+          
+          results.companies.push({
+            name: company.trim(),
+            context: context,
+            confidence: 0.7 // Lower default confidence
+          });
         });
-      });
+      }
+    } catch (companyRegexError) {
+      console.error('Company regex extraction error:', companyRegexError);
+      // Continue with other parsing
     }
 
-    // Extract key insights (bullet points or numbered lists)
-    const bulletPattern = /^[\•\-\*]\s+(.+)$/gm;
-    const numberedPattern = /^\d+\.\s+(.+)$/gm;
-    
-    let matches;
-    const insights = new Set<string>();
-    
-    while ((matches = bulletPattern.exec(content)) !== null) {
-      insights.add(matches[1].trim());
-    }
-    while ((matches = numberedPattern.exec(content)) !== null) {
-      insights.add(matches[1].trim());
-    }
-    
-    // If no bullet points, extract sentences that look like insights
-    if (insights.size === 0) {
-      const sentences = content.split('.');
-      sentences.forEach(sentence => {
-        const trimmed = sentence.trim();
-        if (trimmed.length > 20 && trimmed.length < 150 && 
-            !trimmed.startsWith('However') && !trimmed.startsWith('Therefore')) {
-          insights.add(trimmed);
+    // Extract key insights with safer approach
+    try {
+      const insights = new Set<string>();
+      
+      // Extract bullet points with safer regex
+      const bulletLines = content.split('\n')
+        .filter(line => line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*'));
+        
+      bulletLines.forEach(line => {
+        const cleanLine = line.replace(/^[•\-*]\s+/, '').trim();
+        if (cleanLine.length > 10) {
+          insights.add(cleanLine);
         }
       });
+      
+      // Extract numbered points
+      const numberedLines = content.split('\n')
+        .filter(line => /^\d+\.\s+/.test(line.trim()));
+        
+      numberedLines.forEach(line => {
+        const cleanLine = line.replace(/^\d+\.\s+/, '').trim();
+        if (cleanLine.length > 10) {
+          insights.add(cleanLine);
+        }
+      });
+      
+      // If no bullet points, extract sentences that look like insights
+      if (insights.size === 0) {
+        const sentences = content.split('.')
+          .map(s => s.trim())
+          .filter(s => s.length > 20 && s.length < 150);
+          
+        // Look for sentences with insight indicators
+        const insightIndicators = ['important', 'significant', 'key', 'critical', 'major', 'trend', 'growth'];
+        sentences.forEach(sentence => {
+          if (insightIndicators.some(indicator => sentence.toLowerCase().includes(indicator))) {
+            insights.add(sentence);
+          }
+        });
+      }
+      
+      results.insights = Array.from(insights).slice(0, 5);
+    } catch (insightsError) {
+      console.error('Insights extraction error:', insightsError);
+      results.insights = [];
     }
     
-    results.insights = Array.from(insights).slice(0, 5);
-    
-    // Extract source references
-    const sourcePattern = /\[(.*?)\]\((https?:\/\/.*?)\)/g;
-    while ((matches = sourcePattern.exec(content)) !== null) {
-      results.sources.push({
-        title: matches[1],
-        url: matches[2],
-        date: new Date().toISOString()
-      });
+    // Extract source references with safer approach
+    try {
+      const sources = [];
+      // Look for Markdown-style links
+      const sourcePattern = /\[(.*?)\]\((https?:\/\/[^\s)]+)\)/g;
+      let sourceMatch;
+      
+      while ((sourceMatch = sourcePattern.exec(content)) !== null) {
+        sources.push({
+          title: sourceMatch[1].trim(),
+          url: sourceMatch[2].trim(),
+          date: new Date().toISOString()
+        });
+      }
+      
+      // Also look for plain URLs
+      const urlPattern = /(https?:\/\/[^\s]+)/g;
+      let urlMatch;
+      
+      while ((urlMatch = urlPattern.exec(content)) !== null) {
+        // Don't add if it's already in a Markdown link
+        if (!sources.some(s => s.url === urlMatch[1])) {
+          sources.push({
+            title: 'Reference Source',
+            url: urlMatch[1].trim(),
+            date: new Date().toISOString()
+          });
+        }
+      }
+      
+      results.sources = sources;
+    } catch (sourcesError) {
+      console.error('Sources extraction error:', sourcesError);
+      results.sources = [];
     }
 
     return results;
@@ -295,35 +378,40 @@ export async function searchCompanies(query: string): Promise<any[]> {
     
     // If no structured companies found but we have text, try a simpler approach
     if (companies.length === 0 && content.length > 0) {
-      const companyNameRegex = /\b([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*)\b(?=.*\b(?:company|corporation|inc|ltd|plc)\b)/gi;
-      const companyMatches = content.match(companyNameRegex);
-      
-      if (companyMatches) {
-        companyMatches.forEach((company, index) => {
-          companies.push({
-            companyId: `perplexity-${Date.now()}-${index}`,
-            companyCode: `COMP${index}`,
-            companyName: company.trim(),
-            industry: 'Finance',
-            country: 'Unknown',
-            listingStatus: 'Unknown',
-            matchScore: 0.8 - (index * 0.05),
-            dataAvailable: {
-              profile: true,
-              financials: false,
-              filings: false,
-              tariffData: false
-            },
-            description: content.substring(0, 150).trim()
+      try {
+        const companyNameRegex = /\b([A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)*)\b(?=.*\b(?:company|corporation|inc|ltd|plc)\b)/gi;
+        const companyMatches = content.match(companyNameRegex);
+        
+        if (companyMatches) {
+          companyMatches.forEach((company, index) => {
+            companies.push({
+              companyId: `perplexity-${Date.now()}-${index}`,
+              companyCode: `COMP${index}`,
+              companyName: company.trim(),
+              industry: 'Finance',
+              country: 'Unknown',
+              listingStatus: 'Unknown',
+              matchScore: 0.8 - (index * 0.05),
+              dataAvailable: {
+                profile: true,
+                financials: false,
+                filings: false,
+                tariffData: false
+              },
+              description: content.substring(0, 150).trim()
+            });
           });
-        });
+        }
+      } catch (parseError) {
+        console.error('Company fallback parse error:', parseError);
       }
     }
     
     return companies;
   } catch (error) {
     console.error('Company search error:', error);
-    throw error;
+    // Return empty array instead of throwing to avoid breaking the UI
+    return [];
   }
 }
 
@@ -362,40 +450,67 @@ export async function getFinancialInsights(query: string): Promise<any> {
     // Extract insights from bullet points, numbered lists, and key sentences
     const insights = new Set<string>();
     
-    // Bullet points
-    const bulletPattern = /^[\•\-\*]\s+(.+)$/gm;
-    const numberedPattern = /^\d+\.\s+(.+)$/gm;
-    let matches;
-    
-    while ((matches = bulletPattern.exec(content)) !== null) {
-      insights.add(matches[1].trim());
-    }
-    
-    while ((matches = numberedPattern.exec(content)) !== null) {
-      insights.add(matches[1].trim());
-    }
-    
-    // Look for header sections and their first sentences
-    const headerPattern = /^#+\s+(.+)\n+(.+?)(?=\n)/gm;
-    while ((matches = headerPattern.exec(content)) !== null) {
-      insights.add(`${matches[1]}: ${matches[2].trim()}`);
+    try {
+      // Bullet points
+      const bulletLines = content.split('\n')
+        .filter(line => line.trim().startsWith('•') || line.trim().startsWith('-') || line.trim().startsWith('*'));
+        
+      bulletLines.forEach(line => {
+        const cleanLine = line.replace(/^[•\-*]\s+/, '').trim();
+        if (cleanLine.length > 10) {
+          insights.add(cleanLine);
+        }
+      });
+      
+      // Numbered points
+      const numberedLines = content.split('\n')
+        .filter(line => /^\d+\.\s+/.test(line.trim()));
+        
+      numberedLines.forEach(line => {
+        const cleanLine = line.replace(/^\d+\.\s+/, '').trim();
+        if (cleanLine.length > 10) {
+          insights.add(cleanLine);
+        }
+      });
+      
+      // Look for header sections and their first sentences
+      const headerLines = content.split('\n')
+        .filter(line => /^#+\s+/.test(line.trim()));
+      
+      headerLines.forEach(headerLine => {
+        const headerText = headerLine.replace(/^#+\s+/, '').trim();
+        if (headerText.length > 5) {
+          const headerIndex = content.indexOf(headerLine);
+          const nextContent = content.substring(headerIndex + headerLine.length).trim();
+          const firstSentence = nextContent.split('.')[0];
+          if (firstSentence && firstSentence.length > 10) {
+            insights.add(`${headerText}: ${firstSentence.trim()}`);
+          }
+        }
+      });
+    } catch (parseError) {
+      console.error('Insights parsing error:', parseError);
     }
     
     // If still no insights, extract key sentences
     if (insights.size === 0) {
-      const sentences = content.split(/(?<=\.)\s+/g);
-      const keyPhrases = [
-        'important', 'significant', 'key', 'critical', 'major',
-        'trend', 'growth', 'decline', 'increase', 'decrease',
-        'market', 'economy', 'financial', 'investment', 'risk'
-      ];
-      
-      sentences.forEach(sentence => {
-        if (sentence.length > 20 && sentence.length < 150 &&
-            keyPhrases.some(phrase => sentence.toLowerCase().includes(phrase))) {
-          insights.add(sentence.trim());
-        }
-      });
+      try {
+        const sentences = content.split(/(?<=\.)\s+/g);
+        const keyPhrases = [
+          'important', 'significant', 'key', 'critical', 'major',
+          'trend', 'growth', 'decline', 'increase', 'decrease',
+          'market', 'economy', 'financial', 'investment', 'risk'
+        ];
+        
+        sentences.forEach(sentence => {
+          if (sentence.length > 20 && sentence.length < 150 &&
+              keyPhrases.some(phrase => sentence.toLowerCase().includes(phrase))) {
+            insights.add(sentence.trim());
+          }
+        });
+      } catch (sentenceError) {
+        console.error('Sentence parsing error:', sentenceError);
+      }
     }
     
     return {
@@ -405,7 +520,12 @@ export async function getFinancialInsights(query: string): Promise<any> {
     };
   } catch (error) {
     console.error('Financial insights error:', error);
-    throw error;
+    // Return basic data structure to avoid breaking UI
+    return {
+      summary: `Financial insights for "${query}" are not available at the moment.`,
+      insights: [],
+      timestamp: new Date().toISOString()
+    };
   }
 }
 
@@ -414,149 +534,22 @@ export async function getFinancialInsights(query: string): Promise<any> {
  */
 export async function getMarketNews(): Promise<any[]> {
   try {
-    const prompt = `Provide the latest financial market news from today.
-      Include:
-      - Major market movements in stocks, bonds, commodities, cryptocurrencies
-      - Important economic indicators or data releases
-      - Central bank decisions or announcements
-      - Significant company earnings or corporate events
-      - Geopolitical events affecting markets
-      
-      For each news item, include:
-      - Concise headline/title
-      - Brief summary (1-2 sentences)
-      - Category (Markets, Economy, Companies, etc.)
-      - Source if available
-      
-      Format as structured data with clear sections for each news item.
-      Provide at least 5-8 different news items covering various financial topics.`;
-
-    const messages = [
-      {
-        role: 'system',
-        content: 'You are a financial news reporter providing concise, accurate summaries of the latest market developments. Focus on factual information and provide a diverse range of important financial news.'
-      },
-      {
-        role: 'user',
-        content: prompt
-      }
-    ];
-
-    const content = await callPerplexityAPI(messages, MODELS.SMALL);
+    // Use our proxy endpoint to avoid CORS issues
+    const response = await fetch('/api/market-news');
     
-    // Parse the news content into separate news items
-    const newsItems: any[] = [];
-    
-    // Try to find structured news blocks
-    const newsBlocks = content.split(/(?=\#\#|\d+\.\s+|\*\*News Item)/gi);
-    
-    newsBlocks.forEach((block, index) => {
-      if (block.trim().length < 30) return; // Skip short blocks
-      
-      // Try to extract headline/title
-      const titleMatch = block.match(/(?:\#\#|\d+\.\s+|\*\*)(.*?)(?:\*\*|\n|:)/);
-      if (!titleMatch) return;
-      
-      const title = titleMatch[1].trim();
-      
-      // Try to extract summary, category and source
-      let summary = '';
-      let category = '';
-      let source = '';
-      
-      const summaryMatch = block.match(/(?:Summary|:)\s*(.*?)(?=\n\n|\n(?=Category:|Source:)|\n\-|\n\*|$)/is);
-      if (summaryMatch) {
-        summary = summaryMatch[1].trim();
-      } else {
-        // If no explicit summary, take the first paragraph after the title
-        const lines = block.split('\n').filter(line => line.trim().length > 0);
-        if (lines.length > 1) {
-          summary = lines[1].trim();
-        }
-      }
-      
-      const categoryMatch = block.match(/(?:Category|Type):\s*(.*?)(?:\n|$)/i);
-      if (categoryMatch) {
-        category = categoryMatch[1].trim();
-      } else {
-        // Try to determine category from content
-        const categories = [
-          { name: 'Markets', keywords: ['stock', 'index', 'market', 'dow', 'nasdaq', 's&p'] },
-          { name: 'Economy', keywords: ['gdp', 'inflation', 'economic', 'unemployment', 'fed'] },
-          { name: 'Technology', keywords: ['tech', 'technology', 'software', 'ai', 'digital'] },
-          { name: 'Banking', keywords: ['bank', 'financial', 'lending', 'loan', 'credit'] },
-          { name: 'Commodities', keywords: ['oil', 'gold', 'commodity', 'gas', 'energy'] },
-          { name: 'Crypto', keywords: ['crypto', 'bitcoin', 'blockchain', 'token', 'eth'] }
-        ];
-        
-        const blockText = block.toLowerCase();
-        for (const cat of categories) {
-          if (cat.keywords.some(word => blockText.includes(word))) {
-            category = cat.name;
-            break;
-          }
-        }
-        
-        if (!category) {
-          category = 'Finance';
-        }
-      }
-      
-      const sourceMatch = block.match(/(?:Source|From):\s*(.*?)(?:\n|$)/i);
-      if (sourceMatch) {
-        source = sourceMatch[1].trim();
-      } else {
-        // List of common financial news sources
-        const sources = ['Bloomberg', 'Reuters', 'CNBC', 'Financial Times', 'Wall Street Journal', 'MarketWatch'];
-        // Look for source mentions in the text
-        for (const potentialSource of sources) {
-          if (block.includes(potentialSource)) {
-            source = potentialSource;
-            break;
-          }
-        }
-        
-        if (!source) {
-          source = 'Financial News';
-        }
-      }
-      
-      newsItems.push({
-        id: `news-${index}`,
-        title: title,
-        summary: summary || title, // Use title as summary if no summary found
-        category: category,
-        timestamp: new Date(Date.now() - (index * 3600000)).toISOString(), // Stagger timestamps
-        source: source,
-        url: '#'
-      });
-    });
-    
-    // If no structured news found, try a simpler approach
-    if (newsItems.length === 0) {
-      // Split content by paragraphs and treat each as a news item
-      const paragraphs = content.split('\n\n').filter(p => p.trim().length > 30);
-      
-      paragraphs.forEach((paragraph, index) => {
-        const lines = paragraph.split('\n');
-        const title = lines[0] || 'Market Update';
-        const summary = lines.slice(1).join(' ') || paragraph;
-        
-        newsItems.push({
-          id: `news-${index}`,
-          title: title,
-          summary: summary,
-          category: 'Finance',
-          timestamp: new Date(Date.now() - (index * 3600000)).toISOString(),
-          source: 'Financial News',
-          url: '#'
-        });
-      });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
     }
     
-    return newsItems;
+    const data = await response.json();
+    if (!data.articles || !Array.isArray(data.articles)) {
+      throw new Error('Invalid news data format');
+    }
+    
+    return data.articles;
   } catch (error) {
     console.error('Error fetching market news:', error);
-    throw error;
+    // Return empty array instead of throwing to avoid breaking the UI
+    return [];
   }
 }

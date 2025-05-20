@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import PerplexitySearchBar from './PerplexitySearchBar';
-import JouleAssistantWrapper from './JouleAssistantWrapper';
+// Removed JouleAssistantWrapper import as we're using GlobalJouleAssistant
 import {
   LayoutDashboard,
   BarChart3,
@@ -138,7 +138,8 @@ export default function ModernLayout({ children }: LayoutProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [appFinderOpen, setAppFinderOpen] = useState(false);
-  const [jouleOpen, setJouleOpen] = useState(false);
+  // We're now using GlobalJouleAssistant instead
+  // const [jouleOpen, setJouleOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -340,17 +341,7 @@ export default function ModernLayout({ children }: LayoutProps) {
         <div className="flex items-center gap-1 lg:gap-2 w-1/3 justify-end">
           
           {/* Joule AI Assistant */}
-          <button 
-            className="flex h-full px-3 text-gray-700 hover:bg-gray-100 items-center space-x-1 transition-colors rounded"
-            title="Joule AI Assistant"
-            onClick={() => setJouleOpen(true)}
-          >
-            <div 
-              className="w-6 h-6 rounded flex items-center justify-center bg-[#cc00dc]" 
-            >
-              <span className="text-white font-bold text-sm">J</span>
-            </div>
-          </button>
+          {/* Joule button moved to GlobalJouleAssistant */}
           
           {/* App Finder - Desktop only */}
           <button 
@@ -739,45 +730,7 @@ export default function ModernLayout({ children }: LayoutProps) {
         </div>
       </nav>
 
-      {/* Joule AI Assistant Panel - Full Height */}
-      {jouleOpen && (
-        <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out transform translate-x-0">
-          {/* Joule Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-10 h-10 rounded-md flex items-center justify-center bg-[#cc00dc]" 
-              >
-                <span className="text-white font-bold text-lg">J</span>
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-white">Joule</h2>
-                <p className="text-sm text-white/80 flex items-center gap-2">
-                  Powered by 
-                  <Image
-                    src="/assets/idEDqS_YGr_1747680256633.svg"
-                    alt="SAP"
-                    width={32}
-                    height={16}
-                    className="inline-block brightness-0 invert"
-                  />
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setJouleOpen(false)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-white" />
-            </button>
-          </div>
-
-          {/* Joule Content */}
-          <div className="flex-1 overflow-hidden">
-            <JouleAssistantWrapper open={jouleOpen} onOpenChange={setJouleOpen} />
-          </div>
-        </div>
-      )}
+      {/* Joule AI Assistant moved to GlobalJouleAssistant */}
     </div>
   );
 }

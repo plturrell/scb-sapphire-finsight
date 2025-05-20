@@ -12,9 +12,11 @@ import {
   AlertTitle,
   Paper,
   Divider,
+  ThemeProvider,
   useTheme
 } from '@mui/material';
-import DashboardLayout from '../components/layout/DashboardLayout';
+import muiTheme from '@/lib/mui-theme';
+import ModernLayout from '../components/ModernLayout';
 import VietnamMonteCarloParams, { VietnamMonteCarloConfig } from '../components/VietnamMonteCarloParams';
 import VietnamMonteCarloProbabilityDistribution from '../components/VietnamMonteCarloProbabilityDistribution';
 import VietnamMonteCarloCaseAnalysis from '../components/VietnamMonteCarloCaseAnalysis';
@@ -272,20 +274,21 @@ const VietnamMonteCarloPage: NextPage = () => {
   };
 
   return (
-    <DashboardLayout>
-      <Head>
-        <title>Vietnam Tariff Monte Carlo Simulation | SCB FinSight</title>
-      </Head>
+    <ThemeProvider theme={muiTheme}>
+      <ModernLayout>
+        <Head>
+          <title>Vietnam Tariff Monte Carlo Simulation | SCB FinSight</title>
+        </Head>
 
-      <Container maxWidth="xl">
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Tariff Monte Carlo Simulation
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            Analyze probable outcomes of Vietnam tariff changes using Monte Carlo simulation
-          </Typography>
-        </Box>
+        <Container maxWidth="xl">
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Tariff Monte Carlo Simulation
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+              Analyze probable outcomes of Vietnam tariff changes using Monte Carlo simulation
+            </Typography>
+          </Box>
 
         {error && (
           <Alert 
@@ -355,7 +358,7 @@ const VietnamMonteCarloPage: NextPage = () => {
 
           {/* Action Buttons */}
           <Grid item xs={12}>
-            <Paper elevation={0} sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
+            <Paper elevation={0} sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.12)' }}>
               <Grid container spacing={2} justifyContent="space-between">
                 <Grid item>
                   <Button
@@ -415,7 +418,8 @@ const VietnamMonteCarloPage: NextPage = () => {
           </Typography>
         </Box>
       </Container>
-    </DashboardLayout>
+    </ModernLayout>
+    </ThemeProvider>
   );
 };
 

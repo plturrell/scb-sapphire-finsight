@@ -2,3 +2,4 @@
 export { useDeviceCapabilities } from './useDeviceCapabilities';
 export { useMicroInteractions, useHaptic, useSpring, useRipple, useSwipeGesture } from './useMicroInteractions';
 export { useNetworkAwareLoading, useNetworkLazyLoad, useAdaptiveFetch } from './useNetworkAwareLoading';
+export { default as useCache } from './useCache';

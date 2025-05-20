@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
-import ModernLayout from '@/components/ModernLayout';
 import MetricCard from '@/components/MetricCard';
-import JouleAssistantWrapper from '@/components/JouleAssistantWrapper';
-import PerplexityNewsBar from '@/components/PerplexityNewsBar';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import {
   BarChart,
   Bar,
@@ -18,7 +16,6 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { Sparkles, X } from 'lucide-react';
 
 const monthlyData = [
   { month: 'Jan', revenue: 45000, target: 42000 },
@@ -30,8 +27,8 @@ const monthlyData = [
 ];
 
 const sectorData = [
-  { name: 'Banking', value: 45, color: '#4A5FDB' },
-  { name: 'Insurance', value: 30, color: '#1ED760' },
+  { name: 'Banking', value: 45, color: 'rgb(var(--scb-honolulu-blue))' },
+  { name: 'Insurance', value: 30, color: 'rgb(var(--scb-american-green))' },
   { name: 'Investment', value: 25, color: '#F59E0B' },
 ];
 
@@ -43,52 +40,28 @@ const newsItems = [
 ];
 
 export default function Dashboard() {
-  const [jouleOpen, setJouleOpen] = useState(false);
-
   return (
-    <ModernLayout>
-      <div className="flex gap-6 -m-4 lg:-m-6">
-        {/* News Sidebar */}
-        <div className="hidden lg:block flex-shrink-0">
-          <PerplexityNewsBar />
+    <ScbBeautifulUI showNewsBar={true} pageTitle="SCB FinSight Dashboard">
+      <div className="space-y-6">
+        {/* SCB Banner Image */}
+        <div className="w-full rounded-lg shadow-sm mb-6 overflow-hidden">
+          <Image 
+            src="/assets/finsight_Banner.png" 
+            alt="FinSight Banner" 
+            width={1200} 
+            height={300} 
+            className="w-full" 
+            style={{ objectFit: 'contain' }}
+            priority
+          />
         </div>
         
-        {/* Main Content Area */}
-        <div className="flex-1 p-4 lg:p-6 space-y-6">
-          {/* SCB Banner Image */}
-          <div className="w-full rounded-md shadow-sm mb-6">
-            <Image 
-              src="/assets/finsight_Banner.png" 
-              alt="FinSight Banner" 
-              width={1200} 
-              height={300} 
-              className="w-full" 
-              style={{ objectFit: 'contain' }}
-              priority
-            />
+        {/* Welcome Banner */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 border border-[rgb(var(--scb-border))] rounded-lg shadow-sm mb-6">
+          <div>
+            <p className="text-sm text-[rgb(var(--scb-dark-gray))]">GCFO's digital gateway for data, executive insights driving commercial insights and business decision-making.</p>
           </div>
-          
-          {/* Welcome Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 border border-[hsl(var(--border))] rounded shadow-sm mb-6">
-            <div>
-              <p className="text-sm text-[hsl(var(--muted-foreground))]">GCFO's digital gateway for data, executive insights driving commercial insights and business decision-making.</p>
-            </div>
-            <button
-              onClick={() => setJouleOpen(true)}
-              className="flex items-center self-start space-x-2 px-4 py-2 rounded-lg text-white hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: '#cc00dc' }}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Launch Joule</span>
-              <Image
-                src="/assets/idEDqS_YGr_1747680256633.svg"
-                alt="SAP"
-                width={32}
-                height={16}
-                className="ml-2 brightness-0 invert"
-              />
-            </button>
-          </div>
+        </div>
 
         {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -125,28 +98,45 @@ export default function Dashboard() {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Line Chart */}
-          <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
-              <h3 className="text-base font-normal">Monthly Revenue Trend</h3>
+          <div className="fiori-tile">
+            <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
+              <h3 className="fiori-tile-title">Monthly Revenue Trend</h3>
             </div>
             <div className="p-4">
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="revenue" stroke="#4A5FDB" />
-                  <Line type="monotone" dataKey="target" stroke="#1ED760" strokeDasharray="5 5" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(var(--scb-border), 0.8)" />
+                  <XAxis dataKey="month" tick={{fill: 'rgb(var(--scb-dark-gray))'}} />
+                  <YAxis tick={{fill: 'rgb(var(--scb-dark-gray))'}} />
+                  <Tooltip 
+                    contentStyle={{
+                      borderColor: 'rgb(var(--scb-border))',
+                      backgroundColor: 'white'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="rgb(var(--scb-honolulu-blue))" 
+                    strokeWidth={2}
+                    dot={{fill: 'rgb(var(--scb-honolulu-blue))'}}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="target" 
+                    stroke="rgb(var(--scb-american-green))" 
+                    strokeDasharray="5 5"
+                    dot={{fill: 'rgb(var(--scb-american-green))'}}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Pie Chart */}
-          <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
-              <h3 className="text-base font-normal">Revenue by Sector</h3>
+          <div className="fiori-tile">
+            <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
+              <h3 className="fiori-tile-title">Revenue by Sector</h3>
             </div>
             <div className="p-4">
               <ResponsiveContainer width="100%" height={300}>
@@ -156,7 +146,7 @@ export default function Dashboard() {
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    fill="#8884d8"
+                    fill="rgb(var(--scb-honolulu-blue))"
                     dataKey="value"
                     label={({ name, value }) => `${name}: ${value}%`}
                   >
@@ -164,7 +154,12 @@ export default function Dashboard() {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{
+                      borderColor: 'rgb(var(--scb-border))',
+                      backgroundColor: 'white'
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -172,22 +167,22 @@ export default function Dashboard() {
         </div>
 
         {/* News Section */}
-        <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
-            <h3 className="text-base font-normal">News from SAP Joule</h3>
+        <div className="fiori-tile">
+          <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
+            <h3 className="fiori-tile-title">News from SAP Joule</h3>
           </div>
           <div className="p-4">
             <div className="space-y-3">
               {newsItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-3 border-b border-[hsl(var(--border))] last:border-0">
+                <div key={item.id} className="flex items-center justify-between py-3 border-b border-[rgb(var(--scb-border))] last:border-0">
                   <div className="flex-1">
-                    <p className="text-sm font-normal">{item.title}</p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">{item.source}</p>
+                    <p className="text-sm font-normal text-[rgb(var(--scb-dark-gray))]">{item.title}</p>
+                    <p className="text-xs text-[rgba(var(--scb-dark-gray), 0.7)]">{item.source}</p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs text-[hsl(var(--muted-foreground))]">{item.date}</span>
+                    <span className="text-xs text-[rgba(var(--scb-dark-gray), 0.7)]">{item.date}</span>
                     {item.important && (
-                      <span className="px-2 py-1 bg-[hsla(var(--destructive),0.15)] text-[hsl(var(--destructive))] text-xs rounded">Important</span>
+                      <span className="horizon-chip horizon-chip-purple text-xs">Important</span>
                     )}
                   </div>
                 </div>
@@ -199,11 +194,11 @@ export default function Dashboard() {
         {/* News Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* CNBC News */}
-          <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
+          <div className="fiori-tile">
+            <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-[hsl(var(--destructive))]"></div>
-                <h3 className="text-base font-normal">Important CNBC News</h3>
+                <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-muted-red))]"></div>
+                <h3 className="fiori-tile-title">Important CNBC News</h3>
               </div>
             </div>
             <div className="p-4">
@@ -213,9 +208,9 @@ export default function Dashboard() {
                   'Impact tariff announcements on Asia markets',
                   'Bloomberg Green new regulations for APAC region',
                 ].map((item, index) => (
-                  <li key={index} className="flex items-start py-1 border-b border-[hsl(var(--border))] last:border-0">
-                    <span className="text-[hsl(var(--destructive))] mr-2">•</span>
-                    <span className="text-xs text-[hsl(var(--foreground))]">{item}</span>
+                  <li key={index} className="flex items-start py-1 border-b border-[rgb(var(--scb-border))] last:border-0">
+                    <span className="text-[rgb(var(--scb-muted-red))] mr-2">•</span>
+                    <span className="text-xs text-[rgb(var(--scb-dark-gray))]">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -223,11 +218,11 @@ export default function Dashboard() {
           </div>
 
           {/* Bloomberg Green */}
-          <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
+          <div className="fiori-tile">
+            <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-[hsl(var(--warning))]"></div>
-                <h3 className="text-base font-normal">Bloomberg Green</h3>
+                <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-american-green))]"></div>
+                <h3 className="fiori-tile-title">Bloomberg Green</h3>
               </div>
             </div>
             <div className="p-4">
@@ -237,9 +232,9 @@ export default function Dashboard() {
                   'Sustainability targets updated',
                   'Climate change impact assessment',
                 ].map((item, index) => (
-                  <li key={index} className="flex items-start py-1 border-b border-[hsl(var(--border))] last:border-0">
-                    <span className="text-[hsl(var(--warning))] mr-2">•</span>
-                    <span className="text-xs text-[hsl(var(--foreground))]">{item}</span>
+                  <li key={index} className="flex items-start py-1 border-b border-[rgb(var(--scb-border))] last:border-0">
+                    <span className="text-[rgb(var(--scb-american-green))] mr-2">•</span>
+                    <span className="text-xs text-[rgb(var(--scb-dark-gray))]">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -247,11 +242,11 @@ export default function Dashboard() {
           </div>
 
           {/* BNC Green */}
-          <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
+          <div className="fiori-tile">
+            <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-[hsl(var(--success))]"></div>
-                <h3 className="text-base font-normal">BNC Green</h3>
+                <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-american-green))]"></div>
+                <h3 className="fiori-tile-title">BNC Green</h3>
               </div>
             </div>
             <div className="p-4">
@@ -261,57 +256,16 @@ export default function Dashboard() {
                   'Environmental compliance update',
                   'Green finance opportunities',
                 ].map((item, index) => (
-                  <li key={index} className="flex items-start py-1 border-b border-[hsl(var(--border))] last:border-0">
-                    <span className="text-[hsl(var(--success))] mr-2">•</span>
-                    <span className="text-xs text-[hsl(var(--foreground))]">{item}</span>
+                  <li key={index} className="flex items-start py-1 border-b border-[rgb(var(--scb-border))] last:border-0">
+                    <span className="text-[rgb(var(--scb-american-green))] mr-2">•</span>
+                    <span className="text-xs text-[rgb(var(--scb-dark-gray))]">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
-          </div>
         </div>
       </div>
-
-      {/* Joule AI Assistant Panel - Full Height */}
-      {jouleOpen && (
-        <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out transform translate-x-0">
-          {/* Joule Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b" style={{ backgroundColor: '#cc00dc' }}>
-            <div className="flex items-center gap-3">
-              <div 
-                className="w-10 h-10 rounded-md flex items-center justify-center bg-[#cc00dc]" 
-              >
-                <span className="text-white font-bold text-lg">J</span>
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-white">Joule</h2>
-                <p className="text-sm text-white/80 flex items-center gap-2">
-                  Powered by 
-                  <Image
-                    src="/assets/idEDqS_YGr_1747680256633.svg"
-                    alt="SAP"
-                    width={32}
-                    height={16}
-                    className="inline-block brightness-0 invert"
-                  />
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setJouleOpen(false)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-white" />
-            </button>
-          </div>
-
-          {/* Joule Content */}
-          <div className="flex-1 overflow-hidden">
-            <JouleAssistantWrapper open={jouleOpen} onOpenChange={setJouleOpen} />
-          </div>
-        </div>
-      )}
-    </ModernLayout>
+    </ScbBeautifulUI>
   );
 }

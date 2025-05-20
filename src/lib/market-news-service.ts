@@ -1,25 +1,31 @@
 // Import API functions
 import { v4 as uuidv4 } from 'uuid';
+import perplexityRateLimiter from '@/services/PerplexityRateLimiter';
+import { NewsItem } from '@/types/perplexity';
 
 // Core API functions for news data
-export async function getMarketNews() {
+export async function getMarketNews(): Promise<NewsItem[]> {
+  const startTime = Date.now();
+  const endpoint = 'market-news';
+  let tokenUsage = 0;
+  
+  // Check rate limiter first
+  if (!perplexityRateLimiter.canMakeRequest()) {
+    const timeToWait = perplexityRateLimiter.getTimeToWaitMs();
+    if (timeToWait > 0) {
+      console.warn(`Rate limit reached for Perplexity API. Waiting ${timeToWait}ms before next request.`);
+      await new Promise(resolve => setTimeout(resolve, timeToWait));
+    }
+  }
+  
   try {
-    // Make real API request to Perplexity endpoint
-    const response = await fetch('https://api.perplexity.ai/search/news', {
-      method: 'POST',
+    // Use our proxy API route to avoid CORS issues
+    const response = await fetch('/api/market-news', {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_PERPLEXITY_KEY || 'pplx-key'}`
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        query: 'Latest financial and market news from Vietnam and Asia',
-        options: { 
-          recent: true,
-          region: 'wt-wt',
-          include_domains: ['bloomberg.com', 'ft.com', 'reuters.com', 'wsj.com'],
-          highlight: false
-        }
-      })
+      signal: AbortSignal.timeout(15000) // 15 second timeout
     });
     
     if (!response.ok) {
@@ -28,22 +34,39 @@ export async function getMarketNews() {
     
     const data = await response.json();
     
-    // Process and format the news data
-    return data.results.map((item: any, index: number) => ({
-      id: uuidv4(),
-      title: item.title,
-      summary: item.snippet,
-      category: determineCategory(item.title, item.snippet),
-      timestamp: new Date(item.published_date || Date.now()).toISOString(),
-      source: item.source,
-      url: item.url
-    }));
+    if (!data.articles) {
+      throw new Error('Invalid news data format: missing articles field');
+    }
+    
+    // Estimate token usage based on response size
+    // This is a rough estimate since we don't have actual token usage from the API
+    tokenUsage = Math.max(500, JSON.stringify(data).length / 4);
+    
+    // Record successful API call
+    perplexityRateLimiter.recordRequest({
+      endpoint,
+      tokens: Math.round(tokenUsage),
+      model: 'news-service',
+      startTime,
+      success: true
+    });
+    
+    // Return the articles directly as they're already in the right format
+    return data.articles;
   } catch (error) {
     console.error('Perplexity API error:', error);
     
+    // Record failed API call
+    perplexityRateLimiter.recordRequest({
+      endpoint,
+      tokens: 0,
+      model: 'news-service',
+      startTime,
+      success: false
+    });
+    
     // Generate news through alternative means
-    const dynamicNews = generateDynamicNews();
-    return dynamicNews;
+    return generateDynamicNews();
   }
 }
 
@@ -67,7 +90,7 @@ function determineCategory(title: string, summary: string) {
 }
 
 // Function to generate dynamic date-based news
-function generateDynamicNews() {
+function generateDynamicNews(): NewsItem[] {
   // Generate news dynamically based on current date
   const current = new Date();
   const today = current.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });

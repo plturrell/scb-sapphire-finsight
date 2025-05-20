@@ -1,48 +1,12 @@
 // Perplexity API for tariff data extraction
 import { v4 as uuidv4 } from 'uuid';
+import perplexityRateLimiter from '@/services/PerplexityRateLimiter';
+import { TariffDataResponse, PolicyReference, SourceReference, TariffEntry } from '@/types/perplexity';
 
-// Types for tariff data
-export interface TariffDataResponse {
-  query: string;
-  summary: string;
-  tariffs: TariffEntry[];
-  relatedPolicies: PolicyReference[];
-  sources: SourceReference[];
-  timestamp: string;
-}
-
-export interface TariffEntry {
-  hsCode: string;
-  description: string;
-  sourceCountry: string;
-  destinationCountry: string;
-  rate: number;
-  currency: string;
-  effectiveDate: string;
-  expirationDate?: string;
-  exemptions?: string[];
-  specialConditions?: string[];
-  confidence: number;
-}
-
-export interface PolicyReference {
-  name: string;
-  description: string;
-  countries: string[];
-  implementationDate: string;
-  url?: string;
-  relevance: number;
-}
-
-export interface SourceReference {
-  title: string;
-  url: string;
-  date: string;
-  reliability: number;
-}
+// Types for tariff data have been moved to /src/types/perplexity.ts
 
 // API configuration
-const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY || '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';
+const PERPLEXITY_API_KEY = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 // API models
@@ -72,6 +36,18 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
 
   let retries = 0;
   let lastError: Error | null = null;
+  const startTime = Date.now();
+  const endpoint = 'perplexity-proxy';
+  let tokenUsage = 0;
+
+  // Check if we can make a request based on rate limits
+  if (!perplexityRateLimiter.canMakeRequest()) {
+    const timeToWait = perplexityRateLimiter.getTimeToWaitMs();
+    if (timeToWait > 0) {
+      console.warn(`Rate limit reached for Perplexity API. Waiting ${timeToWait}ms before next request.`);
+      await new Promise(resolve => setTimeout(resolve, timeToWait));
+    }
+  }
 
   while (retries <= MAX_RETRIES) {
     try {
@@ -82,7 +58,9 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(request)
+        body: JSON.stringify(request),
+        // Add error handling for network issues
+        signal: AbortSignal.timeout(10000) // 10 second timeout
       });
 
       if (!response.ok) {
@@ -100,6 +78,20 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
       }
 
       const data = await response.json();
+      // Estimate token usage based on response
+      tokenUsage = data.usage?.total_tokens || 
+        // If usage is not available, estimate based on input/output length
+        (JSON.stringify(messages).length / 4) + (data.choices[0]?.message?.content?.length || 0) / 4;
+
+      // Record successful API call in rate limiter
+      perplexityRateLimiter.recordRequest({
+        endpoint,
+        tokens: Math.round(tokenUsage),
+        model: request.model,
+        startTime,
+        success: true
+      });
+
       return data.choices[0]?.message?.content || '';
     } catch (error) {
       lastError = error as Error;
@@ -110,6 +102,14 @@ async function callPerplexityAPI(messages: Array<{role: string, content: string}
         request.model = fallbackModel;
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       } else {
+        // Record failed API call
+        perplexityRateLimiter.recordRequest({
+          endpoint,
+          tokens: 0, // We don't know how many tokens were used in failed request
+          model: request.model,
+          startTime,
+          success: false
+        });
         break;
       }
     }

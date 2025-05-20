@@ -270,3 +270,35 @@ export const generateUUID = (): UUID => {
 export const getCurrentTimestamp = (): Timestamp => {
   return Date.now();
 };
+
+// Utility function to convert to simulation parameter
+export const toSimulationParameter = (config: any): SimulationParameter => {
+  return {
+    id: config.id || generateUUID(),
+    name: config.name || 'Parameter',
+    value: config.value || 0,
+    minValue: config.minValue,
+    maxValue: config.maxValue,
+    distributionType: config.distributionType || 'Normal',
+    parameterType: config.parameterType || 'Numeric',
+    unit: config.unit,
+    description: config.description,
+    constraints: config.constraints
+  };
+};
+
+// Utility function to convert to component parameter
+export const toComponentParameter = (param: SimulationParameter): any => {
+  return {
+    id: param.id,
+    name: param.name,
+    value: param.value,
+    minValue: param.minValue || 0,
+    maxValue: param.maxValue || 100,
+    distributionType: param.distributionType,
+    parameterType: param.parameterType,
+    unit: param.unit || '',
+    description: param.description || '',
+    constraints: param.constraints || {}
+  };
+};
