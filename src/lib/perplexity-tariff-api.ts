@@ -13,7 +13,7 @@ const MODELS = {
   SMALL: 'mistral-7b-instruct',
   MEDIUM: 'mixtral-8x7b-instruct',
   LARGE: 'llama-2-70b-chat',
-  DEFAULT: 'sonar-small-chat'
+  DEFAULT: 'sonar'
 };
 
 // Retry configuration

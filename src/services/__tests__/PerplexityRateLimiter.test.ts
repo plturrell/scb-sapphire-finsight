@@ -44,7 +44,7 @@ describe('PerplexityRateLimiter', () => {
     perplexityRateLimiter.recordRequest({
       endpoint: 'chat/completions',
       tokens: 100,
-      model: 'sonar-small-chat',
+      model: 'sonar',
       startTime: 500,
       success: true
     });

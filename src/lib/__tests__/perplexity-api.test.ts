@@ -20,7 +20,7 @@ describe('Perplexity API', () => {
       ok: true,
       json: async () => ({
         id: 'mock-id',
-        model: 'sonar-small-chat',
+        model: 'sonar',
         object: 'chat.completion',
         created: Date.now(),
         choices: [
@@ -69,7 +69,7 @@ describe('Perplexity API', () => {
       
       // Check the request body
       const requestBody = JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body);
-      expect(requestBody.model).toBe('sonar-small-chat');
+      expect(requestBody.model).toBe('sonar');
       expect(requestBody.messages).toContainEqual(
         expect.objectContaining({
           role: 'user',
