@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "mkdir -p out && node scripts/create-static-deployment.js",
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
   "framework": "nextjs",
   "outputDirectory": "out",
