@@ -1,0 +1,166 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix scb: <http://standardchartered.com/ontology/> .
+@prefix finance: <http://standardchartered.com/ontology/finance/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# Finance Ontology for SCB Sapphire
+# Core concepts for financial data representation
+
+# ---- Classes ----
+
+finance:FinancialInstrument a owl:Class ;
+    rdfs:label "Financial Instrument"@en ;
+    rdfs:comment "A tradable asset of any kind; either cash, evidence of ownership, or a contractual right to receive or deliver cash."@en .
+
+finance:Portfolio a owl:Class ;
+    rdfs:label "Portfolio"@en ;
+    rdfs:comment "A collection of financial investments like stocks, bonds, commodities, cash, and cash equivalents."@en .
+
+finance:Asset a owl:Class ;
+    rdfs:subClassOf finance:FinancialInstrument ;
+    rdfs:label "Asset"@en ;
+    rdfs:comment "Any resource owned or controlled with the expectation that it will yield future benefits."@en .
+
+finance:Equity a owl:Class ;
+    rdfs:subClassOf finance:Asset ;
+    rdfs:label "Equity"@en ;
+    rdfs:comment "Ownership interest in a company, represented as stock."@en .
+
+finance:FixedIncome a owl:Class ;
+    rdfs:subClassOf finance:Asset ;
+    rdfs:label "Fixed Income"@en ;
+    rdfs:comment "Investment providing a fixed return, such as a bond."@en .
+
+finance:Alternative a owl:Class ;
+    rdfs:subClassOf finance:Asset ;
+    rdfs:label "Alternative Investment"@en ;
+    rdfs:comment "Non-traditional assets, including real estate, commodities, hedge funds, etc."@en .
+
+finance:Cash a owl:Class ;
+    rdfs:subClassOf finance:Asset ;
+    rdfs:label "Cash"@en ;
+    rdfs:comment "Cash and cash equivalents."@en .
+
+finance:Transaction a owl:Class ;
+    rdfs:label "Transaction"@en ;
+    rdfs:comment "A financial transaction representing buying, selling, or transferring assets."@en .
+
+finance:MarketData a owl:Class ;
+    rdfs:label "Market Data"@en ;
+    rdfs:comment "Data related to market conditions, including prices, rates, and indicators."@en .
+
+finance:PerformanceMetric a owl:Class ;
+    rdfs:label "Performance Metric"@en ;
+    rdfs:comment "Metrics used to measure financial performance."@en .
+
+finance:SimulationResult a owl:Class ;
+    rdfs:label "Simulation Result"@en ;
+    rdfs:comment "Results from financial simulations like Monte Carlo."@en .
+
+finance:Sector a owl:Class ;
+    rdfs:label "Sector"@en ;
+    rdfs:comment "A segment of the economy used for categorizing companies."@en .
+
+# ---- Properties ----
+
+finance:hasAsset a owl:ObjectProperty ;
+    rdfs:domain finance:Portfolio ;
+    rdfs:range finance:Asset ;
+    rdfs:label "has asset"@en .
+
+finance:hasValue a owl:DatatypeProperty ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has value"@en .
+
+finance:hasCurrency a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has currency"@en .
+
+finance:hasAllocation a owl:DatatypeProperty ;
+    rdfs:domain finance:Asset ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has allocation"@en ;
+    rdfs:comment "The percentage allocation of an asset in a portfolio."@en .
+
+finance:hasTimestamp a owl:DatatypeProperty ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "has timestamp"@en .
+
+finance:inSector a owl:ObjectProperty ;
+    rdfs:domain finance:Equity ;
+    rdfs:range finance:Sector ;
+    rdfs:label "in sector"@en .
+
+finance:hasPerformance a owl:ObjectProperty ;
+    rdfs:range finance:PerformanceMetric ;
+    rdfs:label "has performance"@en .
+
+finance:hasReturn a owl:DatatypeProperty ;
+    rdfs:subPropertyOf finance:hasPerformance ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has return"@en .
+
+finance:hasYield a owl:DatatypeProperty ;
+    rdfs:subPropertyOf finance:hasPerformance ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has yield"@en .
+
+finance:hasVolatility a owl:DatatypeProperty ;
+    rdfs:subPropertyOf finance:hasPerformance ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has volatility"@en .
+
+finance:hasSharpeRatio a owl:DatatypeProperty ;
+    rdfs:subPropertyOf finance:hasPerformance ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has Sharpe ratio"@en .
+
+finance:hasConfidenceInterval a owl:DatatypeProperty ;
+    rdfs:domain finance:SimulationResult ;
+    rdfs:range xsd:string ;
+    rdfs:label "has confidence interval"@en .
+
+finance:hasExpectedReturn a owl:DatatypeProperty ;
+    rdfs:domain finance:SimulationResult ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has expected return"@en .
+
+finance:hasRiskScore a owl:DatatypeProperty ;
+    rdfs:domain finance:SimulationResult ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has risk score"@en .
+
+# ---- Sector Instances ----
+
+finance:sector-diversified a finance:Sector ;
+    rdfs:label "Diversified"@en .
+
+finance:sector-telecom a finance:Sector ;
+    rdfs:label "Telecom"@en .
+
+finance:sector-automotive a finance:Sector ;
+    rdfs:label "Automotive"@en .
+
+finance:sector-real-estate a finance:Sector ;
+    rdfs:label "Real Estate"@en .
+
+finance:sector-aluminum a finance:Sector ;
+    rdfs:label "Aluminum"@en .
+
+finance:sector-cement a finance:Sector ;
+    rdfs:label "Cement"@en .
+
+finance:sector-chemical a finance:Sector ;
+    rdfs:label "Chemical"@en .
+
+finance:sector-gems a finance:Sector ;
+    rdfs:label "Gems"@en .
+
+finance:sector-construction a finance:Sector ;
+    rdfs:label "Construction"@en .
+
+finance:sector-others a finance:Sector ;
+    rdfs:label "Others"@en .

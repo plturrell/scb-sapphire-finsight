@@ -53,6 +53,7 @@ export default function FinancialSimulation() {
       haptics.medium();
     }
     
+    // Real functionality - navigate to detailed analysis page with query parameters
     router.push({
       pathname: '/financial-simulation/detailed-analysis',
       query: { 

@@ -1,0 +1,190 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix scb: <http://standardchartered.com/ontology/> .
+@prefix company: <http://standardchartered.com/ontology/company/> .
+@prefix finance: <http://standardchartered.com/ontology/finance/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+
+# Company Ontology for SCB Sapphire
+# Core concepts for company and market data representation
+
+# ---- Classes ----
+
+company:Company a owl:Class ;
+    rdfs:label "Company"@en ;
+    rdfs:comment "A legal entity engaged in business."@en .
+
+company:PublicCompany a owl:Class ;
+    rdfs:subClassOf company:Company ;
+    rdfs:label "Public Company"@en ;
+    rdfs:comment "A company that has issued securities through an initial public offering (IPO) and is traded on at least one stock exchange."@en .
+
+company:PrivateCompany a owl:Class ;
+    rdfs:subClassOf company:Company ;
+    rdfs:label "Private Company"@en ;
+    rdfs:comment "A company that is not publicly traded and is privately owned."@en .
+
+company:Executive a owl:Class ;
+    rdfs:label "Executive"@en ;
+    rdfs:comment "A person who holds a senior management position within a company."@en .
+
+company:Industry a owl:Class ;
+    rdfs:label "Industry"@en ;
+    rdfs:comment "A category of companies that are related based on their primary business activities."@en .
+
+company:FinancialStatement a owl:Class ;
+    rdfs:label "Financial Statement"@en ;
+    rdfs:comment "A formal record of the financial activities and position of a company."@en .
+
+company:IncomeStatement a owl:Class ;
+    rdfs:subClassOf company:FinancialStatement ;
+    rdfs:label "Income Statement"@en ;
+    rdfs:comment "A financial statement that shows a company's revenues and expenses during a particular period."@en .
+
+company:BalanceSheet a owl:Class ;
+    rdfs:subClassOf company:FinancialStatement ;
+    rdfs:label "Balance Sheet"@en ;
+    rdfs:comment "A financial statement that reports a company's assets, liabilities, and shareholders' equity at a specific point in time."@en .
+
+company:CashFlowStatement a owl:Class ;
+    rdfs:subClassOf company:FinancialStatement ;
+    rdfs:label "Cash Flow Statement"@en ;
+    rdfs:comment "A financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents."@en .
+
+company:FinancialMetric a owl:Class ;
+    rdfs:label "Financial Metric"@en ;
+    rdfs:comment "A quantifiable measure used to evaluate the financial performance of a company."@en .
+
+company:Country a owl:Class ;
+    rdfs:label "Country"@en ;
+    rdfs:comment "A nation with its own government, occupying a particular territory."@en .
+
+# ---- Properties ----
+
+company:hasName a owl:DatatypeProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range xsd:string ;
+    rdfs:label "has name"@en .
+
+company:hasSymbol a owl:DatatypeProperty ;
+    rdfs:domain company:PublicCompany ;
+    rdfs:range xsd:string ;
+    rdfs:label "has symbol"@en ;
+    rdfs:comment "The ticker symbol under which the company is listed on a stock exchange."@en .
+
+company:hasIndustry a owl:ObjectProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range company:Industry ;
+    rdfs:label "has industry"@en .
+
+company:hasSector a owl:ObjectProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range finance:Sector ;
+    rdfs:label "has sector"@en .
+
+company:headquarteredIn a owl:ObjectProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range company:Country ;
+    rdfs:label "headquartered in"@en .
+
+company:hasExecutive a owl:ObjectProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range company:Executive ;
+    rdfs:label "has executive"@en .
+
+company:hasFinancialStatement a owl:ObjectProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range company:FinancialStatement ;
+    rdfs:label "has financial statement"@en .
+
+company:hasMarketCap a owl:DatatypeProperty ;
+    rdfs:domain company:PublicCompany ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has market cap"@en .
+
+company:hasRevenue a owl:DatatypeProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has revenue"@en .
+
+company:hasProfit a owl:DatatypeProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has profit"@en .
+
+company:hasAssets a owl:DatatypeProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has assets"@en .
+
+company:hasLiabilities a owl:DatatypeProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has liabilities"@en .
+
+company:hasEmployeeCount a owl:DatatypeProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has employee count"@en .
+
+company:hasFoundingDate a owl:DatatypeProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range xsd:date ;
+    rdfs:label "has founding date"@en .
+
+company:hasMetric a owl:ObjectProperty ;
+    rdfs:domain company:Company ;
+    rdfs:range company:FinancialMetric ;
+    rdfs:label "has metric"@en .
+
+# ---- Example Industry Instances ----
+
+company:industry-technology a company:Industry ;
+    rdfs:label "Technology"@en .
+
+company:industry-finance a company:Industry ;
+    rdfs:label "Finance"@en .
+
+company:industry-healthcare a company:Industry ;
+    rdfs:label "Healthcare"@en .
+
+company:industry-energy a company:Industry ;
+    rdfs:label "Energy"@en .
+
+company:industry-manufacturing a company:Industry ;
+    rdfs:label "Manufacturing"@en .
+
+company:industry-retail a company:Industry ;
+    rdfs:label "Retail"@en .
+
+company:industry-telecommunications a company:Industry ;
+    rdfs:label "Telecommunications"@en .
+
+# ---- Example Country Instances ----
+
+company:country-vietnam a company:Country ;
+    rdfs:label "Vietnam"@en ;
+    geo:lat "14.0583"^^xsd:decimal ;
+    geo:long "108.2772"^^xsd:decimal .
+
+company:country-us a company:Country ;
+    rdfs:label "United States"@en ;
+    geo:lat "37.0902"^^xsd:decimal ;
+    geo:long "-95.7129"^^xsd:decimal .
+
+company:country-uk a company:Country ;
+    rdfs:label "United Kingdom"@en ;
+    geo:lat "55.3781"^^xsd:decimal ;
+    geo:long "-3.4360"^^xsd:decimal .
+
+company:country-singapore a company:Country ;
+    rdfs:label "Singapore"@en ;
+    geo:lat "1.3521"^^xsd:decimal ;
+    geo:long "103.8198"^^xsd:decimal .
+
+company:country-hongkong a company:Country ;
+    rdfs:label "Hong Kong"@en ;
+    geo:lat "22.3193"^^xsd:decimal ;
+    geo:long "114.1694"^^xsd:decimal .

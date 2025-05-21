@@ -9,7 +9,7 @@ import useMultiTasking from '../hooks/useMultiTasking';
 import useSafeArea from '../hooks/useSafeArea';
 import { haptics } from '../lib/haptics';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
-import { Briefcase, LayoutDashboard, FileText, Settings, AlertCircle } from '@/components/ui/icons';
+import { Briefcase, LayoutDashboard, FileText, Settings, AlertCircle } from 'lucide-react';
 
 interface ScbBeautifulUIProps {
   children: React.ReactNode;

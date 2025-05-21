@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import MobileNavigation from '@/components/MobileNavigation';
-import { LayoutDashboard, BarChart, Briefcase, FileText, Settings, AlertCircle } from '@/components/ui/icons';
+import { LayoutDashboard, BarChart, Briefcase, FileText, Settings, AlertCircle } from 'lucide-react';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useSafeArea } from '@/hooks/useSafeArea';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
