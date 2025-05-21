@@ -14,7 +14,7 @@ import { TransactionSector } from '@/types';
 import { useMediaQuery } from 'react-responsive';
 import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import { ICONS } from '@/components/IconSystem';
-import { ArrowRight, Download, Filter, RefreshCw, LayoutDashboard, FileText, Settings, AlertCircle } from '@/components/IconExports';
+import { ArrowRight, Download, Filter, RefreshCw, LayoutDashboard, FileText, Settings, AlertCircle, Zap } from '@/components/IconExports';
 import {
   BarChart,
   Bar,

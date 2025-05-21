@@ -831,24 +831,92 @@ export default function Portfolio() {
 
   // Render buttons based on platform
   const renderButtons = () => {
-    if (isAppleDevice && isPlatformDetected) {
+    const actionCards = [
+      { 
+        id: 'personal-data', 
+        title: 'Personal Data Collection', 
+        desc: 'Provide personal details for company records', 
+        bgColor: 'bg-yellow-50 dark:bg-yellow-900/10',
+        icon: 'person.badge.plus',
+        iconColor: '#FF9F0A'
+      },
+      { 
+        id: 'compliance-data', 
+        title: 'Compliance Data Collection', 
+        desc: 'Complete mandatory compliance questionnaire', 
+        bgColor: 'bg-blue-50 dark:bg-blue-900/10',
+        icon: 'checkmark.shield',
+        iconColor: '#007AFF'
+      },
+      { 
+        id: 'profile-update', 
+        title: 'Update Profile', 
+        desc: 'Update your professional and contact details', 
+        bgColor: 'bg-green-50 dark:bg-green-900/10',
+        icon: 'pencil.and.outline',
+        iconColor: '#34C759'
+      }
+    ];
+    
+    if (isApplePlatform && isPlatformDetected) {
       return (
         <div className="space-y-4">
-          {[
-            { title: 'Personal Data Collection', desc: 'Provide personal details for company records', bgColor: 'bg-yellow-50 dark:bg-yellow-900/10' },
-            { title: 'Compliance Data Collection', desc: 'Complete mandatory compliance questionnaire', bgColor: 'bg-blue-50 dark:bg-blue-900/10' },
-            { title: 'Update Profile', desc: 'Update your professional and contact details', bgColor: 'bg-green-50 dark:bg-green-900/10' }
-          ].map((item, idx) => (
-            <div key={idx} className={`flex items-center justify-between p-4 ${item.bgColor} rounded-lg`}>
-              <div>
-                <p className="font-medium text-gray-900 dark:text-white">{item.title}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{item.desc}</p>
+          {actionCards.map((item, idx) => (
+            <div 
+              key={idx} 
+              className={`flex items-center justify-between p-4 ${item.bgColor} rounded-lg shadow-sm transition-all ${
+                isSwiping && swipeTarget === item.id
+                  ? 'transform translate-x-20'
+                  : ''
+              }`}
+              data-swipe-id={item.id}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              style={{
+                transitionProperty: 'transform',
+                transitionDuration: `${springPreset.duration}ms`,
+                transitionTimingFunction: 'cubic-bezier(0.25, 0.1, 0.25, 1.0)'
+              }}
+            >
+              <div className="flex items-start space-x-3">
+                {sfSymbolsSupported && (
+                  <span 
+                    className="sf-symbol text-xl flex-shrink-0 mt-0.5" 
+                    role="img"
+                    style={{ color: item.iconColor }}
+                  >
+                    {item.icon}
+                  </span>
+                )}
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">{item.title}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{item.desc}</p>
+                </div>
               </div>
               <EnhancedTouchButton
                 variant="primary"
-                label="Start"
-                onClick={handleButtonClick}
-              />
+                size={isIPad ? "md" : "sm"}
+                onClick={() => {
+                  handleButtonClick();
+                  haptics.medium();
+                }}
+              >
+                Start
+              </EnhancedTouchButton>
+              
+              {/* iOS Swipe Action Indicators - Hidden by default */}
+              <div 
+                className="absolute right-0 top-0 bottom-0 flex items-center justify-center bg-red-500 rounded-r-lg text-white overflow-hidden"
+                style={{
+                  width: isSwiping && swipeTarget === item.id ? `${touchSwipeDistance * 0.7}px` : '0',
+                  opacity: isSwiping && swipeTarget === item.id ? (touchSwipeDistance > 50 ? 1 : touchSwipeDistance / 50) : 0,
+                  transition: 'opacity 150ms ease-out',
+                  maxWidth: '100px'
+                }}
+              >
+                <span className="sf-symbol text-white text-lg px-4">trash</span>
+              </div>
             </div>
           ))}
         </div>
@@ -857,33 +925,143 @@ export default function Portfolio() {
     
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
-          <div>
-            <p className="font-medium text-gray-900">Personal Data Collection</p>
-            <p className="text-sm text-gray-600">Provide personal details for company records</p>
+        {actionCards.map((item, idx) => (
+          <div key={idx} className={`flex items-center justify-between p-4 ${item.bgColor} rounded-lg`}>
+            <div>
+              <p className="font-medium text-gray-900">{item.title}</p>
+              <p className="text-sm text-gray-600">{item.desc}</p>
+            </div>
+            <button className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg hover:opacity-90 transition-opacity fiori-btn fiori-btn-primary">
+              Start
+            </button>
           </div>
-          <button className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg hover:opacity-90 transition-opacity fiori-btn fiori-btn-primary">
-            Start
-          </button>
-        </div>
-        <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-          <div>
-            <p className="font-medium text-gray-900">Compliance Data Collection</p>
-            <p className="text-sm text-gray-600">Complete mandatory compliance questionnaire</p>
+        ))}
+      </div>
+    );
+  };
+
+    // iOS-style data point detail modal
+  const renderDataDetailModal = () => {
+    if (!showDetailModal || !selectedDataPoint) return null;
+    
+    const region = selectedDataPoint.region;
+    const planned = selectedDataPoint.planned;
+    const actual = selectedDataPoint.actual;
+    const difference = actual - planned;
+    const percentDifference = ((actual - planned) / planned) * 100;
+    
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 animate-in fade-in"
+        onClick={handleCloseDetailModal}
+        style={{
+          backdropFilter: 'blur(3px)',
+          WebkitBackdropFilter: 'blur(3px)'
+        }}
+      >
+        <div 
+          className={`w-full max-w-lg mx-auto rounded-t-xl overflow-hidden pb-8 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+          style={{
+            transform: 'translateY(0)',
+            animation: 'slide-in-up 350ms cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+            boxShadow: '0 -2px 20px rgba(0,0,0,0.2)',
+            paddingBottom: hasHomeIndicator ? `calc(2rem + ${safeAreaCss.bottom})` : '2rem'
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Handle bar for dragging */}
+          <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3" />
+          
+          {/* Header */}
+          <div className="px-5 pt-4 pb-6 border-b border-gray-200 dark:border-gray-800">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {region} Performance
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Planned vs. Actual Metrics
+            </p>
           </div>
-          <button className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg hover:opacity-90 transition-opacity fiori-btn fiori-btn-primary">
-            Start
-          </button>
-        </div>
-        <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-          <div>
-            <p className="font-medium text-gray-900">Update Profile</p>
-            <p className="text-sm text-gray-600">Update your professional and contact details</p>
+          
+          {/* Content */}
+          <div className="px-5 py-4">
+            {/* Metrics */}
+            <div className="grid grid-cols-2 gap-5 mb-6">
+              <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-800/20' : 'bg-blue-50'}`}>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Planned</p>
+                <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">{planned}%</p>
+              </div>
+              <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-green-800/20' : 'bg-green-50'}`}>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Actual</p>
+                <p className="text-2xl font-semibold text-green-600 dark:text-green-400">{actual}%</p>
+              </div>
+            </div>
+            
+            {/* Details */}
+            <div className={`p-4 rounded-lg mb-5 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Difference</span>
+                <span className={`text-sm font-medium ${difference >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {difference >= 0 ? '+' : ''}{difference}%
+                </span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">% Change</span>
+                <span className={`text-sm font-medium ${percentDifference >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {percentDifference >= 0 ? '+' : ''}{percentDifference.toFixed(1)}%
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Status</span>
+                <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${
+                  actual >= planned 
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' 
+                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                }`}>
+                  {actual >= planned ? 'On Target' : 'Below Target'}
+                </span>
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className="space-y-3">
+              <button 
+                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${isDarkMode ? 'bg-blue-600' : 'bg-blue-600'}`}
+                onClick={() => {
+                  haptics.medium();
+                  handleCloseDetailModal();
+                }}
+              >
+                <span className="sf-symbol text-white">chart.xyaxis.line</span>
+                <span>View Detailed Analysis</span>
+              </button>
+              <button 
+                className={`w-full px-4 py-3 rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode 
+                    ? 'bg-gray-800 text-white border border-gray-700'
+                    : 'bg-white text-gray-800 border border-gray-300'
+                }`}
+                onClick={() => {
+                  haptics.light();
+                  handleCloseDetailModal();
+                }}
+              >
+                <span className="sf-symbol">xmark</span>
+                <span>Close</span>
+              </button>
+            </div>
           </div>
-          <button className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg hover:opacity-90 transition-opacity fiori-btn fiori-btn-primary">
-            Start
-          </button>
         </div>
+      </div>
+    );
+  };
+  
+  // iOS-style pull-to-refresh indicator
+  const renderRefreshIndicator = () => {
+    if (!refreshing || !isApplePlatform) return null;
+    
+    return (
+      <div className="fixed top-0 left-0 right-0 flex justify-center pt-4 z-40 pointer-events-none">
+        <div className="h-8 w-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
       </div>
     );
   };
@@ -900,10 +1078,16 @@ export default function Portfolio() {
           tabItems={tabItems}
           navBarRightActions={navBarActions}
           showBackButton={true}
-          largeTitle={true}
+          largeTitle={!navbarHidden}
           theme={isDarkMode ? 'dark' : 'light'}
         >
-          <div className="space-y-6">
+          <div 
+            ref={contentRef}
+            className="space-y-6" 
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div>
               <p className={`scb-data-label ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'} mt-1`}>
                 Sofia - Transaction Banking CFO
@@ -967,6 +1151,37 @@ export default function Portfolio() {
               {renderButtons()}
             </div>
           </div>
+          
+          {/* iOS Pull-to-refresh indicator */}
+          {renderRefreshIndicator()}
+          
+          {/* iOS Modal for detailed data view */}
+          {renderDataDetailModal()}
+          
+          {/* Dynamic floating tasks reminder (iPhone only) */}
+          {isIPhone && (
+            <div 
+              className={`fixed bottom-20 right-4 px-4 py-3 rounded-full shadow-lg flex items-center space-x-2 transition-all duration-300 ${
+                isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+              } ${navbarHidden ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-10 pointer-events-none'}`}
+              style={{
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                zIndex: 30
+              }}
+              onClick={() => {
+                haptics.medium();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setNavbarHidden(false);
+              }}
+            >
+              <span className="sf-symbol text-blue-500">list.bullet.clipboard</span>
+              <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Tasks</span>
+              <span className="w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                3
+              </span>
+            </div>
+          )}
         </IOSOptimizedLayout>
       ) : (
         <ScbBeautifulUI showNewsBar={!isSmallScreen} pageTitle="Asia Portfolio" showTabs={false}>

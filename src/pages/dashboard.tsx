@@ -223,43 +223,41 @@ const Dashboard: React.FC = () => {
     setUserRole(newRole);
   };
 
-  // Financial metrics - would come from API in real implementation
-  const financialMetrics = {
-    totalAssets: {
-      value: '2,456,789',
-      percentChange: 3.2,
-      target: 2500000,
-      previous: 2380000
-    },
-    portfolioPerformance: {
-      value: '8.7',
-      percentChange: 1.2,
-      target: 7.5,
-      previous: 7.6
-    },
-    riskScore: {
-      value: '64',
-      percentChange: -3.1,
-      target: 60,
-      previous: 66
-    }
-  };
+  // Format financial metrics from real data
+  const financialMetrics = useMemo(() => {
+    return data ? DashboardService.formatFinancialMetrics(data) : {
+      totalAssets: {
+        value: '-',
+        percentChange: 0,
+        target: 0,
+        previous: 0
+      },
+      portfolioPerformance: {
+        value: '-',
+        percentChange: 0,
+        target: 0,
+        previous: 0
+      },
+      riskScore: {
+        value: '-',
+        percentChange: 0,
+        target: 0,
+        previous: 0
+      }
+    };
+  }, [data]);
 
-  // Asset allocation data for the pie chart - enhanced with AI indicators
-  const allocationData = [
-    { name: 'Equities', value: 0.51, color: '#0072AA', aiEnhanced: true, confidence: 0.92 },
-    { name: 'Fixed Income', value: 0.31, color: '#21AA47', aiEnhanced: false },
-    { name: 'Real Estate', value: 0.10, color: '#78ADD2', aiEnhanced: true, confidence: 0.85 },
-    { name: 'Alternatives', value: 0.08, color: '#A4D0A0', aiEnhanced: false }
-  ];
+  // Get asset allocation data from real data
+  const allocationData = useMemo(() => {
+    if (!data) return [];
+    return DashboardService.getAssetAllocationData(data.assets.breakdown);
+  }, [data]);
 
-  // Sample table data
-  const assetData = [
-    { id: 1, name: 'Equities', value: 1245600, allocation: 0.51, change: 0.042 },
-    { id: 2, name: 'Fixed Income', value: 756400, allocation: 0.31, change: 0.016 },
-    { id: 3, name: 'Real Estate', value: 245000, allocation: 0.10, change: -0.023 },
-    { id: 4, name: 'Alternatives', value: 196000, allocation: 0.08, change: 0.067 }
-  ];
+  // Get asset data from real data
+  const assetData = useMemo(() => {
+    if (!data) return [];
+    return data.assets.breakdown;
+  }, [data]);
 
   const tableColumns: TableColumn[] = [
     { header: 'Asset Class', accessor: 'name', type: 'text' },
@@ -590,15 +588,27 @@ const Dashboard: React.FC = () => {
                       <div className="flex justify-between w-full text-center text-xs">
                         <div className="flex flex-col items-center">
                           <span className="text-[rgb(var(--scb-muted-red))] font-medium">Worst Case</span>
-                          <span className="scb-metric-tertiary text-[rgb(var(--scb-muted-red))]">-2.1%</span>
+                          <span className="scb-metric-tertiary text-[rgb(var(--scb-muted-red))]">
+                            {data?.risk?.monteCarloResults?.worstCase 
+                              ? `${data.risk.monteCarloResults.worstCase > 0 ? '+' : ''}${data.risk.monteCarloResults.worstCase.toFixed(1)}%` 
+                              : '-2.1%'}
+                          </span>
                         </div>
                         <div className="flex flex-col items-center">
                           <span className="text-[rgb(var(--scb-honolulu-blue))] font-medium">Expected</span>
-                          <span className="scb-metric-tertiary text-[rgb(var(--scb-honolulu-blue))]">+6.4%</span>
+                          <span className="scb-metric-tertiary text-[rgb(var(--scb-honolulu-blue))]">
+                            {data?.risk?.monteCarloResults?.expected 
+                              ? `+${data.risk.monteCarloResults.expected.toFixed(1)}%` 
+                              : '+6.4%'}
+                          </span>
                         </div>
                         <div className="flex flex-col items-center">
                           <span className="text-[rgb(var(--scb-american-green))] font-medium">Best Case</span>
-                          <span className="scb-metric-tertiary text-[rgb(var(--scb-american-green))]">+11.2%</span>
+                          <span className="scb-metric-tertiary text-[rgb(var(--scb-american-green))]">
+                            {data?.risk?.monteCarloResults?.bestCase 
+                              ? `+${data.risk.monteCarloResults.bestCase.toFixed(1)}%` 
+                              : '+11.2%'}
+                          </span>
                         </div>
                       </div>
                     </div>

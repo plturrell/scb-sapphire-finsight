@@ -749,33 +749,40 @@ const TariffScannerPage: NextPage = () => {
               </div>
             )}
             
-            {/* Tabs */}
-            <div className={`border-b border-[rgb(var(--scb-border))]`}>
-              <div className="flex space-x-6">
-                <button
-                  className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
-                    selectedTab === 'general' 
-                      ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
-                      : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
-                  }`}
-                  onClick={() => handleTabChange('general')}
-                >
-                  <Folder size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
-                  <span>ASEAN Tariff Scanner</span>
-                </button>
-                <button
-                  className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
-                    selectedTab === 'vietnam' 
-                      ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
-                      : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
-                  }`}
-                  onClick={() => handleTabChange('vietnam')}
-                >
-                  <Map size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
-                  <span>Vietnam Focus</span>
-                </button>
+            {/* SF Symbols Tariff Scanner Navigation for Apple devices */}
+            {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+              <SFSymbolsTariffScannerNavigation />
+            )}
+            
+            {/* Traditional Tabs for non-Apple devices or when SF Symbols not supported */}
+            {(!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) && (
+              <div className={`border-b border-[rgb(var(--scb-border))]`}>
+                <div className="flex space-x-6">
+                  <button
+                    className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                      selectedTab === 'general' 
+                        ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                        : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                    }`}
+                    onClick={() => handleTabChange('general')}
+                  >
+                    <Folder size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
+                    <span>ASEAN Tariff Scanner</span>
+                  </button>
+                  <button
+                    className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                      selectedTab === 'vietnam' 
+                        ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                        : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                    }`}
+                    onClick={() => handleTabChange('vietnam')}
+                  >
+                    <Map size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
+                    <span>Vietnam Focus</span>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
             
             {/* Tab Panels */}
             <div className="mt-6">
