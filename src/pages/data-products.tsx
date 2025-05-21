@@ -325,6 +325,11 @@ const DataProductsPage: React.FC = () => {
               </div>
             </div>
             
+            {/* SF Symbols Data Products Categories Navigation */}
+            {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+              <SFSymbolsDataProductsNavigation />
+            )}
+            
             {/* Search and Filter */}
             <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} shadow-sm rounded-lg p-4 border`}>
               <div className={`flex ${isMultiTasking && mode === 'slide-over' ? 'flex-col gap-3' : 'flex-col md:flex-row gap-4'}`}>
@@ -345,19 +350,22 @@ const DataProductsPage: React.FC = () => {
                   />
                 </div>
                 
-                <div className={`flex gap-2 overflow-x-auto ${isMultiTasking && mode === 'slide-over' ? 'pb-0.5' : 'pb-1'}`}>
-                  {categories.map(category => (
-                    <EnhancedTouchButton
-                      key={category}
-                      onClick={() => handleCategorySelect(category)}
-                      variant={(category === 'All' && !selectedCategory) || category === selectedCategory ? 'primary' : isDarkMode ? 'dark' : 'secondary'}
-                      size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
-                      className="whitespace-nowrap"
-                    >
-                      {category}
-                    </EnhancedTouchButton>
-                  ))}
-                </div>
+                {/* Only show these buttons if SF Symbols navigation isn't available */}
+                {(!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) && (
+                  <div className={`flex gap-2 overflow-x-auto ${isMultiTasking && mode === 'slide-over' ? 'pb-0.5' : 'pb-1'}`}>
+                    {categories.map(category => (
+                      <EnhancedTouchButton
+                        key={category}
+                        onClick={() => handleCategorySelect(category)}
+                        variant={(category === 'All' && !selectedCategory) || category === selectedCategory ? 'primary' : isDarkMode ? 'dark' : 'secondary'}
+                        size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                        className="whitespace-nowrap"
+                      >
+                        {category}
+                      </EnhancedTouchButton>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             

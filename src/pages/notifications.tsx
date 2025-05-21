@@ -19,7 +19,7 @@ import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { haptics } from '@/lib/haptics';
-import { EnhancedTouchButton } from '@/components/EnhancedTouchButton';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
 import { useSafeArea } from '@/hooks/useSafeArea';
 import { useApplePhysics } from '@/hooks/useApplePhysics';
