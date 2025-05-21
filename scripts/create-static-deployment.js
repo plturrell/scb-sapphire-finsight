@@ -452,10 +452,19 @@ fs.writeFileSync(
   })
 );
 
-// Create a buildId file
+// Create buildId files
+const buildId = "static-build-" + Date.now();
+
+// Create in _next directory for Next.js
 fs.writeFileSync(
   path.join(outDir, '_next/BUILD_ID'),
-  "static-build-" + Date.now()
+  buildId
+);
+
+// Create in root directory for Vercel
+fs.writeFileSync(
+  path.join(outDir, 'BUILD_ID'),
+  buildId
 );
 
 console.log('✅ Created additional configuration files');
