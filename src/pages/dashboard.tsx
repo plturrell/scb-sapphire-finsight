@@ -8,12 +8,11 @@ import { getGrokCompletion } from '@/lib/grok-api';
 // Import the report service for simulations
 import * as ReportService from '@/lib/report-service';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
-import { useIOS } from '@/hooks/useResponsive';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import useMultiTasking from '@/hooks/useMultiTasking';
 import { useMicroInteractions } from '@/hooks/useMicroInteractions';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
-import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
-import EnhancedIOSTabBar from '@/components/EnhancedIOSTabBar';
-import EnhancedIOSBreadcrumb from '@/components/EnhancedIOSBreadcrumb';
+import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { IconSystemProvider } from '@/components/IconSystem';
 import { ICONS } from '@/components/IconSystem';
 

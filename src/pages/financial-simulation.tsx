@@ -46,6 +46,25 @@ export default function FinancialSimulation() {
       router.push(selectedTab.href);
     }
   };
+  
+  // Navigate to detailed analysis page with simulation data
+  const viewDetailedAnalysis = () => {
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    router.push({
+      pathname: '/financial-simulation/detailed-analysis',
+      query: { 
+        role: userRole,
+        expectedReturn: summaryMetrics.expectedReturn,
+        riskScore: summaryMetrics.volatility,
+        confidenceLower: summaryMetrics.confidenceInterval[0],
+        confidenceUpper: summaryMetrics.confidenceInterval[1],
+        simulationId: simulationData?.aiInsights?.updatedAt?.toISOString() || new Date().toISOString()
+      }
+    });
+  };
 
   return (
     <div>

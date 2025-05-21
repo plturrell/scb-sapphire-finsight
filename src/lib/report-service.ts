@@ -305,6 +305,41 @@ export class ReportService {
       return null;
     }
   }
+  
+  /**
+   * Get detailed analysis for a financial simulation
+   * @param simulationId The ID of the simulation to analyze
+   */
+  async getDetailedAnalysis(simulationId: string): Promise<any> {
+    try {
+      console.log(`Fetching detailed analysis for simulation: ${simulationId}`);
+      
+      if (!this.financeApiKey) {
+        throw new Error('Finance API key is missing. Please check environment variables.');
+      }
+      
+      // Request detailed analysis from the finance API
+      const analysisResponse = await axios.get(
+        `${this.financeApiEndpoint}/simulations/${simulationId}/analysis`,
+        {
+          headers: {
+            'Authorization': `Bearer ${this.financeApiKey}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      if (analysisResponse.status !== 200) {
+        throw new Error(`Failed to fetch detailed analysis: ${analysisResponse.statusText}`);
+      }
+      
+      // Return the detailed analysis data
+      return analysisResponse.data;
+    } catch (error: unknown) {
+      console.error(`Error fetching detailed analysis for simulation ${simulationId}:`, error);
+      throw new Error(`Failed to fetch detailed analysis: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
 }
 
 // Create an instance of the ReportService
