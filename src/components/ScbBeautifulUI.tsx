@@ -95,7 +95,7 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
       default:
         router.push('/');
     }
-  }
+  }, [isIOS, preferences.enableHaptics, router]);
 
   // Define iOS-style tabs
   const tabItems = [
