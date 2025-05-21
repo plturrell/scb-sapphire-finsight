@@ -8,7 +8,7 @@ import useMultiTasking from '@/hooks/useMultiTasking';
 import { haptics } from '@/lib/haptics';
 import { TransactionSector } from '@/types';
 import { useMediaQuery } from 'react-responsive';
-import { ArrowRight, Download, Filter, RefreshCw } from 'lucide-react';
+import { ArrowRight, Download, Filter, RefreshCw, Briefcase, LayoutDashboard, FileText, Settings, AlertCircle } from 'lucide-react';
 import {
   BarChart,
   Bar,
