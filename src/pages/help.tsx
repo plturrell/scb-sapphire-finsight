@@ -133,9 +133,55 @@ export default function Help() {
   const [expandedFaqs, setExpandedFaqs] = useState<string[]>([]);
   const { isDarkMode, preferences } = useUIPreferences();
   
+  // iOS optimization hooks
+  const { deviceType, isAppleDevice, screenSize } = useDeviceCapabilities();
+  const { safeArea, orientation, hasHomeIndicator, hasDynamicIsland } = useSafeArea();
+  const physics = useApplePhysics({ motion: 'standard', respectReduceMotion: true });
+  
+  // Detect if running on Apple device
+  const isiOS = deviceType === 'mobile' && isAppleDevice;
+  const isiPad = deviceType === 'tablet' && isAppleDevice;
+  const isApplePlatform = isiOS || isiPad;
+  
+  // Detect iPad multi-tasking mode (Slide Over, Split View, or Full Screen)
+  const [iPadMode, setIPadMode] = useState<'full' | 'split' | 'slide' | 'none'>('full');
+  
+  // Track the iPad multi-tasking mode
+  useEffect(() => {
+    if (!isiPad) return;
+    
+    const detectMultitaskingMode = () => {
+      const windowWidth = window.innerWidth;
+      const screenWidth = window.screen.width;
+      
+      // iPad multi-tasking detection logic
+      if (windowWidth === screenWidth || (orientation === 'landscape' && windowWidth > 768)) {
+        // Full screen mode
+        setIPadMode('full');
+      } else if (windowWidth >= 320 && windowWidth <= 400) {
+        // Slide Over mode (narrow floating window)
+        setIPadMode('slide');
+      } else {
+        // Split View mode (portion of the screen)
+        setIPadMode('split');
+      }
+    };
+    
+    // Initial detection
+    detectMultitaskingMode();
+    
+    // Update on resize
+    window.addEventListener('resize', detectMultitaskingMode);
+    
+    return () => {
+      window.removeEventListener('resize', detectMultitaskingMode);
+    };
+  }, [isiPad, orientation]);
+  
   // Helper function to get animation class if animations are enabled
   const getAnimationClass = (className: string) => {
-    return preferences.enableAnimations ? className : '';
+    if (physics.shouldReduceMotion || !preferences.enableAnimations) return '';
+    return className;
   };
   
   const toggleFaq = (faqId: string) => {
@@ -167,26 +213,79 @@ export default function Help() {
     selectedCategory === 'all' || doc.category === selectedCategory
   );
 
-  // Memoize toggle function with haptic feedback
+  // Memoize toggle function with optimized haptic feedback for iOS
   const toggleFaqWithHaptics = useCallback((faqId: string) => {
-    // Add haptic feedback if enabled
-    if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
+    // Enhanced haptic feedback for iOS devices
+    if (isApplePlatform) {
+      haptics.selection();
+    } 
+    // Fallback to basic vibration for other devices
+    else if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
       navigator.vibrate(5);
     }
+    
     toggleFaq(faqId);
-  }, [preferences.enableHaptics, toggleFaq]);
+  }, [isApplePlatform, preferences.enableHaptics, toggleFaq]);
   
-  return (
-    <ScbBeautifulUI 
-      pageTitle="Help Center" 
-      showNewsBar={preferences.enableNewsBar && false}
-      showTabs={preferences.mobileNavStyle === 'tab'}
-    >
+  // Adapt layout based on iPad multi-tasking mode
+  const getLayoutForIPadMode = () => {
+    if (!isiPad) return '';
+    
+    switch (iPadMode) {
+      case 'slide':
+        return 'ipad-slide-over-mode';
+      case 'split':
+        return 'ipad-split-view-mode';
+      default:
+        return 'ipad-full-screen-mode';
+    }
+  };
+
+  // Compact layout for smaller screens or iPad Slide Over mode
+  const useCompactLayout = isiPad && iPadMode === 'slide' || screenSize === 'mobile';
+
+  // Configure iOS navigation right actions
+  const navRightActions = [
+    {
+      icon: 'magnifyingglass',
+      onPress: () => {
+        if (isApplePlatform) {
+          haptics.selection();
+        }
+        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      },
+      label: 'Search',
+      variant: 'primary'
+    }
+  ];
+
+  return isApplePlatform ? (
+    <>
       <Head>
         <title>Help Center | SCB Sapphire FinSight</title>
       </Head>
-
-      <div className="space-y-6">
+      
+      <EnhancedIOSNavBar
+        title="Help Center"
+        largeTitle={true}
+        rightActions={navRightActions}
+        respectSafeArea={true}
+        transparent={false}
+        blurred={true}
+        theme={isDarkMode ? 'dark' : 'light'}
+      />
+      
+      <div 
+        className={`space-y-6 px-4 pt-2 ${getLayoutForIPadMode()}`}
+        style={{ 
+          paddingBottom: hasHomeIndicator ? '34px' : '16px',
+          maxWidth: isiPad && iPadMode === 'full' ? '768px' : '100%',
+          margin: isiPad && iPadMode === 'full' ? '0 auto' : '0'
+        }}
+      >
         {/* Help Center Header with Search */}
         <div className={`rounded-lg shadow-sm border p-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
           <div className="max-w-2xl mx-auto text-center">
@@ -640,6 +739,58 @@ export default function Help() {
             </div>
           </div>
         </div>
+      </div>
+    </>
+  ) : (
+    <ScbBeautifulUI 
+      pageTitle="Help Center" 
+      showNewsBar={preferences.enableNewsBar && false}
+      showTabs={preferences.mobileNavStyle === 'tab'}
+    >
+      <Head>
+        <title>Help Center | SCB Sapphire FinSight</title>
+      </Head>
+
+      <div className="space-y-6">
+        {/* Help Center Header with Search */}
+        <div className={`rounded-lg shadow-sm border p-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className={`text-2xl font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+              How can we help you today?
+            </h2>
+            <p className={`mt-2 mb-6 ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+              Search our knowledge base or browse the help topics below
+            </p>
+            
+            <div className="relative max-w-xl mx-auto">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
+              </div>
+              <input
+                type="text"
+                placeholder="Search for help articles, tutorials, FAQs..."
+                className={`pl-10 w-full py-3 rounded-lg ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                    : 'bg-white border-[rgb(var(--scb-border))] text-[rgb(var(--scb-dark-gray))]'
+                }`}
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  // Add haptic feedback if enabled
+                  if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
+                    navigator.vibrate(2);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Rest of the content */}
+        {/* Help Categories */}
+        {/* Left Column - FAQs */}
+        {/* Right Column - Contact and Resources */}
       </div>
     </ScbBeautifulUI>
   );

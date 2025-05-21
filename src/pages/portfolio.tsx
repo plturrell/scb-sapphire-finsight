@@ -452,60 +452,130 @@ export default function Portfolio() {
   };
 
   return (
-    <ScbBeautifulUI showNewsBar={!isSmallScreen} pageTitle="Asia Portfolio" showTabs={isAppleDevice}>
-      <div className="space-y-6">
-        <div>
-          <p className="scb-data-label text-[rgb(var(--scb-dark-gray))] dark:text-gray-400 mt-1">
-            Sofia - Transaction Banking CFO
-          </p>
-        </div>
+    <>
+      {isAppleDevice ? (
+        <IOSOptimizedLayout
+          title="Asia Portfolio"
+          subtitle="Transaction Banking Overview"
+          showBreadcrumb={true}
+          breadcrumbItems={breadcrumbItems}
+          showTabBar={true}
+          tabItems={tabItems}
+          navBarRightActions={navBarActions}
+          showBackButton={true}
+          largeTitle={true}
+          theme={isDarkMode ? 'dark' : 'light'}
+        >
+          <div className="space-y-6">
+            <div>
+              <p className={`scb-data-label ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'} mt-1`}>
+                Sofia - Transaction Banking CFO
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MetricCard
-            title="Total Revenue"
-            value={14.32}
-            change={6.3}
-            period="YoY Income"
-            format="percentage"
-          />
-          <MetricCard
-            title="RoRWA"
-            value={6.3}
-            change={6.3}
-            period="Risk-adjusted returns"
-            format="percentage"
-          />
-          <MetricCard
-            title="Sustainable Finance"
-            value={50789}
-            period="Mobilization"
-            format="currency"
-          />
-          <MetricCard
-            title="Tasks"
-            value="7 overdue"
-            period="3 tasks need attention"
-            format="string"
-          />
-        </div>
+            <div className={`grid grid-cols-1 ${
+              isMultiTasking && mode === 'slide-over'
+                ? 'gap-3'
+                : isMultiTasking
+                  ? 'md:grid-cols-2 gap-4'
+                  : 'md:grid-cols-2 lg:grid-cols-4 gap-6'
+            }`}>
+              <MetricCard
+                title="Total Revenue"
+                value={14.32}
+                change={6.3}
+                period="YoY Income"
+                format="percentage"
+              />
+              <MetricCard
+                title="RoRWA"
+                value={6.3}
+                change={6.3}
+                period="Risk-adjusted returns"
+                format="percentage"
+              />
+              <MetricCard
+                title="Sustainable Finance"
+                value={50789}
+                period="Mobilization"
+                format="currency"
+              />
+              <MetricCard
+                title="Tasks"
+                value="7 overdue"
+                period="3 tasks need attention"
+                format="string"
+              />
+            </div>
 
-        {/* Dynamically render charts based on platform */}
-        {renderCharts()}
+            {/* Dynamically render charts based on platform */}
+            {renderCharts()}
 
-        <div className={`
-          bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6 fiori-tile
-          dark:bg-gray-800 dark:border-gray-700
-          ${isMultiTasking && mode === 'slide-over' ? 'p-4' : 'p-6'}
-        `}>
-          <h3 className={`
-            scb-section-header text-lg font-medium mb-4 dark:text-white
-            ${isMultiTasking && mode === 'slide-over' ? 'text-base mb-3' : 'text-lg mb-4'}
-          `}>
-            Personal & Additional Data Collection
-          </h3>
-          {renderButtons()}
-        </div>
-      </div>
-    </ScbBeautifulUI>
+            <div className={`
+              ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-[rgb(var(--scb-border))]'} 
+              rounded-lg shadow-sm p-6
+              ${isMultiTasking && mode === 'slide-over' ? 'p-4' : 'p-6'}
+            `}>
+              <h3 className={`
+                scb-section-header text-lg font-medium mb-4 ${isDarkMode ? 'text-white' : ''}
+                ${isMultiTasking && mode === 'slide-over' ? 'text-base mb-3' : 'text-lg mb-4'}
+              `}>
+                Personal & Additional Data Collection
+              </h3>
+              {renderButtons()}
+            </div>
+          </div>
+        </IOSOptimizedLayout>
+      ) : (
+        <ScbBeautifulUI showNewsBar={!isSmallScreen} pageTitle="Asia Portfolio" showTabs={false}>
+          <div className="space-y-6">
+            <div>
+              <p className="scb-data-label text-[rgb(var(--scb-dark-gray))] mt-1">
+                Sofia - Transaction Banking CFO
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard
+                title="Total Revenue"
+                value={14.32}
+                change={6.3}
+                period="YoY Income"
+                format="percentage"
+              />
+              <MetricCard
+                title="RoRWA"
+                value={6.3}
+                change={6.3}
+                period="Risk-adjusted returns"
+                format="percentage"
+              />
+              <MetricCard
+                title="Sustainable Finance"
+                value={50789}
+                period="Mobilization"
+                format="currency"
+              />
+              <MetricCard
+                title="Tasks"
+                value="7 overdue"
+                period="3 tasks need attention"
+                format="string"
+              />
+            </div>
+
+            {/* Dynamically render charts based on platform */}
+            {renderCharts()}
+
+            <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6">
+              <h3 className="scb-section-header text-lg font-medium mb-4">
+                Personal & Additional Data Collection
+              </h3>
+              {renderButtons()}
+            </div>
+          </div>
+        </ScbBeautifulUI>
+      )}
+    </>
   );
 }

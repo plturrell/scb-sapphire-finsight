@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import DataProductExplorer from '@/components/DataProductExplorer';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import EnhancedLoadingSpinner from '@/components/EnhancedLoadingSpinner';
-import useMultiTasking from '@/hooks/useMultiTasking';
+import { useMultiTasking } from '@/hooks/useMultiTasking';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useMicroInteractions } from '@/hooks/useMicroInteractions';
+import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { haptics } from '@/lib/haptics';
 import { useMediaQuery } from 'react-responsive';
 import { Search, Filter, ArrowUpDown, Plus, Database, RefreshCw, DownloadCloud, Share2 } from 'lucide-react';
@@ -65,10 +67,6 @@ const dataProducts = [
 ];
 
 const DataProductsPage: React.FC = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [isPlatformDetected, setPlatformDetected] = useState(false);
-  const [isAppleDevice, setIsAppleDevice] = useState(false);
-  const [isIPad, setIsIPad] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -77,28 +75,13 @@ const DataProductsPage: React.FC = () => {
   const categories = ['All', 'Financial', 'Accounting', 'Controlling', 'Analytics'];
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
-  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  const { mode, isMultiTasking } = useMultiTasking();
+  const { isAppleDevice, deviceType } = useDeviceCapabilities();
   const { isDarkMode, preferences } = useUIPreferences();
   const { haptic } = useMicroInteractions();
   
-  // Detect platform when component mounts
-  useEffect(() => {
-    setIsMounted(true);
-    
-    // Check if we're on an Apple platform
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    
-    // Check if we're on iPad specifically
-    const isIpad = /iPad/.test(navigator.userAgent) || 
-      (navigator.platform === 'MacIntel' && 
-      navigator.maxTouchPoints > 1 &&
-      !navigator.userAgent.includes('iPhone'));
-    
-    setIsAppleDevice(isIOS);
-    setIsIPad(isIpad);
-    setPlatformDetected(true);
-  }, []);
+  // Determine if it's an iPad
+  const isIPad = deviceType === 'tablet' && isAppleDevice;
   
   // Filter data products based on search query and category
   const filteredProducts = dataProducts.filter(product => {
@@ -176,6 +159,60 @@ const DataProductsPage: React.FC = () => {
     
     alert('Opening share dialog...');
   };
+  
+  // Navigation bar actions
+  const navBarActions = [
+    {
+      icon: 'arrow.down.doc',
+      label: 'Export',
+      onPress: handleDownload
+    },
+    {
+      icon: 'plus.circle',
+      label: 'Create New',
+      onPress: handleCreateNew
+    }
+  ];
+  
+  // Tab items for navigation
+  const tabItems = [
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      icon: 'gauge',
+      href: '/dashboard',
+    },
+    {
+      key: 'analytics',
+      label: 'Analytics',
+      icon: 'chart.bar.xaxis',
+      href: '/analytics',
+    },
+    {
+      key: 'portfolio',
+      label: 'Portfolio',
+      icon: 'briefcase',
+      href: '/portfolio',
+    },
+    {
+      key: 'data',
+      label: 'Data',
+      icon: 'server.rack',
+      href: '/data-products',
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: 'gearshape',
+      href: '/settings',
+    },
+  ];
+  
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/', icon: 'house' },
+    { label: 'Data Products', href: '/data-products', icon: 'server.rack' },
+  ];
   
   return (
     <ScbBeautifulUI 
