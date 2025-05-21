@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { TariffSearchParams, TariffInfo, TariffChangeEvent } from './SemanticTariffEngine';
+import perplexityService from './PerplexityService';
 
 /**
  * LangChainIntegration
@@ -11,8 +12,7 @@ import { TariffSearchParams, TariffInfo, TariffChangeEvent } from './SemanticTar
  * that can be stored in the tariff ontology.
  */
 export class LangChainIntegration {
-  private apiKey: string = process.env.PERPLEXITY_API_KEY || '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';
-  private perplexityApiUrl: string = 'https://api.perplexity.ai/chat/completions';
+  // Using centralized PerplexityService instead of direct API calls
   private models = {
     SMALL: 'mistral-7b-instruct',
     MEDIUM: 'mixtral-8x7b-instruct',
@@ -70,17 +70,9 @@ export class LangChainIntegration {
   }
   
   /**
-   * Call Perplexity API with retry logic using our server-side proxy
+   * Call Perplexity API using the centralized PerplexityService with retry logic
    */
   private async callPerplexityApi(messages: Array<{ role: string, content: string }>, model = this.models.DEFAULT): Promise<string> {
-    const request = {
-      model: model,
-      messages: messages,
-      temperature: 0.2,
-      max_tokens: 2000,
-      stream: false
-    };
-    
     const MAX_RETRIES = 2;
     const RETRY_DELAY = 1000;
     let retries = 0;
@@ -88,31 +80,14 @@ export class LangChainIntegration {
     
     while (retries <= MAX_RETRIES) {
       try {
-        // Use our proxy API route instead of calling Perplexity directly
-        // This avoids CORS issues
-        const response = await fetch('/api/perplexity-proxy', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(request)
+        // Use the centralized PerplexityService to ensure consistent API key management
+        // Type assertion needed because our messages use string for role but PerplexityService expects specific roles
+        const data = await perplexityService.callPerplexityAPI(messages as Array<{ role: "system" | "user" | "assistant", content: string }>, {
+          temperature: 0.2,
+          max_tokens: 2000,
+          model: model
         });
         
-        if (!response.ok) {
-          // Try alternative model if the current one fails
-          if (retries < MAX_RETRIES) {
-            retries++;
-            const fallbackModel = retries === 1 ? this.models.MEDIUM : this.models.SMALL;
-            console.warn(`Perplexity API error (${response.status}), retrying with model: ${fallbackModel}`);
-            request.model = fallbackModel;
-            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-            continue;
-          }
-          const errorText = await response.text();
-          throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
-        }
-        
-        const data = await response.json();
         return data.choices[0]?.message?.content || '';
       } catch (error) {
         lastError = error as Error;
@@ -120,7 +95,7 @@ export class LangChainIntegration {
           retries++;
           const fallbackModel = retries === 1 ? this.models.MEDIUM : this.models.SMALL;
           console.warn(`Perplexity API error, retrying with model: ${fallbackModel}`, error);
-          request.model = fallbackModel;
+          model = fallbackModel;
           await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
         } else {
           break;

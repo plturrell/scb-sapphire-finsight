@@ -1,4 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import perplexityService from '@/services/PerplexityService';
+
+/**
+ * NOTE: This endpoint is now redundant with the centralized PerplexityService implementation.
+ * It is kept for historical reference and to validate the working API keys.
+ * New code should use the centralized PerplexityService instead of testing multiple keys.
+ */
 
 /**
  * Debug endpoint to test all possible Perplexity API keys
@@ -73,12 +80,12 @@ export default async function handler(
         success: statusCode === 200,
         response: responseText.substring(0, 100) // Limit response size
       };
-    } catch (error) {
+    } catch (error: any) {
       results.keyResults[`key${i+1}`] = {
         maskedKey,
         status: 'Error',
         success: false,
-        error: error.message
+        error: error?.message || 'Unknown error'
       };
     }
   }

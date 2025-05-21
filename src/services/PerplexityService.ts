@@ -59,6 +59,14 @@ class PerplexityService {
   }
   
   /**
+   * Get masked API key information for debugging purposes
+   * Returns a safe version of the API key with most characters hidden
+   */
+  getApiKeyInfo(): string {
+    return `${this.apiKey.substring(0, 5)}...${this.apiKey.substring(this.apiKey.length - 4)}`;
+  }
+  
+  /**
    * Direct call to the Perplexity API with retries and rate limiting
    */
   async callPerplexityAPI(messages: PerplexityMessage[], options: {

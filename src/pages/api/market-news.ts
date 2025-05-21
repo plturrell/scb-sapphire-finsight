@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
+import perplexityService from '@/services/PerplexityService';
 
-// Using the new API key directly on the server side
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || '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';
-const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Handle OPTIONS requests for CORS preflight
@@ -47,19 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
     
-    // Validate API key
-    if (!PERPLEXITY_API_KEY) {
-      console.error('Missing Perplexity API key in market-news endpoint');
-      return res.status(500).json({ 
-        error: 'Server configuration error: Missing API key',
-        success: false
-      });
-    }
-    
-    // Log the API key format (first 8 chars) for debugging
-    console.log(`Using Perplexity API key in market-news: ${PERPLEXITY_API_KEY.substring(0, 8)}...`);
-    
-    // Call Perplexity API to get market news
+    // Call Perplexity API to get market news via the centralized service
     const messages = [
       {
         role: 'system',
@@ -71,61 +57,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     ];
     
-    // Using exact format from Perplexity API documentation
-    const payload = {
-      model: 'sonar',
-      messages: messages
-    };
+    console.log('Making request to Perplexity API via centralized service for market news');
     
-    console.log('Sending market news API request with payload:', JSON.stringify(payload));
-    
-    // Use the exact fetch format from documentation
-    const options = {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    };
-    
-    console.log('Request options:', {
-      ...options,
-      headers: {...options.headers, Authorization: 'Bearer <redacted>'}
+    // Use our centralized service to make the API call
+    const data = await perplexityService.callPerplexityAPI(messages, {
+      temperature: 0.2,
+      max_tokens: 2000,
+      model: 'sonar'
     });
     
-    const response = await fetch(PERPLEXITY_API_URL, options);
-
-    // Check if the API call was successful
-    if (!response.ok) {
-      // Get more detailed error information if available
-      try {
-        const errorText = await response.text();
-        console.error('Perplexity API error in market-news:', response.status, response.statusText);
-        console.error('Error details:', errorText);
-        console.error('Request headers:', JSON.stringify({
-          'Authorization': 'Bearer [REDACTED]',
-          'Content-Type': 'application/json'
-        }));
-        console.error('Request payload:', JSON.stringify(payload));
-        
-        // Return the actual error status and details
-        return res.status(response.status).json({
-          success: false,
-          error: `Perplexity API error: ${response.status} ${response.statusText}`,
-          details: errorText
-        });
-      } catch (parseError) {
-        console.error('Error parsing API error response:', parseError);
-        return res.status(response.status).json({
-          success: false,
-          error: `Perplexity API error: ${response.status} ${response.statusText}`
-        });
-      }
-    }
-
-    // Parse the API response
-    const data = await response.json();
     const newsContent = data.choices[0]?.message?.content || '';
     
     // Process the news content to extract news items

@@ -1,8 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-// Using the new API key directly on the server side
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY || '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';
-const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
+import perplexityService from '@/services/PerplexityService';
 
 /**
  * API route specifically for tariff search queries
@@ -84,41 +81,18 @@ Multiple entries are possible if there are different categories or conditions. E
 
     // Create messages for API call
     const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: queryText }
+      { role: 'system' as const, content: systemPrompt },
+      { role: 'user' as const, content: queryText }
     ];
 
-    // Prepare the payload according to Perplexity API requirements
-    const payload = {
-      model: 'sonar',
-      messages: messages
-    };
+    console.log('Making request to Perplexity API via centralized service for tariff search');
     
-    console.log('Sending tariff API request with payload:', JSON.stringify(payload));
-    
-    // Use the exact fetch format from documentation
-    const options = {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    };
-    
-    // Call Perplexity API from server side
-    const response = await fetch(PERPLEXITY_API_URL, options);
-
-    // Check if the API call was successful
-    if (!response.ok) {
-      console.error('Perplexity API error:', response.status, response.statusText);
-      return res.status(response.status).json({ 
-        error: `Perplexity API error: ${response.status} ${response.statusText}` 
-      });
-    }
-
-    // Parse the response
-    const data = await response.json();
+    // Use our centralized service to make the API call
+    const data = await perplexityService.callPerplexityAPI(messages, {
+      temperature: 0.2,
+      max_tokens: 2000,
+      model: 'sonar'
+    });
     const content = data.choices[0]?.message?.content || '';
 
     // Try to extract JSON from the response
