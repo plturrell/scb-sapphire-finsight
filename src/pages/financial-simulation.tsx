@@ -284,7 +284,7 @@ export default function FinancialSimulation() {
   };
 
   return (
-    <React.Fragment>
+    <div className="financial-simulation-page">
       <Head>
         <title>Financial Simulation | SCB Sapphire</title>
         <meta name="description" content="Monte Carlo financial simulation and analysis for optimized investment strategies" />
@@ -364,7 +364,7 @@ export default function FinancialSimulation() {
             <span className="text-gray-700">{error}</span>
           </div>
         ) : (
-          <React.Fragment>
+          <div className="simulation-content">
             {/* KPI summary cards */}
             <div className={`grid grid-cols-1 gap-4 mb-6 ${isMultiTasking && mode === 'slide-over' ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
               <KPICard 
@@ -418,13 +418,39 @@ export default function FinancialSimulation() {
             
             {/* Main simulation component */}
             <div ref={simulationRef} className="mb-6">
-              <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-4">
-                <h2 className="text-lg font-medium mb-4">Monte Carlo Tree Search Simulation</h2>
-                <div className={`${isMultiTasking ? (mode === 'slide-over' ? 'h-[400px]' : 'h-[500px]') : 'h-[600px]'}`}>
+              <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-[hsl(var(--border))]'} border rounded-lg ${isMultiTasking && mode === 'slide-over' ? 'p-3' : 'p-4'} ${isAppleDevice ? 'shadow-sm' : ''}`}>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    Monte Carlo Tree Search Simulation
+                  </h2>
+                  
+                  {/* Role selector for iOS devices */}
+                  {isAppleDevice && isPlatformDetected && (
+                    <div className={`flex items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-1' : 'gap-2'}`}>
+                      <EnhancedTouchButton
+                        onClick={() => handleRoleChange('investor')}
+                        variant={userRole === 'investor' ? 'primary' : isDark ? 'dark' : 'secondary'}
+                        size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                      >
+                        Investor
+                      </EnhancedTouchButton>
+                      
+                      <EnhancedTouchButton
+                        onClick={() => handleRoleChange('advisor')}
+                        variant={userRole === 'advisor' ? 'primary' : isDark ? 'dark' : 'secondary'}
+                        size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                      >
+                        Advisor
+                      </EnhancedTouchButton>
+                    </div>
+                  )}
+                </div>
+                
+                <div className={`${isMultiTasking ? (mode === 'slide-over' ? 'h-[380px]' : 'h-[480px]') : 'h-[580px]'}`}>
                   <EnhancedDynamicSankeySimulation
                     initialData={simulationData}
                     width={simulationRef.current?.offsetWidth || 1000}
-                    height={isMultiTasking ? (mode === 'slide-over' ? 350 : 450) : 560}
+                    height={isMultiTasking ? (mode === 'slide-over' ? 330 : 430) : 540}
                     title="Financial Flow Simulation"
                     onSimulationComplete={handleSimulationResults}
                     isAppleDevice={isAppleDevice}
@@ -433,6 +459,7 @@ export default function FinancialSimulation() {
                     multiTaskingMode={mode}
                     orientation={orientation}
                     enableHaptics={isAppleDevice}
+                    darkMode={isDark}
                     simulationConfig={{
                       iterations: 5000,
                       timeHorizon: 24, // 24 months
@@ -443,22 +470,64 @@ export default function FinancialSimulation() {
                     }}
                   />
                 </div>
+                
+                {/* Interactive hint for iOS devices */}
+                {isAppleDevice && !loading && (
+                  <div className={`text-xs text-center mt-2 ${isDark ? 'text-blue-400 opacity-70' : 'text-blue-600 opacity-70'}`}>
+                    {isMultiTasking && mode === 'slide-over'
+                      ? 'Tap nodes for details'
+                      : 'Tap and drag nodes to explore relationships'
+                    }
+                  </div>
+                )}
               </div>
             </div>
             
             {/* Optimized allocation section - shown after simulation is complete */}
             {summaryMetrics.simulationCompleted && (
-              <div className="bg-white border border-[hsl(var(--border))] rounded-lg p-4">
-                <h2 className="text-lg font-medium mb-4">Optimized Asset Allocation</h2>
-                <div className={`grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'gap-4' : 'md:grid-cols-2 gap-8'}`}>
+              <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-[hsl(var(--border))]'} border rounded-lg ${isMultiTasking && mode === 'slide-over' ? 'p-3' : 'p-4'} ${isAppleDevice ? 'shadow-sm' : ''}`}>
+                <h2 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium ${isDark ? 'text-white' : 'text-gray-900'} mb-3`}>
+                  Optimized Asset Allocation
+                  
+                  {/* Add actions for iOS devices */}
+                  {isAppleDevice && (
+                    <div className="float-right">
+                      <EnhancedTouchButton
+                        onClick={exportSimulationReport}
+                        variant={isDark ? "dark" : "secondary"}
+                        size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                        className="flex items-center gap-1"
+                        disabled={!summaryMetrics.simulationCompleted}
+                      >
+                        <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} ${isRefreshing ? 'animate-spin' : ''}`} />
+                        {!isMultiTasking && <span>Export</span>}
+                      </EnhancedTouchButton>
+                    </div>
+                  )}
+                </h2>
+                
+                <div className={`grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'gap-3' : isMultiTasking && mode === 'split-view' ? 'gap-4 md:grid-cols-2' : 'md:grid-cols-2 gap-8'}`}>
                   <div>
-                    <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium text-gray-900 mb-4`}>Recommended Allocation</h3>
-                    <div className="space-y-4">
+                    <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-3`}>
+                      Recommended Allocation
+                    </h3>
+                    <div className="space-y-3">
                       {Object.entries(summaryMetrics.optimizedAllocation).map(([asset, allocation]: [string, number]) => (
-                        <div key={asset} className="flex items-center">
-                          <div className={`${isMultiTasking && mode === 'slide-over' ? 'w-24 text-xs' : 'w-32 text-sm'} font-medium text-gray-700`}>{asset}</div>
+                        <div 
+                          key={asset} 
+                          className="flex items-center"
+                          onClick={() => {
+                            if (isAppleDevice) {
+                              haptics.light();
+                              alert(`Details for ${asset} allocation: ${(allocation * 100).toFixed(1)}%`);
+                            }
+                          }}
+                        >
+                          <div className={`${isMultiTasking && mode === 'slide-over' ? 'w-20 text-xs' : 'w-32 text-sm'} font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                            {asset}
+                          </div>
                           <div className="flex-1">
-                            <div className="bg-gray-200 rounded-full h-4">
+                            <div className={`${isDark ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-4`}>
                               <div 
                                 className={`rounded-full h-4 ${
                                   asset.toLowerCase().includes('equit') ? 'bg-[rgb(var(--scb-honolulu-blue))]' :
@@ -470,41 +539,74 @@ export default function FinancialSimulation() {
                               ></div>
                             </div>
                           </div>
-                          <div className={`${isMultiTasking && mode === 'slide-over' ? 'w-12 text-xs' : 'w-16 text-sm'} text-right font-medium text-gray-900`}>
+                          <div className={`${isMultiTasking && mode === 'slide-over' ? 'w-12 text-xs' : 'w-16 text-sm'} text-right font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
                             {(allocation * 100).toFixed(1)}%
                           </div>
                         </div>
                       ))}
                     </div>
+                    
+                    {/* iOS-specific interactive hint */}
+                    {isAppleDevice && !isMultiTasking && (
+                      <div className="mt-2 text-xs text-center opacity-70 text-blue-600 dark:text-blue-400">
+                        Tap on allocation bars for details
+                      </div>
+                    )}
                   </div>
                   
-                  <div className={`${isMultiTasking && mode === 'slide-over' ? 'mt-4' : ''}`}>
-                    <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium text-gray-900 mb-4`}>AI-Generated Insights</h3>
-                    <div className="bg-[rgba(var(--horizon-blue),0.05)] border border-[rgba(var(--horizon-blue),0.2)] rounded-lg p-4">
-                      <div className="flex items-start mb-4">
-                        <Zap className={`${isMultiTasking && mode === 'slide-over' ? 'h-4 w-4' : 'h-5 w-5'} text-[rgb(var(--horizon-blue))] mr-2 mt-0.5`} />
-                        <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium text-[rgb(var(--horizon-neutral-gray))]`}>Key Findings from 5,000+ Simulations</span>
+                  <div className={`${isMultiTasking && mode === 'slide-over' ? 'mt-3' : ''}`}>
+                    <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} font-medium ${isDark ? 'text-gray-200' : 'text-gray-900'} mb-3`}>
+                      AI-Generated Insights
+                    </h3>
+                    <div className={`${
+                      isDark 
+                        ? 'bg-blue-900/20 border-blue-800/30' 
+                        : 'bg-[rgba(var(--horizon-blue),0.05)] border-[rgba(var(--horizon-blue),0.2)]'
+                    } border rounded-lg ${isMultiTasking && mode === 'slide-over' ? 'p-2' : 'p-4'}`}>
+                      <div className="flex items-start mb-3">
+                        <Zap className={`${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-5 w-5'} ${isDark ? 'text-blue-400' : 'text-[rgb(var(--horizon-blue))]'} mr-2 mt-0.5 flex-shrink-0`} />
+                        <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${isDark ? 'text-gray-200' : 'text-[rgb(var(--horizon-neutral-gray))]'}`}>
+                          Key Findings from 5,000+ Simulations
+                        </span>
                       </div>
-                      <ul className={`space-y-2 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} text-gray-700`}>
+                      <ul className={`space-y-2 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                         <li className="flex items-start">
-                          <ArrowUp className={`${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'} text-[rgb(var(--scb-american-green))] mr-2 mt-0.5`} />
+                          <ArrowUp className={`${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'} ${isDark ? 'text-green-400' : 'text-[rgb(var(--scb-american-green))]'} mr-2 mt-0.5 flex-shrink-0`} />
                           <span>The optimal allocation provides a {summaryMetrics.expectedReturn.toFixed(1)}% expected return with moderate risk.</span>
                         </li>
                         <li className="flex items-start">
-                          <ArrowDown className={`${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'} text-[rgb(var(--horizon-red))] mr-2 mt-0.5`} />
+                          <ArrowDown className={`${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'} ${isDark ? 'text-red-400' : 'text-[rgb(var(--horizon-red))]'} mr-2 mt-0.5 flex-shrink-0`} />
                           <span>Recession scenarios show a maximum drawdown of {(summaryMetrics.riskScore * 2).toFixed(1)}% that recovers within 8 months.</span>
                         </li>
                         <li className="flex items-start">
-                          <TrendingUp className={`${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'} text-[rgb(var(--horizon-blue))] mr-2 mt-0.5`} />
+                          <TrendingUp className={`${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'} ${isDark ? 'text-blue-400' : 'text-[rgb(var(--horizon-blue))]'} mr-2 mt-0.5 flex-shrink-0`} />
                           <span>Increasing {Object.entries(summaryMetrics.optimizedAllocation)[0][0]} allocation by 5% could improve long-term returns.</span>
                         </li>
                       </ul>
+                      
+                      {/* iOS-specific action button */}
+                      {isAppleDevice && (
+                        <div className={`mt-3 ${isMultiTasking && mode === 'slide-over' ? 'text-center' : 'text-right'}`}>
+                          <EnhancedTouchButton
+                            onClick={() => {
+                              if (isAppleDevice) {
+                                haptics.medium();
+                                alert('Viewing detailed AI analysis...');
+                              }
+                            }}
+                            variant={isDark ? "dark" : "link"}
+                            size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                          >
+                            View Full Analysis
+                          </EnhancedTouchButton>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             )}
-          </React.Fragment>
+          </div>
         )}
 
         {/* iOS Tab Bar Navigation */}
@@ -516,15 +618,22 @@ export default function FinancialSimulation() {
             respectSafeArea={true}
             hapticFeedback={true}
             blurred={true}
-            showLabels={true}
+            showLabels={!isMultiTasking || mode !== 'slide-over'} // Hide labels in slide-over mode
             theme={isDark ? 'dark' : 'light'}
-            floating={true}
+            floating={!isMultiTasking || mode !== 'slide-over'}
+            compact={isMultiTasking}
+            multiTaskingMode={mode}
           />
+        )}
+        
+        {/* iOS-specific bottom safe area spacer for notched devices */}
+        {isAppleDevice && (
+          <div className="h-6 sm:h-4 md:h-2"></div>
         )}
       </div>
       </div>
         </IconSystemProvider>
       </ScbBeautifulUI>
-    </React.Fragment>
+    </div>
   );
 }
