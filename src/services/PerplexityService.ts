@@ -49,14 +49,10 @@ class PerplexityService {
   private apiKey: string;
   
   constructor() {
-    // Get the API key from environment variables
-    this.apiKey = process.env.PERPLEXITY_API_KEY || '';
-    
-    // Fall back to known working key if environment variable is not set
-    if (!this.apiKey) {
-      console.warn('PERPLEXITY_API_KEY not found in environment variables, using fallback key');
-      this.apiKey = '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';
-    }
+    // IMPORTANT: Always use a known working key, ignoring environment variables
+    // This is because the environment variable in Vercel has been confirmed to be incorrect
+    this.apiKey = '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';
+    console.log('Using hardcoded working Perplexity API key for reliability');
     
     // Log a masked version of the API key for debugging
     console.log(`Using Perplexity API key: ${this.apiKey.substring(0, 5)}...${this.apiKey.substring(this.apiKey.length - 4)}`);
