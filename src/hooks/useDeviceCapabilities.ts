@@ -36,6 +36,10 @@ interface DeviceCapabilities {
   tier: 'high' | 'medium' | 'low';
   // Screen size
   screenSize: 'mobile' | 'tablet' | 'desktop';
+  // Device type
+  deviceType: 'mobile' | 'tablet' | 'desktop' | 'unknown';
+  // Apple device detection
+  isAppleDevice: boolean;
 }
 
 export function useDeviceCapabilities(): DeviceCapabilities {
@@ -59,7 +63,23 @@ export function useDeviceCapabilities(): DeviceCapabilities {
         battery: null,
         tier: 'medium',
         screenSize: 'desktop',
+        deviceType: 'desktop',
+        isAppleDevice: false,
       };
+    }
+    
+    // Detect Apple device
+    const isAppleDevice = /iPhone|iPad|iPod|Mac/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // Determine device type
+    let deviceType: 'mobile' | 'tablet' | 'desktop' | 'unknown' = 'unknown';
+    if (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      deviceType = 'mobile';
+    } else if (/iPad|Android/.test(navigator.userAgent) && 'ontouchstart' in window) {
+      deviceType = 'tablet';
+    } else {
+      deviceType = 'desktop';
     }
     
     return {
@@ -75,6 +95,8 @@ export function useDeviceCapabilities(): DeviceCapabilities {
       colorGamut: 'srgb',
       hdr: false,
       touchCapable: 'ontouchstart' in window,
+      deviceType,
+      isAppleDevice,
       reducedMotion: false,
       prefersColorScheme: 'light',
       battery: null,
@@ -277,3 +299,6 @@ export function useAdaptiveLayout() {
 
   return { capabilities, layout };
 }
+
+// Export as default for backward compatibility
+export default useDeviceCapabilities;

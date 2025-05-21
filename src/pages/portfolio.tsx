@@ -4,7 +4,10 @@ import MetricCard from '@/components/MetricCard';
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
-import useMultiTasking from '@/hooks/useMultiTasking';
+import { useMultiTasking } from '@/hooks/useMultiTasking';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { useMediaQuery } from 'react-responsive';
 import { haptics } from '@/lib/haptics';
 import {
@@ -48,33 +51,15 @@ const taskData = [
 ];
 
 export default function Portfolio() {
-  const [isMounted, setIsMounted] = useState(false);
-  const [isPlatformDetected, setPlatformDetected] = useState(false);
-  const [isAppleDevice, setIsAppleDevice] = useState(false);
-  const [isIPad, setIsIPad] = useState(false);
   const [selectedBarData, setSelectedBarData] = useState<any>(null);
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const { mode, isMultiTasking } = useMultiTasking();
-
-  // Detect platform on mount
-  useEffect(() => {
-    setIsMounted(true);
-    
-    // Check if we're on an Apple platform
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    
-    // Check if we're on iPad specifically
-    const isIpad = /iPad/.test(navigator.userAgent) || 
-      (navigator.platform === 'MacIntel' && 
-       navigator.maxTouchPoints > 1 &&
-       !navigator.userAgent.includes('iPhone'));
-    
-    setIsAppleDevice(isIOS);
-    setIsIPad(isIpad);
-    setPlatformDetected(true);
-  }, []);
+  const { isAppleDevice, deviceType } = useDeviceCapabilities();
+  const { isDarkMode } = useUIPreferences();
+  
+  // Determine if it's an iPad
+  const isIPad = deviceType === 'tablet' && isAppleDevice;
 
   // Handle bar data selection
   const handleBarSelect = (data: any) => {
@@ -92,6 +77,66 @@ export default function Portfolio() {
       haptics.medium();
     }
   };
+  
+  // Navigation bar actions
+  const navBarActions = [
+    {
+      icon: 'plus',
+      label: 'Add Task',
+      onPress: () => {
+        if (isAppleDevice) haptics.medium();
+        alert('Adding a new task...');
+      }
+    },
+    {
+      icon: 'rectangle.stack.badge.plus',
+      label: 'Add Collection',
+      onPress: () => {
+        if (isAppleDevice) haptics.medium();
+        alert('Adding a new collection...');
+      }
+    }
+  ];
+  
+  // Tab items for navigation
+  const tabItems = [
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      icon: 'gauge',
+      href: '/dashboard',
+    },
+    {
+      key: 'analytics',
+      label: 'Analytics',
+      icon: 'chart.bar.xaxis',
+      href: '/analytics',
+    },
+    {
+      key: 'portfolio',
+      label: 'Portfolio',
+      icon: 'briefcase',
+      href: '/portfolio',
+    },
+    {
+      key: 'reports',
+      label: 'Reports',
+      icon: 'doc.text',
+      href: '/reports',
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: 'gearshape',
+      href: '/settings',
+    },
+  ];
+  
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/', icon: 'house' },
+    { label: 'Portfolio', href: '/portfolio', icon: 'briefcase' },
+  ];
 
   // Render bar chart with iOS optimizations
   const renderBarChart = (dimensions: any, interactionState: any, helpers: any) => {

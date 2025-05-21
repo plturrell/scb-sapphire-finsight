@@ -1,12 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 import perplexityService from '@/services/PerplexityService';
+import { withApiCache } from '@/services/redis/ApiCacheMiddleware';
 
 // Add server-side retry and timeout management
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // ms
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Handle OPTIONS requests for CORS preflight
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -123,6 +124,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   });
 }
+
+// Apply cache middleware to the handler
+export default withApiCache(handler, {
+  ttl: 15 * 60, // 15 minutes TTL
+  type: 'market', // Use market data type
+  includeQueryParams: true, // Include all query parameters in cache key
+});
 
 // Helper function to process news content into structured format
 function processNewsContent(content: string): any[] {

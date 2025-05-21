@@ -4,7 +4,10 @@ import DetailedAnalyticsTable from '@/components/DetailedAnalyticsTable.enhanced
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
-import useMultiTasking from '@/hooks/useMultiTasking';
+import { useMultiTasking } from '@/hooks/useMultiTasking';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { haptics } from '@/lib/haptics';
 import { TransactionSector } from '@/types';
 import { useMediaQuery } from 'react-responsive';
@@ -67,37 +70,19 @@ const pieData = [
 ];
 
 export default function Analytics() {
-  const [isMounted, setIsMounted] = useState(false);
-  const [isPlatformDetected, setPlatformDetected] = useState(false);
-  const [isAppleDevice, setIsAppleDevice] = useState(false);
-  const [isIPad, setIsIPad] = useState(false);
   const [selectedSector, setSelectedSector] = useState<any>(null);
   const [activeFilterIndex, setActiveFilterIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
-  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  const { mode, isMultiTasking } = useMultiTasking();
+  const { isAppleDevice, deviceType } = useDeviceCapabilities();
+  const { isDarkMode } = useUIPreferences();
+  
+  // Determine if it's an iPad
+  const isIPad = deviceType === 'tablet' && isAppleDevice;
   
   const timeFilters = ['Last 30 Days', 'Last Quarter', 'Last 6 Months', 'Year to Date', 'Last 12 Months'];
-
-  // Detect platform when component mounts
-  useEffect(() => {
-    setIsMounted(true);
-    
-    // Check if we're on an Apple platform
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    
-    // Check if we're on iPad specifically
-    const isIpad = /iPad/.test(navigator.userAgent) || 
-      (navigator.platform === 'MacIntel' && 
-      navigator.maxTouchPoints > 1 &&
-      !navigator.userAgent.includes('iPhone'));
-    
-    setIsAppleDevice(isIOS);
-    setIsIPad(isIpad);
-    setPlatformDetected(true);
-  }, []);
 
   // Handle chart sector selection
   const handleSectorSelect = (sector: any) => {
@@ -147,6 +132,60 @@ export default function Analytics() {
     // In a real app, this would generate and download a report
     alert('Downloading analytics report...');
   };
+  
+  // Navigation bar actions
+  const navBarActions = [
+    {
+      icon: 'arrow.down.doc',
+      label: 'Download Report',
+      onPress: handleDownloadReport
+    },
+    {
+      icon: 'arrow.clockwise',
+      label: 'Refresh',
+      onPress: handleRefresh
+    }
+  ];
+  
+  // Tab items for navigation
+  const tabItems = [
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      icon: 'gauge',
+      href: '/dashboard',
+    },
+    {
+      key: 'analytics',
+      label: 'Analytics',
+      icon: 'chart.bar.xaxis',
+      href: '/analytics',
+    },
+    {
+      key: 'portfolio',
+      label: 'Portfolio',
+      icon: 'briefcase',
+      href: '/portfolio',
+    },
+    {
+      key: 'reports',
+      label: 'Reports',
+      icon: 'doc.text',
+      href: '/reports',
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: 'gearshape',
+      href: '/settings',
+    },
+  ];
+  
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/', icon: 'house' },
+    { label: 'Analytics', href: '/analytics', icon: 'chart.bar.xaxis' },
+  ];
 
   // Render line chart with iOS optimizations if on Apple device
   const renderLineChart = (dimensions: any, interactionState: any, helpers: any) => {
@@ -449,21 +488,30 @@ export default function Analytics() {
   };
 
   return (
-    <ScbBeautifulUI 
-      showNewsBar={!isSmallScreen && !isMultiTasking} 
-      pageTitle="Analytics" 
-      showTabs={isAppleDevice}
-    >
-      <div className={`space-y-6 ${isMultiTasking && mode === 'slide-over' ? 'px-2' : ''}`}>
-        <div className="flex justify-between items-center flex-wrap gap-2">
-          <div>
-            <p className="text-gray-600 mt-1">Transaction Banking Performance Overview</p>
-          </div>
-          
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            {isAppleDevice && isPlatformDetected ? (
-              <>
+    <>
+      {isAppleDevice ? (
+        <IOSOptimizedLayout
+          title="Analytics"
+          subtitle="Transaction Banking Performance"
+          showBreadcrumb={true}
+          breadcrumbItems={breadcrumbItems}
+          showTabBar={true}
+          tabItems={tabItems}
+          navBarRightActions={navBarActions}
+          showBackButton={true}
+          largeTitle={true}
+          theme={isDarkMode ? 'dark' : 'light'}
+        >
+          <div className="space-y-6">
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <div>
+                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mt-1`}>
+                  Transaction Banking Performance Overview
+                </p>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
                 <EnhancedTouchButton
                   variant="secondary"
                   label="Refresh"
@@ -479,9 +527,129 @@ export default function Analytics() {
                   onClick={handleDownloadReport}
                   compact={isMultiTasking && mode === 'slide-over'}
                 />
-              </>
-            ) : (
-              <>
+              </div>
+            </div>
+            
+            {/* Time Period Filter */}
+            <div className="overflow-x-auto">
+              <div className={`inline-flex ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg p-1 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                {timeFilters.map((filter, index) => (
+                  <button
+                    key={filter}
+                    className={`px-3 py-1.5 rounded-md transition-colors ${
+                      activeFilterIndex === index 
+                        ? isDarkMode 
+                          ? 'bg-gray-700 shadow-sm text-blue-400' 
+                          : 'bg-white shadow-sm text-blue-600'
+                        : isDarkMode
+                          ? 'text-gray-300 hover:text-white'
+                          : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                    onClick={() => handleFilterChange(index)}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Responsive table - use enhanced on iPad for multitasking */}
+            <DetailedAnalyticsTable 
+              data={sectorData} 
+              compact={isMultiTasking && mode === 'slide-over'}
+            />
+
+            {/* Charts - dynamically rendered based on platform */}
+            {renderCharts()}
+
+            {/* Key Insights section */}
+            <div className={`
+              ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'} 
+              rounded-lg shadow ${isMultiTasking && mode === 'slide-over' ? 'p-4' : 'p-6'}
+            `}>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className={`
+                  text-lg font-semibold
+                  ${isDarkMode ? 'text-blue-400' : 'text-[rgb(var(--scb-honolulu-blue))]'}
+                `}>
+                  Key Insights
+                </h3>
+                
+                <EnhancedTouchButton
+                  variant="link"
+                  label="View All Insights"
+                  iconRight={<ArrowRight className="w-4 h-4" />}
+                  onClick={() => {
+                    haptics.selection();
+                    alert('This would navigate to a detailed insights view');
+                  }}
+                  compact={true}
+                />
+              </div>
+              
+              <div className={`grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'md:grid-cols-1' : 'md:grid-cols-3'} gap-4`}>
+                <div 
+                  className={`
+                    p-4 ${isDarkMode ? 'bg-blue-900/20 text-blue-100' : 'bg-blue-50'} rounded-lg transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer
+                  `}
+                  onClick={() => {
+                    haptics.selection();
+                    alert('Viewing details for top performer: Diversified sector');
+                  }}
+                >
+                  <h4 className={`font-semibold ${isDarkMode ? 'text-blue-100' : 'text-blue-900'}`}>Top Performer</h4>
+                  <p className={`text-sm ${isDarkMode ? 'text-blue-200' : 'text-blue-700'} mt-1`}>
+                    Diversified sector showing 4.2% growth
+                  </p>
+                </div>
+                
+                <div 
+                  className={`
+                    p-4 ${isDarkMode ? 'bg-green-900/20 text-green-100' : 'bg-green-50'} rounded-lg transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer
+                  `}
+                  onClick={() => {
+                    haptics.selection();
+                    alert('Viewing details for strongest yield: Diversified sector');
+                  }}
+                >
+                  <h4 className={`font-semibold ${isDarkMode ? 'text-green-100' : 'text-green-900'}`}>Strongest Yield</h4>
+                  <p className={`text-sm ${isDarkMode ? 'text-green-200' : 'text-green-700'} mt-1`}>
+                    Diversified sector at 6.3% yield
+                  </p>
+                </div>
+                
+                <div 
+                  className={`
+                    p-4 ${isDarkMode ? 'bg-yellow-900/20 text-yellow-100' : 'bg-yellow-50'} rounded-lg transition-transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer
+                  `}
+                  onClick={() => {
+                    haptics.selection();
+                    alert('Viewing details for watch area: Automotive sector');
+                  }}
+                >
+                  <h4 className={`font-semibold ${isDarkMode ? 'text-yellow-100' : 'text-yellow-900'}`}>Watch Area</h4>
+                  <p className={`text-sm ${isDarkMode ? 'text-yellow-200' : 'text-yellow-700'} mt-1`}>
+                    Automotive showing -1.2% decline
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </IOSOptimizedLayout>
+      ) : (
+        <ScbBeautifulUI 
+          showNewsBar={!isSmallScreen && !isMultiTasking} 
+          pageTitle="Analytics" 
+          showTabs={false}
+        >
+          <div className="space-y-6">
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <div>
+                <p className="text-gray-600 mt-1">Transaction Banking Performance Overview</p>
+              </div>
+              
+              {/* Action Buttons for non-Apple devices */}
+              <div className="flex items-center gap-2">
                 <button 
                   className="px-3 py-1.5 bg-white border border-gray-300 rounded-md shadow-sm text-sm flex items-center gap-1"
                   onClick={handleRefresh}
@@ -497,139 +665,73 @@ export default function Analytics() {
                   <Download className="w-4 h-4" />
                   Download Report
                 </button>
-              </>
-            )}
-          </div>
-        </div>
-        
-        {/* Time Period Filter */}
-        <div className="overflow-x-auto">
-          <div className={`inline-flex bg-gray-100 rounded-lg p-1 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
-            {timeFilters.map((filter, index) => (
-              isAppleDevice && isPlatformDetected ? (
-                <button
-                  key={filter}
-                  className={`px-3 py-1.5 rounded-md transition-colors ${
-                    activeFilterIndex === index 
-                      ? 'bg-white shadow-sm text-blue-600' 
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                  onClick={() => handleFilterChange(index)}
+              </div>
+            </div>
+            
+            {/* Time Period Filter for non-Apple devices */}
+            <div className="overflow-x-auto">
+              <div className="inline-flex bg-gray-100 rounded-lg p-1 text-sm">
+                {timeFilters.map((filter, index) => (
+                  <button
+                    key={filter}
+                    className={`px-3 py-1.5 rounded-md transition-colors ${
+                      activeFilterIndex === index 
+                        ? 'bg-white shadow-sm font-medium' 
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                    onClick={() => handleFilterChange(index)}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Non-Apple device content */}
+            <DetailedAnalyticsTable 
+              data={sectorData} 
+              compact={false}
+            />
+
+            {/* Charts for non-Apple devices */}
+            {renderCharts()}
+
+            {/* Key Insights section for non-Apple devices */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">
+                  Key Insights
+                </h3>
+                
+                <button 
+                  className="text-sm text-blue-600 flex items-center gap-1"
+                  onClick={() => alert('This would navigate to a detailed insights view')}
                 >
-                  {filter}
+                  View All Insights
+                  <ArrowRight className="w-4 h-4" />
                 </button>
-              ) : (
-                <button
-                  key={filter}
-                  className={`px-3 py-1.5 rounded-md transition-colors ${
-                    activeFilterIndex === index 
-                      ? 'bg-white shadow-sm font-medium' 
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                  onClick={() => handleFilterChange(index)}
-                >
-                  {filter}
-                </button>
-              )
-            ))}
-          </div>
-        </div>
-
-        {/* Responsive table - use enhanced on iPad for multitasking */}
-        <DetailedAnalyticsTable 
-          data={sectorData} 
-          compact={isMultiTasking && mode === 'slide-over'}
-        />
-
-        {/* Charts - dynamically rendered based on platform */}
-        {renderCharts()}
-
-        {/* Key Insights section - adapt for iOS styling on Apple devices */}
-        <div className={`
-          bg-white rounded-lg shadow ${isMultiTasking && mode === 'slide-over' ? 'p-4' : 'p-6'}
-          ${isAppleDevice ? 'shadow-sm dark:bg-gray-800 dark:border dark:border-gray-700' : ''}
-        `}>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className={`
-              text-lg font-semibold
-              ${isAppleDevice ? 'text-[rgb(var(--scb-honolulu-blue))]' : ''}
-            `}>
-              Key Insights
-            </h3>
-            
-            {isAppleDevice && isPlatformDetected ? (
-              <EnhancedTouchButton
-                variant="link"
-                label="View All Insights"
-                iconRight={<ArrowRight className="w-4 h-4" />}
-                onClick={() => {
-                  if (isAppleDevice) haptics.selection();
-                  alert('This would navigate to a detailed insights view');
-                }}
-                compact={true}
-              />
-            ) : (
-              <button 
-                className="text-sm text-blue-600 flex items-center gap-1"
-                onClick={() => alert('This would navigate to a detailed insights view')}
-              >
-                View All Insights
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-          
-          <div className={`grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'md:grid-cols-1' : 'md:grid-cols-3'} gap-4`}>
-            <div 
-              className={`
-                p-4 bg-blue-50 rounded-lg transition-transform
-                ${isAppleDevice ? 'bg-opacity-50 dark:bg-blue-900/20 dark:text-blue-100 hover:scale-[1.02] active:scale-[0.98] cursor-pointer' : ''}
-              `}
-              onClick={() => {
-                if (isAppleDevice) {
-                  haptics.selection();
-                  alert('Viewing details for top performer: Diversified sector');
-                }
-              }}
-            >
-              <h4 className="font-semibold text-blue-900 dark:text-blue-100">Top Performer</h4>
-              <p className="text-sm text-blue-700 dark:text-blue-200 mt-1">Diversified sector showing 4.2% growth</p>
-            </div>
-            
-            <div 
-              className={`
-                p-4 bg-green-50 rounded-lg transition-transform
-                ${isAppleDevice ? 'bg-opacity-50 dark:bg-green-900/20 dark:text-green-100 hover:scale-[1.02] active:scale-[0.98] cursor-pointer' : ''}
-              `}
-              onClick={() => {
-                if (isAppleDevice) {
-                  haptics.selection();
-                  alert('Viewing details for strongest yield: Diversified sector');
-                }
-              }}
-            >
-              <h4 className="font-semibold text-green-900 dark:text-green-100">Strongest Yield</h4>
-              <p className="text-sm text-green-700 dark:text-green-200 mt-1">Diversified sector at 6.3% yield</p>
-            </div>
-            
-            <div 
-              className={`
-                p-4 bg-yellow-50 rounded-lg transition-transform
-                ${isAppleDevice ? 'bg-opacity-50 dark:bg-yellow-900/20 dark:text-yellow-100 hover:scale-[1.02] active:scale-[0.98] cursor-pointer' : ''}
-              `}
-              onClick={() => {
-                if (isAppleDevice) {
-                  haptics.selection();
-                  alert('Viewing details for watch area: Automotive sector');
-                }
-              }}
-            >
-              <h4 className="font-semibold text-yellow-900 dark:text-yellow-100">Watch Area</h4>
-              <p className="text-sm text-yellow-700 dark:text-yellow-200 mt-1">Automotive showing -1.2% decline</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-semibold text-blue-900">Top Performer</h4>
+                  <p className="text-sm text-blue-700 mt-1">Diversified sector showing 4.2% growth</p>
+                </div>
+                
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h4 className="font-semibold text-green-900">Strongest Yield</h4>
+                  <p className="text-sm text-green-700 mt-1">Diversified sector at 6.3% yield</p>
+                </div>
+                
+                <div className="p-4 bg-yellow-50 rounded-lg">
+                  <h4 className="font-semibold text-yellow-900">Watch Area</h4>
+                  <p className="text-sm text-yellow-700 mt-1">Automotive showing -1.2% decline</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </ScbBeautifulUI>
+        </ScbBeautifulUI>
+      )}
+    </>
   );
 }

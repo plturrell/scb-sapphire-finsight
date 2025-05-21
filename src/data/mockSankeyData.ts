@@ -1,5 +1,57 @@
 import { SankeyData } from '../types';
 
+// Export the mock Sankey data for use in components
+export const mockSankeyData: SankeyData = {
+  nodes: [
+    { name: 'Operating Revenue', group: 'income', value: 1000 },
+    { name: 'Investment Income', group: 'income', value: 450 },
+    { name: 'Fees & Commissions', group: 'income', value: 350 },
+    { name: 'Interest Income', group: 'income', value: 650 },
+    
+    { name: 'Operating Expenses', group: 'expense', value: 700 },
+    { name: 'Administrative', group: 'expense', value: 350 },
+    { name: 'Salaries', group: 'expense', value: 450 },
+    { name: 'Marketing', group: 'expense', value: 180 },
+    
+    { name: 'Net Income', group: 'equity', value: 770 },
+    { name: 'Retained Earnings', group: 'equity', value: 620 },
+    { name: 'Dividends', group: 'equity', value: 150 },
+    
+    { name: 'Fixed Assets', group: 'asset', value: 500 },
+    { name: 'Current Assets', group: 'asset', value: 800 },
+    { name: 'Liquid Assets', group: 'asset', value: 550 },
+    
+    { name: 'Long-term Debt', group: 'liability', value: 350 },
+    { name: 'Short-term Liabilities', group: 'liability', value: 250 }
+  ],
+  links: [
+    // Revenue flows
+    { source: 0, target: 8, value: 300 },
+    { source: 1, target: 8, value: 250 },
+    { source: 2, target: 8, value: 100 },
+    { source: 3, target: 8, value: 120 },
+    
+    // Expense flows
+    { source: 0, target: 4, value: 350 },
+    { source: 0, target: 5, value: 150 },
+    { source: 0, target: 6, value: 150 },
+    { source: 0, target: 7, value: 50 },
+    
+    // Net income allocation
+    { source: 8, target: 9, value: 620 },
+    { source: 8, target: 10, value: 150 },
+    
+    // Asset flows
+    { source: 9, target: 11, value: 150 },
+    { source: 9, target: 12, value: 320 },
+    { source: 9, target: 13, value: 150 },
+    
+    // Liability flows
+    { source: 12, target: 14, value: 180 },
+    { source: 12, target: 15, value: 120 }
+  ]
+};
+
 // Mock initial data for Sankey visualization
 export const initialSankeyData: SankeyData = {
   nodes: [

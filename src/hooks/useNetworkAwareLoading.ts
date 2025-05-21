@@ -348,4 +348,7 @@ export function useAdaptiveFetch<T>(
   }, [url, fetchData]);
 
   return { data, loading, error, refresh };
-}
+};
+
+// Export as default for backward compatibility
+export default useNetworkAwareLoading;

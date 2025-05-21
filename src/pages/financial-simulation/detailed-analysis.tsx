@@ -122,6 +122,444 @@ export default function DetailedAnalysis() {
     router.push('/financial-simulation');
   };
   
+  // Export detailed analysis as PDF with real functionality
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+  
+  const exportDetailedAnalysisAsPdf = async () => {
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    try {
+      setIsGeneratingPdf(true);
+      
+      // Create a new PDF document
+      const pdfDoc = await PDFDocument.create();
+      
+      // Embed the standard fonts
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      
+      // Add a page to the document
+      const page = pdfDoc.addPage([600, 800]);
+      const { width, height } = page.getSize();
+      
+      // Draw the title
+      page.drawText('Detailed Financial Analysis', {
+        x: 50,
+        y: height - 50,
+        size: 24,
+        font: helveticaBold,
+        color: rgb(0, 0.3, 0.6), // SCB blue
+      });
+
+      // Add subtitle
+      page.drawText('Monte Carlo Simulation Analysis Results', {
+        x: 50,
+        y: height - 80,
+        size: 14,
+        font: helveticaFont,
+        color: rgb(0.3, 0.3, 0.3),
+      });
+      
+      // Add date
+      const currentDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      
+      page.drawText(`Generated on: ${currentDate}`, {
+        x: 50,
+        y: height - 110,
+        size: 12,
+        font: helveticaFont,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      // Add user role information
+      page.drawText(`Role: ${role || 'Investor'}`, {
+        x: 50,
+        y: height - 130,
+        size: 12,
+        font: helveticaFont,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      // Draw a divider line
+      page.drawLine({
+        start: { x: 50, y: height - 150 },
+        end: { x: width - 50, y: height - 150 },
+        thickness: 1,
+        color: rgb(0.8, 0.8, 0.8),
+      });
+      
+      // Add summary metrics section
+      page.drawText('Simulation Summary Metrics', {
+        x: 50,
+        y: height - 180,
+        size: 18,
+        font: helveticaBold,
+        color: rgb(0, 0, 0),
+      });
+      
+      // Draw summary metrics
+      const summaryItems = [
+        { label: 'Expected Return:', value: `${expectedReturn || '8.5'}%`, trend: parseFloat(expectedReturn as string || '8.5') > 7 ? '↑' : '↓' },
+        { label: 'Risk Score:', value: riskScore || '4.3', trend: '' },
+        { label: 'Confidence Interval:', value: `${confidenceLower || '6.2'}% - ${confidenceUpper || '10.8'}%`, trend: '' },
+        { label: 'Simulation Count:', value: '10,000', trend: '' },
+      ];
+      
+      summaryItems.forEach((item, index) => {
+        // Label
+        page.drawText(item.label, {
+          x: 50,
+          y: height - 210 - (index * 25),
+          size: 12,
+          font: helveticaFont,
+          color: rgb(0.3, 0.3, 0.3),
+        });
+        
+        // Value
+        page.drawText(item.value, {
+          x: 200,
+          y: height - 210 - (index * 25),
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Trend
+        if (item.trend) {
+          const trendColor = item.trend === '↑' ? rgb(0, 0.7, 0) : rgb(0.8, 0, 0);
+          page.drawText(item.trend, {
+            x: 300,
+            y: height - 210 - (index * 25),
+            size: 12,
+            font: helveticaFont,
+            color: trendColor,
+          });
+        }
+      });
+      
+      // Draw a divider line
+      page.drawLine({
+        start: { x: 50, y: height - 320 },
+        end: { x: width - 50, y: height - 320 },
+        thickness: 1,
+        color: rgb(0.8, 0.8, 0.8),
+      });
+      
+      // Add tab data based on active tab
+      if (activeTab === 'risk') {
+        page.drawText('Risk Analysis', {
+          x: 50,
+          y: height - 350,
+          size: 18,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Add risk factor explanations
+        page.drawText('Market Volatility: 65%', {
+          x: 50,
+          y: height - 380,
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText('Inflation Impact: 42%', {
+          x: 50,
+          y: height - 405,
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText('Interest Rate Risk: 78%', {
+          x: 50,
+          y: height - 430,
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText('Sector Exposure: 31%', {
+          x: 50,
+          y: height - 455,
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+      } 
+      else if (activeTab === 'allocation') {
+        page.drawText('Asset Allocation', {
+          x: 50,
+          y: height - 350,
+          size: 18,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Draw asset allocation data
+        const allocations = [
+          { asset: 'Equities', allocation: 0.55 },
+          { asset: 'Fixed Income', allocation: 0.30 },
+          { asset: 'Alternatives', allocation: 0.10 },
+          { asset: 'Cash', allocation: 0.05 },
+        ];
+        
+        allocations.forEach((alloc, index) => {
+          // Asset name
+          page.drawText(alloc.asset, {
+            x: 50,
+            y: height - 380 - (index * 35),
+            size: 12,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+          
+          // Allocation percentage
+          page.drawText(`${(alloc.allocation * 100).toFixed(1)}%`, {
+            x: 200,
+            y: height - 380 - (index * 35),
+            size: 12,
+            font: helveticaBold,
+            color: rgb(0, 0, 0),
+          });
+          
+          // Draw allocation bar
+          const barStartX = 250;
+          const barMaxWidth = 250;
+          const barHeight = 15;
+          
+          // Background bar
+          page.drawRectangle({
+            x: barStartX,
+            y: height - 390 - (index * 35),
+            width: barMaxWidth,
+            height: barHeight,
+            color: rgb(0.9, 0.9, 0.9),
+          });
+          
+          // Foreground bar (colored by asset type)
+          let barColor;
+          if (alloc.asset.toLowerCase().includes('equit')) {
+            barColor = rgb(0, 0.4, 0.7); // Blue for equities
+          } else if (alloc.asset.toLowerCase().includes('fixed')) {
+            barColor = rgb(0.2, 0.6, 0.3); // Green for fixed income
+          } else if (alloc.asset.toLowerCase().includes('alt')) {
+            barColor = rgb(0.8, 0.3, 0.1); // Orange for alternatives
+          } else {
+            barColor = rgb(0.6, 0.6, 0.2); // Yellow/gold for cash or others
+          }
+          
+          page.drawRectangle({
+            x: barStartX,
+            y: height - 390 - (index * 35),
+            width: barMaxWidth * alloc.allocation,
+            height: barHeight,
+            color: barColor,
+          });
+        });
+      }
+      else if (activeTab === 'metrics') {
+        page.drawText('Performance Metrics', {
+          x: 50,
+          y: height - 350,
+          size: 18,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Add metrics data
+        const metrics = [
+          { name: 'Expected Return', value: `${expectedReturn || '8.5'}%` },
+          { name: 'Volatility', value: `${(parseFloat(riskScore as string || '4.3') * 2.2).toFixed(1)}%` },
+          { name: 'Sharpe Ratio', value: '1.73' },
+          { name: 'Sortino Ratio', value: '2.12' },
+          { name: 'Max Drawdown', value: '-9.4%' },
+          { name: 'Success Rate', value: '94%' },
+          { name: 'Value at Risk (95%)', value: '-7.2%' },
+          { name: 'Expected Tail Loss', value: '-10.4%' },
+          { name: 'Beta', value: '0.87' },
+          { name: 'Information Ratio', value: '1.21' },
+        ];
+        
+        // Draw in two columns
+        metrics.slice(0, 5).forEach((metric, index) => {
+          page.drawText(metric.name + ':', {
+            x: 50,
+            y: height - 380 - (index * 25),
+            size: 12,
+            font: helveticaFont,
+            color: rgb(0.3, 0.3, 0.3),
+          });
+          
+          page.drawText(metric.value, {
+            x: 200,
+            y: height - 380 - (index * 25),
+            size: 12,
+            font: helveticaBold,
+            color: rgb(0, 0, 0),
+          });
+        });
+        
+        metrics.slice(5).forEach((metric, index) => {
+          page.drawText(metric.name + ':', {
+            x: 330,
+            y: height - 380 - (index * 25),
+            size: 12,
+            font: helveticaFont,
+            color: rgb(0.3, 0.3, 0.3),
+          });
+          
+          page.drawText(metric.value, {
+            x: 480,
+            y: height - 380 - (index * 25),
+            size: 12,
+            font: helveticaBold,
+            color: rgb(0, 0, 0),
+          });
+        });
+      }
+      else if (activeTab === 'scenarios') {
+        page.drawText('Scenario Analysis', {
+          x: 50,
+          y: height - 350,
+          size: 18,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Draw scenario data
+        const scenarios = [
+          { name: 'Baseline', probability: 60, return: parseFloat(expectedReturn as string) || 8.5 },
+          { name: 'Recession', probability: 25, return: (parseFloat(expectedReturn as string) || 8.5) * 0.4 },
+          { name: 'Growth', probability: 15, return: (parseFloat(expectedReturn as string) || 8.5) * 1.5 }
+        ];
+        
+        // Headers
+        page.drawText('Scenario', {
+          x: 50,
+          y: height - 380,
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText('Probability', {
+          x: 200,
+          y: height - 380,
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        page.drawText('Return', {
+          x: 350,
+          y: height - 380,
+          size: 12,
+          font: helveticaBold,
+          color: rgb(0, 0, 0),
+        });
+        
+        // Scenario data
+        scenarios.forEach((scenario, index) => {
+          page.drawText(scenario.name, {
+            x: 50,
+            y: height - 410 - (index * 30),
+            size: 12,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+          
+          page.drawText(`${scenario.probability}%`, {
+            x: 200,
+            y: height - 410 - (index * 30),
+            size: 12,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+          
+          page.drawText(`${scenario.return.toFixed(1)}%`, {
+            x: 350,
+            y: height - 410 - (index * 30),
+            size: 12,
+            font: helveticaFont,
+            color: rgb(0, 0, 0),
+          });
+        });
+      }
+      
+      // Add footer
+      page.drawText('© 2025 Standard Chartered Bank - Confidential', {
+        x: width / 2 - 120,
+        y: 30,
+        size: 10,
+        font: helveticaFont,
+        color: rgb(0.5, 0.5, 0.5),
+      });
+      
+      page.drawText('This report was generated using Monte Carlo Tree Search simulation', {
+        x: width / 2 - 145,
+        y: 15,
+        size: 9,
+        font: helveticaFont,
+        color: rgb(0.6, 0.6, 0.6),
+      });
+      
+      // Serialize the PDFDocument to bytes
+      const pdfBytes = await pdfDoc.save();
+      
+      // Convert the bytes to a Blob
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      
+      // Create a URL for the Blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a link element
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Financial_Analysis_${role || 'Investor'}_${activeTab}_${new Date().toISOString().split('T')[0]}.pdf`;
+      
+      // Append to the document, click and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL created for the blob
+      URL.revokeObjectURL(url);
+      
+      // Show success state and provide success haptic feedback
+      setDownloadSuccess(true);
+      
+      if (isAppleDevice) {
+        haptics.success();
+      }
+      
+      // Reset success state after 2 seconds
+      setTimeout(() => {
+        setDownloadSuccess(false);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      
+      // Error haptic feedback
+      if (isAppleDevice) {
+        haptics.error();
+      }
+      
+      alert('Unable to generate PDF. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+  
   return (
     <div>
       <Head>
@@ -143,15 +581,12 @@ export default function DetailedAnalysis() {
               theme={isDark ? 'dark' : 'light'}
               rightActions={[
                 {
-                  icon: 'square.and.arrow.down',
-                  label: 'Export PDF',
-                  onPress: () => {
-                    if (isAppleDevice) haptics.medium();
-                    if (window.confirm('Export detailed analysis as PDF?')) {
-                      // In a real app, this would call the PDF export function
-                      alert('Exporting detailed analysis as PDF...');
-                    }
-                  }
+                  icon: isGeneratingPdf ? 'arrow.clockwise' : downloadSuccess ? 'checkmark.circle.fill' : 'square.and.arrow.down',
+                  label: isGeneratingPdf ? 'Generating...' : downloadSuccess ? 'Downloaded' : 'Export PDF',
+                  onPress: exportDetailedAnalysisAsPdf,
+                  disabled: isGeneratingPdf,
+                  variant: downloadSuccess ? 'success' : 'primary',
+                  loading: isGeneratingPdf
                 }
               ]}
               respectSafeArea={true}

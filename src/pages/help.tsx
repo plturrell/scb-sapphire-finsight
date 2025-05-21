@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,6 +23,12 @@ import {
 } from 'lucide-react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useSafeArea } from '@/hooks/useSafeArea';
+import { useApplePhysics } from '@/hooks/useApplePhysics';
+import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
+import { EnhancedTouchButton, EnhancedPillTabs } from '@/components/EnhancedTouchButton';
+import haptics from '@/lib/haptics';
 
 // Sample data for help categories
 const helpCategories = [
