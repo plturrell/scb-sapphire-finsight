@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import MobileNavigation from '@/components/MobileNavigation';
-import { LayoutDashboard, ChartBarIcon, Briefcase, FileText, Settings, AlertCircle } from 'lucide-react';
+import { LayoutDashboard, BarChart, Briefcase, FileText, Settings, AlertCircle } from 'lucide-react';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useSafeArea } from '@/hooks/useSafeArea';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
@@ -17,7 +17,7 @@ const MobileNavigationTest: NextPage = () => {
   // Custom navigation items
   const customItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+    { name: 'Analytics', href: '/analytics', icon: BarChart },
     { name: 'Portfolio', href: '/portfolio', icon: Briefcase, badge: 3 },
     { name: 'Reports', href: '/reports', icon: FileText }
   ];
