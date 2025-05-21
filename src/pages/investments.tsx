@@ -51,25 +51,17 @@ const marketInsights = [
 
 export default function Investments() {
   const { preferences, isDarkMode } = useUIPreferences();
-  const { mode, isMultiTasking } = useMultiTasking();
-  const { deviceCapabilities } = useDeviceCapabilities();
-  const { safeArea } = useSafeArea();
-  const sfSymbolsSupported = useSFSymbolsSupport();
   
-  // Detect if device is an Apple device
-  const [isAppleDevice, setIsAppleDevice] = useState(false);
-  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  
-  useEffect(() => {
-    // Detect iOS/iPadOS/macOS
-    const isApple = /iPhone|iPad|iPod|Mac/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    setIsAppleDevice(isApple);
-    setIsPlatformDetected(true);
-  }, []);
+  // Device capability hooks
+  const { isAppleDevice, deviceType } = useDeviceCapabilities();
+  const { mode, isMultiTasking, sizeClass } = useMultiTasking();
+  // Using standard motion physics without specific preset
+  const applePhysics = useApplePhysics({ motion: 'standard' });
+  const { safeArea, hasHomeIndicator, hasDynamicIsland, orientation } = useSafeArea();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
   
   // iOS-specific state for touch interactions
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [navbarHidden, setNavbarHidden] = useState(false);
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -80,28 +72,17 @@ export default function Investments() {
   const [touchSwipeDistance, setTouchSwipeDistance] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const [swipeTarget, setSwipeTarget] = useState<string | null>(null);
-  const [isPlatformDetected, setPlatformDetected] = useState(false);
   
   // Refs
   const contentRef = useRef<HTMLDivElement>(null);
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
-  
-  // Device capability hooks
-  const { isAppleDevice, deviceType } = useDeviceCapabilities();
-  const { mode, isMultiTasking, sizeClass } = useMultiTasking();
-  const { springPreset } = useApplePhysics({ motion: 'standard' });
-  const { safeArea, hasHomeIndicator, hasDynamicIsland, orientation } = useSafeArea();
-  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
   
   // Define device types
   const isIPad = deviceType === 'tablet' && isAppleDevice;
   const isIPhone = deviceType === 'mobile' && isAppleDevice;
   const isApplePlatform = isIPad || isIPhone;
   
-  // Effect to detect platform
-  useEffect(() => {
-    setPlatformDetected(true);
-  }, []);
+  // Platform detection is handled by the useDeviceCapabilities hook
   
   // Effect to handle scroll events for iOS-style navbar hiding/showing
   useEffect(() => {
@@ -354,7 +335,6 @@ export default function Investments() {
                 change={2.8}
                 period="This Month"
                 format="currency"
-                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
               />
               <MetricCard
                 title="YTD Return"
@@ -362,7 +342,6 @@ export default function Investments() {
                 change={1.2}
                 period="vs Benchmark 7.5%"
                 format="percentage"
-                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
               />
               <MetricCard
                 title="Dividend Yield"
@@ -370,7 +349,6 @@ export default function Investments() {
                 change={0.3}
                 period="vs Last Year"
                 format="percentage"
-                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
               />
               <MetricCard
                 title="Risk Score"
@@ -378,7 +356,6 @@ export default function Investments() {
                 change={-3}
                 period="Moderate"
                 format="number"
-                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
               />
             </div>
         
