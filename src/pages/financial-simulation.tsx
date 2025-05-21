@@ -600,7 +600,7 @@ Generated on: ${new Date().toLocaleDateString()}
   };
 
   return (
-    <>
+    <div>
       <Head>
         <title>Financial Simulation | SCB Sapphire</title>
         <meta name="description" content="Monte Carlo financial simulation and analysis for optimized investment strategies" />
@@ -669,9 +669,8 @@ Generated on: ${new Date().toLocaleDateString()}
             ? 'px-2 py-2 overflow-x-hidden' 
             : isMultiTasking && mode === 'split-view'
               ? 'px-4 py-3 max-w-4xl' 
-              : 'px-6 py-4 max-w-6xl'} mx-auto`}
+              : 'px-6 py-4 max-w-6xl'} mx-auto`}>
             {/* The main content remains mostly the same, just remove the top heading since it's in the navbar */}
-        
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <EnhancedLoadingSpinner size="lg" message="Loading financial data..." variant="primary" />
@@ -930,7 +929,7 @@ Generated on: ${new Date().toLocaleDateString()}
                 </div>
               </div>
             )}
-          </div>
+          </React.Fragment>
         )}
 
         {/* iOS Tab Bar Navigation */}
@@ -955,7 +954,7 @@ Generated on: ${new Date().toLocaleDateString()}
           <div className="h-6 sm:h-4 md:h-2"></div>
         )}
       </div>
-      </div>
+        </div>
         </IconSystemProvider>
       </ScbBeautifulUI>
     </div>
