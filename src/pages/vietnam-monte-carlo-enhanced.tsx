@@ -11,6 +11,7 @@ import VietnamMonteCarloSensitivity from '@/components/VietnamMonteCarloSensitiv
 import VietnamMonteCarloLlmAnalysis from '@/components/VietnamMonteCarloLlmAnalysis';
 import VietnamMonteCarloHistory from '@/components/VietnamMonteCarloHistory';
 import { globalSimulationCache } from '@/services/SimulationCache';
+import monteCarloService from '@/services/MonteCarloService';
 import monteCarloStorageService from '@/services/MonteCarloStorageService';
 import monteCarloComparisonService from '@/services/MonteCarloComparisonService';
 import vietnamMonteCarloAdapter from '@/services/VietnamMonteCarloAdapter';
@@ -176,6 +177,110 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
     setSensitivityResults(null);
     setLlmAnalysis(null);
     
+    try {
+      // Use the Monte Carlo service to create and run simulation
+      const result = await monteCarloService.createSimulation(simConfig, username);
+      
+      // Update current simulation state
+      const input = await monteCarloService.getSimulationInput(result.inputId);
+      const output = await monteCarloService.getSimulationOutput(result.outputId);
+      
+      setCurrentSimulation({
+        input,
+        output
+      });
+      
+      // Start polling for results
+      pollSimulationStatus(result.inputId, result.outputId);
+      
+    } catch (error) {
+      console.error('Error creating simulation:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create simulation');
+      setSimulationStatus('failed');
+      
+      // Provide error haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.error();
+      }
+    }
+  };
+  
+  // Poll simulation status
+  const pollSimulationStatus = async (inputId: UUID, outputId: UUID) => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const status = await monteCarloService.getSimulationStatus(inputId);
+        
+        setSimulationStatus(status.status as SimulationStatus);
+        
+        if (status.error) {
+          setError(status.error);
+          clearInterval(pollInterval);
+          return;
+        }
+        
+        if (status.status === 'completed' && status.hasResults) {
+          // Get the completed simulation output
+          const output = await monteCarloService.getSimulationOutput(outputId);
+          
+          if (output && output.results) {
+            // Update UI with results
+            setSimulationResults(output.results.rawResults || []);
+            setSensitivityResults(output.results.sensitivityAnalysis);
+            
+            // Get LLM analysis if available
+            if (output.llmAnalysis) {
+              setLlmAnalysis({
+                status: 'complete',
+                keyInsights: output.llmAnalysis.insights || [],
+                riskAssessment: output.llmAnalysis.riskAssessment || null,
+                recommendations: output.llmAnalysis.recommendations || []
+              });
+            }
+            
+            // Update current simulation
+            setCurrentSimulation(prev => ({
+              ...prev,
+              output
+            }));
+            
+            // Provide success haptic feedback on Apple devices
+            if (isAppleDevice) {
+              haptics.success();
+            }
+          }
+          
+          clearInterval(pollInterval);
+        } else if (status.status === 'failed') {
+          setError(status.error || 'Simulation failed');
+          setSimulationStatus('failed');
+          
+          // Provide error haptic feedback on Apple devices
+          if (isAppleDevice) {
+            haptics.error();
+          }
+          
+          clearInterval(pollInterval);
+        }
+      } catch (error) {
+        console.error('Error polling simulation status:', error);
+        setError('Error checking simulation status');
+        clearInterval(pollInterval);
+      }
+    }, 2000); // Poll every 2 seconds
+    
+    // Clear interval after 5 minutes to prevent infinite polling
+    setTimeout(() => {
+      clearInterval(pollInterval);
+      if (simulationStatus === 'running') {
+        setError('Simulation timed out');
+        setSimulationStatus('failed');
+      }
+    }, 300000); // 5 minutes
+  };
+  
+  // Original storage-based simulation handling (kept as fallback)
+  const handleRunSimulationLegacy = async (simConfig: VietnamMonteCarloConfig) => {
     // Create or update simulation input in storage
     let input: SimulationInput;
     if (currentSimulation.input) {
@@ -464,34 +569,15 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
     }
     
     try {
-      // Try to get simulation input from Business Data Cloud first
-      let input: SimulationInput | null = null;
-      try {
-        input = await businessDataCloudConnector.getSimulationInput(simulationId);
-      } catch (cloudError) {
-        console.log('Business Data Cloud retrieval failed, falling back to local storage', cloudError);
-        // Fall back to local storage
-        input = await monteCarloStorageService.getSimulationInput(simulationId);
-      }
+      // Use Monte Carlo service to get simulation input
+      const input = await monteCarloService.getSimulationInput(simulationId);
       
       if (!input) {
         throw new Error('Simulation not found');
       }
       
-      // Get outputs for this input
-      let outputs: SimulationOutput[] = [];
-      try {
-        // Try Business Data Cloud first
-        outputs = await businessDataCloudConnector.getSimulationOutputs(simulationId);
-        if (outputs.length === 0) {
-          // If no results from BDC, fall back to local storage
-          outputs = await monteCarloStorageService.listSimulationOutputs(simulationId);
-        }
-      } catch (cloudError) {
-        console.log('Business Data Cloud outputs retrieval failed, falling back to local storage', cloudError);
-        // Fall back to local storage
-        outputs = await monteCarloStorageService.listSimulationOutputs(simulationId);
-      }
+      // Get outputs for this input using Monte Carlo service
+      const outputs = await monteCarloService.getSimulationOutputs(simulationId);
       
       const completedOutputs = outputs.filter(o => o.status === 'completed');
       
@@ -1102,8 +1188,8 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
                 <h3 className="font-medium text-[rgb(var(--horizon-neutral-gray))]">About This Tool</h3>
                 <p className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} text-gray-700 mt-1`}>
                   The Vietnam Tariff Monte Carlo Simulation uses stochastic modeling to simulate thousands of possible outcomes 
-                  based on varying tariff parameters. It leverages GROK 3 API for advanced analysis and Nvidia's langchain 
-                  for structured report generation. All simulations are saved to the Business Data Cloud for future reference.
+                  based on varying tariff parameters. It leverages real data storage with Apache Jena, Redis caching, 
+                  and Perplexity AI for advanced analysis. All simulations are saved to the Business Data Cloud for future reference.
                 </p>
               </div>
             </div>
@@ -1114,7 +1200,7 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
 
         <div className="mb-4">
           <p className="text-xs text-gray-500">
-            © 2025 SCB FinSight | Data updated: May 19, 2025 | Vietnam Tariff Monte Carlo Module v2.0.0
+            © 2025 SCB FinSight | Data updated: May 19, 2025 | Vietnam Tariff Monte Carlo Module v2.0.0 | Real Data Integration
           </p>
         </div>
       </div>

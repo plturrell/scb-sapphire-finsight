@@ -3,7 +3,7 @@ import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import MetricCard from '@/components/MetricCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
-import { RefreshCw, Info, Filter, Download, Share2 } from 'lucide-react';
+import { RefreshCw, Info, Filter, Download, Share2, ChevronRight } from 'lucide-react';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
@@ -15,6 +15,7 @@ import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVis
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import '@/styles/ios-enhancements.css';
 
 // Sample investment data
 const investmentAllocationData = [
@@ -60,6 +61,7 @@ export default function Investments() {
   const applePhysics = useApplePhysics({ motion: 'standard' });
   const { safeArea, hasHomeIndicator, hasDynamicIsland, orientation } = useSafeArea();
   const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const { prefersReducedMotion } = useReducedMotion();
   
   // iOS-specific state for touch interactions
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -73,6 +75,13 @@ export default function Investments() {
   const [touchSwipeDistance, setTouchSwipeDistance] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const [swipeTarget, setSwipeTarget] = useState<string | null>(null);
+  const [pinchState, setPinchState] = useState({ scale: 1, initialDistance: 0, isActive: false });
+  const [containerDimensions, setContainerDimensions] = useState({ width: 300, height: 300 });
+  
+  // iOS-style network awareness and offline state
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [connectionType, setConnectionType] = useState<string>('');
+  const [showOfflineBanner, setShowOfflineBanner] = useState(false);
   
   // Refs
   const contentRef = useRef<HTMLDivElement>(null);
@@ -83,8 +92,76 @@ export default function Investments() {
   const isIPhone = deviceType === 'mobile' && isAppleDevice;
   const isApplePlatform = isIPad || isIPhone;
   
+  // Generate iOS-specific CSS classes
+  const getIOSClasses = () => {
+    const classes = [];
+    if (isApplePlatform) classes.push('ios-optimized');
+    if (isIPhone) classes.push('ios-iphone');
+    if (isIPad) classes.push('ios-ipad');
+    if (hasDynamicIsland) classes.push('ios-dynamic-island');
+    if (hasHomeIndicator) classes.push('ios-home-indicator');
+    if (prefersReducedMotion) classes.push('reduced-motion');
+    if (isMultiTasking) classes.push('ios-multitasking');
+    if (mode === 'slide-over') classes.push('ios-slide-over');
+    if (mode === 'split-view') classes.push('ios-split-view');
+    if (mode === 'stage-manager') classes.push('ios-stage-manager');
+    return classes.join(' ');
+  };
+  
   // Platform detection is handled by the useDeviceCapabilities hook
   
+  // Effect to update container dimensions for responsive charts
+  useEffect(() => {
+    if (!contentRef.current) return;
+    
+    const updateDimensions = () => {
+      if (contentRef.current) {
+        const rect = contentRef.current.getBoundingClientRect();
+        setContainerDimensions({
+          width: rect.width || 300,
+          height: Math.max(rect.height || 300, 300)
+        });
+      }
+    };
+    
+    updateDimensions();
+    
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(contentRef.current);
+    
+    return () => {
+      if (contentRef.current) {
+        resizeObserver.unobserve(contentRef.current);
+      }
+    };
+  }, []);
+  
+  // Effect to handle multi-tasking and orientation changes for iPad
+  useEffect(() => {
+    if (!isIPad || !isMultiTasking) return;
+    
+    const handleOrientationChange = () => {
+      // Adjust layout when orientation changes in multi-tasking mode
+      setTimeout(() => {
+        if (contentRef.current) {
+          const rect = contentRef.current.getBoundingClientRect();
+          setContainerDimensions({
+            width: rect.width || 300,
+            height: Math.max(rect.height || 300, 300)
+          });
+        }
+      }, 200); // Allow for orientation transition to complete
+    };
+    
+    window.addEventListener('orientationchange', handleOrientationChange);
+    window.addEventListener('resize', handleOrientationChange);
+    
+    return () => {
+      window.removeEventListener('orientationchange', handleOrientationChange);
+      window.removeEventListener('resize', handleOrientationChange);
+    };
+  }, [isIPad, isMultiTasking]);
+
   // Effect to handle scroll events for iOS-style navbar hiding/showing
   useEffect(() => {
     if (!isApplePlatform) return;
@@ -126,6 +203,56 @@ export default function Investments() {
       }
     };
   }, [lastScrollY, isApplePlatform]);
+
+  // Effect to monitor network connectivity for iOS devices
+  useEffect(() => {
+    if (!isApplePlatform) return;
+    
+    const handleOnlineStatus = () => {
+      const online = navigator.onLine;
+      setIsOnline(online);
+      
+      if (!online && !showOfflineBanner) {
+        setShowOfflineBanner(true);
+        if (isApplePlatform) haptics.warning(); // Notify user of connectivity loss
+      } else if (online && showOfflineBanner) {
+        setShowOfflineBanner(false);
+        if (isApplePlatform) haptics.success(); // Notify user of connectivity restoration
+      }
+    };
+    
+    const getConnectionInfo = () => {
+      // @ts-ignore - connection API may not be available in all browsers
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (connection) {
+        setConnectionType(connection.effectiveType || connection.type || 'unknown');
+      }
+    };
+    
+    // Initial setup
+    handleOnlineStatus();
+    getConnectionInfo();
+    
+    window.addEventListener('online', handleOnlineStatus);
+    window.addEventListener('offline', handleOnlineStatus);
+    
+    // Monitor connection changes on iOS
+    // @ts-ignore
+    if (navigator.connection) {
+      // @ts-ignore
+      navigator.connection.addEventListener('change', getConnectionInfo);
+    }
+    
+    return () => {
+      window.removeEventListener('online', handleOnlineStatus);
+      window.removeEventListener('offline', handleOnlineStatus);
+      // @ts-ignore
+      if (navigator.connection) {
+        // @ts-ignore
+        navigator.connection.removeEventListener('change', getConnectionInfo);
+      }
+    };
+  }, [showOfflineBanner, isApplePlatform]);
   
   // Handling refresh with iOS-style feedback
   const handleRefresh = () => {
@@ -151,19 +278,75 @@ export default function Investments() {
     // Store the initial touch position
     setTouchStartY(e.touches[0].clientY);
     
-    // Reset swipe state
-    setIsSwiping(false);
-    setTouchSwipeDistance(0);
-    
-    // Identify swipe target if applicable
-    const target = e.currentTarget.getAttribute('data-swipe-id');
-    if (target) {
-      setSwipeTarget(target);
+    // Check for pinch gesture (two touches)
+    if (e.touches.length === 2) {
+      // Calculate initial distance between two touch points
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const initialDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      
+      setPinchState({
+        scale: pinchState.scale, // Keep current scale
+        initialDistance,
+        isActive: true
+      });
+      
+      // Provide haptic feedback for pinch start
+      haptics.light();
+      
+      // Prevent default to avoid scrolling during pinch
+      e.preventDefault();
+    } else {
+      // Reset swipe state for single touch
+      setIsSwiping(false);
+      setTouchSwipeDistance(0);
+      
+      // Identify swipe target if applicable
+      const target = e.currentTarget.getAttribute('data-swipe-id');
+      if (target) {
+        setSwipeTarget(target);
+      }
     }
   };
   
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isApplePlatform || touchStartY === null) return;
+    if (!isApplePlatform) return;
+    
+    // Handle pinch-to-zoom (two touches)
+    if (e.touches.length === 2 && pinchState.isActive && pinchState.initialDistance > 0) {
+      // Calculate current distance between touch points
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const currentDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      
+      // Calculate new scale based on the change in distance
+      const newScale = (currentDistance / pinchState.initialDistance) * pinchState.scale;
+      
+      // Constrain scale to reasonable limits (0.5 to 3)
+      const constrainedScale = Math.min(Math.max(newScale, 0.5), 3);
+      
+      // Apply haptic feedback at scale thresholds for a more tactile experience
+      if (constrainedScale > 1.5 && pinchState.scale <= 1.5) haptics.light();
+      if (constrainedScale > 2.0 && pinchState.scale <= 2.0) haptics.medium();
+      if (constrainedScale < 1.0 && pinchState.scale >= 1.0) haptics.light();
+      
+      setPinchState({
+        ...pinchState,
+        scale: constrainedScale
+      });
+      
+      e.preventDefault(); // Prevent default to avoid unwanted scrolling
+      return;
+    }
+    
+    // Handle single touch gestures
+    if (touchStartY === null) return;
     
     const currentY = e.touches[0].clientY;
     const diffY = touchStartY - currentY;
@@ -174,13 +357,20 @@ export default function Investments() {
       setIsSwiping(true);
       setTouchSwipeDistance(diffX);
       
-      // Trigger haptic feedback at threshold points
+      // Enhanced haptic feedback with gradual intensity
+      // This creates a more precise "detent" feeling common in iOS interfaces
+      if (diffX > 30 && diffX < 32) haptics.selection();
       if (diffX > 50 && diffX < 52) haptics.light();
+      if (diffX > 75 && diffX < 77) haptics.light();
       if (diffX > 100 && diffX < 102) haptics.medium();
     }
     
-    // Pull-to-refresh gesture (when at top of page)
+    // Pull-to-refresh gesture with enhanced physics (when at top of page)
     if (diffY < -50 && window.scrollY <= 0 && !isRefreshing) {
+      // Progressive haptic feedback based on pull distance
+      if (diffY < -80 && diffY > -85) haptics.light();
+      if (diffY < -120 && diffY > -125) haptics.medium();
+      
       handleRefresh();
     }
   };
@@ -188,15 +378,39 @@ export default function Investments() {
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!isApplePlatform) return;
     
-    // Handle swipe action completion
+    // Handle pinch gesture end
+    if (pinchState.isActive) {
+      // Reset to default scale with a satisfying snap if close to 1
+      if (pinchState.scale > 0.85 && pinchState.scale < 1.15) {
+        setPinchState({
+          scale: 1,
+          initialDistance: 0,
+          isActive: false
+        });
+        haptics.light(); // Feedback for snapping back
+      } else {
+        setPinchState({
+          ...pinchState,
+          initialDistance: 0,
+          isActive: false
+        });
+      }
+      return;
+    }
+    
+    // Handle swipe action completion with enhanced feedback
     if (isSwiping && touchSwipeDistance > 100 && swipeTarget) {
-      // Complete the swipe action
-      handleSwipeAction(swipeTarget);
-      haptics.success(); // Success feedback
+      // Add a small delay before action to make it feel more deliberate
+      setTimeout(() => {
+        // Complete the swipe action
+        handleSwipeAction(swipeTarget);
+        haptics.success(); // Success feedback
+      }, 50);
     } else if (isSwiping) {
-      // Reset if swipe wasn't far enough
+      // Animate swiped item back with spring physics
       setIsSwiping(false);
       setTouchSwipeDistance(0);
+      haptics.selection(); // Light feedback for cancellation
     }
     
     // Reset touch state
@@ -291,13 +505,94 @@ export default function Investments() {
     { label: 'Investments', href: '/investments', icon: 'chart.pie.fill' },
   ];
   
-  // iOS-style pull-to-refresh indicator
+  // iOS-style offline banner
+  const renderOfflineBanner = () => {
+    if (!showOfflineBanner || !isApplePlatform) return null;
+    
+    // Position the banner below the Dynamic Island if present
+    const topOffset = hasDynamicIsland ? '100px' : '80px';
+    
+    return (
+      <div 
+        className={`fixed left-4 right-4 z-50 pointer-events-auto notification-banner ${showOfflineBanner ? 'show' : ''}`}
+        style={{ 
+          top: topOffset,
+          maxWidth: '400px',
+          margin: '0 auto',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          ...(hasDynamicIsland && {
+            filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.1))'
+          })
+        }}
+      >
+        <div 
+          className={`p-3 rounded-xl border ${
+            isDarkMode 
+              ? 'bg-gray-800/90 border-gray-700 text-white' 
+              : 'bg-white/90 border-gray-200 text-gray-800'
+          }`}
+          style={{
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <div className="flex items-center gap-3">
+            {sfSymbolsSupported ? (
+              <span className="sf-symbol text-orange-500 text-lg">wifi.slash</span>
+            ) : (
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+            )}
+            <div className="flex-1">
+              <p className="text-sm font-medium">No Internet Connection</p>
+              <p className="text-xs opacity-75">Showing cached data</p>
+            </div>
+            <button 
+              className={`px-3 py-1 text-xs rounded-lg ${
+                isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              onClick={() => {
+                setShowOfflineBanner(false);
+                if (isApplePlatform) haptics.light();
+              }}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // iOS-style pull-to-refresh indicator with Dynamic Island awareness
   const renderRefreshIndicator = () => {
     if (!isRefreshing || !isApplePlatform) return null;
     
+    // Position the refresh indicator below the Dynamic Island if present
+    const topOffset = hasDynamicIsland ? '72px' : '50px';
+    
     return (
-      <div className="fixed top-0 left-0 right-0 flex justify-center pt-4 z-40 pointer-events-none">
-        <div className="h-8 w-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
+      <div 
+        className="fixed top-0 left-0 right-0 flex justify-center z-40 pointer-events-none"
+        style={{ 
+          paddingTop: topOffset,
+          // Respect Dynamic Island in full-screen experiences
+          ...(hasDynamicIsland && {
+            filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.1))'
+          })
+        }}
+      >
+        <div 
+          className={`h-8 w-8 rounded-full border-2 border-blue-500 border-t-transparent ${
+            prefersReducedMotion ? '' : 'animate-spin'
+          }`}
+          style={{
+            animation: prefersReducedMotion 
+              ? 'none' 
+              : `spin ${applePhysics.config.duration * 2}ms linear infinite`
+          }}
+        />
       </div>
     );
   };
@@ -308,23 +603,37 @@ export default function Investments() {
     
     return (
       <div 
-        className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 animate-in fade-in"
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/40"
         onClick={() => {
           setShowDetailModal(false);
           if (isApplePlatform) haptics.light();
         }}
         style={{
-          backdropFilter: 'blur(3px)',
-          WebkitBackdropFilter: 'blur(3px)'
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          // Enhanced backdrop for iOS-style modal feel
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          animation: prefersReducedMotion 
+            ? 'none' 
+            : `fade-in ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
         }}
       >
         <div 
-          className={`w-full max-w-lg mx-auto rounded-t-xl overflow-hidden pb-8 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+          className={`w-full max-w-lg mx-auto rounded-t-xl overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
           style={{
             transform: 'translateY(0)',
-            animation: 'slide-in-up 350ms cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+            animation: prefersReducedMotion 
+              ? 'none' 
+              : `slide-in-up ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`,
             boxShadow: '0 -2px 20px rgba(0,0,0,0.2)',
-            paddingBottom: hasHomeIndicator ? `calc(2rem + ${safeAreaCss.bottom})` : '2rem'
+            paddingBottom: hasHomeIndicator ? `calc(2rem + ${safeAreaCss.bottom})` : '2rem',
+            // Better iOS-style sheet appearance
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px',
+            ...(hasDynamicIsland && {
+              // Ensure content doesn't interfere with Dynamic Island
+              maxHeight: 'calc(100vh - 100px)'
+            })
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -387,17 +696,32 @@ export default function Investments() {
               </div>
             </div>
             
-            {/* Actions */}
+            {/* iOS-style Actions */}
             <div className="space-y-3">
               <button 
-                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${isDarkMode ? 'bg-blue-600' : 'bg-blue-600'}`}
+                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode ? 'bg-blue-600' : 'bg-blue-600'
+                } active:scale-95 transition-transform duration-100`}
                 onClick={() => {
                   if (isApplePlatform) haptics.medium();
                   setShowDetailModal(false);
                 }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  borderRadius: '12px',
+                  minHeight: '48px', // iOS-recommended touch target size
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
               >
-                {sfSymbolsSupported && (
-                  <span className="sf-symbol text-white">chart.xyaxis.line</span>
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-white text-[16px]">chart.xyaxis.line</span>
+                ) : (
+                  <span>📊</span>
                 )}
                 <span>View Details</span>
               </button>
@@ -406,14 +730,27 @@ export default function Investments() {
                   isDarkMode 
                     ? 'bg-gray-800 text-white border border-gray-700'
                     : 'bg-white text-gray-800 border border-gray-300'
-                }`}
+                } active:scale-95 transition-transform duration-100`}
                 onClick={() => {
                   if (isApplePlatform) haptics.light();
                   setShowDetailModal(false);
                 }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  borderRadius: '12px',
+                  minHeight: '48px', // iOS-recommended touch target size
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
               >
-                {sfSymbolsSupported && (
-                  <span className="sf-symbol">xmark</span>
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-[16px]">xmark</span>
+                ) : (
+                  <span>✕</span>
                 )}
                 <span>Close</span>
               </button>
@@ -495,17 +832,32 @@ export default function Investments() {
               </ul>
             </div>
             
-            {/* Actions */}
+            {/* iOS-style Actions */}
             <div className="mt-6 space-y-3">
               <button 
-                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${isDarkMode ? 'bg-blue-600' : 'bg-blue-600'}`}
+                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode ? 'bg-blue-600' : 'bg-blue-600'
+                } active:scale-95 transition-transform duration-100`}
                 onClick={() => {
                   if (isApplePlatform) haptics.medium();
                   setShowInsightModal(false);
                 }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  borderRadius: '12px',
+                  minHeight: '48px', // iOS-recommended touch target size
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
               >
-                {sfSymbolsSupported && (
-                  <span className="sf-symbol text-white">doc.text</span>
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-white text-[16px]">doc.text</span>
+                ) : (
+                  <span>📄</span>
                 )}
                 <span>View Full Report</span>
               </button>
@@ -514,14 +866,27 @@ export default function Investments() {
                   isDarkMode 
                     ? 'bg-gray-800 text-white border border-gray-700'
                     : 'bg-white text-gray-800 border border-gray-300'
-                }`}
+                } active:scale-95 transition-transform duration-100`}
                 onClick={() => {
                   if (isApplePlatform) haptics.light();
                   setShowInsightModal(false);
                 }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  borderRadius: '12px',
+                  minHeight: '48px', // iOS-recommended touch target size
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
               >
-                {sfSymbolsSupported && (
-                  <span className="sf-symbol">xmark</span>
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-[16px]">xmark</span>
+                ) : (
+                  <span>✕</span>
                 )}
                 <span>Close</span>
               </button>
@@ -534,32 +899,62 @@ export default function Investments() {
   
   // Use ScbBeautifulUI instead of IOSOptimizedLayout to avoid JSX structure issues
   return (
-    <ScbBeautifulUI
-      showSearchBar={true}
-      pageTitle="Investments"
-    >
-          <div 
-            ref={contentRef}
-            className="space-y-6" 
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
+    <>
+      {/* iOS-specific refresh indicator */}
+      {renderRefreshIndicator()}
+      
+      {/* iOS-specific offline banner */}
+      {renderOfflineBanner()}
+      
+      {/* iOS-specific modal overlays */}
+      {renderHoldingDetailModal()}
+      {renderInsightDetailModal()}
+      
+      <ScbBeautifulUI
+        showSearchBar={true}
+        pageTitle="Investments"
+      >
+        <div 
+          ref={contentRef}
+          className={`space-y-6 ${getIOSClasses()}`}
+          onTouchStart={isApplePlatform ? handleTouchStart : undefined}
+          onTouchMove={isApplePlatform ? handleTouchMove : undefined}
+          onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+          style={{
+            // Apple-style scrolling physics
+            ...(isApplePlatform && {
+              WebkitOverflowScrolling: 'touch',
+              overscrollBehavior: 'contain',
+              // Respect safe areas for iOS devices
+              paddingBottom: hasHomeIndicator ? safeAreaCss.bottom : '0px',
+              // Apply pinch zoom if active for the entire container
+              ...(pinchState.isActive && {
+                transform: `scale(${pinchState.scale})`,
+                transformOrigin: 'center',
+                transition: 'none'
+              })
+            })
+          }}
+        >
             {/* Subtitle */}
             <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Comprehensive view of your investment assets and performance
             </p>
         
-            {/* Key Metrics */}
-            <div className={`grid grid-cols-1 ${
+            {/* Key Metrics - Enhanced responsive layout */}
+            <div className={`grid transition-all duration-300 ${
               isMultiTasking && mode === 'slide-over'
-                ? 'gap-3'
-                : isMultiTasking
-                  ? 'md:grid-cols-2 gap-4'
-                  : isIPad
-                    ? 'md:grid-cols-2 lg:grid-cols-4 gap-4'
-                    : 'md:grid-cols-2 gap-4'
-            }`}>
+                ? 'grid-cols-1 gap-3'
+                : isMultiTasking && mode === 'split-view'
+                  ? 'grid-cols-1 sm:grid-cols-2 gap-4'
+                : isMultiTasking && mode === 'stage-manager'
+                  ? sizeClass === 'compact' ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-4'
+                  : isIPad && !isMultiTasking
+                    ? 'grid-cols-2 lg:grid-cols-4 gap-4'
+                    : isIPhone
+                      ? 'grid-cols-1 gap-4'
+                      : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'
+            } ${getIOSClasses()}`}>
               <MetricCard
                 title="Total Portfolio Value"
                 value={2345670}
@@ -648,81 +1043,258 @@ export default function Investments() {
             </div>
           </div>
           
-          {/* Performance Chart */}
-          <div className={`rounded-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border shadow-sm overflow-hidden`}>
-            <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex justify-between items-center`}>
-              <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Performance vs Benchmark</h3>
-              <div className="flex items-center gap-2">
-                <EnhancedTouchButton
-                  variant="ghost"
-                  size="xs"
-                  className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
-                >
-                  <Download className="h-4 w-4" />
-                </EnhancedTouchButton>
-                <EnhancedTouchButton
-                  variant="ghost"
-                  size="xs"
-                  className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
-                >
-                  <Share2 className="h-4 w-4" />
-                </EnhancedTouchButton>
-              </div>
-            </div>
-            <div className="p-4">
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={investmentPerformanceData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'} />
-                    <XAxis 
-                      dataKey="month" 
-                      tick={{ fill: isDarkMode ? '#9ca3af' : '#6b7280' }}
-                    />
-                    <YAxis 
-                      tickFormatter={(value) => `${value}%`}
-                      tick={{ fill: isDarkMode ? '#9ca3af' : '#6b7280' }}
-                    />
-                    <Tooltip 
-                      formatter={(value) => `${value}%`}
-                      contentStyle={{
-                        borderRadius: 4,
-                        backgroundColor: isDarkMode ? '#1f2937' : 'white',
-                        borderColor: isDarkMode ? '#374151' : '#e5e7eb',
-                        color: isDarkMode ? 'white' : 'black'
+          {/* iOS-Optimized Performance Chart */}
+          {isApplePlatform ? (
+            <EnhancedIOSDataVisualization
+              data={investmentPerformanceData}
+              type="line"
+              title="Performance vs Benchmark"
+              width={containerDimensions.width}
+              height={300}
+              colors={['#0072AA', '#21AA47']}
+              enableInteraction={true}
+              enableHaptics={true}
+              accessibilityLabel="Investment performance chart showing portfolio returns compared to benchmark"
+              className={`${isDarkMode ? 'dark-theme' : 'light-theme'} ${prefersReducedMotion ? 'reduced-motion' : ''}`}
+              onDataPointSelect={(point, index) => {
+                console.log('Point selected:', point);
+                haptics.selection();
+              }}
+              renderChart={(dimensions, interactionState, helpers) => (
+                <div className={`chart-container ${interactionState.isExpanded ? 'expanded' : ''} ${
+                  pinchState.isActive ? 'pinch-active' : ''
+                }`}
+                   style={{ 
+                     transform: pinchState.isActive ? `scale(${pinchState.scale})` : 'scale(1)',
+                     transition: !pinchState.isActive 
+                       ? `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)` 
+                       : 'none',
+                     // iOS-style spring animation when expanded
+                     ...(interactionState.isExpanded && !prefersReducedMotion && {
+                       animation: `ios-spring-scale ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
+                       transformOrigin: 'center center'
+                     })
+                   }}>
+                  <ResponsiveContainer width="100%" height={interactionState.isExpanded ? 400 : dimensions.height}>
+                    <LineChart 
+                      data={investmentPerformanceData}
+                      margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+                    >
+                      <CartesianGrid 
+                        strokeDasharray="3 3" 
+                        stroke={isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'} 
+                        strokeOpacity={prefersReducedMotion ? 0.7 : 1}
+                      />
+                      <XAxis 
+                        dataKey="month" 
+                        tick={{ fill: isDarkMode ? '#9ca3af' : '#6b7280' }}
+                        tickSize={8}
+                        dy={10}
+                      />
+                      <YAxis 
+                        tickFormatter={(value) => `${value}%`}
+                        tick={{ fill: isDarkMode ? '#9ca3af' : '#6b7280' }}
+                        width={40}
+                        tickSize={8}
+                        dx={-10}
+                      />
+                      <Tooltip 
+                        formatter={(value) => `${value}%`}
+                        contentStyle={{
+                          borderRadius: 12,
+                          backgroundColor: isDarkMode ? 'rgba(31,41,55,0.95)' : 'rgba(255,255,255,0.95)',
+                          borderColor: isDarkMode ? '#374151' : '#e5e7eb',
+                          color: isDarkMode ? 'white' : 'black',
+                          padding: '8px 12px',
+                          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                          backdropFilter: 'blur(8px)',
+                          WebkitBackdropFilter: 'blur(8px)',
+                          borderWidth: '0.5px'
+                        }}
+                        cursor={{ 
+                          stroke: isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)', 
+                          strokeWidth: 1.5, 
+                          strokeDasharray: '4 4' 
+                        }}
+                        active={interactionState.activeIndex !== null || undefined}
+                        wrapperStyle={{ zIndex: 10 }}
+                        position={{ y: 0 }}
+                        allowEscapeViewBox={{ x: false, y: true }}
+                        animationEasing={prefersReducedMotion ? "linear" : "ease-out"}
+                        animationDuration={prefersReducedMotion ? 0 : 300}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="returns" 
+                        name="Portfolio" 
+                        stroke="#0072AA" 
+                        strokeWidth={3}
+                        isAnimationActive={!prefersReducedMotion}
+                        animationDuration={1000}
+                        animationEasing="ease-out"
+                        activeDot={{ 
+                          r: 6, 
+                          stroke: isDarkMode ? 'rgba(0,114,170,0.8)' : '#0072AA',
+                          strokeWidth: 2,
+                          fill: isDarkMode ? '#1f2937' : 'white'
+                        }}
+                        dot={{ r: 0 }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="benchmark" 
+                        name="Benchmark" 
+                        stroke="#21AA47" 
+                        strokeWidth={2.5}
+                        strokeDasharray="5 5"
+                        isAnimationActive={!prefersReducedMotion}
+                        animationDuration={1000}
+                        animationEasing="ease-out"
+                        animationBegin={300}
+                        activeDot={{ 
+                          r: 6, 
+                          stroke: isDarkMode ? 'rgba(33,170,71,0.8)' : '#21AA47',
+                          strokeWidth: 2,
+                          fill: isDarkMode ? '#1f2937' : 'white'
+                        }}
+                        dot={{ r: 0 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+              renderLegend={(isActive) => (
+                <div className={`flex justify-center gap-6 mt-2 py-2 ${
+                  isActive ? 'opacity-100' : 'opacity-80'
+                } transition-opacity duration-200`}>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#0072AA]"></div>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Portfolio</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#21AA47]"></div>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Benchmark</span>
+                  </div>
+                </div>
+              )}
+              renderCardContent={() => (
+                <div className="p-4 space-y-4">
+                  <h4 className={`text-base font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Portfolio Performance</h4>
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    Your portfolio has outperformed the benchmark by 0.7% year-to-date. The strongest performance was in March with a 3.5% increase.
+                  </p>
+                  <div className="flex gap-4">
+                    <button 
+                      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg ${
+                        isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800'
+                      }`}
+                      onClick={() => {
+                        haptics.light();
                       }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="returns" 
-                      name="Portfolio" 
-                      stroke="#0072AA" 
-                      strokeWidth={2}
-                      activeDot={{ r: 6 }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="benchmark" 
-                      name="Benchmark" 
-                      stroke="#21AA47" 
-                      strokeWidth={2}
-                      strokeDasharray="5 5"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              
-              <div className="mt-4 flex justify-center gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[#0072AA]"></div>
-                  <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Portfolio</span>
+                    >
+                      {sfSymbolsSupported ? (
+                        <span className="sf-symbol text-[15px]">arrow.down.doc</span>
+                      ) : (
+                        <Download className="h-4 w-4" />
+                      )}
+                      <span>Download</span>
+                    </button>
+                    <button 
+                      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg ${
+                        isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-100 text-gray-800'
+                      }`}
+                      onClick={() => {
+                        haptics.light();
+                      }}
+                    >
+                      {sfSymbolsSupported ? (
+                        <span className="sf-symbol text-[15px]">square.and.arrow.up</span>
+                      ) : (
+                        <Share2 className="h-4 w-4" />
+                      )}
+                      <span>Share</span>
+                    </button>
+                  </div>
                 </div>
+              )}
+            />
+          ) : (
+            // Standard Performance Chart for non-Apple devices
+            <div className={`rounded-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border shadow-sm overflow-hidden`}>
+              <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex justify-between items-center`}>
+                <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Performance vs Benchmark</h3>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[#21AA47]"></div>
-                  <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Benchmark</span>
+                  <EnhancedTouchButton
+                    variant="ghost"
+                    size="xs"
+                    className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                  >
+                    <Download className="h-4 w-4" />
+                  </EnhancedTouchButton>
+                  <EnhancedTouchButton
+                    variant="ghost"
+                    size="xs"
+                    className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </EnhancedTouchButton>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={investmentPerformanceData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'} />
+                      <XAxis 
+                        dataKey="month" 
+                        tick={{ fill: isDarkMode ? '#9ca3af' : '#6b7280' }}
+                      />
+                      <YAxis 
+                        tickFormatter={(value) => `${value}%`}
+                        tick={{ fill: isDarkMode ? '#9ca3af' : '#6b7280' }}
+                      />
+                      <Tooltip 
+                        formatter={(value) => `${value}%`}
+                        contentStyle={{
+                          borderRadius: 4,
+                          backgroundColor: isDarkMode ? '#1f2937' : 'white',
+                          borderColor: isDarkMode ? '#374151' : '#e5e7eb',
+                          color: isDarkMode ? 'white' : 'black'
+                        }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="returns" 
+                        name="Portfolio" 
+                        stroke="#0072AA" 
+                        strokeWidth={2}
+                        activeDot={{ r: 6 }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="benchmark" 
+                        name="Benchmark" 
+                        stroke="#21AA47" 
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className="mt-4 flex justify-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#0072AA]"></div>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Portfolio</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#21AA47]"></div>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Benchmark</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
         
         {/* Top Holdings */}
@@ -757,15 +1329,30 @@ export default function Investments() {
               {topHoldingsData.map((holding) => (
                 <div 
                   key={holding.name}
-                  className={`relative overflow-hidden transition-all duration-300 ${
+                  className={`relative overflow-hidden transition-all ${
                     isSwiping && swipeTarget === `holding-${holding.name}`
-                      ? 'transform translate-x-20'
-                      : ''
+                      ? 'duration-0' // No CSS transition during active swiping
+                      : `duration-${applePhysics.config.duration}`
                   }`}
                   data-swipe-id={`holding-${holding.name}`}
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}
+                  style={{
+                    ...(isSwiping && swipeTarget === `holding-${holding.name}` && {
+                      transform: `translateX(${Math.min(touchSwipeDistance, 120)}px)`,
+                      transition: 'none',
+                      // Apply rubber band effect for overswipe (iOS-style physics)
+                      ...(touchSwipeDistance > 120 && {
+                        transform: `translateX(${120 + (touchSwipeDistance - 120) * 0.3}px)`
+                      })
+                    }),
+                    // Smooth spring animation back to original position
+                    ...(!isSwiping && swipeTarget === null && {
+                      transform: 'translateX(0px)',
+                      transition: `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+                    })
+                  }}
                 >
                   <div 
                     className={`px-4 py-3 flex items-center justify-between ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}
@@ -888,15 +1475,30 @@ export default function Investments() {
             {marketInsights.map((insight) => (
               <div 
                 key={insight.id} 
-                className={`relative overflow-hidden transition-all duration-300 ${
+                className={`relative overflow-hidden transition-all ${
                   isSwiping && swipeTarget === `insight-${insight.id}`
-                    ? 'transform translate-x-20'
-                    : ''
+                    ? 'duration-0' // No CSS transition during active swiping
+                    : `duration-${applePhysics.config.duration}`
                 }`}
                 data-swipe-id={`insight-${insight.id}`}
                 onTouchStart={isApplePlatform ? handleTouchStart : undefined}
                 onTouchMove={isApplePlatform ? handleTouchMove : undefined}
                 onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+                style={{
+                  ...(isSwiping && swipeTarget === `insight-${insight.id}` && {
+                    transform: `translateX(${Math.min(touchSwipeDistance, 120)}px)`,
+                    transition: 'none',
+                    // Apply rubber band effect for overswipe (iOS-style physics)
+                    ...(touchSwipeDistance > 120 && {
+                      transform: `translateX(${120 + (touchSwipeDistance - 120) * 0.3}px)`
+                    })
+                  }),
+                  // Smooth spring animation back to original position
+                  ...(!isSwiping && swipeTarget === null && {
+                    transform: 'translateX(0px)',
+                    transition: `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+                  })
+                }}
               >
                 <div 
                   className={`flex items-center justify-between p-4 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}
@@ -962,7 +1564,7 @@ export default function Investments() {
             ))}
           </div>
         </div>
-      </div>
-    </ScbBeautifulUI>
+      </ScbBeautifulUI>
+    </>
   );
 }

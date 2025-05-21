@@ -26,18 +26,51 @@ import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useSafeArea } from '@/hooks/useSafeArea';
 import { useApplePhysics } from '@/hooks/useApplePhysics';
+import { useIOS } from '@/hooks/useResponsive';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import EnhancedPillTabs from '@/components/EnhancedPillTabs';
+import EnhancedHelpNavigation from '@/components/EnhancedHelpNavigation';
 import haptics from '@/lib/haptics';
 
-// Sample data for help categories
+// Enhanced sample data for help categories with SF Symbol icons and descriptions
 const helpCategories = [
-  { id: 'getting-started', name: 'Getting Started', icon: BookOpen },
-  { id: 'data-analysis', name: 'Data Analysis', icon: FileText },
-  { id: 'reporting', name: 'Reporting', icon: FileText },
-  { id: 'api', name: 'API & Integration', icon: FileText },
-  { id: 'account', name: 'Account Management', icon: FileText },
+  { 
+    id: 'getting-started', 
+    name: 'Getting Started', 
+    icon: 'play.circle.fill',
+    count: 8,
+    description: 'Learn the basics and set up your account to get the most out of SCB Sapphire FinSight'
+  },
+  { 
+    id: 'data-analysis', 
+    name: 'Data Analysis', 
+    icon: 'chart.bar.xaxis',
+    count: 12,
+    description: 'Master advanced analytics tools and create powerful data visualizations'
+  },
+  { 
+    id: 'reporting', 
+    name: 'Reporting', 
+    icon: 'doc.text.fill',
+    count: 6,
+    description: 'Generate custom reports and schedule automated delivery to stakeholders'
+  },
+  { 
+    id: 'api', 
+    name: 'API & Integration', 
+    icon: 'terminal.fill',
+    count: 4,
+    description: 'Integrate with external systems and leverage our comprehensive API'
+  },
+  { 
+    id: 'account', 
+    name: 'Account Management', 
+    icon: 'person.crop.circle.fill',
+    count: 5,
+    description: 'Manage users, permissions, and organization settings'
+  },
 ];
 
 // Sample data for FAQs
@@ -132,7 +165,12 @@ export default function Help() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
   const [expandedFaqs, setExpandedFaqs] = useState<string[]>([]);
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
   const { isDarkMode, preferences } = useUIPreferences();
+  
+  // Platform detection
+  const isAppleDeviceHook = useIOS();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
   
   // iOS optimization hooks
   const { deviceType, isAppleDevice, screenSize } = useDeviceCapabilities();
@@ -146,6 +184,11 @@ export default function Help() {
   
   // Detect iPad multi-tasking mode (Slide Over, Split View, or Full Screen)
   const [iPadMode, setIPadMode] = useState<'full' | 'split' | 'slide' | 'none'>('full');
+  
+  // Platform detection effect
+  useEffect(() => {
+    setIsPlatformDetected(true);
+  }, []);
   
   // Track the iPad multi-tasking mode
   useEffect(() => {
@@ -356,30 +399,56 @@ export default function Help() {
           </div>
         </div>
         
-        {/* iOS-optimized Help Categories using EnhancedPillTabs */}
+        {/* Enhanced Help Categories with SF Symbols */}
         <div className={`rounded-xl shadow-sm border p-5 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-[rgba(var(--scb-border),0.8)]'}`}
           style={{ backdropFilter: 'blur(8px)' }}>
-          <div className="overflow-x-auto no-scrollbar pb-1">
-            <EnhancedPillTabs
-              tabs={[
-                { value: 'all', label: 'All Topics' },
-                ...helpCategories.map(category => ({
-                  value: category.id,
-                  label: category.name,
-                  icon: <category.icon className="h-4 w-4" />
-                }))
+          <div className="mb-3">
+            <h3 className={`text-base font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+              Help Topics
+            </h3>
+          </div>
+          
+          {isAppleDeviceHook && isPlatformDetected && sfSymbolsSupported ? (
+            <EnhancedHelpNavigation
+              categories={[
+                { id: 'all', name: 'All Topics', icon: 'square.grid.2x2.fill', count: helpCategories.reduce((sum, cat) => sum + (cat.count || 0), 0) },
+                ...helpCategories
               ]}
-              value={selectedCategory}
-              onChange={(value) => {
-                setSelectedCategory(value);
+              activeCategory={selectedCategory}
+              onCategoryChange={(categoryId) => {
+                setSelectedCategory(categoryId);
                 // iOS-specific haptic feedback
                 if (isApplePlatform) {
                   haptics.selection();
                 }
               }}
-              className="flex-wrap"
+              variant={useCompactLayout ? 'segments' : 'cards'}
+              showDescriptions={!useCompactLayout}
+              className="mt-2"
             />
-          </div>
+          ) : (
+            <div className="overflow-x-auto no-scrollbar pb-1">
+              <EnhancedPillTabs
+                tabs={[
+                  { value: 'all', label: 'All Topics' },
+                  ...helpCategories.map(category => ({
+                    value: category.id,
+                    label: category.name,
+                    icon: React.createElement(category.icon as React.ComponentType<any>, { className: "h-4 w-4" })
+                  }))
+                ]}
+                value={selectedCategory}
+                onChange={(value) => {
+                  setSelectedCategory(value);
+                  // iOS-specific haptic feedback
+                  if (isApplePlatform) {
+                    haptics.selection();
+                  }
+                }}
+                className="flex-wrap"
+              />
+            </div>
+          )}
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -889,10 +958,84 @@ export default function Help() {
           </div>
         </div>
         
-        {/* Rest of the content */}
-        {/* Help Categories */}
-        {/* Left Column - FAQs */}
-        {/* Right Column - Contact and Resources */}
+        {/* Enhanced Help Categories Navigation */}
+        <div className={`rounded-lg shadow-sm border p-5 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
+          <div className="mb-4">
+            <h3 className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+              Help Topics
+            </h3>
+            <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+              Browse help articles by category or search for specific topics
+            </p>
+          </div>
+          
+          <EnhancedHelpNavigation
+            categories={[
+              { id: 'all', name: 'All Topics', icon: 'square.grid.2x2.fill', count: helpCategories.reduce((sum, cat) => sum + (cat.count || 0), 0) },
+              ...helpCategories
+            ]}
+            activeCategory={selectedCategory}
+            onCategoryChange={(categoryId) => {
+              setSelectedCategory(categoryId);
+              // Add haptic feedback if enabled
+              if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
+                navigator.vibrate(5);
+              }
+            }}
+            variant="cards"
+            showDescriptions={true}
+            className="mt-4"
+          />
+        </div>
+        
+        {/* FAQs Section */}
+        <div className={`rounded-lg shadow-sm border overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
+          <div className={`px-6 py-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
+            <h3 className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+              Frequently Asked Questions
+            </h3>
+          </div>
+          
+          <div className={`p-0 divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-[rgb(var(--scb-border))]'}`}>
+            {filteredFaqs.length > 0 ? (
+              filteredFaqs.map(faq => (
+                <div key={faq.id} className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
+                  <button
+                    className={`w-full text-left px-6 py-4 flex items-center justify-between focus:outline-none ${
+                      isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                    } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                    onClick={() => toggleFaqWithHaptics(faq.id)}
+                  >
+                    <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                      {faq.question}
+                    </span>
+                    <ChevronDown className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'} ${
+                      preferences.enableAnimations ? 'transition-transform' : ''
+                    } ${expandedFaqs.includes(faq.id) ? 'transform rotate-180' : ''}`} />
+                  </button>
+                  
+                  {expandedFaqs.includes(faq.id) && (
+                    <div className={`px-6 pb-4 ${preferences.enableAnimations ? getAnimationClass('animate-fadeIn') : ''}`}>
+                      <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                        {faq.answer}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="py-12 text-center">
+                <HelpCircle className={`h-12 w-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-600' : 'text-[rgb(var(--scb-dark-gray))] opacity-20'}`} />
+                <h4 className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                  No FAQs found
+                </h4>
+                <p className={`text-sm mt-1 max-w-sm mx-auto ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))] opacity-70'}`}>
+                  Try a different search term or category to find the information you're looking for.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </ScbBeautifulUI>
   );

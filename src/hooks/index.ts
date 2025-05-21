@@ -17,10 +17,11 @@ export {
 // Export other hooks normally
 export { useNetworkAwareLoading, useNetworkLazyLoad, useAdaptiveFetch } from './useNetworkAwareLoading';
 export { default as useCache } from './useCache';
+export { default as useReducedMotion } from './useReducedMotion';
 
 // Export Apple-specific hooks
 export { default as useApplePhysics } from './useApplePhysics';
-export { default as useSafeArea } from './useSafeArea';
+export { useSafeArea, safeAreaCss } from './useSafeArea';
 export { default as useMultiTasking } from './useMultiTasking';
 export { default as useGestures } from './useGestures';
 export { default as useDragAndDrop } from './useDragAndDrop';

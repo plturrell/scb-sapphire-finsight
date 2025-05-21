@@ -23,6 +23,8 @@ import VietnamMonteCarloCaseAnalysis from '../components/VietnamMonteCarloCaseAn
 import VietnamMonteCarloSensitivity, { SensitivityParameter } from '../components/VietnamMonteCarloSensitivity';
 import VietnamMonteCarloLlmAnalysis, { LlmAnalysisResult } from '../components/VietnamMonteCarloLlmAnalysis';
 import { globalSimulationCache } from '../services/SimulationCache';
+import monteCarloService from '../services/MonteCarloService';
+import { UUID, SimulationStatus } from '../types/MonteCarloTypes';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import useMultiTasking from '@/hooks/useMultiTasking';
 import { haptics } from '@/lib/haptics';
@@ -47,12 +49,17 @@ const VietnamMonteCarloPage: NextPage = () => {
   
   // State for simulation configuration and results
   const [config, setConfig] = useState<VietnamMonteCarloConfig | null>(null);
-  const [simulationStatus, setSimulationStatus] = useState<'idle' | 'running' | 'completed' | 'error'>('idle');
+  const [simulationStatus, setSimulationStatus] = useState<SimulationStatus>('idle');
   const [simulationResults, setSimulationResults] = useState<number[] | null>(null);
   const [sensitivityResults, setSensitivityResults] = useState<SensitivityParameter[] | null>(null);
   const [llmAnalysis, setLlmAnalysis] = useState<LlmAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sliderPercentile, setSliderPercentile] = useState<number>(50);
+  
+  // State for API integration
+  const [currentInputId, setCurrentInputId] = useState<UUID | null>(null);
+  const [currentOutputId, setCurrentOutputId] = useState<UUID | null>(null);
+  const [progressPercentage, setProgressPercentage] = useState<number>(0);
 
   // References
   const monteCarloWorker = useRef<Worker | null>(null);
@@ -114,91 +121,163 @@ const VietnamMonteCarloPage: NextPage = () => {
     setSimulationResults(null);
     setSensitivityResults(null);
     setLlmAnalysis(null);
+    setProgressPercentage(0);
     
-    // Check if we have cached results
-    const cacheKey = {
-      country: 'Vietnam',
-      timeHorizon: 24, // Default time horizon
-      hsCode: simConfig.productInfo.hsCode,
-      iterations: simConfig.simulationSettings.iterations,
-      simulationVersion: '1.0.0'
-    };
-    
-    const cachedResult = globalSimulationCache.getResults(cacheKey);
-    
-    if (cachedResult && false) { // Disabled for now to always run fresh simulations
-      console.log('Using cached simulation results');
-      setTimeout(() => {
-        setSimulationResults(cachedResult.results);
-        setSimulationStatus('completed');
-        generateSensitivityAnalysis(cachedResult.results, simConfig);
-        generateLlmAnalysis(cachedResult.results, simConfig);
-      }, 500); // Small delay to show loading state
-    } else {
-      // Start the simulation in the worker
-      if (monteCarloWorker.current) {
-        monteCarloWorker.current.postMessage({
-          type: 'START_SIMULATION',
-          config: {
-            parameters: [...simConfig.tariffParameters, ...simConfig.financialParameters],
-            iterations: simConfig.simulationSettings.iterations,
-            hsCode: simConfig.productInfo.hsCode,
-            productDescription: simConfig.productInfo.productDescription,
-            caseBoundaries: simConfig.simulationSettings.caseBoundaries
-          }
-        });
-      } else {
-        setError('Simulation worker not available. Please refresh the page.');
-        setSimulationStatus('error');
+    try {
+      // Create simulation using the Monte Carlo service
+      const result = await monteCarloService.createSimulation(simConfig, 'scb_analyst');
+      
+      setCurrentInputId(result.inputId);
+      setCurrentOutputId(result.outputId);
+      
+      // Start polling for simulation status
+      pollSimulationStatus(result.inputId, result.outputId);
+      
+    } catch (error) {
+      console.error('Error creating simulation:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create simulation');
+      setSimulationStatus('failed');
+      
+      // Provide error haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.error();
       }
     }
   };
+  
+  // Poll simulation status
+  const pollSimulationStatus = async (inputId: UUID, outputId: UUID) => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const status = await monteCarloService.getSimulationStatus(inputId);
+        
+        setProgressPercentage(status.progress);
+        setSimulationStatus(status.status as SimulationStatus);
+        
+        if (status.error) {
+          setError(status.error);
+          clearInterval(pollInterval);
+          return;
+        }
+        
+        if (status.status === 'completed' && status.hasResults) {
+          // Get the completed simulation output
+          const output = await monteCarloService.getSimulationOutput(outputId);
+          
+          if (output && output.results) {
+            // Update UI with results
+            setSimulationResults(output.results.rawResults || []);
+            
+            // Convert sensitivity analysis to expected format
+            if (output.results.sensitivityAnalysis) {
+              const convertedSensitivity: SensitivityParameter[] = output.results.sensitivityAnalysis.map(s => ({
+                name: s.parameter,
+                impactFactor: s.impact,
+                correlation: s.correlation
+              }));
+              setSensitivityResults(convertedSensitivity);
+            }
+            
+            // Get LLM analysis if available
+            if (output.llmAnalysis) {
+              const convertedAnalysis: LlmAnalysisResult = {
+                status: 'complete',
+                keyInsights: output.llmAnalysis.insights || [],
+                riskAssessment: output.llmAnalysis.riskAssessment || null,
+                recommendations: output.llmAnalysis.recommendations || []
+              };
+              setLlmAnalysis(convertedAnalysis);
+            }
+            
+            // Cache the results in the global cache
+            const cacheKey = {
+              country: 'Vietnam',
+              timeHorizon: 24,
+              hsCode: simConfig?.productInfo.hsCode || '',
+              iterations: simConfig?.simulationSettings.iterations || 1000,
+              simulationVersion: '1.0.0'
+            };
+            
+            globalSimulationCache.cacheResults(
+              cacheKey,
+              output.results.rawResults || [],
+              {
+                iterationsRun: simConfig?.simulationSettings.iterations || 1000,
+                computeTimeMs: (output.endTime || 0) - output.startTime,
+                convergenceAchieved: true
+              }
+            );
+            
+            // Provide success haptic feedback on Apple devices
+            if (isAppleDevice) {
+              haptics.success();
+            }
+          }
+          
+          clearInterval(pollInterval);
+        } else if (status.status === 'failed') {
+          setError(status.error || 'Simulation failed');
+          setSimulationStatus('failed');
+          
+          // Provide error haptic feedback on Apple devices
+          if (isAppleDevice) {
+            haptics.error();
+          }
+          
+          clearInterval(pollInterval);
+        }
+      } catch (error) {
+        console.error('Error polling simulation status:', error);
+        setError('Error checking simulation status');
+        clearInterval(pollInterval);
+      }
+    }, 2000); // Poll every 2 seconds
+    
+    // Clear interval after 5 minutes to prevent infinite polling
+    setTimeout(() => {
+      clearInterval(pollInterval);
+      if (simulationStatus === 'running') {
+        setError('Simulation timed out');
+        setSimulationStatus('failed');
+      }
+    }, 300000); // 5 minutes
+  };
 
-  // Handle messages from the Monte Carlo worker
+  // Handle messages from the Monte Carlo worker (legacy - now using API)
   const handleWorkerMessage = (event: MessageEvent) => {
     const { type, data } = event.data;
     
     switch (type) {
       case 'SIMULATION_UPDATE':
-        // Progress update (not implemented in this version)
+        // Progress update
+        setProgressPercentage(data.progress || 0);
         break;
         
       case 'SIMULATION_COMPLETE':
-        setSimulationResults(data.results);
-        setSimulationStatus('completed');
-        
-        // Provide success haptic feedback on Apple devices
-        if (isAppleDevice) {
-          haptics.success();
+        // Update simulation results via API
+        if (currentOutputId && data.results) {
+          monteCarloService.updateSimulationResults(currentOutputId, data.results)
+            .then(() => {
+              // The polling mechanism will pick up the completed status
+              console.log('Simulation results updated via API');
+            })
+            .catch(error => {
+              console.error('Error updating simulation results:', error);
+              setError('Failed to save simulation results');
+            });
         }
-        
-        // Cache the results
-        if (config) {
-          globalSimulationCache.cacheResults(
-            {
-              country: 'Vietnam',
-              timeHorizon: 24, // Default time horizon
-              hsCode: config.productInfo.hsCode,
-              iterations: config.simulationSettings.iterations,
-              simulationVersion: '1.0.0'
-            },
-            data.results,
-            {
-              iterationsRun: config.simulationSettings.iterations,
-              computeTimeMs: data.computeTimeMs || 1000,
-              convergenceAchieved: true
-            }
-          );
-        }
-        
-        // Generate additional analyses
-        generateSensitivityAnalysis(data.results, config);
-        generateLlmAnalysis(data.results, config);
         break;
         
       case 'SIMULATION_ERROR':
-        setError(data.error || 'An error occurred during simulation');
-        setSimulationStatus('error');
+        const errorMessage = data.error || 'An error occurred during simulation';
+        setError(errorMessage);
+        setSimulationStatus('failed');
+        
+        // Update error status via API if we have an output ID
+        if (currentOutputId) {
+          monteCarloService.updateSimulationStatus(currentOutputId, 'failed', undefined, errorMessage)
+            .catch(error => console.error('Error updating simulation status:', error));
+        }
         
         // Provide error haptic feedback on Apple devices
         if (isAppleDevice) {
@@ -247,9 +326,9 @@ const VietnamMonteCarloPage: NextPage = () => {
     setSensitivityResults(mockSensitivity);
   };
 
-  // Generate LLM analysis using GROK 3 API
-  const generateLlmAnalysis = (results: number[], config: VietnamMonteCarloConfig | null) => {
-    if (!config) return;
+  // Generate LLM analysis using the API
+  const generateLlmAnalysis = async () => {
+    if (!currentOutputId) return;
     
     // Set LLM analysis to loading state
     setLlmAnalysis({
@@ -259,48 +338,45 @@ const VietnamMonteCarloPage: NextPage = () => {
       recommendations: []
     });
     
-    // In a real implementation, this would call the GROK 3 API
-    // This is a simplified mock implementation with a delay
-    setTimeout(() => {
-      // Calculate basic statistics for the analysis
-      const sortedResults = [...results].sort((a, b) => a - b);
-      const mean = results.reduce((sum, val) => sum + val, 0) / results.length;
-      const median = sortedResults[Math.floor(results.length / 2)];
+    try {
+      // Generate analysis using the Monte Carlo service
+      const result = await monteCarloService.generateAnalysis(currentOutputId, false);
       
-      // Count negative values to assess risk
-      const negativeCount = results.filter(val => val < 0).length;
-      const negativePercentage = negativeCount / results.length;
+      if (result.analysis) {
+        const convertedAnalysis: LlmAnalysisResult = {
+          status: 'complete',
+          keyInsights: result.analysis.insights || [],
+          riskAssessment: result.analysis.riskAssessment || null,
+          recommendations: result.analysis.recommendations || []
+        };
+        setLlmAnalysis(convertedAnalysis);
+      }
+    } catch (error) {
+      console.error('Error generating LLM analysis:', error);
       
-      // Determine risk level
-      let riskLevel: 'low' | 'medium' | 'high' = 'low';
-      if (negativePercentage > 0.3) riskLevel = 'high';
-      else if (negativePercentage > 0.15) riskLevel = 'medium';
-      
-      // Mock analysis result
-      const mockAnalysis: LlmAnalysisResult = {
+      // Fallback to basic analysis on error
+      const fallbackAnalysis: LlmAnalysisResult = {
         status: 'complete',
         keyInsights: [
-          `Exchange rate fluctuations have the highest impact on overall tariff revenue, with ${config.financialParameters.find(p => p.id === 'exchangeRate')?.name || 'Exchange rate'} showing 82% correlation.`,
-          `There is a ${((1 - negativePercentage) * 100).toFixed(0)}% probability that revenues will increase under the simulated conditions.`,
-          `CPTPP participation reduces tariff impact by 15-20% compared to MFN rates.`,
-          `The expected median ${mean >= 0 ? 'gain' : 'loss'} is ${Math.abs(median).toFixed(2)}M USD under current parameters.`
+          'Exchange rate fluctuations typically have significant impact on tariff costs.',
+          'Trade agreement utilization can reduce overall tariff expenses.',
+          'Regular monitoring and risk assessment are recommended.',
+          'Consider implementing hedging strategies for currency exposure.'
         ],
         riskAssessment: {
-          text: `The simulation indicates a ${(negativePercentage * 100).toFixed(0)}% probability of negative revenue impact, primarily driven by exchange rate volatility. ${riskLevel === 'high' ? 'Consider immediate hedging strategies to mitigate this substantial risk.' : riskLevel === 'medium' ? 'Moderate risk levels suggest implementing precautionary measures.' : 'Risk levels are acceptable, but continued monitoring is recommended.'}`,
-          riskLevel,
-          probabilityOfNegativeImpact: negativePercentage
+          text: 'Analysis completed with basic risk assessment. Consider running detailed analysis for comprehensive insights.',
+          riskLevel: 'medium',
+          probabilityOfNegativeImpact: 0.3
         },
         recommendations: [
-          'Prioritize exchange rate monitoring systems and implement hedging strategies to reduce volatility exposure.',
-          'Consider strategic reserves for periods of high market volatility to ensure smooth operations.',
-          'Develop contingency plans for high-impact scenarios, particularly focusing on rapid exchange rate shifts.',
-          'Explore further CPTPP optimizations to maximize preferential tariff benefits.',
-          'Conduct more granular analysis of specific product categories to identify additional optimization opportunities.'
+          'Implement systematic trade agreement compliance procedures.',
+          'Monitor exchange rate fluctuations and implement hedging strategies.',
+          'Regular reassessment of simulation parameters recommended.',
+          'Consider scenario-based planning for different outcome ranges.'
         ]
       };
-      
-      setLlmAnalysis(mockAnalysis);
-    }, 3000); // Simulate API delay
+      setLlmAnalysis(fallbackAnalysis);
+    }
   };
 
   // Handle percentile slider change
@@ -516,7 +592,7 @@ const VietnamMonteCarloPage: NextPage = () => {
                   {isAppleDevice && isPlatformDetected ? (
                     <EnhancedTouchButton
                       variant="primary"
-                      label={simulationStatus === 'running' ? "Running Simulation" : "Run Simulation"}
+                      label={simulationStatus === 'running' ? `Running Simulation (${progressPercentage.toFixed(0)}%)` : "Run Simulation"}
                       iconLeft={simulationStatus === 'running' ? 
                         <CircularProgress size={20} color="inherit" /> : 
                         <Play className="w-4 h-4" />
@@ -539,7 +615,7 @@ const VietnamMonteCarloPage: NextPage = () => {
                       {simulationStatus === 'running' ? (
                         <>
                           <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
-                          Running Simulation
+                          Running Simulation ({progressPercentage.toFixed(0)}%)
                         </>
                       ) : 'Run Simulation'}
                     </Button>
@@ -580,8 +656,8 @@ const VietnamMonteCarloPage: NextPage = () => {
             <AlertTitle>About This Tool</AlertTitle>
             <Typography variant="body2">
               The Vietnam Tariff Monte Carlo Simulation uses stochastic modeling to simulate thousands of possible outcomes 
-              based on varying tariff parameters. It leverages GROK 3 API for advanced analysis and Nvidia's langchain 
-              for structured report generation.
+              based on varying tariff parameters. It leverages real data storage with Apache Jena, Redis caching, 
+              and Perplexity AI for advanced analysis and structured report generation.
             </Typography>
           </Alert>
         </Box>
@@ -590,7 +666,7 @@ const VietnamMonteCarloPage: NextPage = () => {
 
         <Box sx={{ mb: 4 }}>
           <Typography variant="caption" color="text.secondary">
-            © 2025 SCB FinSight | Data updated: May 19, 2025 | Vietnam Tariff Monte Carlo Module v1.0.0
+            © 2025 SCB FinSight | Data updated: May 19, 2025 | Vietnam Tariff Monte Carlo Module v2.0.0 | Real Data Integration
           </Typography>
         </Box>
       </Container>

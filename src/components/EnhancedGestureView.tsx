@@ -310,7 +310,7 @@ const EnhancedGestureView: React.FC<EnhancedGestureViewProps> = ({
     onPinch, onRotate, onPan, onPencilInput,
     allowContentScaling, allowContentRotation, allowContentPanning,
     initialScale, initialRotation, minScale, maxScale,
-    resetOnDoubleTap, scrollView
+    resetOnDoubleTap, scrollView, handleScrollView, setGestureHandlers
   ]);
   
   // Calculate scroll bounds for scroll view mode
@@ -356,7 +356,7 @@ const EnhancedGestureView: React.FC<EnhancedGestureViewProps> = ({
   }, [scrollView, overflowDirection]);
   
   // Handle scroll view behavior
-  const handleScrollView = (gestureState: GestureState) => {
+  const handleScrollView = useCallback((gestureState: GestureState) => {
     if (!scrollView) return;
     
     const { deltaX, deltaY, velocityX, velocityY } = gestureState;
@@ -401,7 +401,7 @@ const EnhancedGestureView: React.FC<EnhancedGestureViewProps> = ({
     
     // Update scrolling state for visual feedback
     setIsScrolling(true);
-  };
+  }, [scrollView, scrollPosition, scrollBounds, bounceEffect, setBounce, setScrollPosition, setIsScrolling]);
   
   // Handle bounce animation end
   useEffect(() => {
@@ -472,7 +472,7 @@ const EnhancedGestureView: React.FC<EnhancedGestureViewProps> = ({
         setIsScrolling(false);
       }
     }
-  }, [state.active, isScrolling, scrollPosition, scrollBounds]);
+  }, [state, isScrolling, scrollPosition, scrollBounds]);
   
   // Create transform style for content
   const getContentTransform = () => {

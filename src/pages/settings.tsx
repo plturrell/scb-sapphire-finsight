@@ -7,10 +7,48 @@ import useMultiTasking from '@/hooks/useMultiTasking';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import EnhancedAppleTouchButton from '@/components/EnhancedAppleTouchButton';
 import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
+import EnhancedSettingsNavigation from '@/components/EnhancedSettingsNavigation';
 import { haptics } from '@/lib/haptics';
 import { useSafeArea, safeAreaCss } from '@/hooks/useSafeArea';
 import { useApplePhysics, appleAnimations } from '@/hooks/useApplePhysics';
+import { useIOS } from '@/hooks/useResponsive';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Eye, Zap, Volume2, Bell, Check } from 'lucide-react';
+
+// Settings sections with SF Symbol icons
+const settingsSections = [
+  { 
+    id: 'general', 
+    name: 'General', 
+    icon: 'gear', 
+    description: 'Basic app settings and system information'
+  },
+  { 
+    id: 'appearance', 
+    name: 'Appearance', 
+    icon: 'paintbrush.fill',
+    description: 'Themes, colors, and visual preferences'
+  },
+  { 
+    id: 'layout', 
+    name: 'Layout', 
+    icon: 'square.grid.3x3',
+    description: 'Navigation and layout options'
+  },
+  { 
+    id: 'performance', 
+    name: 'Performance', 
+    icon: 'bolt.fill',
+    description: 'Animations and performance settings'
+  },
+  { 
+    id: 'notifications', 
+    name: 'Notifications', 
+    icon: 'bell.fill',
+    description: 'Alert and notification preferences',
+    badge: '4'
+  },
+];
 
 const SettingsPage = () => {
   const { preferences, setPreference, resetPreferences, isDarkMode } = useUIPreferences();
@@ -20,6 +58,10 @@ const SettingsPage = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
+  
+  // Platform detection
+  const isAppleDeviceHook = useIOS();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
   
   // Add iOS-specific hooks
   const { safeArea, hasDynamicIsland, hasHomeIndicator } = useSafeArea();
@@ -214,6 +256,14 @@ const SettingsPage = () => {
     }
   };
   
+  // Handle section change for SF Symbols navigation
+  const handleSectionChange = (sectionId: string) => {
+    const sectionIndex = settingsSections.findIndex(section => section.id === sectionId);
+    if (sectionIndex !== -1) {
+      handleTabChange(sectionIndex);
+    }
+  };
+  
   return (
     <>
       {/* iOS Navigation Bar */}
@@ -271,6 +321,19 @@ const SettingsPage = () => {
                 fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif"
               }}
             >
+              {/* Enhanced Settings Navigation with SF Symbols */}
+              {isAppleDeviceHook && isPlatformDetected && sfSymbolsSupported && (
+                <div className="mb-6">
+                  <EnhancedSettingsNavigation
+                    sections={settingsSections}
+                    activeSection={settingsSections[activeTab]?.id || 'general'}
+                    onSectionChange={handleSectionChange}
+                    variant={isIPad && !isMultiTasking ? 'grid' : 'list'}
+                    showDescriptions={isIPad && !isMultiTasking}
+                    className="mb-4"
+                  />
+                </div>
+              )}
               {/* iOS-style grouped table view */}
               <div className="rounded-lg overflow-hidden shadow-sm">
                 {/* System Information */}
@@ -584,13 +647,25 @@ const SettingsPage = () => {
           ) : (
             /* Standard (non-iOS) settings interface */
             <>
+              {/* Enhanced Settings Navigation for non-iOS */}
+              <div className="mb-6">
+                <EnhancedSettingsNavigation
+                  sections={settingsSections}
+                  activeSection={settingsSections[activeTab]?.id || 'general'}
+                  onSectionChange={handleSectionChange}
+                  variant="tabs"
+                  showDescriptions={false}
+                  className="mb-4"
+                />
+              </div>
+              
               <Tabs 
                 variant="enclosed" 
                 colorScheme="blue" 
                 index={activeTab} 
                 onChange={handleTabChange}
                 className={`${isMultiTasking ? 'tabs-multitasking' : ''}`}>
-                <TabList>
+                <TabList style={{ display: 'none' }}>
                   <Tab><div className="flex items-center"><Settings className="w-4 h-4 mr-2" /> General</div></Tab>
                   <Tab><div className="flex items-center"><PaintBucket className="w-4 h-4 mr-2" /> Appearance</div></Tab>
                   <Tab><div className="flex items-center"><Layout className="w-4 h-4 mr-2" /> Layout</div></Tab>

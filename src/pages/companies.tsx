@@ -132,6 +132,14 @@ export default function Companies() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSector, setSelectedSector] = useState('all');
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
+  const isAppleDevice = useIOS();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Platform detection effect
+  useEffect(() => {
+    setIsPlatformDetected(true);
+  }, []);
   
   // Filter companies based on search and sector
   const filteredCompanies = companies.filter(company => {
@@ -154,22 +162,39 @@ export default function Companies() {
       <div className="space-y-6">
         {/* Enhanced Search Bar */}
         <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-5">
-          <EnhancedRealCompanySearchBar />
+          <EnhancedRealCompanySearchBar 
+            onCompanySelect={(company) => {
+              console.log('Selected company:', company);
+              setSelectedCompany(company.companyCode);
+            }}
+          />
           
-          <div className="mt-4 flex flex-wrap gap-2">
-            {sectors.map(sector => (
-              <button
-                key={sector.id}
-                onClick={() => setSelectedSector(sector.id)}
-                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                  selectedSector === sector.id
-                    ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
-                    : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
-                }`}
-              >
-                {sector.name} ({sector.count})
-              </button>
-            ))}
+          <div className="mt-4">
+            {isAppleDevice && isPlatformDetected && sfSymbolsSupported ? (
+              <EnhancedSectorNavigation
+                sectors={sectors}
+                activeSector={selectedSector}
+                onSectorChange={setSelectedSector}
+                variant={isAppleDevice ? 'card' : 'chip'}
+                className="mt-2"
+              />
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {sectors.map(sector => (
+                  <button
+                    key={sector.id}
+                    onClick={() => setSelectedSector(sector.id)}
+                    className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                      selectedSector === sector.id
+                        ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
+                        : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
+                    }`}
+                  >
+                    {sector.name} ({sector.count})
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         

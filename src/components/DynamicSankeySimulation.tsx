@@ -124,7 +124,7 @@ const DynamicSankeySimulation: React.FC<DynamicSankeySimulationProps> = ({
         simulationWorker.current.terminate();
       }
     };
-  }, [onSimulationComplete]);
+  }, [onSimulationComplete, onSaveResults]);
   
   // Start simulation
   const startSimulation = useCallback(() => {

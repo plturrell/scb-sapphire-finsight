@@ -99,7 +99,7 @@ const EnhancedIOSDataVisualization: React.FC<EnhancedIOSDataVisualizationProps> 
     isRevealed: false
   });
   
-  const { springPreset } = useApplePhysics();
+  const { spring } = useApplePhysics({ motion: 'standard' });
   const { safeArea } = useSafeArea();
   
   // Initialize with reveal animation
@@ -267,7 +267,7 @@ const EnhancedIOSDataVisualization: React.FC<EnhancedIOSDataVisualizationProps> 
   
   // Transition properties for iOS-style animations
   const getTransitionStyle = () => {
-    const { damping, stiffness } = springPreset('standard');
+    const { damping, stiffness } = spring;
     
     return {
       transition: `all ${damping}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
@@ -282,7 +282,7 @@ const EnhancedIOSDataVisualization: React.FC<EnhancedIOSDataVisualizationProps> 
   const getExpandedStyle = () => {
     if (!interactionState.isExpanded) return {};
     
-    const { damping, stiffness } = springPreset('standard');
+    const { damping, stiffness } = spring;
     
     return {
       position: 'fixed' as const,

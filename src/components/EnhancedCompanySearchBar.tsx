@@ -154,7 +154,7 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
         setIsLoading(false);
       }
     }, 300),
-    []
+    [setSearchResults, setSearchStatus, setIsLoading]
   );
 
   // Handle search input change

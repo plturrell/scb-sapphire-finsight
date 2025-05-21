@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { KPICard, ChartCard, TableCard, AlertCard } from '@/components/cards';
-import { TrendingUp, TrendingDown, AlertCircle, Sparkles, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, Sparkles, BarChart3, RefreshCw, Info, ChevronRight } from 'lucide-react';
 import AllocationPieChart from '@/components/charts/AllocationPieChart';
 import { getGrokCompletion } from '@/lib/grok-api';
 // Import the dashboard service for real data
@@ -11,9 +11,18 @@ import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useMultiTasking } from '@/hooks/useMultiTasking';
 import { useMicroInteractions } from '@/hooks/useMicroInteractions';
+import { useIOSCompatibility } from '@/hooks/useIOSCompatibility';
+import { useSFSymbolsSupport } from '@/hooks/useSFSymbolsSupport';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import useApplePhysics from '@/hooks/useApplePhysics';
+import useSafeArea, { safeAreaCss } from '@/hooks/useSafeArea';
+import { haptics } from '@/lib/haptics';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedDashboardNavigation from '@/components/EnhancedDashboardNavigation';
 import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
+import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import { ICONS } from '@/components/IconSystem';
+import '@/styles/ios-enhancements.css';
 
 /**
  * Dashboard MVP for SCB Sapphire FinSight
@@ -72,6 +81,7 @@ const Dashboard: React.FC = () => {
   const [userRole, setUserRole] = useState<'executive' | 'analyst' | 'operations'>('analyst');
   const [aiInsight, setAiInsight] = useState<string>('');
   const [showAiAlert, setShowAiAlert] = useState(false);
+  const [activeDashboardSection, setActiveDashboardSection] = useState('overview');
   const [visibleComponents, setVisibleComponents] = useState<VisibleComponents>({
     detailedTables: true,
     monteCarloSimulation: true,
@@ -80,12 +90,124 @@ const Dashboard: React.FC = () => {
     aiInsights: true
   });
   
+  // iOS-specific state for touch interactions and gestures
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [navbarHidden, setNavbarHidden] = useState(false);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [showKPIDetailModal, setShowKPIDetailModal] = useState(false);
+  const [selectedKPI, setSelectedKPI] = useState<any>(null);
+  const [showChartDetailModal, setShowChartDetailModal] = useState(false);
+  const [selectedChart, setSelectedChart] = useState<any>(null);
+  const [touchSwipeDistance, setTouchSwipeDistance] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [swipeTarget, setSwipeTarget] = useState<string | null>(null);
+  const [pinchState, setPinchState] = useState({ scale: 1, initialDistance: 0, isActive: false });
+  const [containerDimensions, setContainerDimensions] = useState({ width: 300, height: 300 });
+  
+  // iOS-style network awareness and offline state
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [connectionType, setConnectionType] = useState<string>('');
+  const [showOfflineBanner, setShowOfflineBanner] = useState(false);
+  
   // Device and platform detection
   const { isAppleDevice, deviceType } = useDeviceCapabilities();
-  const { isMultiTasking, mode } = useMultiTasking();
+  const { isMultiTasking, mode, sizeClass } = useMultiTasking();
+  const { safeArea, hasHomeIndicator, hasDynamicIsland, orientation } = useSafeArea();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const { prefersReducedMotion } = useReducedMotion();
+  const applePhysics = useApplePhysics({ motion: 'standard' });
+  const isIOS = useIOSCompatibility();
+  
+  // Refs
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Define device types
+  const isIPad = deviceType === 'tablet' && isAppleDevice;
+  const isIPhone = deviceType === 'mobile' && isAppleDevice;
+  const isApplePlatform = isIPad || isIPhone;
   
   // Active tab state for the iOS tab bar
   const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // Generate iOS-specific CSS classes
+  const getIOSClasses = () => {
+    const classes = [];
+    if (isApplePlatform) classes.push('ios-optimized');
+    if (isIPhone) classes.push('ios-iphone');
+    if (isIPad) classes.push('ios-ipad');
+    if (hasDynamicIsland) classes.push('ios-dynamic-island');
+    if (hasHomeIndicator) classes.push('ios-home-indicator');
+    if (prefersReducedMotion) classes.push('reduced-motion');
+    if (isMultiTasking) classes.push('ios-multitasking');
+    if (mode === 'slide-over') classes.push('ios-slide-over');
+    if (mode === 'split-view') classes.push('ios-split-view');
+    if (mode === 'stage-manager') classes.push('ios-stage-manager');
+    return classes.join(' ');
+  };
+  
+  // Dashboard sections configuration with role-based access
+  const dashboardSections = useMemo(() => [
+    {
+      id: 'overview',
+      label: 'Overview',
+      sublabel: 'Executive summary',
+      icon: 'gauge.badge.plus',
+      role: 'all' as const
+    },
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      sublabel: 'Deep dive analysis',
+      icon: 'chart.bar.xaxis.ascending',
+      role: 'analyst' as const
+    },
+    {
+      id: 'portfolio',
+      label: 'Portfolio',
+      sublabel: 'Asset allocation',
+      icon: 'briefcase.fill',
+      role: 'all' as const
+    },
+    {
+      id: 'risk',
+      label: 'Risk',
+      sublabel: 'Risk assessment',
+      icon: 'shield.lefthalf.filled.badge.checkmark',
+      role: 'all' as const
+    },
+    {
+      id: 'performance',
+      label: 'Performance',
+      sublabel: 'Returns & metrics',
+      icon: 'chart.line.uptrend.xyaxis',
+      role: 'analyst' as const
+    },
+    {
+      id: 'simulation',
+      label: 'Monte Carlo',
+      sublabel: 'Scenario analysis',
+      icon: 'waveform.path.ecg',
+      role: 'analyst' as const,
+      badge: visibleComponents.monteCarloSimulation ? '3' : undefined
+    },
+    {
+      id: 'reports',
+      label: 'Reports',
+      sublabel: 'Generated insights',
+      icon: 'doc.text.fill',
+      role: 'all' as const,
+      badge: '5'
+    },
+    {
+      id: 'operations',
+      label: 'Operations',
+      sublabel: 'Daily operations',
+      icon: 'gear.badge.checkmark',
+      role: 'operations' as const
+    }
+  ], [visibleComponents.monteCarloSimulation]);
   
   // iOS tab bar configuration
   const tabItems = [
@@ -150,6 +272,150 @@ const Dashboard: React.FC = () => {
   
   // Fetch financial data
   const { data, loading, error } = useFinancialData();
+  
+  // Effect to update container dimensions for responsive charts
+  useEffect(() => {
+    if (!contentRef.current) return;
+    
+    const updateDimensions = () => {
+      if (contentRef.current) {
+        const rect = contentRef.current.getBoundingClientRect();
+        setContainerDimensions({
+          width: rect.width || 300,
+          height: Math.max(rect.height || 300, 300)
+        });
+      }
+    };
+    
+    updateDimensions();
+    
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(contentRef.current);
+    
+    return () => {
+      if (contentRef.current) {
+        resizeObserver.unobserve(contentRef.current);
+      }
+    };
+  }, []);
+
+  // Effect to handle multi-tasking and orientation changes for iPad
+  useEffect(() => {
+    if (!isIPad || !isMultiTasking) return;
+    
+    const handleOrientationChange = () => {
+      // Adjust layout when orientation changes in multi-tasking mode
+      setTimeout(() => {
+        if (contentRef.current) {
+          const rect = contentRef.current.getBoundingClientRect();
+          setContainerDimensions({
+            width: rect.width || 300,
+            height: Math.max(rect.height || 300, 300)
+          });
+        }
+      }, 200); // Allow for orientation transition to complete
+    };
+    
+    window.addEventListener('orientationchange', handleOrientationChange);
+    window.addEventListener('resize', handleOrientationChange);
+    
+    return () => {
+      window.removeEventListener('orientationchange', handleOrientationChange);
+      window.removeEventListener('resize', handleOrientationChange);
+    };
+  }, [isIPad, isMultiTasking]);
+
+  // Effect to handle scroll events for iOS-style navbar hiding/showing
+  useEffect(() => {
+    if (!isApplePlatform) return;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Update navbar visibility based on scroll direction
+      if (currentScrollY > lastScrollY + 10 && currentScrollY > 100) {
+        // Scrolling down - hide navbar
+        setNavbarHidden(true);
+        if (isApplePlatform) {
+          haptics.light(); // Subtle feedback when navbar hides
+        }
+      } else if (currentScrollY < lastScrollY - 10 || currentScrollY < 50) {
+        // Scrolling up or near top - show navbar
+        setNavbarHidden(false);
+      }
+      
+      // Update the last scroll position
+      setLastScrollY(currentScrollY);
+      
+      // Debounce updating scroll position
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+      
+      scrollTimerRef.current = setTimeout(() => {
+        setLastScrollY(currentScrollY);
+      }, 100);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, [lastScrollY, isApplePlatform]);
+
+  // Effect to monitor network connectivity for iOS devices
+  useEffect(() => {
+    if (!isApplePlatform) return;
+    
+    const handleOnlineStatus = () => {
+      const online = navigator.onLine;
+      setIsOnline(online);
+      
+      if (!online && !showOfflineBanner) {
+        setShowOfflineBanner(true);
+        if (isApplePlatform) haptics.warning(); // Notify user of connectivity loss
+      } else if (online && showOfflineBanner) {
+        setShowOfflineBanner(false);
+        if (isApplePlatform) haptics.success(); // Notify user of connectivity restoration
+      }
+    };
+    
+    const getConnectionInfo = () => {
+      // @ts-ignore - connection API may not be available in all browsers
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (connection) {
+        setConnectionType(connection.effectiveType || connection.type || 'unknown');
+      }
+    };
+    
+    // Initial setup
+    handleOnlineStatus();
+    getConnectionInfo();
+    
+    window.addEventListener('online', handleOnlineStatus);
+    window.addEventListener('offline', handleOnlineStatus);
+    
+    // Monitor connection changes on iOS
+    // @ts-ignore
+    if (navigator.connection) {
+      // @ts-ignore
+      navigator.connection.addEventListener('change', getConnectionInfo);
+    }
+    
+    return () => {
+      window.removeEventListener('online', handleOnlineStatus);
+      window.removeEventListener('offline', handleOnlineStatus);
+      // @ts-ignore
+      if (navigator.connection) {
+        // @ts-ignore
+        navigator.connection.removeEventListener('change', getConnectionInfo);
+      }
+    };
+  }, [showOfflineBanner, isApplePlatform]);
   
   // Configure dashboard based on user role
   useEffect(() => {
@@ -221,6 +487,203 @@ const Dashboard: React.FC = () => {
   // Update the parent component when role changes
   const handleRoleChange = (newRole: 'executive' | 'analyst' | 'operations') => {
     setUserRole(newRole);
+  };
+
+  // Handling refresh with iOS-style feedback
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    
+    if (isApplePlatform) {
+      haptics.medium(); // Medium haptic for refresh action
+    }
+    
+    setTimeout(() => {
+      setIsRefreshing(false);
+      
+      if (isApplePlatform) {
+        haptics.success(); // Success feedback when refresh completes
+      }
+      
+      // Optionally refetch data here
+      window.location.reload();
+    }, 1500);
+  };
+
+  // Touch event handlers for iOS-specific interactions
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    
+    // Store the initial touch position
+    setTouchStartY(e.touches[0].clientY);
+    
+    // Check for pinch gesture (two touches)
+    if (e.touches.length === 2) {
+      // Calculate initial distance between two touch points
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const initialDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      
+      setPinchState({
+        scale: pinchState.scale, // Keep current scale
+        initialDistance,
+        isActive: true
+      });
+      
+      // Provide haptic feedback for pinch start
+      haptics.light();
+      
+      // Prevent default to avoid scrolling during pinch
+      e.preventDefault();
+    } else {
+      // Reset swipe state for single touch
+      setIsSwiping(false);
+      setTouchSwipeDistance(0);
+      
+      // Identify swipe target if applicable
+      const target = e.currentTarget.getAttribute('data-swipe-id');
+      if (target) {
+        setSwipeTarget(target);
+      }
+    }
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    
+    // Handle pinch-to-zoom (two touches)
+    if (e.touches.length === 2 && pinchState.isActive && pinchState.initialDistance > 0) {
+      // Calculate current distance between touch points
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const currentDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      
+      // Calculate new scale based on the change in distance
+      const newScale = (currentDistance / pinchState.initialDistance) * pinchState.scale;
+      
+      // Constrain scale to reasonable limits (0.5 to 3)
+      const constrainedScale = Math.min(Math.max(newScale, 0.5), 3);
+      
+      // Apply haptic feedback at scale thresholds for a more tactile experience
+      if (constrainedScale > 1.5 && pinchState.scale <= 1.5) haptics.light();
+      if (constrainedScale > 2.0 && pinchState.scale <= 2.0) haptics.medium();
+      if (constrainedScale < 1.0 && pinchState.scale >= 1.0) haptics.light();
+      
+      setPinchState({
+        ...pinchState,
+        scale: constrainedScale
+      });
+      
+      e.preventDefault(); // Prevent default to avoid unwanted scrolling
+      return;
+    }
+    
+    // Handle single touch gestures
+    if (touchStartY === null) return;
+    
+    const currentY = e.touches[0].clientY;
+    const diffY = touchStartY - currentY;
+    const diffX = e.touches[0].clientX - e.currentTarget.getBoundingClientRect().left;
+    
+    // For potential swipe actions in dashboard elements
+    if (swipeTarget && Math.abs(diffY) < 20 && diffX > 20) {
+      setIsSwiping(true);
+      setTouchSwipeDistance(diffX);
+      
+      // Enhanced haptic feedback with gradual intensity
+      if (diffX > 30 && diffX < 32) haptics.selection();
+      if (diffX > 50 && diffX < 52) haptics.light();
+      if (diffX > 75 && diffX < 77) haptics.light();
+      if (diffX > 100 && diffX < 102) haptics.medium();
+    }
+    
+    // Pull-to-refresh gesture (when at top of page)
+    if (diffY < -50 && window.scrollY <= 0 && !isRefreshing) {
+      // Progressive haptic feedback based on pull distance
+      if (diffY < -80 && diffY > -85) haptics.light();
+      if (diffY < -120 && diffY > -125) haptics.medium();
+      
+      handleRefresh();
+    }
+  };
+  
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    
+    // Handle pinch gesture end
+    if (pinchState.isActive) {
+      // Reset to default scale with a satisfying snap if close to 1
+      if (pinchState.scale > 0.85 && pinchState.scale < 1.15) {
+        setPinchState({
+          scale: 1,
+          initialDistance: 0,
+          isActive: false
+        });
+        haptics.light(); // Feedback for snapping back
+      } else {
+        setPinchState({
+          ...pinchState,
+          initialDistance: 0,
+          isActive: false
+        });
+      }
+      return;
+    }
+    
+    // Handle swipe action completion
+    if (isSwiping && touchSwipeDistance > 100 && swipeTarget) {
+      // Add a small delay before action to make it feel more deliberate
+      setTimeout(() => {
+        // Complete the swipe action
+        handleSwipeAction(swipeTarget);
+        haptics.success(); // Success feedback
+      }, 50);
+    } else if (isSwiping) {
+      // Animate swiped item back with spring physics
+      setIsSwiping(false);
+      setTouchSwipeDistance(0);
+      haptics.selection(); // Light feedback for cancellation
+    }
+    
+    // Reset touch state
+    setTouchStartY(null);
+    setSwipeTarget(null);
+  };
+  
+  // Handle swipe actions on dashboard elements
+  const handleSwipeAction = (itemId: string) => {
+    // Identify item type and action
+    const [itemType, itemValue] = itemId.split('-');
+    
+    if (itemType === 'kpi') {
+      // Show details for the swiped KPI
+      const kpiData = {
+        id: itemValue,
+        title: itemValue === 'assets' ? 'Total Assets' : itemValue === 'performance' ? 'Portfolio Performance' : 'Risk Score',
+        value: financialMetrics[itemValue as keyof typeof financialMetrics]
+      };
+      setSelectedKPI(kpiData);
+      setShowKPIDetailModal(true);
+    } else if (itemType === 'chart') {
+      // Show details for the swiped chart
+      const chartData = {
+        id: itemValue,
+        title: itemValue === 'allocation' ? 'Asset Allocation' : 'Performance Chart',
+        data: allocationData
+      };
+      setSelectedChart(chartData);
+      setShowChartDetailModal(true);
+    }
+    
+    // Reset swipe state
+    setIsSwiping(false);
+    setTouchSwipeDistance(0);
+    setSwipeTarget(null);
   };
 
   // Format financial metrics from real data
@@ -320,6 +783,16 @@ const Dashboard: React.FC = () => {
     handleRoleChange(role);
   }, [preferences.enableHaptics, isAppleDevice, haptic]);
   
+  // Handle dashboard section changes
+  const handleDashboardSectionChange = useCallback((sectionId: string) => {
+    setActiveDashboardSection(sectionId);
+    
+    // Optional: Update URL with section parameter
+    const url = new URL(window.location.href);
+    url.searchParams.set('section', sectionId);
+    window.history.replaceState({}, '', url.toString());
+  }, []);
+
   // Handle tab changes
   const handleTabChange = (key: string) => {
     setActiveTab(key);
@@ -378,6 +851,18 @@ const Dashboard: React.FC = () => {
                 </EnhancedTouchButton>
               </div>
             </div>
+          </div>
+
+          {/* Enhanced Dashboard Navigation with SF Symbols */}
+          <div className="mb-6">
+            <EnhancedDashboardNavigation
+              sections={dashboardSections}
+              activeSection={activeDashboardSection}
+              onSectionChange={handleDashboardSectionChange}
+              variant={isMultiTasking && mode === 'slide-over' ? 'list' : deviceType === 'tablet' ? 'grid' : 'cards'}
+              userRole={userRole}
+              className="w-full"
+            />
           </div>
           
           {/* Alert Cards */}
@@ -646,6 +1131,18 @@ const Dashboard: React.FC = () => {
                 <option value="operations">Operations</option>
               </select>
             </div>
+          </div>
+
+          {/* Enhanced Dashboard Navigation - Non-iOS version */}
+          <div className="mb-6">
+            <EnhancedDashboardNavigation
+              sections={dashboardSections}
+              activeSection={activeDashboardSection}
+              onSectionChange={handleDashboardSectionChange}
+              variant="tabs"
+              userRole={userRole}
+              className="w-full"
+            />
           </div>
           
           {/* Alert Cards */}

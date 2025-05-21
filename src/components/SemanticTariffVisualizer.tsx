@@ -406,6 +406,7 @@ const SemanticTariffVisualizer: React.FC = () => {
   // Background colors for light/dark mode
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const emptyStateBgColor = useColorModeValue('gray.50', 'gray.900');
   
   return (
     <Box 
@@ -755,7 +756,7 @@ const SemanticTariffVisualizer: React.FC = () => {
           borderWidth="1px"
           borderRadius="md"
           borderColor={borderColor}
-          bg={useColorModeValue('gray.50', 'gray.900')}
+          bg={emptyStateBgColor}
         >
           <SearchIcon boxSize={10} color="gray.400" mb={4} />
           <Text fontSize="lg" fontWeight="medium" mb={2}>No tariff data found</Text>

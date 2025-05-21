@@ -5,14 +5,18 @@ import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVis
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import EnhancedAppleTouchButton from '@/components/EnhancedAppleTouchButton';
+import EnhancedAnalyticsNavigation from '@/components/EnhancedAnalyticsNavigation';
 import { useMultiTasking } from '@/hooks/useMultiTasking';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { useIOSCompatibility } from '@/hooks/useIOSCompatibility';
+import { useSFSymbolsSupport } from '@/hooks/useSFSymbolsSupport';
+import { useMicroInteractions } from '@/hooks/useMicroInteractions';
 import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { haptics } from '@/lib/haptics';
 import { TransactionSector } from '@/types';
 import { useMediaQuery } from 'react-responsive';
-import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import useSafeArea, { safeAreaCss } from '@/hooks/useSafeArea';
 import { ICONS } from '@/components/IconSystem';
 import { ArrowRight, Download, Filter, RefreshCw, LayoutDashboard, FileText, Settings, AlertCircle, Zap } from '@/components/IconExports';
 import {
@@ -99,8 +103,10 @@ export default function Analytics() {
   const { mode, isMultiTasking, windowWidth, windowHeight } = useMultiTasking();
   const { isAppleDevice, deviceType, prefersReducedMotion } = useDeviceCapabilities();
   const { isDarkMode } = useUIPreferences();
-  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
-  const { safeArea, hasNotch, hasHomeIndicator } = useSafeArea();
+  const isIOS = useIOSCompatibility();
+  const supportsSFSymbols = useSFSymbolsSupport();
+  const { haptic, microScale } = useMicroInteractions();
+  const { safeArea, hasHomeIndicator, hasDynamicIsland } = useSafeArea();
   
   // Determine if it's an iOS device
   const isIPad = deviceType === 'tablet' && isAppleDevice;
@@ -168,15 +174,57 @@ export default function Analytics() {
     setTouchStartY(null);
   };
   
-  // Analytics categories with SF Symbols icons
+  // Analytics categories with SF Symbols icons - enhanced version
   const analyticsCategories = [
-    { id: 'overview', label: 'Overview', icon: 'chart.bar.doc.horizontal', badge: null },
-    { id: 'revenue', label: 'Revenue', icon: 'dollarsign.circle.fill', badge: '+5.2%' },
-    { id: 'accounts', label: 'Accounts', icon: 'person.2.fill', badge: '895' },
-    { id: 'performance', label: 'Performance', icon: 'chart.line.uptrend.xyaxis.fill', badge: null },
-    { id: 'sectors', label: 'Sectors', icon: 'rectangle.3.group.fill', badge: '10' },
-    { id: 'risk', label: 'Risk', icon: 'exclamationmark.triangle.fill', badge: '3' },
-    { id: 'custom', label: 'Custom', icon: 'slider.horizontal.3', badge: null }
+    { 
+      id: 'overview', 
+      label: 'Overview', 
+      sublabel: 'Executive summary',
+      icon: 'chart.bar.doc.horizontal', 
+      badge: undefined as string | undefined
+    },
+    { 
+      id: 'revenue', 
+      label: 'Revenue', 
+      sublabel: 'Income analysis',
+      icon: 'dollarsign.circle.fill', 
+      badge: '+5.2%' 
+    },
+    { 
+      id: 'accounts', 
+      label: 'Accounts', 
+      sublabel: 'Customer metrics',
+      icon: 'person.2.fill', 
+      count: 895
+    },
+    { 
+      id: 'performance', 
+      label: 'Performance', 
+      sublabel: 'Key indicators',
+      icon: 'chart.line.uptrend.xyaxis.fill', 
+      badge: undefined as string | undefined
+    },
+    { 
+      id: 'sectors', 
+      label: 'Sectors', 
+      sublabel: 'Industry breakdown',
+      icon: 'rectangle.3.group.fill', 
+      count: 10
+    },
+    { 
+      id: 'risk', 
+      label: 'Risk', 
+      sublabel: 'Risk assessment',
+      icon: 'exclamationmark.triangle.fill', 
+      count: 3
+    },
+    { 
+      id: 'custom', 
+      label: 'Custom', 
+      sublabel: 'Custom reports',
+      icon: 'slider.horizontal.3', 
+      badge: undefined as string | undefined
+    }
   ];
   
   const timeFilters = ['Last 30 Days', 'Last Quarter', 'Last 6 Months', 'Year to Date', 'Last 12 Months'];
@@ -250,56 +298,6 @@ export default function Analytics() {
     if (showDataDetail) {
       setShowDataDetail(false);
     }
-  };
-  
-  // SF Symbols Analytics Categories Navigation component
-  const SFSymbolsAnalyticsNavigation = () => {
-    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
-      return null;
-    }
-    
-    return (
-      <div className={`rounded-lg overflow-x-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1 mb-4`}>
-        <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
-          {analyticsCategories.map((category) => (
-            <button 
-              key={category.id}
-              onClick={() => handleCategorySelect(category.id)}
-              className={`
-                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
-                ${activeAnalyticsCategory === category.id
-                  ? isDarkMode 
-                    ? 'bg-blue-900/30 text-blue-400' 
-                    : 'bg-blue-50 text-blue-600'
-                  : isDarkMode 
-                    ? 'text-gray-300 hover:bg-gray-700' 
-                    : 'text-gray-600 hover:bg-gray-100'
-                }
-              `}
-            >
-              <div className="relative">
-                <span className="sf-symbol text-xl" role="img">{category.icon}</span>
-                
-                {/* Badge */}
-                {category.badge && (
-                  <span className={`
-                    absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
-                    flex items-center justify-center px-1
-                    ${category.badge.startsWith('+') 
-                      ? isDarkMode ? 'bg-green-600' : 'bg-green-500' 
-                      : isDarkMode ? 'bg-blue-600' : 'bg-red-500'
-                    }
-                  `}>
-                    {category.badge.length > 4 ? category.badge.substring(0, 3) + '...' : category.badge}
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px] font-medium mt-1">{category.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
   };
   
   // Handle data refresh with iOS physics animations

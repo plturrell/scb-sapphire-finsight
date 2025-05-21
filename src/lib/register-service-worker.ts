@@ -8,10 +8,22 @@ export function registerServiceWorker() {
     navigator.serviceWorker.register('/service-worker.js')
       .then(registration => {
         console.log('Service Worker registered:', registration);
+        
+        // Check if registration is still valid before using it
+        if (!registration || registration.unregistered) {
+          console.warn('Service Worker registration is no longer valid');
+          return;
+        }
 
         // Check for updates periodically
         setInterval(() => {
-          registration.update();
+          try {
+            if (registration && !registration.unregistered) {
+              registration.update();
+            }
+          } catch (error) {
+            console.error('Error updating service worker:', error);
+          }
         }, 60000); // Check every minute
 
         // Handle updates
@@ -60,9 +72,13 @@ export function registerServiceWorker() {
         showNotification('Back online', 'success');
         
         // Trigger background sync
-        if ('sync' in navigator.serviceWorker.registration!) {
-          navigator.serviceWorker.registration!.sync.register('sync-data');
-        }
+        navigator.serviceWorker.ready.then((registration) => {
+          if ('sync' in registration) {
+            registration.sync.register('sync-data');
+          }
+        }).catch(error => {
+          console.error('Service worker not ready:', error);
+        });
       }
       wasOffline = false;
     });

@@ -9,6 +9,7 @@ import KPICard from '@/components/cards/KPICard';
 import EnhancedLoadingSpinner from '@/components/EnhancedLoadingSpinner';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import useMultiTasking from '@/hooks/useMultiTasking';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { haptics } from '@/lib/haptics';
 import { UserRole } from '@/types';
 import { useMediaQuery } from 'react-responsive';
@@ -42,6 +43,7 @@ export default function FinancialSimulation() {
   
   // SF Symbols support and platform detection
   const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const { isAppleDevice } = useDeviceCapabilities();
   const [activeSimulationMode, setActiveSimulationMode] = useState<string>('montecarlo');
   
   // Simulation categories with SF Symbols icons

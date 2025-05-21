@@ -81,7 +81,7 @@ const EnhancedIOSBreadcrumb: React.FC<EnhancedIOSBreadcrumbProps> = ({
       return [{ label: 'Home', href: '/', icon: 'house' }, ...visibleItems];
     }
     return visibleItems;
-  }, [visibleItems, showHome]);
+  }, [visibleItems, showHome, items]);
   
   // Handle item click
   const handleItemClick = (item: BreadcrumbItem, index: number) => {

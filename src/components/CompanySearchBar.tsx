@@ -122,7 +122,7 @@ const CompanySearchBar: React.FC = () => {
         setIsLoading(false);
       }
     }, 300),
-    []
+    [setSearchResults, setIsLoading]
   );
 
   // Handle search input change
