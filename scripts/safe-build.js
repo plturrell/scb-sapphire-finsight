@@ -26,13 +26,16 @@ if (!configContent.includes('productionBrowserSourceMaps: true')) {
 }
 
 try {
-  // Use the local next binary from node_modules
-  console.log('Starting Next.js build with source maps enabled...');
+  // Use the local next binary from node_modules with Terser completely disabled
+  console.log('Starting Next.js build with source maps enabled and minification disabled...');
   execSync('node ./node_modules/next/dist/bin/next build', { 
     stdio: 'inherit',
     env: {
       ...process.env,
-      NEXT_TELEMETRY_DISABLED: '1'
+      NEXT_TELEMETRY_DISABLED: '1',
+      NODE_ENV: 'development', // Force development mode to avoid minification
+      NEXT_SKIP_MINIFY: '1',   // Skip minification explicitly
+      NEXT_DISABLE_TERSER: '1' // Custom flag to completely disable Terser
     }
   });
   
