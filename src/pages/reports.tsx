@@ -662,8 +662,33 @@ export default function Reports() {
                   <p className="text-xs text-[hsl(var(--muted-foreground))]">Every Monday at 09:00 AM</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Edit</button>
-                  <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Disable</button>
+                  {isAppleDevice && isPlatformDetected ? (
+                    <>
+                      <EnhancedTouchButton 
+                        variant="secondary" 
+                        label="Edit" 
+                        size="small"
+                        onClick={() => {
+                          if (isAppleDevice) haptics.light();
+                          // Edit functionality
+                        }}
+                      />
+                      <EnhancedTouchButton 
+                        variant="secondary" 
+                        label="Disable" 
+                        size="small"
+                        onClick={() => {
+                          if (isAppleDevice) haptics.light();
+                          // Disable functionality
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Edit</button>
+                      <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Disable</button>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
@@ -672,8 +697,33 @@ export default function Reports() {
                   <p className="text-xs text-[hsl(var(--muted-foreground))]">First day of each month at 07:00 AM</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Edit</button>
-                  <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Disable</button>
+                  {isAppleDevice && isPlatformDetected ? (
+                    <>
+                      <EnhancedTouchButton 
+                        variant="secondary" 
+                        label="Edit" 
+                        size="small"
+                        onClick={() => {
+                          if (isAppleDevice) haptics.light();
+                          // Edit functionality
+                        }}
+                      />
+                      <EnhancedTouchButton 
+                        variant="secondary" 
+                        label="Disable" 
+                        size="small"
+                        onClick={() => {
+                          if (isAppleDevice) haptics.light();
+                          // Disable functionality
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Edit</button>
+                      <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Disable</button>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex items-center justify-between">

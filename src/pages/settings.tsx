@@ -1,150 +1,450 @@
-import React from 'react';
-import Layout from '@/components/Layout';
+import React, { useState } from 'react';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
+import { Switch, Tabs, TabList, TabPanels, Tab, TabPanel, Select, Radio, RadioGroup, Stack } from '@chakra-ui/react';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Eye, Zap, Volume2, Bell } from 'lucide-react';
 
-export default function Settings() {
+const SettingsPage = () => {
+  const { preferences, setPreference, resetPreferences, isDarkMode } = useUIPreferences();
+  const { deviceType, isAppleDevice, browserName } = useDeviceCapabilities();
+  const [activeTab, setActiveTab] = useState(0);
+  
+  // Save changes notification
+  const [showSaveNotice, setShowSaveNotice] = useState(false);
+  
+  // Show save notification when preferences change
+  const handlePreferenceChange = <K extends keyof typeof preferences>(key: K, value: typeof preferences[K]) => {
+    setPreference(key, value);
+    setShowSaveNotice(true);
+    
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+      setShowSaveNotice(false);
+    }, 3000);
+  };
+  
+  // Reset all preferences
+  const handleResetPreferences = () => {
+    resetPreferences();
+    setShowSaveNotice(true);
+    
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+      setShowSaveNotice(false);
+    }, 3000);
+  };
+  
   return (
-    <Layout>
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="bg-white p-4 border border-[hsl(var(--border))] rounded shadow-sm">
-          <h1 className="text-xl font-normal text-[hsl(var(--foreground))]">Settings</h1>
-          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Configure your SCB Sapphire FinSight experience</p>
+    <ScbBeautifulUI pageTitle="Settings">
+      <div className="max-w-4xl mx-auto">
+        {/* Settings header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-[rgb(var(--scb-honolulu-blue))] dark:text-white">
+            Application Settings
+          </h1>
+          <p className="text-[rgb(var(--scb-dark-gray))] dark:text-gray-300 mt-2">
+            Customize your SCB Sapphire experience with these settings
+          </p>
         </div>
-
-        {/* Settings Panel */}
-        <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
-            <h3 className="text-base font-normal">Account Settings</h3>
-          </div>
-          <div className="p-4">
-            <div className="space-y-6">
-              {/* Profile Settings */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">Profile Information</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Full Name</label>
-                    <input 
-                      type="text" 
-                      defaultValue="Administrator" 
-                      className="input-sapui5 w-full" 
+        
+        {/* Settings tabs */}
+        <Tabs variant="enclosed" colorScheme="blue" index={activeTab} onChange={setActiveTab}>
+          <TabList>
+            <Tab><div className="flex items-center"><Settings className="w-4 h-4 mr-2" /> General</div></Tab>
+            <Tab><div className="flex items-center"><PaintBucket className="w-4 h-4 mr-2" /> Appearance</div></Tab>
+            <Tab><div className="flex items-center"><Layout className="w-4 h-4 mr-2" /> Layout</div></Tab>
+            <Tab><div className="flex items-center"><Zap className="w-4 h-4 mr-2" /> Performance</div></Tab>
+            <Tab><div className="flex items-center"><Bell className="w-4 h-4 mr-2" /> Notifications</div></Tab>
+          </TabList>
+          
+          <TabPanels>
+            {/* General Settings */}
+            <TabPanel>
+              <div className="space-y-6">
+                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                  <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">System Information</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">Device Type</span>
+                      <span className="text-sm font-medium">{deviceType}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">Browser</span>
+                      <span className="text-sm font-medium">{browserName}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">Platform</span>
+                      <span className="text-sm font-medium">{isAppleDevice ? 'Apple' : 'Other'}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">Dark Mode</span>
+                      <span className="text-sm font-medium">{isDarkMode ? 'Enabled' : 'Disabled'}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                  <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Feature Settings</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-medium text-gray-800 dark:text-gray-200">Enable News Bar</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Show the latest news in the sidebar</p>
+                      </div>
+                      <Switch 
+                        colorScheme="blue" 
+                        isChecked={preferences.enableNewsBar}
+                        onChange={() => handlePreferenceChange('enableNewsBar', !preferences.enableNewsBar)}
+                      />
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-medium text-gray-800 dark:text-gray-200">Enable Joule Assistant</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">AI-powered assistant for insights</p>
+                      </div>
+                      <Switch 
+                        colorScheme="blue" 
+                        isChecked={preferences.enableJouleAssistant}
+                        onChange={() => handlePreferenceChange('enableJouleAssistant', !preferences.enableJouleAssistant)}
+                      />
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-medium text-gray-800 dark:text-gray-200">Enable Search Bar</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Show search bar on pages</p>
+                      </div>
+                      <Switch 
+                        colorScheme="blue" 
+                        isChecked={preferences.enableSearchBar}
+                        onChange={() => handlePreferenceChange('enableSearchBar', !preferences.enableSearchBar)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+            
+            {/* Appearance Settings */}
+            <TabPanel>
+              <div className="space-y-6">
+                <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                  <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Theme</h2>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Theme Mode</h3>
+                      <RadioGroup 
+                        value={preferences.theme} 
+                        onChange={(value) => handlePreferenceChange('theme', value as 'light' | 'dark' | 'system')}
+                      >
+                        <Stack direction="row" spacing={5}>
+                          <Radio value="light" colorScheme="blue">
+                            <div className="flex items-center">
+                              <Sun className="w-4 h-4 mr-2" />
+                              Light
+                            </div>
+                          </Radio>
+                          <Radio value="dark" colorScheme="blue">
+                            <div className="flex items-center">
+                              <Moon className="w-4 h-4 mr-2" />
+                              Dark
+                            </div>
+                          </Radio>
+                          <Radio value="system" colorScheme="blue">
+                            <div className="flex items-center">
+                              <Monitor className="w-4 h-4 mr-2" />
+                              System
+                            </div>
+                          </Radio>
+                        </Stack>
+                      </RadioGroup>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Accent Color</h3>
+                      <div className="flex items-center space-x-4">
+                        {['blue', 'green', 'purple', 'teal', 'orange'].map((color) => (
+                          <button
+                            key={color}
+                            className={`w-8 h-8 rounded-full transition-transform ${
+                              preferences.accentColor === color 
+                                ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' 
+                                : 'hover:scale-105'
+                            }`}
+                            style={{ 
+                              backgroundColor: 
+                                color === 'blue' ? 'rgb(0, 114, 170)' :
+                                color === 'green' ? 'rgb(33, 170, 71)' :
+                                color === 'purple' ? 'rgb(88, 86, 214)' :
+                                color === 'teal' ? 'rgb(0, 199, 190)' :
+                                'rgb(255, 149, 0)'
+                            }}
+                            onClick={() => handlePreferenceChange('accentColor', color as any)}
+                            aria-label={`${color} accent color`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Font Size</h3>
+                      <Select 
+                        value={preferences.fontSize}
+                        onChange={(e) => handlePreferenceChange('fontSize', e.target.value as 'small' | 'medium' | 'large')}
+                        maxWidth="200px"
+                      >
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large">Large</option>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                  <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Chart Appearance</h2>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Chart Color Palette</h3>
+                      <Select 
+                        value={preferences.chartColorPalette}
+                        onChange={(e) => handlePreferenceChange('chartColorPalette', e.target.value as any)}
+                        maxWidth="200px"
+                      >
+                        <option value="standard">Standard</option>
+                        <option value="colorblind">Colorblind Friendly</option>
+                        <option value="monochrome">Monochrome</option>
+                        <option value="pastel">Pastel</option>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Chart Theme</h3>
+                      <RadioGroup 
+                        value={preferences.chartTheme} 
+                        onChange={(value) => handlePreferenceChange('chartTheme', value as 'light' | 'dark' | 'system')}
+                      >
+                        <Stack direction="row" spacing={5}>
+                          <Radio value="light" colorScheme="blue">Light</Radio>
+                          <Radio value="dark" colorScheme="blue">Dark</Radio>
+                          <Radio value="system" colorScheme="blue">System</Radio>
+                        </Stack>
+                      </RadioGroup>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Legend Position</h3>
+                      <RadioGroup 
+                        value={preferences.chartLegendPosition} 
+                        onChange={(value) => handlePreferenceChange('chartLegendPosition', value as 'top' | 'bottom' | 'left' | 'right')}
+                      >
+                        <Stack direction="row" spacing={5}>
+                          <Radio value="top" colorScheme="blue">Top</Radio>
+                          <Radio value="bottom" colorScheme="blue">Bottom</Radio>
+                          <Radio value="left" colorScheme="blue">Left</Radio>
+                          <Radio value="right" colorScheme="blue">Right</Radio>
+                        </Stack>
+                      </RadioGroup>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+            
+            {/* Layout Settings */}
+            <TabPanel>
+              <div className="space-y-6">
+                <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                  <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Layout Options</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-medium text-gray-800 dark:text-gray-200">Sidebar Expanded</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Show labels in sidebar navigation</p>
+                      </div>
+                      <Switch 
+                        colorScheme="blue" 
+                        isChecked={preferences.sidebarExpanded}
+                        onChange={() => handlePreferenceChange('sidebarExpanded', !preferences.sidebarExpanded)}
+                      />
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Layout Density</h3>
+                      <RadioGroup 
+                        value={preferences.layoutDensity} 
+                        onChange={(value) => handlePreferenceChange('layoutDensity', value as 'compact' | 'comfortable' | 'spacious')}
+                      >
+                        <Stack direction="column" spacing={2}>
+                          <Radio value="compact" colorScheme="blue">Compact (dense, more content)</Radio>
+                          <Radio value="comfortable" colorScheme="blue">Comfortable (default spacing)</Radio>
+                          <Radio value="spacious" colorScheme="blue">Spacious (more whitespace)</Radio>
+                        </Stack>
+                      </RadioGroup>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Header Style</h3>
+                      <RadioGroup 
+                        value={preferences.headerStyle} 
+                        onChange={(value) => handlePreferenceChange('headerStyle', value as 'white' | 'blue')}
+                      >
+                        <Stack direction="row" spacing={5}>
+                          <Radio value="white" colorScheme="blue">White</Radio>
+                          <Radio value="blue" colorScheme="blue">SCB Blue</Radio>
+                        </Stack>
+                      </RadioGroup>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                  <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Mobile Layout</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-medium text-gray-800 dark:text-gray-200">Show Labels</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Show labels in mobile navigation</p>
+                      </div>
+                      <Switch 
+                        colorScheme="blue" 
+                        isChecked={preferences.showLabels}
+                        onChange={() => handlePreferenceChange('showLabels', !preferences.showLabels)}
+                      />
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Navigation Style</h3>
+                      <RadioGroup 
+                        value={preferences.mobileNavStyle} 
+                        onChange={(value) => handlePreferenceChange('mobileNavStyle', value as 'bottom' | 'tab')}
+                      >
+                        <Stack direction="row" spacing={5}>
+                          <Radio value="bottom" colorScheme="blue">
+                            <div className="flex items-center">
+                              <Smartphone className="w-4 h-4 mr-2" />
+                              Bottom Tabs
+                            </div>
+                          </Radio>
+                          <Radio value="tab" colorScheme="blue">
+                            <div className="flex items-center">
+                              <Layout className="w-4 h-4 mr-2" />
+                              Top Tabs
+                            </div>
+                          </Radio>
+                        </Stack>
+                      </RadioGroup>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+            
+            {/* Performance Settings */}
+            <TabPanel>
+              <div className="space-y-6">
+                <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                  <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Animation & Effects</h2>
+                  
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-medium text-gray-800 dark:text-gray-200">Enable Animations</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Use animations throughout the app</p>
+                      </div>
+                      <Switch 
+                        colorScheme="blue" 
+                        isChecked={preferences.enableAnimations}
+                        onChange={() => handlePreferenceChange('enableAnimations', !preferences.enableAnimations)}
+                      />
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="font-medium text-gray-800 dark:text-gray-200">Enable Haptic Feedback</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Tactile feedback on interactions (mobile)</p>
+                      </div>
+                      <Switch 
+                        colorScheme="blue" 
+                        isChecked={preferences.enableHaptics}
+                        onChange={() => handlePreferenceChange('enableHaptics', !preferences.enableHaptics)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabPanel>
+            
+            {/* Notification Settings */}
+            <TabPanel>
+              <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Notification Preferences</h2>
+                
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="font-medium text-gray-800 dark:text-gray-200">Show Notifications</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Display notification alerts</p>
+                    </div>
+                    <Switch 
+                      colorScheme="blue" 
+                      isChecked={true}
                     />
                   </div>
+                  
                   <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Email Address</label>
-                    <input 
-                      type="email" 
-                      defaultValue="admin@scbsapphire.com" 
-                      className="input-sapui5 w-full" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Role</label>
-                    <select className="input-sapui5 w-full">
-                      <option>Administrator</option>
-                      <option>Analyst</option>
-                      <option>Manager</option>
-                      <option>Viewer</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Department</label>
-                    <select className="input-sapui5 w-full">
-                      <option>Finance</option>
-                      <option>Sales</option>
-                      <option>Operations</option>
-                      <option>IT</option>
-                    </select>
+                    <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Notification Types</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Portfolio Alerts</span>
+                        <Switch colorScheme="blue" defaultChecked />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Report Updates</span>
+                        <Switch colorScheme="blue" defaultChecked />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">Market News</span>
+                        <Switch colorScheme="blue" defaultChecked />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">System Updates</span>
+                        <Switch colorScheme="blue" defaultChecked />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Notification Settings */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">Notification Settings</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <input type="checkbox" id="email-notifications" className="mr-2" defaultChecked />
-                    <label htmlFor="email-notifications" className="text-sm">Email Notifications</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="report-alerts" className="mr-2" defaultChecked />
-                    <label htmlFor="report-alerts" className="text-sm">Report Alerts</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="market-updates" className="mr-2" defaultChecked />
-                    <label htmlFor="market-updates" className="text-sm">Market Updates</label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Display Settings */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">Display Settings</h4>
-                <div className="space-y-2">
-                  <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Theme</label>
-                    <select className="input-sapui5 w-full md:w-1/3">
-                      <option>SAP Quartz Light (Default)</option>
-                      <option>SAP Quartz Dark</option>
-                      <option>SAP Belize</option>
-                      <option>High Contrast</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Default Dashboard</label>
-                    <select className="input-sapui5 w-full md:w-1/3">
-                      <option>Overview</option>
-                      <option>Financial Analytics</option>
-                      <option>Portfolio</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+        
+        {/* Reset button */}
+        <div className="mt-8 flex justify-between items-center">
+          <button
+            className="px-4 py-2 text-sm text-red-600 hover:text-red-700 font-medium rounded-md hover:bg-red-50 transition-colors"
+            onClick={handleResetPreferences}
+          >
+            Reset to Defaults
+          </button>
+          
+          {/* Save notification */}
+          {showSaveNotice && (
+            <div className="bg-green-50 text-green-800 px-4 py-2 rounded-md text-sm">
+              Preferences saved automatically
             </div>
-          </div>
-          <div className="px-4 py-3 border-t border-[hsl(var(--border))] flex justify-end">
-            <button className="btn-sapui5 btn-sapui5-secondary mr-2">Cancel</button>
-            <button className="btn-sapui5 btn-sapui5-primary">Save Changes</button>
-          </div>
-        </div>
-
-        {/* Security Settings */}
-        <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-[hsl(var(--border))]">
-            <h3 className="text-base font-normal">Security Settings</h3>
-          </div>
-          <div className="p-4">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Password</label>
-                <div className="flex items-center space-x-2">
-                  <input 
-                    type="password" 
-                    value="••••••••••••" 
-                    disabled
-                    className="input-sapui5 w-full md:w-1/3" 
-                  />
-                  <button className="btn-sapui5 btn-sapui5-secondary">Change</button>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-[hsl(var(--muted-foreground))] mb-1">Two-Factor Authentication</label>
-                <div className="flex items-center space-x-2">
-                  <select className="input-sapui5 w-full md:w-1/3">
-                    <option>Enabled</option>
-                    <option>Disabled</option>
-                  </select>
-                  <button className="btn-sapui5 btn-sapui5-secondary">Configure</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="px-4 py-3 border-t border-[hsl(var(--border))] flex justify-end">
-            <button className="btn-sapui5 btn-sapui5-primary">Update Security Settings</button>
-          </div>
+          )}
         </div>
       </div>
-    </Layout>
+    </ScbBeautifulUI>
   );
-}
+};
+
+export default SettingsPage;
