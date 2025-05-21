@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+// Ensure React is in scope for JSX
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import reportService from '@/lib/report-service';

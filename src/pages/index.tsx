@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// Ensure React is in scope for JSX
 import Image from 'next/image';
 import MetricCard from '@/components/MetricCard';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
