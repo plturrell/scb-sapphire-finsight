@@ -101,6 +101,133 @@ export default function Portfolio() {
     setPlatformDetected(true);
   }, []);
   
+  // Effect to handle scroll events for iOS-style navbar hiding/showing
+  useEffect(() => {
+    if (!isApplePlatform) return;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Update navbar visibility based on scroll direction
+      if (currentScrollY > lastScrollY + 10 && currentScrollY > 100) {
+        // Scrolling down - hide navbar
+        setNavbarHidden(true);
+        if (isApplePlatform) {
+          haptics.light(); // Subtle feedback when navbar hides
+        }
+      } else if (currentScrollY < lastScrollY - 10 || currentScrollY < 50) {
+        // Scrolling up or near top - show navbar
+        setNavbarHidden(false);
+      }
+      
+      // Update the last scroll position
+      setLastScrollY(currentScrollY);
+      
+      // Debounce updating scroll position
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+      
+      scrollTimerRef.current = setTimeout(() => {
+        setLastScrollY(currentScrollY);
+      }, 100);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, [lastScrollY, isApplePlatform]);
+  
+  // Touch event handlers for iOS-specific interactions
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    
+    // Store the initial touch position
+    setTouchStartY(e.touches[0].clientY);
+    
+    // Reset swipe state
+    setIsSwiping(false);
+    setTouchSwipeDistance(0);
+    
+    // Identify swipe target if applicable
+    const target = e.currentTarget.getAttribute('data-swipe-id');
+    if (target) {
+      setSwipeTarget(target);
+    }
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isApplePlatform || touchStartY === null) return;
+    
+    const currentY = e.touches[0].clientY;
+    const diffY = touchStartY - currentY;
+    const diffX = e.touches[0].clientX - e.currentTarget.getBoundingClientRect().left;
+    
+    // For potential swipe actions in card items
+    if (swipeTarget && Math.abs(diffY) < 20 && diffX > 20) {
+      setIsSwiping(true);
+      setTouchSwipeDistance(diffX);
+      
+      // Trigger haptic feedback at threshold points
+      if (diffX > 50 && diffX < 52) haptics.light();
+      if (diffX > 100 && diffX < 102) haptics.medium();
+    }
+    
+    // Pull-to-refresh gesture (when at top of page)
+    if (diffY < -50 && window.scrollY <= 0 && !refreshing) {
+      handleRefresh();
+    }
+  };
+  
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    
+    // Handle swipe action completion
+    if (isSwiping && touchSwipeDistance > 100 && swipeTarget) {
+      // Complete the swipe action
+      handleSwipeAction(swipeTarget);
+      haptics.success(); // Success feedback
+    } else if (isSwiping) {
+      // Reset if swipe wasn't far enough
+      setIsSwiping(false);
+      setTouchSwipeDistance(0);
+    }
+    
+    // Reset touch state
+    setTouchStartY(null);
+    setSwipeTarget(null);
+  };
+  
+  // Handle pull-to-refresh
+  const handleRefresh = async () => {
+    if (refreshing) return;
+    
+    setRefreshing(true);
+    haptics.medium(); // Medium strength feedback for refresh
+    
+    // Simulate refresh (would fetch new data in a real implementation)
+    setTimeout(() => {
+      setRefreshing(false);
+      haptics.success(); // Success feedback when refresh completes
+    }, 1500);
+  };
+  
+  // Handle swipe actions on portfolio items
+  const handleSwipeAction = (itemId: string) => {
+    // Perform action based on the swiped item
+    console.log(`Swipe action performed on item: ${itemId}`);
+    
+    // Reset swipe state
+    setIsSwiping(false);
+    setTouchSwipeDistance(0);
+    setSwipeTarget(null);
+  };
+  
   // Portfolio categories with SF Symbols icons
   const portfolioCategories = [
     { id: 'overview', label: 'Overview', icon: 'chart.pie.fill', badge: null },
@@ -115,11 +242,23 @@ export default function Portfolio() {
   // Handle bar data selection
   const handleBarSelect = (data: any) => {
     setSelectedBarData(data);
+    setSelectedDataPoint(data);
     
     // Provide haptic feedback on Apple devices
     if (isAppleDevice) {
       haptics.selection();
     }
+    
+    // Show data point detail modal on iOS devices
+    if (isApplePlatform) {
+      setShowDetailModal(true);
+    }
+  };
+  
+  // Close detail modal
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    haptics.light();
   };
 
   // Handle button click with haptic feedback
@@ -255,48 +394,140 @@ export default function Portfolio() {
   // Render bar chart with iOS optimizations
   const renderBarChart = (dimensions: any, interactionState: any, helpers: any) => {
     const { width, height } = dimensions;
+    const { triggerHaptic } = helpers || { triggerHaptic: () => {} };
+    
+    // iOS-specific interaction handlers
+    const handleBarClick = (data: any, index: number) => {
+      // Set the selected data point
+      handleBarSelect(data.payload);
+      
+      // Use iOS-appropriate haptic feedback
+      if (isApplePlatform) {
+        triggerHaptic('selection');
+      }
+    };
+    
+    // iOS-specific tooltip customizations
+    const renderTooltipContent = (props: any) => {
+      const { payload, label } = props;
+      if (!payload || payload.length === 0) return null;
+      
+      // iOS-style tooltip with blur effect
+      return (
+        <div 
+          className={`p-3 rounded-lg ${isDarkMode 
+            ? 'bg-gray-800/90 text-white backdrop-blur-lg' 
+            : 'bg-white/90 text-gray-900 backdrop-blur-lg'}`}
+          style={{
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)'
+          }}
+        >
+          <div className="font-medium text-xs mb-1">{label}</div>
+          {payload.map((entry: any, index: number) => (
+            <div key={`item-${index}`} className="flex justify-between items-center text-xs my-1">
+              <div className="flex items-center">
+                <div 
+                  className="w-2 h-2 rounded-sm mr-1"
+                  style={{ backgroundColor: entry.color }}
+                ></div>
+                <span>{entry.name}:</span>
+              </div>
+              <span className={`font-semibold ml-3 ${index === 1 ? 'text-[#007AFF]' : 'text-[#FF9F0A]'}`}>
+                {entry.value}%
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    };
     
     return (
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={portfolioData} margin={{ top: 5, right: 20, left: 5, bottom: 80 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
+        <BarChart 
+          data={portfolioData} 
+          margin={{ top: 5, right: 20, left: 5, bottom: 80 }}
+          onClick={isApplePlatform ? (data) => {
+            if (data && data.activePayload) {
+              handleBarClick(data.activePayload[0], data.activeTooltipIndex || 0);
+            }
+          } : undefined}
+        >
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            stroke={isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"} 
+            vertical={false}
+          />
           <XAxis 
             dataKey="region" 
             angle={-45} 
             textAnchor="end" 
             height={80}
-            tick={{ fontSize: interactionState?.isCompact ? 10 : 12 }}
-            stroke="#8E8E93"
+            tick={{ 
+              fontSize: interactionState?.isCompact ? 10 : 12,
+              fill: isDarkMode ? "#8E8E93" : "#606066"
+            }}
+            axisLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+            tickLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
           />
           <YAxis 
-            tick={{ fontSize: interactionState?.isCompact ? 10 : 12 }}
-            stroke="#8E8E93"
+            tick={{ 
+              fontSize: interactionState?.isCompact ? 10 : 12,
+              fill: isDarkMode ? "#8E8E93" : "#606066"
+            }}
+            axisLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+            tickLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+            width={40}
           />
           <Tooltip 
-            contentStyle={{
-              borderRadius: 8,
-              backgroundColor: 'rgba(255,255,255,0.95)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              border: '1px solid rgba(0,0,0,0.05)'
+            content={renderTooltipContent}
+            cursor={{
+              fill: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+              radius: [4, 4, 0, 0]
             }}
+            animationDuration={300}
+            animationEasing="ease-out"
           />
-          <Legend wrapperStyle={{ fontSize: interactionState?.isCompact ? 10 : 12 }} />
+          <Legend 
+            wrapperStyle={{ 
+              fontSize: interactionState?.isCompact ? 10 : 12,
+              opacity: 0.8
+            }} 
+            iconType="circle"
+            iconSize={8}
+          />
           <Bar 
             dataKey="planned" 
-            fill={iosColors[5]} 
+            fill={isDarkMode ? iosColors[5] : iosColors[5]} 
             name="Planned" 
             radius={[4, 4, 0, 0]}
-            animationDuration={1000}
-            activeBar={{ fill: iosColors[5], stroke: 'white', strokeWidth: 2 }}
+            animationDuration={isApplePlatform ? springPreset.duration : 1000}
+            activeBar={{ 
+              fill: isDarkMode ? iosColors[5] : iosColors[5], 
+              stroke: isDarkMode ? 'rgba(255,255,255,0.8)' : 'white', 
+              strokeWidth: 2,
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+            }}
+            animationEasing="ease-out"
+            isAnimationActive={true}
           />
           <Bar 
             dataKey="actual" 
-            fill={iosColors[0]} 
+            fill={isDarkMode ? iosColors[0] : iosColors[0]} 
             name="Actual" 
             radius={[4, 4, 0, 0]}
-            animationDuration={1200}
-            animationBegin={200}
-            activeBar={{ fill: iosColors[0], stroke: 'white', strokeWidth: 2 }}
+            animationDuration={isApplePlatform ? springPreset.duration + 200 : 1200}
+            animationBegin={isApplePlatform ? 100 : 200}
+            activeBar={{ 
+              fill: isDarkMode ? iosColors[0] : iosColors[0], 
+              stroke: isDarkMode ? 'rgba(255,255,255,0.8)' : 'white', 
+              strokeWidth: 2,
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+            }}
+            animationEasing="ease-out"
+            isAnimationActive={true}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -308,31 +539,123 @@ export default function Portfolio() {
     const { width, height } = dimensions;
     const { isCompact } = interactionState;
     
+    // iPad-optimized tooltip with more compact size for multitasking
+    const renderMultitaskingTooltip = (props: any) => {
+      const { payload, label } = props;
+      if (!payload || payload.length === 0) return null;
+      
+      return (
+        <div 
+          className={`p-2 rounded-lg ${isDarkMode 
+            ? 'bg-gray-800/90 text-white backdrop-blur-lg' 
+            : 'bg-white/90 text-gray-900 backdrop-blur-lg'}`}
+          style={{
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)',
+            fontSize: isCompact ? '0.65rem' : '0.75rem'
+          }}
+        >
+          <div className="font-medium mb-1">{label}</div>
+          {payload.map((entry: any, index: number) => (
+            <div key={`item-${index}`} className="flex justify-between items-center my-0.5">
+              <div className="flex items-center">
+                <div 
+                  className="w-1.5 h-1.5 rounded-sm mr-1"
+                  style={{ backgroundColor: entry.color }}
+                ></div>
+                <span>{entry.name}:</span>
+              </div>
+              <span className={`font-semibold ml-2 ${index === 1 ? 'text-[#007AFF]' : 'text-[#FF9F0A]'}`}>
+                {entry.value}%
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    };
+    
     return (
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={portfolioData} margin={{ top: 5, right: 20, left: 5, bottom: isCompact ? 60 : 80 }}>
-          <CartesianGrid strokeDasharray="3 3" />
+        <BarChart 
+          data={portfolioData} 
+          margin={{ top: 5, right: 20, left: 5, bottom: isCompact ? 60 : 80 }}
+          onClick={(data) => {
+            if (data && data.activePayload) {
+              handleBarSelect(data.activePayload[0].payload);
+              haptics.selection();
+            }
+          }}
+        >
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            stroke={isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"} 
+            vertical={false}
+          />
           <XAxis 
             dataKey="region" 
             angle={-45} 
             textAnchor="end" 
             height={isCompact ? 60 : 80}
-            tick={{ fontSize: isCompact ? 9 : 11 }}
+            tick={{ 
+              fontSize: isCompact ? 9 : 11,
+              fill: isDarkMode ? "#8E8E93" : "#606066" 
+            }}
+            axisLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+            tickLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
           />
-          <YAxis tick={{ fontSize: isCompact ? 9 : 11 }} />
-          <Tooltip />
-          <Legend wrapperStyle={{ fontSize: isCompact ? 9 : 11 }} />
+          <YAxis 
+            tick={{ 
+              fontSize: isCompact ? 9 : 11,
+              fill: isDarkMode ? "#8E8E93" : "#606066" 
+            }}
+            axisLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+            tickLine={{ stroke: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+            width={isCompact ? 30 : 40}
+          />
+          <Tooltip 
+            content={renderMultitaskingTooltip}
+            cursor={{
+              fill: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+              radius: [4, 4, 0, 0]
+            }}
+          />
+          <Legend 
+            wrapperStyle={{ 
+              fontSize: isCompact ? 9 : 11,
+              opacity: 0.8
+            }}
+            iconType="circle"
+            iconSize={isCompact ? 6 : 8}
+            height={20}
+          />
           <Bar 
             dataKey="planned" 
-            fill={iosColors[5]} 
+            fill={isDarkMode ? iosColors[5] : iosColors[5]} 
             name="Planned" 
             radius={[4, 4, 0, 0]}
+            animationDuration={springPreset.duration}
+            activeBar={{ 
+              fill: isDarkMode ? iosColors[5] : iosColors[5], 
+              stroke: isDarkMode ? 'rgba(255,255,255,0.8)' : 'white', 
+              strokeWidth: 2
+            }}
+            animationEasing="ease-out"
           />
           <Bar 
             dataKey="actual" 
-            fill={iosColors[0]} 
+            fill={isDarkMode ? iosColors[0] : iosColors[0]} 
             name="Actual" 
             radius={[4, 4, 0, 0]}
+            animationDuration={springPreset.duration + 200}
+            animationBegin={100}
+            activeBar={{ 
+              fill: isDarkMode ? iosColors[0] : iosColors[0], 
+              stroke: isDarkMode ? 'rgba(255,255,255,0.8)' : 'white', 
+              strokeWidth: 2
+            }}
+            animationEasing="ease-out"
           />
         </BarChart>
       </ResponsiveContainer>

@@ -384,6 +384,100 @@ const VietnamTariffImpactPage: NextPage = () => {
     }
   };
   
+  // SF Symbols Tariff Navigation Component
+  const SFSymbolsTariffNavigation = () => {
+    return (
+      <Box sx={{ 
+        display: 'flex', 
+        overflow: 'auto', 
+        mb: 3, 
+        pb: 1,
+        backgroundColor: 'background.paper',
+        borderRadius: 2,
+        boxShadow: 1,
+        border: 1,
+        borderColor: 'divider',
+        p: 1
+      }}>
+        {tariffTabs.map((tab) => (
+          <Box 
+            key={tab.id}
+            onClick={() => handleSFSymbolTabChange(tab.id)}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              p: 1,
+              minWidth: 80,
+              borderRadius: 2,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              bgcolor: activeTab === tab.id ? 'rgba(21, 101, 192, 0.1)' : 'transparent',
+              '&:hover': {
+                bgcolor: activeTab === tab.id ? 'rgba(21, 101, 192, 0.1)' : 'rgba(0, 0, 0, 0.04)'
+              }
+            }}
+          >
+            <Box
+              sx={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 48,
+                height: 48,
+                borderRadius: '50%',
+                mb: 0.5,
+                bgcolor: activeTab === tab.id ? 'primary.main' : 'action.selected',
+                color: activeTab === tab.id ? 'white' : 'text.primary'
+              }}
+            >
+              <SFSymbol 
+                name={tab.icon} 
+                size={24}
+                color={activeTab === tab.id ? 'white' : undefined}
+              />
+              
+              {/* Badge indicator */}
+              {tab.badge && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: -5,
+                    right: -5,
+                    minWidth: 20,
+                    height: 20,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '50%',
+                    bgcolor: 'error.main',
+                    color: 'white',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    px: 0.5
+                  }}
+                >
+                  {tab.badge}
+                </Box>
+              )}
+            </Box>
+            <Typography
+              variant="caption"
+              sx={{
+                textAlign: 'center',
+                fontWeight: activeTab === tab.id ? 'medium' : 'regular',
+                color: activeTab === tab.id ? 'primary.main' : 'text.primary'
+              }}
+            >
+              {tab.label}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+  
   return (
     <>
       <Head>
@@ -540,33 +634,40 @@ const VietnamTariffImpactPage: NextPage = () => {
               </Grid>
             </Grid>
             
-            {/* Tabs */}
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-              <Tabs 
-                value={activeTab} 
-                onChange={handleTabChange}
-                aria-label="Vietnam tariff analysis tabs"
-              >
-                <Tab 
-                  icon={<BarChart2 size={16} />} 
-                  iconPosition="start" 
-                  label="Tariff Flow Visualization" 
-                  value="visualization" 
-                />
-                <Tab 
-                  icon={<Map size={16} />} 
-                  iconPosition="start" 
-                  label="Geographic Impact" 
-                  value="geomap" 
-                />
-                <Tab 
-                  icon={<Activity size={16} />} 
-                  iconPosition="start" 
-                  label="Alerts & News" 
-                  value="alerts" 
-                />
-              </Tabs>
-            </Box>
+            {/* SF Symbols Navigation for Apple devices */}
+            {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+              <SFSymbolsTariffNavigation />
+            )}
+            
+            {/* Traditional Tabs for non-Apple devices or when SF Symbols are not supported */}
+            {(!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) && (
+              <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+                <Tabs 
+                  value={activeTab} 
+                  onChange={handleTabChange}
+                  aria-label="Vietnam tariff analysis tabs"
+                >
+                  <Tab 
+                    icon={<BarChart2 size={16} />} 
+                    iconPosition="start" 
+                    label="Tariff Flow Visualization" 
+                    value="visualization" 
+                  />
+                  <Tab 
+                    icon={<Map size={16} />} 
+                    iconPosition="start" 
+                    label="Geographic Impact" 
+                    value="geomap" 
+                  />
+                  <Tab 
+                    icon={<Activity size={16} />} 
+                    iconPosition="start" 
+                    label="Alerts & News" 
+                    value="alerts" 
+                  />
+                </Tabs>
+              </Box>
+            )}
             
             {/* Tab Content */}
             {activeTab === 'visualization' && (

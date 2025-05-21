@@ -20,6 +20,8 @@ import {
   StopCircle, Workflow, Download, Share2, Bell, 
   HelpCircle, Info
 } from 'lucide-react';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import SFSymbol from '@/components/SFSymbol';
 
 // Import mock data for initial development (will be replaced by real data in production)
 import { mockTariffAlerts } from '../mock/tariffAlerts';
@@ -46,6 +48,13 @@ const TariffScannerPage: NextPage = () => {
   const { haptic } = useMicroInteractions();
   const { touchCapable } = useDeviceCapabilities();
   const { isDarkMode } = useUIPreferences();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Tariff scanner tabs with SF Symbols icons
+  const tariffScannerTabs = [
+    { id: 'general', label: 'ASEAN Scanner', icon: 'folder.fill', badge: alerts.length.toString() },
+    { id: 'vietnam', label: 'Vietnam Focus', icon: 'map.fill', badge: vietnamAlerts.length.toString() }
+  ];
   
   // Multi-tasking mode detection for iPad
   const [isMultiTasking, setIsMultiTasking] = useState(false);
@@ -585,6 +594,68 @@ const TariffScannerPage: NextPage = () => {
     
     // Implement export functionality
     alert('Exporting tariff analysis results...');
+  };
+  
+  // SF Symbols Tariff Scanner Navigation Component
+  const SFSymbolsTariffScannerNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`mb-6 -mx-4 px-4 overflow-x-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} py-2`}>
+        <div className="flex space-x-4 items-center">
+          {tariffScannerTabs.map((tab) => (
+            <div 
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`flex flex-col items-center p-2 rounded-xl cursor-pointer transition-colors ${
+                selectedTab === tab.id
+                ? isDarkMode 
+                  ? 'bg-blue-900/30' 
+                  : 'bg-blue-50'
+                : isDarkMode 
+                  ? 'hover:bg-gray-700' 
+                  : 'hover:bg-gray-100'
+              }`}
+              style={{ minWidth: isMultiTasking && mode === 'slide-over' ? '70px' : '80px' }}
+            >
+              <div className={`relative flex items-center justify-center ${
+                isMultiTasking && mode === 'slide-over' ? 'w-10 h-10' : 'w-12 h-12'
+              } rounded-full mb-1 ${
+                selectedTab === tab.id
+                ? 'bg-[rgb(var(--scb-honolulu-blue))]'
+                : isDarkMode 
+                  ? 'bg-gray-700' 
+                  : 'bg-gray-200'
+              }`}>
+                <SFSymbol 
+                  name={tab.icon} 
+                  size={isMultiTasking && mode === 'slide-over' ? 22 : 26}
+                  color={selectedTab === tab.id ? 'white' : undefined}
+                />
+                
+                {/* Badge indicator */}
+                {tab.badge && parseInt(tab.badge) > 0 && (
+                  <div className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center rounded-full bg-[rgb(var(--scb-notification))] text-white text-xs px-1">
+                    {tab.badge}
+                  </div>
+                )}
+              </div>
+              <span className={`text-center ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${
+                selectedTab === tab.id
+                ? 'text-[rgb(var(--scb-honolulu-blue))] font-medium'
+                : isDarkMode 
+                  ? 'text-gray-300' 
+                  : 'text-gray-600'
+              }`}>
+                {tab.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
