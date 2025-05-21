@@ -5,6 +5,8 @@
  * It handles authentication, rate limiting, retries, and formatting.
  * 
  * All Perplexity API calls should use this service to ensure consistency.
+ * 
+ * Updated with improved error handling, retry logic, and timeout management.
  */
 
 import perplexityRateLimiter from './PerplexityRateLimiter';
