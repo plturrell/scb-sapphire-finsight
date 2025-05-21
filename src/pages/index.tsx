@@ -589,23 +589,63 @@ export default function Dashboard() {
         {/* Charts - conditionally rendered based on platform */}
         {renderCharts()}
 
-        {/* News Section - platform-aware styling */}
-        <div className={`fiori-tile ${isAppleDevice ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}>
-          <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] dark:border-gray-700">
-            <h3 className="fiori-tile-title dark:text-white">News from SAP Joule</h3>
+        {/* News Section - platform-aware styling with iOS optimizations */}
+        <div className={`fiori-tile ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} border rounded-lg shadow-sm`}>
+          <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} flex justify-between items-center`}>
+            <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              News from SAP Joule
+            </h3>
+            
+            {/* iOS-specific view all button */}
+            {isAppleDevice && isPlatformDetected && (
+              <EnhancedTouchButton
+                onClick={() => {
+                  if (isAppleDevice) haptic({ intensity: 'light' });
+                  alert('View all news');
+                }}
+                variant={isDarkMode ? "dark" : "secondary"}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                className="flex items-center gap-1"
+              >
+                <ChevronRight className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                {!isMultiTasking && <span>View All</span>}
+              </EnhancedTouchButton>
+            )}
           </div>
+          
           <div className="p-4">
             <div className="space-y-3">
               {newsItems.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-3 border-b border-[rgb(var(--scb-border))] dark:border-gray-700 last:border-0">
+                <div 
+                  key={item.id} 
+                  className={`flex items-center justify-between py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border)])'} last:border-0`}
+                  onClick={() => {
+                    if (isAppleDevice) {
+                      haptic({ intensity: 'light' });
+                      alert(`Viewing news: ${item.title}`);
+                    }
+                  }}
+                >
                   <div className="flex-1">
-                    <p className="text-sm font-normal text-[rgb(var(--scb-dark-gray))] dark:text-gray-300">{item.title}</p>
-                    <p className="text-xs text-[rgba(var(--scb-dark-gray), 0.7)] dark:text-gray-400">{item.source}</p>
+                    <p className={`text-sm font-normal ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                      {item.title}
+                    </p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-[rgba(var(--scb-dark-gray), 0.7)]'}`}>
+                      {item.source}
+                    </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs text-[rgba(var(--scb-dark-gray), 0.7)] dark:text-gray-400">{item.date}</span>
+                    <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-[rgba(var(--scb-dark-gray), 0.7)]'}`}>
+                      {item.date}
+                    </span>
                     {item.important && (
-                      <span className="horizon-chip horizon-chip-purple text-xs">Important</span>
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        isDarkMode 
+                          ? 'bg-purple-900/50 text-purple-300' 
+                          : 'bg-purple-100 text-purple-800'
+                      }`}>
+                        Important
+                      </span>
                     )}
                   </div>
                 </div>
@@ -614,18 +654,40 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* News Categories - responsive layout for iPad and simplified for small screens */}
-        <div className={`
-          grid 
-          ${isIPad && isPlatformDetected && isMultiTasking ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 lg:grid-cols-3'} 
-          gap-6
-        `}>
-          {/* CNBC News */}
-          <div className={`fiori-tile ${isAppleDevice ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}>
-            <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] dark:border-gray-700">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-muted-red))]"></div>
-                <h3 className="fiori-tile-title dark:text-white">Important CNBC News</h3>
+        {/* News Categories - responsive layout for iPad multi-tasking modes */}
+        <div className={`grid ${
+          isMultiTasking && mode === 'slide-over' 
+            ? 'grid-cols-1 gap-3' 
+            : isMultiTasking && mode === 'split-view'
+              ? orientation === 'portrait' ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-4'
+              : 'grid-cols-1 lg:grid-cols-3 gap-6'
+        }`}
+          {/* CNBC News - iOS optimized */}
+          <div 
+            className={`border rounded-lg shadow-sm overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} ${
+              isAppleDevice ? 'transition-all duration-150 active:scale-[0.99]' : ''
+            }`}
+            style={isAppleDevice ? { WebkitTapHighlightColor: 'transparent' } : undefined}
+          >
+            <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-muted-red))]"></div>
+                  <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'}`}>
+                    Important CNBC News
+                  </h3>
+                </div>
+                
+                {isAppleDevice && (
+                  <Info 
+                    className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} ${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isAppleDevice) haptic({ intensity: 'light' });
+                      alert('CNBC News info');
+                    }}
+                  />
+                )}
               </div>
             </div>
             <div className="p-4">
@@ -635,21 +697,54 @@ export default function Dashboard() {
                   'Impact tariff announcements on Asia markets',
                   'Bloomberg Green new regulations for APAC region',
                 ].map((item, index) => (
-                  <li key={index} className="flex items-start py-1 border-b border-[rgb(var(--scb-border))] dark:border-gray-700 last:border-0">
+                  <li 
+                    key={index} 
+                    className={`flex items-start py-1 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border)])'} last:border-0 ${
+                      isAppleDevice ? 'active:bg-gray-50 dark:active:bg-gray-700' : ''
+                    }`}
+                    onClick={() => {
+                      if (isAppleDevice) {
+                        haptic({ intensity: 'light' });
+                        alert(`Reading: ${item}`);
+                      }
+                    }}
+                  >
                     <span className="text-[rgb(var(--scb-muted-red))] mr-2">•</span>
-                    <span className="text-xs text-[rgb(var(--scb-dark-gray))] dark:text-gray-300">{item}</span>
+                    <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                      {item}
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
 
-          {/* Bloomberg Green */}
-          <div className={`fiori-tile ${isAppleDevice ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}>
-            <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] dark:border-gray-700">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-american-green))]"></div>
-                <h3 className="fiori-tile-title dark:text-white">Bloomberg Green</h3>
+          {/* Bloomberg Green - iOS optimized */}
+          <div 
+            className={`border rounded-lg shadow-sm overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} ${
+              isAppleDevice ? 'transition-all duration-150 active:scale-[0.99]' : ''
+            }`}
+            style={isAppleDevice ? { WebkitTapHighlightColor: 'transparent' } : undefined}
+          >
+            <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-american-green))]"></div>
+                  <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'}`}>
+                    Bloomberg Green
+                  </h3>
+                </div>
+                
+                {isAppleDevice && (
+                  <Info 
+                    className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} ${isMultiTasking && mode === 'slide-over' ? 'h-3 w-3' : 'h-4 w-4'}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isAppleDevice) haptic({ intensity: 'light' });
+                      alert('Bloomberg Green info');
+                    }}
+                  />
+                )}
               </div>
             </div>
             <div className="p-4">
@@ -659,9 +754,22 @@ export default function Dashboard() {
                   'Sustainability targets updated',
                   'Climate change impact assessment',
                 ].map((item, index) => (
-                  <li key={index} className="flex items-start py-1 border-b border-[rgb(var(--scb-border))] dark:border-gray-700 last:border-0">
+                  <li 
+                    key={index} 
+                    className={`flex items-start py-1 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border)])'} last:border-0 ${
+                      isAppleDevice ? 'active:bg-gray-50 dark:active:bg-gray-700' : ''
+                    }`}
+                    onClick={() => {
+                      if (isAppleDevice) {
+                        haptic({ intensity: 'light' });
+                        alert(`Reading: ${item}`);
+                      }
+                    }}
+                  >
                     <span className="text-[rgb(var(--scb-american-green))] mr-2">•</span>
-                    <span className="text-xs text-[rgb(var(--scb-dark-gray))] dark:text-gray-300">{item}</span>
+                    <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                      {item}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -669,12 +777,32 @@ export default function Dashboard() {
           </div>
 
           {/* BNC Green - hide in Slide Over mode on iPad */}
-          {!(isIPad && isPlatformDetected && isMultiTasking) && (
-            <div className={`fiori-tile ${isAppleDevice ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}>
-              <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] dark:border-gray-700">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-american-green))]"></div>
-                  <h3 className="fiori-tile-title dark:text-white">BNC Green</h3>
+          {(!isMultiTasking || mode !== 'slide-over') && (
+            <div 
+              className={`border rounded-lg shadow-sm overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} ${
+                isAppleDevice ? 'transition-all duration-150 active:scale-[0.99]' : ''
+              }`}
+              style={isAppleDevice ? { WebkitTapHighlightColor: 'transparent' } : undefined}
+            >
+              <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-american-green))]"></div>
+                    <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} ${isMultiTasking && mode === 'split-view' ? 'text-sm' : 'text-base'}`}>
+                      BNC Green
+                    </h3>
+                  </div>
+                  
+                  {isAppleDevice && (
+                    <Info 
+                      className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'} ${isMultiTasking && mode === 'split-view' ? 'h-3 w-3' : 'h-4 w-4'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isAppleDevice) haptic({ intensity: 'light' });
+                        alert('BNC Green info');
+                      }}
+                    />
+                  )}
                 </div>
               </div>
               <div className="p-4">
@@ -684,9 +812,22 @@ export default function Dashboard() {
                     'Environmental compliance update',
                     'Green finance opportunities',
                   ].map((item, index) => (
-                    <li key={index} className="flex items-start py-1 border-b border-[rgb(var(--scb-border))] dark:border-gray-700 last:border-0">
+                    <li 
+                      key={index} 
+                      className={`flex items-start py-1 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border)])'} last:border-0 ${
+                        isAppleDevice ? 'active:bg-gray-50 dark:active:bg-gray-700' : ''
+                      }`}
+                      onClick={() => {
+                        if (isAppleDevice) {
+                          haptic({ intensity: 'light' });
+                          alert(`Reading: ${item}`);
+                        }
+                      }}
+                    >
                       <span className="text-[rgb(var(--scb-american-green))] mr-2">•</span>
-                      <span className="text-xs text-[rgb(var(--scb-dark-gray))] dark:text-gray-300">{item}</span>
+                      <span className={`${isMultiTasking && mode === 'split-view' ? 'text-xs' : 'text-sm'} ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                        {item}
+                      </span>
                     </li>
                   ))}
                 </ul>

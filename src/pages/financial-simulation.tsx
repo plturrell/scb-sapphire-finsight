@@ -284,7 +284,7 @@ export default function FinancialSimulation() {
   };
 
   return (
-    <>
+    <React.Fragment>
       <Head>
         <title>Financial Simulation | SCB Sapphire</title>
         <meta name="description" content="Monte Carlo financial simulation and analysis for optimized investment strategies" />
@@ -294,16 +294,25 @@ export default function FinancialSimulation() {
         <IconSystemProvider>
         {isAppleDevice && isPlatformDetected ? (
           <div className={`min-h-screen ${isSmallScreen ? 'pb-20' : 'pb-16'} ${isPlatformDetected ? (isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900') : ''}`}>
-          {/* iOS Navigation Bar */}
+          {/* iOS Navigation Bar - Adapted for iPad multi-tasking */}
           <EnhancedIOSNavBar 
             title="Financial Simulation"
-            subtitle="Monte Carlo Analysis"
-            largeTitle={true}
+            subtitle={isMultiTasking && mode === 'slide-over' ? null : "Monte Carlo Analysis"}
+            largeTitle={!isMultiTasking || mode !== 'slide-over'}
             blurred={true}
             showBackButton={true}
             onBackButtonPress={() => router.push('/dashboard')}
             theme={isDark ? 'dark' : 'light'}
-            rightActions={[
+            rightActions={isMultiTasking && mode === 'slide-over' ? [
+              {
+                icon: 'square.and.arrow.down',
+                label: null, // No label in slide-over mode
+                onPress: exportSimulationReport,
+                disabled: !summaryMetrics.simulationCompleted,
+                variant: 'primary',
+                size: 'small'
+              }
+            ] : [
               {
                 icon: 'square.and.arrow.down',
                 label: 'Export',
@@ -319,19 +328,30 @@ export default function FinancialSimulation() {
             ]}
             respectSafeArea={true}
             hapticFeedback={true}
+            multiTaskingMode={mode}
+            isMultiTasking={isMultiTasking}
+            compactFormatting={isMultiTasking}
           />
           
-          {/* Breadcrumb Navigation */}
-          <div className={`px-4 py-2 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-            <EnhancedIOSBreadcrumb 
-              items={breadcrumbItems}
-              showIcons={true}
-              hapticFeedback={true}
-              theme={isDark ? 'dark' : 'light'}
-            />
-          </div>
+          {/* Breadcrumb Navigation - Hide in slide-over mode to save space */}
+          {(!isMultiTasking || mode !== 'slide-over') && (
+            <div className={`px-4 py-2 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+              <EnhancedIOSBreadcrumb 
+                items={breadcrumbItems}
+                showIcons={true}
+                hapticFeedback={true}
+                theme={isDark ? 'dark' : 'light'}
+                compact={isMultiTasking}
+              />
+            </div>
+          )}
           
-          <div className={`${isMultiTasking && mode === 'slide-over' ? 'px-3 py-2' : 'px-6 py-4'} max-w-6xl mx-auto`}>
+          {/* Main content container - adjusted padding for multi-tasking */}
+          <div className={`${isMultiTasking && mode === 'slide-over' 
+            ? 'px-2 py-2 overflow-x-hidden' 
+            : isMultiTasking && mode === 'split-view'
+              ? 'px-4 py-3 max-w-4xl' 
+              : 'px-6 py-4 max-w-6xl'} mx-auto`}
             {/* The main content remains mostly the same, just remove the top heading since it's in the navbar */}
         
         {loading ? (
@@ -344,7 +364,7 @@ export default function FinancialSimulation() {
             <span className="text-gray-700">{error}</span>
           </div>
         ) : (
-          <>
+          <React.Fragment>
             {/* KPI summary cards */}
             <div className={`grid grid-cols-1 gap-4 mb-6 ${isMultiTasking && mode === 'slide-over' ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
               <KPICard 
@@ -484,7 +504,7 @@ export default function FinancialSimulation() {
                 </div>
               </div>
             )}
-          </>
+          </React.Fragment>
         )}
 
         {/* iOS Tab Bar Navigation */}
@@ -502,7 +522,9 @@ export default function FinancialSimulation() {
           />
         )}
       </div>
-      </IconSystemProvider>
-    </ScbBeautifulUI>
+      </div>
+        </IconSystemProvider>
+      </ScbBeautifulUI>
+    </React.Fragment>
   );
 }

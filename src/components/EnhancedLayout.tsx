@@ -10,6 +10,7 @@ import {
   Activity, TrendingUp, Layers, Database, Terminal, Sparkles
 } from 'lucide-react';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
+import AppNavigationLinks from './layout/AppNavigationLinks';
 
 /**
  * EnhancedLayout provides a consistent layout system for all pages in the application
