@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,6 +19,9 @@ import {
 } from 'lucide-react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import EnhancedRealCompanySearchBar from '@/components/EnhancedRealCompanySearchBar';
+import EnhancedSectorNavigation from '@/components/EnhancedSectorNavigation';
+import { useIOS } from '@/hooks/useResponsive';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 
 // Sample data for companies
 const companies = [
@@ -114,15 +117,15 @@ const companies = [
   }
 ];
 
-// Sample data for sectors
+// Sample data for sectors with SF Symbol icons
 const sectors = [
-  { id: 'all', name: 'All Sectors', count: 11 },
-  { id: 'technology', name: 'Technology', count: 5 },
-  { id: 'consumer-cyclical', name: 'Consumer Cyclical', count: 2 },
-  { id: 'financial', name: 'Financial Services', count: 1 },
-  { id: 'healthcare', name: 'Healthcare', count: 1 },
-  { id: 'energy', name: 'Energy', count: 1 },
-  { id: 'industrial', name: 'Industrial', count: 1 },
+  { id: 'all', name: 'All Sectors', count: 11, icon: 'square.grid.2x2.fill' },
+  { id: 'technology', name: 'Technology', count: 5, icon: 'desktopcomputer' },
+  { id: 'consumer-cyclical', name: 'Consumer Cyclical', count: 2, icon: 'cart.fill' },
+  { id: 'financial', name: 'Financial Services', count: 1, icon: 'dollarsign.circle.fill' },
+  { id: 'healthcare', name: 'Healthcare', count: 1, icon: 'cross.case.fill' },
+  { id: 'energy', name: 'Energy', count: 1, icon: 'bolt.fill' },
+  { id: 'industrial', name: 'Industrial', count: 1, icon: 'gearshape.2.fill' },
 ];
 
 export default function Companies() {

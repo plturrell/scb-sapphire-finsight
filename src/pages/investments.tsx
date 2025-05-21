@@ -11,9 +11,10 @@ import { useMultiTasking } from '@/hooks/useMultiTasking';
 import useApplePhysics from '@/hooks/useApplePhysics';
 import useSafeArea, { safeAreaCss } from '@/hooks/useSafeArea';
 import { haptics } from '@/lib/haptics';
-import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 // Sample investment data
 const investmentAllocationData = [
@@ -870,29 +871,93 @@ export default function Investments() {
         
         {/* Market Insights */}
         <div className={`rounded-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border shadow-sm overflow-hidden`}>
-          <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex justify-between items-center`}>
             <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Market Insights</h3>
+            {isApplePlatform && sfSymbolsSupported && (
+              <button 
+                className="p-1"
+                onClick={() => {
+                  if (isApplePlatform) haptics.light();
+                }}
+              >
+                <span className={`sf-symbol text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>arrow.counterclockwise</span>
+              </button>
+            )}
           </div>
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {marketInsights.map((insight) => (
-              <div key={insight.id} className={`flex items-center justify-between p-4 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                <div className="flex items-start gap-3">
-                  {insight.urgent && (
-                    <div className={`${isDarkMode ? 'bg-red-900/20' : 'bg-red-100'} p-1.5 rounded-full`}>
-                      <Info className="h-4 w-4 text-red-500" />
-                    </div>
-                  )}
-                  <div>
-                    <h4 className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{insight.title}</h4>
-                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{insight.date}</p>
-                  </div>
-                </div>
-                <EnhancedTouchButton
-                  variant="secondary"
-                  size="xs"
+              <div 
+                key={insight.id} 
+                className={`relative overflow-hidden transition-all duration-300 ${
+                  isSwiping && swipeTarget === `insight-${insight.id}`
+                    ? 'transform translate-x-20'
+                    : ''
+                }`}
+                data-swipe-id={`insight-${insight.id}`}
+                onTouchStart={isApplePlatform ? handleTouchStart : undefined}
+                onTouchMove={isApplePlatform ? handleTouchMove : undefined}
+                onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+              >
+                <div 
+                  className={`flex items-center justify-between p-4 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}
+                  onClick={() => {
+                    if (isApplePlatform) {
+                      setSelectedInsight(insight);
+                      setShowInsightModal(true);
+                      haptics.selection();
+                    }
+                  }}
                 >
-                  View Details
-                </EnhancedTouchButton>
+                  <div className="flex items-start gap-3">
+                    {insight.urgent && (
+                      <div className={`${isDarkMode ? 'bg-red-900/20' : 'bg-red-100'} p-1.5 rounded-full`}>
+                        {isApplePlatform && sfSymbolsSupported ? (
+                          <span className="sf-symbol text-red-500">exclamationmark.circle</span>
+                        ) : (
+                          <Info className="h-4 w-4 text-red-500" />
+                        )}
+                      </div>
+                    )}
+                    <div>
+                      <h4 className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{insight.title}</h4>
+                      <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{insight.date}</p>
+                    </div>
+                  </div>
+                  
+                  {isApplePlatform ? (
+                    <div className="flex items-center text-gray-400">
+                      {sfSymbolsSupported ? (
+                        <span className={`sf-symbol ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>chevron.right</span>
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </div>
+                  ) : (
+                    <EnhancedTouchButton
+                      variant={isDarkMode ? "dark" : "secondary"}
+                      size="xs"
+                    >
+                      View Details
+                    </EnhancedTouchButton>
+                  )}
+                </div>
+                
+                {/* Swipe action indicators - only visible during swipe */}
+                <div 
+                  className="absolute right-0 top-0 bottom-0 flex items-center justify-center bg-blue-500 text-white overflow-hidden"
+                  style={{
+                    width: isSwiping && swipeTarget === `insight-${insight.id}` ? `${touchSwipeDistance * 0.7}px` : '0',
+                    opacity: isSwiping && swipeTarget === `insight-${insight.id}` ? (touchSwipeDistance > 50 ? 1 : touchSwipeDistance / 50) : 0,
+                    transition: 'opacity 150ms ease-out',
+                    maxWidth: '100px'
+                  }}
+                >
+                  {sfSymbolsSupported ? (
+                    <span className="sf-symbol text-white text-lg px-4">doc.text</span>
+                  ) : (
+                    <Info className="h-5 w-5 text-white mx-4" />
+                  )}
+                </div>
               </div>
             ))}
           </div>
