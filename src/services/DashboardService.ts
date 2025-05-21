@@ -271,11 +271,33 @@ function formatNumber(value: number): string {
   return new Intl.NumberFormat('en-US').format(value);
 }
 
+/**
+ * Get dashboard data from test endpoint
+ * This is useful for testing UI components with controlled data
+ */
+export async function getTestDashboardData(): Promise<FinancialData> {
+  try {
+    // Use our API service to call the test endpoint
+    const response = await fetch('/api/dashboard/test');
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error fetching test dashboard data:', error);
+    throw error;
+  }
+}
+
 // Export a single object with all methods
 const DashboardService = {
   getDashboardData,
   getAssetAllocationData,
-  formatFinancialMetrics
+  formatFinancialMetrics,
+  getTestDashboardData
 };
 
 export default DashboardService;

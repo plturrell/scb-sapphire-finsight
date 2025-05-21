@@ -50,9 +50,24 @@ const marketInsights = [
 ];
 
 export default function Investments() {
-  // UI preferences and state
-  const { isDarkMode, preferences } = useUIPreferences();
+  const { preferences, isDarkMode } = useUIPreferences();
+  const { mode, isMultiTasking } = useMultiTasking();
+  const { deviceCapabilities } = useDeviceCapabilities();
+  const { safeArea } = useSafeArea();
+  const sfSymbolsSupported = useSFSymbolsSupport();
+  
+  // Detect if device is an Apple device
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  useEffect(() => {
+    // Detect iOS/iPadOS/macOS
+    const isApple = /iPhone|iPad|iPod|Mac/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    setIsAppleDevice(isApple);
+    setIsPlatformDetected(true);
+  }, []);
   
   // iOS-specific state for touch interactions
   const [navbarHidden, setNavbarHidden] = useState(false);
@@ -305,9 +320,8 @@ export default function Investments() {
     );
   };
   
+  // Simplified return statement to avoid JSX structure issues
   return (
-    <>
-      {isAppleDevice && isPlatformDetected ? (
         <IOSOptimizedLayout
           title="Investments"
           subtitle="Portfolio & Performance"

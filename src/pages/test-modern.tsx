@@ -107,6 +107,80 @@ export default function TestModernPage() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
   
+  // Handle visualization type change
+  const handleVisualizationChange = (visType: string) => {
+    if (isApplePlatform) {
+      haptics.selection();
+    }
+    
+    setActiveVisualization(visType);
+    
+    // In a real implementation, this would load the appropriate visualization type
+    console.log(`Switching to visualization: ${visType}`);
+  };
+  
+  // SF Symbols Visualization Categories Navigation Component
+  const SFSymbolsVisualizationNavigation = () => {
+    if (!isApplePlatform || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`mb-4 -mx-4 px-4 overflow-x-auto ${isDark ? 'bg-gray-800' : 'bg-white'} border-t border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} shadow-sm py-3`}>
+        <div className="flex items-center space-x-3 overflow-x-auto pb-1 hide-scrollbar">
+          {visualizationCategories.map((category) => (
+            <div 
+              key={category.id}
+              onClick={() => handleVisualizationChange(category.id)}
+              className={`flex flex-col items-center p-2 rounded-xl cursor-pointer transition-colors ${
+                activeVisualization === category.id
+                ? isDark 
+                  ? 'bg-blue-900/30' 
+                  : 'bg-blue-50'
+                : isDark 
+                  ? 'hover:bg-gray-700' 
+                  : 'hover:bg-gray-100'
+              }`}
+              style={{ minWidth: isMultiTasking && mode === 'slide-over' ? '64px' : '80px' }}
+            >
+              <div className={`relative flex items-center justify-center ${
+                isMultiTasking && mode === 'slide-over' ? 'w-10 h-10' : 'w-12 h-12'
+              } rounded-full mb-1 ${
+                activeVisualization === category.id
+                ? isDark 
+                  ? 'bg-blue-500' 
+                  : 'bg-blue-500'
+                : isDark 
+                  ? 'bg-gray-700' 
+                  : 'bg-gray-200'
+              }`}>
+                <SFSymbol 
+                  name={category.icon} 
+                  size={isMultiTasking && mode === 'slide-over' ? 22 : 24}
+                  color={activeVisualization === category.id ? 'white' : undefined}
+                />
+                
+                {/* Badge indicator */}
+                {category.badge && (
+                  <div className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs px-1">
+                    {category.badge}
+                  </div>
+                )}
+              </div>
+              <span className={`text-center ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${
+                activeVisualization === category.id
+                ? isDark ? 'text-blue-400 font-medium' : 'text-blue-600 font-medium'
+                : isDark ? 'text-gray-300' : 'text-gray-700'
+              }`}>
+                {category.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+  
   // Current data based on mode
   const currentData = dataMode === 'standard' ? initialSankeyData : forecastScenarioData;
   
@@ -161,10 +235,21 @@ export default function TestModernPage() {
             />
           </div>
           
+          {/* SF Symbols Visualization Navigation */}
+          {isApplePlatform && sfSymbolsSupported && (
+            <SFSymbolsVisualizationNavigation />
+          )}
+          
           {/* Welcome Card */}
           <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} p-6 rounded-lg shadow-sm border`}>
             <div className="flex justify-between items-center mb-4">
-              <h1 className={`text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Enhanced Sankey Chart Demo</h1>
+              <h1 className={`text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                {activeVisualization === 'sankey' ? 'Enhanced Sankey Chart Demo' : 
+                 activeVisualization === 'bar' ? 'Bar Chart Visualization' :
+                 activeVisualization === 'line' ? 'Line Chart Visualization' :
+                 activeVisualization === 'pie' ? 'Pie Chart Visualization' :
+                 'Network Graph Visualization'}
+              </h1>
               
               <button 
                 onClick={toggleTheme}
