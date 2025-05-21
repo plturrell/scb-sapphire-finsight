@@ -320,20 +320,12 @@ export default function Investments() {
     );
   };
   
-  // Simplified return statement to avoid JSX structure issues
+  // Use ScbBeautifulUI instead of IOSOptimizedLayout to avoid JSX structure issues
   return (
-        <IOSOptimizedLayout
-          title="Investments"
-          subtitle="Portfolio & Performance"
-          showBreadcrumb={true}
-          breadcrumbItems={breadcrumbItems}
-          showTabBar={true}
-          tabItems={tabItems}
-          navBarRightActions={navBarActions}
-          showBackButton={true}
-          largeTitle={!navbarHidden}
-          theme={isDarkMode ? 'dark' : 'light'}
-        >
+    <ScbBeautifulUI
+      showSearchBar={true}
+      pageTitle="Investments"
+    >
           <div 
             ref={contentRef}
             className="space-y-6" 
@@ -582,7 +574,7 @@ export default function Investments() {
                   </div>
                 </div>
                 <EnhancedTouchButton
-                  variant={isDarkMode ? "dark" : "secondary"}
+                  variant="secondary"
                   size="xs"
                 >
                   View Details

@@ -261,7 +261,15 @@ export default function TestModernPage() {
             </div>
             
             <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
-              This page demonstrates the new EnhancedSankeyChart component with SCB Beautiful UI styling and iOS-optimized navigation.
+              {activeVisualization === 'sankey' ? 
+                'This page demonstrates the new EnhancedSankeyChart component with SCB Beautiful UI styling and iOS-optimized navigation.' :
+               activeVisualization === 'bar' ? 
+                'Interactive bar chart visualization for financial data analysis with comparison capabilities and advanced filtering.' :
+               activeVisualization === 'line' ? 
+                'Time-series line chart with trend analysis, forecasting, and interactive data point exploration.' :
+               activeVisualization === 'pie' ? 
+                'Segmented pie chart visualization with drilldown capabilities and proportional analysis tools.' :
+                'Interactive network graph showing relationships between financial entities with connection strength analysis.'}
             </p>
             
             {/* Controls */}
@@ -339,24 +347,58 @@ export default function TestModernPage() {
             </div>
           )}
           
-          {/* The EnhancedSankeyChart */}
+          {/* Visualizations */}
           <div className={`transition-all duration-500 ease-in-out ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg shadow-sm border ${isExpanded ? 'h-[700px]' : 'h-[500px]'}`}>
-            <EnhancedSankeyChart 
-              data={currentData}
-              width={1100}
-              height={isExpanded ? 650 : 450}
-              title="Financial Flow Analysis"
-              subtitle={dataMode === 'aiEnhanced' ? "With AI-enhanced predictions" : "Standard analysis"}
-              showAIControls={true}
-              showLegend={true}
-              isLoading={isGenerating}
-              adaptiveLayout={true}
-              onRegenerateClick={generateAIEnhancedData}
-              onExpandChart={() => setIsExpanded(!isExpanded)}
-              className="h-full w-full"
-              animationDuration={800}
-              theme={theme}
-            />
+            {activeVisualization === 'sankey' ? (
+              <EnhancedSankeyChart 
+                data={currentData}
+                width={1100}
+                height={isExpanded ? 650 : 450}
+                title="Financial Flow Analysis"
+                subtitle={dataMode === 'aiEnhanced' ? "With AI-enhanced predictions" : "Standard analysis"}
+                showAIControls={true}
+                showLegend={true}
+                isLoading={isGenerating}
+                adaptiveLayout={true}
+                onRegenerateClick={generateAIEnhancedData}
+                onExpandChart={() => setIsExpanded(!isExpanded)}
+                className="h-full w-full"
+                animationDuration={800}
+                theme={theme}
+              />
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center p-6 text-center">
+                <SFSymbol 
+                  name={visualizationCategories.find(c => c.id === activeVisualization)?.icon || 'chart.bar.fill'} 
+                  size={80}
+                  color={isDark ? "#60a5fa" : "#3b82f6"}
+                />
+                
+                <h3 className={`mt-6 text-xl font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {activeVisualization === 'bar' ? 'Bar Chart Visualization' :
+                   activeVisualization === 'line' ? 'Line Chart Visualization' :
+                   activeVisualization === 'pie' ? 'Pie Chart Visualization' :
+                   'Network Graph Visualization'}
+                </h3>
+                
+                <p className={`mt-3 max-w-md ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {activeVisualization === 'bar' ? 
+                    'Interactive bar chart for comparing financial metrics across categories with advanced filtering capabilities.' :
+                   activeVisualization === 'line' ? 
+                    'Time-series financial analysis with trend detection, anomaly highlighting, and forecast projections.' :
+                   activeVisualization === 'pie' ? 
+                    'Proportional analysis of financial allocations with interactive drilldown for detailed segment exploration.' :
+                    'Network diagram showing connections and relationships between financial entities with strength indicators.'}
+                </p>
+                
+                <button 
+                  className="mt-6 fiori-btn fiori-btn-primary"
+                  onClick={() => handleVisualizationChange('sankey')}
+                >
+                  Return to Sankey Chart
+                </button>
+              </div>
+            )}
           </div>
           
           {/* Feature Highlights */}
