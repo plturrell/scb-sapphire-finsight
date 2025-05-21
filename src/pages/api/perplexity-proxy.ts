@@ -28,44 +28,72 @@ export default async function handler(
   res.setHeader('Access-Control-Allow-Methods', 'POST');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  try {
-    // Get the request data
-    const {
-      messages,
-      temperature = 0.2,
-      max_tokens = 2000,
-      model = 'sonar'
-    } = req.body;
+  const MAX_SERVER_RETRIES = 2;
+  const RETRY_TIMEOUT = 500; // ms
 
-    // Validate required parameters
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: 'Messages array is required' });
-    }
-    
-    console.log(`Processing request for model: ${model}, max_tokens: ${max_tokens}`);
-    
+  let attempt = 0;
+  let lastError: any = null;
+
+  while (attempt <= MAX_SERVER_RETRIES) {
     try {
-      // Use our centralized service to make the API call
-      const response = await perplexityService.callPerplexityAPI(messages, {
-        temperature,
-        max_tokens,
-        model
-      });
-      
+      // Get the request data
+      const {
+        messages,
+        temperature = 0.2,
+        max_tokens = 2000,
+        model = 'sonar'
+      } = req.body;
+
+      // Log request attempt
+      console.log(`Processing Perplexity API request (attempt ${attempt + 1}/${MAX_SERVER_RETRIES + 1}) for model: ${model}, max_tokens: ${max_tokens}`);
+
+      // Validate required parameters
+      if (!messages || !Array.isArray(messages)) {
+        return res.status(400).json({ 
+          error: 'Messages array is required', 
+          success: false 
+        });
+      }
+
+      // Call the Perplexity API through our centralized service
+      const response = await perplexityService.callPerplexityAPI(
+        messages,
+        {
+          temperature,
+          max_tokens,
+          model
+        }
+      );
+
       // Return the successful response
-      return res.status(200).json(response);
-    } catch (error) {
-      console.error('Error calling Perplexity API:', error);
-      return res.status(500).json({ 
-        error: `Perplexity API error: ${error.message}`,
-        timestamp: new Date().toISOString()
+      return res.status(200).json({
+        ...response,
+        success: true
       });
+    } catch (error: any) {
+      lastError = error;
+      console.error(`Perplexity proxy error (attempt ${attempt + 1}/${MAX_SERVER_RETRIES + 1}):`, error.message || error);
+      
+      // If we have more retries left, wait and try again
+      if (attempt < MAX_SERVER_RETRIES) {
+        attempt++;
+        await new Promise(resolve => setTimeout(resolve, RETRY_TIMEOUT));
+      } else {
+        // We've exhausted our retries, return the error with a fallback message
+        const errorMessage = error.message || 'Unknown error';
+        return res.status(500).json({ 
+          error: `Failed to call Perplexity API: ${errorMessage}`, 
+          success: false,
+          fallbackContent: "I'm sorry, but I couldn't retrieve information at this time. Please try again in a moment.",
+          timestamp: new Date().toISOString()
+        });
+      }
     }
-  } catch (error) {
-    console.error('Error in Perplexity proxy:', error);
-    return res.status(500).json({ 
-      error: 'Internal server error',
-      timestamp: new Date().toISOString()
-    });
   }
+  
+  // This code should never be reached, but adding as a fallback
+  return res.status(500).json({ 
+    error: 'Internal server error',
+    timestamp: new Date().toISOString()
+  });
 }

@@ -14,6 +14,17 @@ const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 const MODEL_NAME = 'sonar';
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // ms
+const REQUEST_QUEUE_INTERVAL = 300; // ms between queue processing
+
+// Global request queue to prevent concurrent requests
+type QueuedRequest = {
+  execute: () => Promise<any>;
+  resolve: (value: any) => void;
+  reject: (error: any) => void;
+};
+
+const requestQueue: QueuedRequest[] = [];
+let isProcessingQueue = false;
 
 // Types for API interactions
 export interface PerplexityMessage {
@@ -67,117 +78,171 @@ class PerplexityService {
   }
   
   /**
+   * Process the request queue to prevent too many concurrent API calls
+   */
+  private async processQueue() {
+    if (isProcessingQueue || requestQueue.length === 0) {
+      return;
+    }
+
+    isProcessingQueue = true;
+
+    try {
+      // Process one request at a time
+      const request = requestQueue.shift();
+      if (request) {
+        try {
+          const result = await request.execute();
+          request.resolve(result);
+        } catch (error) {
+          request.reject(error);
+        }
+      }
+    } finally {
+      isProcessingQueue = false;
+      
+      // Schedule the next request after a delay to prevent flooding
+      if (requestQueue.length > 0) {
+        setTimeout(() => this.processQueue(), REQUEST_QUEUE_INTERVAL);
+      }
+    }
+  }
+
+  /**
+   * Add a request to the queue and process it when ready
+   */
+  private enqueueRequest<T>(executeFunc: () => Promise<T>): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      // Add to queue
+      requestQueue.push({
+        execute: executeFunc,
+        resolve,
+        reject
+      });
+      
+      // Start processing if not already started
+      if (!isProcessingQueue) {
+        this.processQueue();
+      }
+    });
+  }
+
+  /**
    * Direct call to the Perplexity API with retries and rate limiting
+   * Now uses a queue system to prevent too many concurrent requests
    */
   async callPerplexityAPI(messages: PerplexityMessage[], options: {
     temperature?: number;
     max_tokens?: number;
     model?: string;
   } = {}): Promise<PerplexityResponse> {
-    // Record metrics for rate limiting
-    const startTime = Date.now();
-    const endpoint = 'perplexity-service';
-    
-    // Set default options
-    const model = options.model || MODEL_NAME;
-    const temperature = options.temperature ?? 0.2;
-    const max_tokens = options.max_tokens ?? 2000;
-    
-    // Check if we can make a request based on rate limits
-    if (!perplexityRateLimiter.canMakeRequest()) {
-      const timeToWait = perplexityRateLimiter.getTimeToWaitMs();
-      if (timeToWait > 0) {
-        console.warn(`Rate limit reached for Perplexity API. Waiting ${timeToWait}ms before next request.`);
-        await new Promise(resolve => setTimeout(resolve, timeToWait));
-      }
-    }
-    
-    // Create request body
-    const requestBody: PerplexityRequest = {
-      model,
-      messages,
-      temperature,
-      max_tokens
-    };
-    
-    // Retry logic
-    let retries = 0;
-    let lastError: Error | null = null;
-    let tokenUsage = 0;
-    
-    while (retries <= MAX_RETRIES) {
-      try {
-        console.log(`Making Perplexity API request to model: ${model}`);
-        
-        const response = await fetch(PERPLEXITY_API_URL, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestBody)
-        });
-        
-        if (!response.ok) {
-          const status = response.status;
-          const statusText = response.statusText;
-          
-          // Log detailed error if available
-          let errorText = '';
-          try {
-            errorText = await response.text();
-          } catch (e) {
-            errorText = 'Could not read error response';
-          }
-          
-          console.error(`Perplexity API error (${status}: ${statusText}):`, errorText);
-          
-          // Retry if not a fatal error
-          if (retries < MAX_RETRIES) {
-            retries++;
-            console.warn(`Retrying Perplexity API call (${retries}/${MAX_RETRIES})...`);
-            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-            continue;
-          }
-          
-          throw new Error(`API error: ${status}`);
+    // Add this request to the queue
+    return this.enqueueRequest(async () => {
+      // Record metrics for rate limiting
+      const startTime = Date.now();
+      const endpoint = 'perplexity-service';
+      
+      // Set default options
+      const model = options.model || MODEL_NAME;
+      const temperature = options.temperature ?? 0.2;
+      const max_tokens = options.max_tokens ?? 2000;
+      
+      // Check if we can make a request based on rate limits
+      if (!perplexityRateLimiter.canMakeRequest()) {
+        const timeToWait = perplexityRateLimiter.getTimeToWaitMs();
+        if (timeToWait > 0) {
+          console.warn(`Rate limit reached for Perplexity API. Waiting ${timeToWait}ms before next request.`);
+          await new Promise(resolve => setTimeout(resolve, timeToWait));
         }
-        
-        const data = await response.json();
-        tokenUsage = data.usage?.total_tokens || 0;
-        
-        // Record successful API call in rate limiter
-        perplexityRateLimiter.recordRequest({
-          endpoint,
-          tokens: tokenUsage,
-          model,
-          startTime,
-          success: true
-        });
-        
-        return data;
-      } catch (error) {
-        lastError = error as Error;
-        
-        if (retries < MAX_RETRIES) {
-          retries++;
-          console.warn(`Perplexity API error, retrying (${retries}/${MAX_RETRIES})...`, error);
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-        } else {
-          // Record failed API call
+      }
+      
+      // Create request body
+      const requestBody: PerplexityRequest = {
+        model,
+        messages,
+        temperature,
+        max_tokens
+      };
+      
+      // Retry logic
+      let retries = 0;
+      let lastError: Error | null = null;
+      let tokenUsage = 0;
+      
+      while (retries <= MAX_RETRIES) {
+        try {
+          console.log(`Making Perplexity API request to model: ${model}`);
+          
+          const response = await fetch(PERPLEXITY_API_URL, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          });
+          
+          if (!response.ok) {
+            const status = response.status;
+            const statusText = response.statusText;
+            
+            // Log detailed error if available
+            let errorText = '';
+            try {
+              errorText = await response.text();
+            } catch (e) {
+              errorText = 'Could not read error response';
+            }
+            
+            console.error(`Perplexity API error (${status}: ${statusText}):`, errorText);
+            
+            // Retry if not a fatal error
+            if (retries < MAX_RETRIES) {
+              retries++;
+              console.warn(`Retrying Perplexity API call (${retries}/${MAX_RETRIES})...`);
+              await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+              continue;
+            }
+            
+            throw new Error(`API error: ${status}`);
+          }
+          
+          const data = await response.json();
+          tokenUsage = data.usage?.total_tokens || 0;
+          
+          // Record successful API call in rate limiter
           perplexityRateLimiter.recordRequest({
             endpoint,
-            tokens: 0,
+            tokens: tokenUsage,
             model,
             startTime,
-            success: false
+            success: true
           });
-          break;
+          
+          return data;
+        } catch (error) {
+          lastError = error as Error;
+          
+          if (retries < MAX_RETRIES) {
+            retries++;
+            console.warn(`Perplexity API error, retrying (${retries}/${MAX_RETRIES})...`, error);
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+          } else {
+            // Record failed API call
+            perplexityRateLimiter.recordRequest({
+              endpoint,
+              tokens: 0,
+              model,
+              startTime,
+              success: false
+            });
+            break;
+          }
         }
       }
-    }
-    
-    throw lastError || new Error('Failed to get response from Perplexity API');
+      
+      throw lastError || new Error('Failed to get response from Perplexity API');
+    });
   }
   
   /**
