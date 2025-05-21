@@ -286,85 +286,98 @@ export default function Help() {
           margin: isiPad && iPadMode === 'full' ? '0 auto' : '0'
         }}
       >
-        {/* Help Center Header with Search */}
-        <div className={`rounded-lg shadow-sm border p-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className={`text-2xl font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+        {/* iOS optimized search */}
+        <div className={`rounded-xl shadow-sm border p-5 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-[rgba(var(--scb-border),0.8)]'}`}
+          style={{ backdropFilter: 'blur(8px)' }}>
+          <div className="mx-auto text-center">
+            <h2 className={`text-2xl font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}
+                style={{ fontFamily: "-apple-system, 'SF Pro Display', system-ui, BlinkMacSystemFont, sans-serif" }}>
               How can we help you today?
             </h2>
-            <p className={`mt-2 mb-6 ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+            <p className={`mt-2 mb-4 ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
               Search our knowledge base or browse the help topics below
             </p>
             
+            {/* iOS-style search field with rounded corners and blurred background */}
             <div className="relative max-w-xl mx-auto">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
+              <div className={`flex items-center overflow-hidden 
+                rounded-full border shadow-sm
+                ${isDarkMode 
+                  ? 'bg-gray-700/80 border-gray-600' 
+                  : 'bg-[rgba(var(--scb-light-gray),0.5)] border-[rgba(var(--scb-border),0.6)]'}`}
+                style={{ backdropFilter: 'blur(4px)' }}>
+                <div className="pl-4 flex items-center">
+                  <Search className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search for help articles, tutorials, FAQs..."
+                  className={`w-full py-3 px-3 bg-transparent border-0 outline-none ${
+                    isDarkMode 
+                      ? 'text-white placeholder-gray-400' 
+                      : 'text-[rgb(var(--scb-dark-gray))] placeholder-[rgba(var(--scb-dark-gray),0.6)]'
+                  }`}
+                  style={{ fontFamily: "-apple-system, system-ui, BlinkMacSystemFont, sans-serif" }}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    // iOS-specific haptic feedback
+                    if (isApplePlatform) {
+                      haptics.selection();
+                    }
+                  }}
+                  onFocus={() => {
+                    if (isApplePlatform) {
+                      haptics.light();
+                    }
+                  }}
+                />
+                {searchQuery.length > 0 && (
+                  <button 
+                    className={`pr-4 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`}
+                    onClick={() => {
+                      setSearchQuery('');
+                      // Provide haptic feedback
+                      if (isApplePlatform) {
+                        haptics.light();
+                      }
+                    }}
+                  >
+                    <span className="sr-only">Clear search</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="10" cy="10" r="8" fill={isDarkMode ? "#3A3A3C" : "#E5E5E7"} />
+                      <path d="M7.05 7.05L12.95 12.95M7.05 12.95L12.95 7.05" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
               </div>
-              <input
-                type="text"
-                placeholder="Search for help articles, tutorials, FAQs..."
-                className={`pl-10 w-full py-3 rounded-lg ${
-                  isDarkMode 
-                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
-                    : 'bg-white border-[rgb(var(--scb-border))] text-[rgb(var(--scb-dark-gray))]'
-                }`}
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  // Add haptic feedback if enabled
-                  if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
-                    navigator.vibrate(2);
-                  }
-                }}
-              />
             </div>
           </div>
         </div>
         
-        {/* Help Categories */}
-        <div className={`rounded-lg shadow-sm border p-5 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
-          <div className="flex overflow-x-auto no-scrollbar pb-2 gap-2">
-            <button
-              onClick={() => {
-                setSelectedCategory('all');
-                if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
-                  navigator.vibrate(5);
+        {/* iOS-optimized Help Categories using EnhancedPillTabs */}
+        <div className={`rounded-xl shadow-sm border p-5 ${isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-[rgba(var(--scb-border),0.8)]'}`}
+          style={{ backdropFilter: 'blur(8px)' }}>
+          <div className="overflow-x-auto no-scrollbar pb-1">
+            <EnhancedPillTabs
+              tabs={[
+                { value: 'all', label: 'All Topics' },
+                ...helpCategories.map(category => ({
+                  value: category.id,
+                  label: category.name,
+                  icon: <category.icon className="h-4 w-4" />
+                }))
+              ]}
+              value={selectedCategory}
+              onChange={(value) => {
+                setSelectedCategory(value);
+                // iOS-specific haptic feedback
+                if (isApplePlatform) {
+                  haptics.selection();
                 }
               }}
-              className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
-                selectedCategory === 'all'
-                  ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
-                  : isDarkMode 
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
-                    : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
-              } ${preferences.enableAnimations ? 'transition-all hover:shadow-sm' : ''}`}
-            >
-              All Topics
-            </button>
-            
-            {helpCategories.map(category => (
-              <button
-                key={category.id}
-                onClick={() => {
-                  setSelectedCategory(category.id);
-                  if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
-                    navigator.vibrate(5);
-                  }
-                }}
-                className={`px-4 py-2 rounded-full whitespace-nowrap flex items-center ${
-                  preferences.enableAnimations ? 'transition-all hover:shadow-sm' : ''
-                } ${
-                  selectedCategory === category.id
-                    ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
-                    : isDarkMode 
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
-                      : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
-                }`}
-              >
-                <category.icon className="h-4 w-4 mr-2" />
-                {category.name}
-              </button>
-            ))}
+              className="flex-wrap"
+            />
           </div>
         </div>
         

@@ -1,6 +1,6 @@
 // This file centralizes all icon exports to ensure they're properly bundled
 import {
-  Briefcase as BriefcaseIcon,
+  Folder as FolderIcon,
   LayoutDashboard as LayoutDashboardIcon,
   FileText as FileTextIcon,
   Settings as SettingsIcon,
@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 // Re-export with explicit names to avoid bundling issues
-export const Briefcase = BriefcaseIcon;
+export const Briefcase = FolderIcon; // Using Folder as a replacement for Briefcase
 export const LayoutDashboard = LayoutDashboardIcon;
 export const FileText = FileTextIcon;
 export const Settings = SettingsIcon;
@@ -26,7 +26,7 @@ export const BarChart = BarChartIcon;
 
 // Also export as a single object for convenience
 export const Icons = {
-  Briefcase,
+  Briefcase, // This is now using Folder icon as a replacement
   LayoutDashboard,
   FileText,
   Settings,

@@ -11,7 +11,7 @@ import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { haptics } from '@/lib/haptics';
 import { TransactionSector } from '@/types';
 import { useMediaQuery } from 'react-responsive';
-import { ArrowRight, Download, Filter, RefreshCw, Briefcase, LayoutDashboard, FileText, Settings, AlertCircle } from '@/components/IconExports';
+import { ArrowRight, Download, Filter, RefreshCw, LayoutDashboard, FileText, Settings, AlertCircle } from '@/components/IconExports';
 import {
   BarChart,
   Bar,
