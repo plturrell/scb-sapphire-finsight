@@ -126,6 +126,47 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
 
   // Categories for App Finder
   const categories = ['All', ...Array.from(new Set(appCatalog.map(app => app.category)))];
+  
+  // Helper function for haptic feedback
+  const triggerHaptics = () => {
+    if (!preferences.enableHaptics) return;
+    
+    // Use navigator.vibrate if available (most mobile browsers)
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+  };
+  
+  // Get CSS classes for layout density
+  const getDensityClasses = () => {
+    switch (preferences.layoutDensity) {
+      case 'compact':
+        return 'p-2 lg:p-3 space-y-2';
+      case 'spacious':
+        return 'p-6 lg:p-8 space-y-6';
+      case 'comfortable':
+      default:
+        return 'p-4 lg:p-6 space-y-4';
+    }
+  };
+  
+  // Get CSS classes for font size
+  const getFontSizeClasses = () => {
+    switch (preferences.fontSize) {
+      case 'small':
+        return 'text-xs lg:text-sm';
+      case 'large':
+        return 'text-base lg:text-lg';
+      case 'medium':
+      default:
+        return 'text-sm lg:text-base';
+    }
+  };
+  
+  // Get animation classes based on preferences
+  const getAnimationClasses = (animation: string) => {
+    return preferences.enableAnimations ? animation : '';
+  };
 
   // Initialize notifications
   useEffect(() => {
@@ -255,13 +296,18 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Close modals on route change
+  // Close modals on route change and apply preferences
   useEffect(() => {
     setSidebarOpen(sidebarExpanded);
     setUserMenuOpen(false);
     setNotificationsOpen(false);
     setAppFinderOpen(false);
   }, [router.pathname, sidebarExpanded]);
+  
+  // Update sidebar state when preferences change
+  useEffect(() => {
+    setSidebarOpen(sidebarExpanded);
+  }, [preferences.sidebarExpanded]);
 
   // Get notification icon based on type
   const getNotificationIcon = (type: string) => {

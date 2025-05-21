@@ -5,11 +5,14 @@ import MobileNavigation from '@/components/MobileNavigation';
 import { LayoutDashboard, ChartBarIcon, Briefcase, FileText, Settings, AlertCircle } from 'lucide-react';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useSafeArea } from '@/hooks/useSafeArea';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 
 const MobileNavigationTest: NextPage = () => {
   const [activeTab, setActiveTab] = useState('bottom');
   const { deviceType, screenSize, operatingSystem } = useDeviceCapabilities();
   const { safeArea } = useSafeArea();
+  const { isDarkMode, preferences } = useUIPreferences();
   
   // Custom navigation items
   const customItems = [
@@ -25,19 +28,18 @@ const MobileNavigationTest: NextPage = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <>
       <Head>
         <title>Mobile Navigation Test | SCB Sapphire</title>
         <meta name="description" content="Test mobile navigation patterns for SCB Sapphire" />
       </Head>
       
-      {/* Main Content */}
-      <header className="px-4 py-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700" style={{ paddingTop: safeArea.top > 0 ? safeArea.top + 16 : 24 }}>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Mobile Navigation Test</h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Testing different mobile navigation patterns</p>
-      </header>
-      
-      <main className="px-4 py-6 space-y-8">
+      <ScbBeautifulUI pageTitle="Mobile Navigation Test">
+        <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>
+          Testing different mobile navigation patterns
+        </p>
+        
+        <div className="space-y-8">
         {/* Device Information */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
           <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Device Information</h2>
@@ -137,57 +139,58 @@ const MobileNavigationTest: NextPage = () => {
             </div>
           ))}
         </div>
-      </main>
-      
-      {/* Mobile Navigation Component */}
-      {activeTab === 'bottom' && (
-        <MobileNavigation 
-          variant="bottom"
-          customItems={customItems}
-          showLabel={true}
-          enableHaptics={true}
-          showNotifications={true}
-          activeItemHref="/dashboard"
-        />
-      )}
-      
-      {activeTab === 'tab' && (
-        <MobileNavigation 
-          variant="tab"
-          customItems={customItems}
-          showLabel={true}
-          enableHaptics={true}
-          showNotifications={true}
-          showSearch={true}
-          activeItemHref="/analytics"
-        />
-      )}
-      
-      {activeTab === 'iphone' && (
-        <MobileNavigation 
-          variant="bottom"
-          customItems={customItems}
-          showLabel={true}
-          enableHaptics={true}
-          appearance="light"
-          activeItemHref="/portfolio"
-        />
-      )}
-      
-      {activeTab === 'android' && (
-        <MobileNavigation 
-          variant="bottom"
-          customItems={[
-            ...customItems,
-            { name: 'Settings', href: '/settings', icon: Settings }
-          ]}
-          showLabel={false}
-          enableHaptics={false}
-          appearance="dark"
-          activeItemHref="/reports"
-        />
-      )}
-    </div>
+      </div>
+        
+        {/* Mobile Navigation Component */}
+        {activeTab === 'bottom' && (
+          <MobileNavigation 
+            variant="bottom"
+            customItems={customItems}
+            showLabel={preferences.showLabels}
+            enableHaptics={preferences.enableHaptics}
+            showNotifications={true}
+            activeItemHref="/dashboard"
+          />
+        )}
+        
+        {activeTab === 'tab' && (
+          <MobileNavigation 
+            variant="tab"
+            customItems={customItems}
+            showLabel={preferences.showLabels}
+            enableHaptics={preferences.enableHaptics}
+            showNotifications={true}
+            showSearch={true}
+            activeItemHref="/analytics"
+          />
+        )}
+        
+        {activeTab === 'iphone' && (
+          <MobileNavigation 
+            variant="bottom"
+            customItems={customItems}
+            showLabel={preferences.showLabels}
+            enableHaptics={preferences.enableHaptics}
+            appearance="light"
+            activeItemHref="/portfolio"
+          />
+        )}
+        
+        {activeTab === 'android' && (
+          <MobileNavigation 
+            variant="bottom"
+            customItems={[
+              ...customItems,
+              { name: 'Settings', href: '/settings', icon: Settings }
+            ]}
+            showLabel={false}
+            enableHaptics={preferences.enableHaptics}
+            appearance="dark"
+            activeItemHref="/reports"
+          />
+        )}
+      </ScbBeautifulUI>
+    </>
   );
 };
 

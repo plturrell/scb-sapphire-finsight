@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { Switch, Tabs, TabList, TabPanels, Tab, TabPanel, Select, Radio, RadioGroup, Stack } from '@chakra-ui/react';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
@@ -34,37 +34,74 @@ const SettingsPage = () => {
     setPlatformDetected(true);
   }, []);
   
-  // Show save notification when preferences change
-  const handlePreferenceChange = <K extends keyof typeof preferences>(key: K, value: typeof preferences[K]) => {
-    // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
-      haptics.selection();
+  // Debounce timer ref for preventing UI flicker during theme changes
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const noticeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Show save notification with debouncing
+  const showSaveNotification = useCallback(() => {
+    // Clear any existing timers
+    if (noticeTimerRef.current) {
+      clearTimeout(noticeTimerRef.current);
     }
     
-    setPreference(key, value);
+    // Show the notification
     setShowSaveNotice(true);
     
     // Hide notification after 3 seconds
-    setTimeout(() => {
+    noticeTimerRef.current = setTimeout(() => {
       setShowSaveNotice(false);
+      noticeTimerRef.current = null;
     }, 3000);
-  };
+  }, []);
+  
+  // Show save notification when preferences change
+  const handlePreferenceChange = useCallback(<K extends keyof typeof preferences>(key: K, value: typeof preferences[K]) => {
+    // Only provide haptic feedback if enabled and on supported devices
+    if (preferences.enableHaptics && isAppleDevice) {
+      haptics.selection();
+    }
+    
+    // For theme changes, use debouncing to prevent flicker
+    if (key === 'theme' || key === 'chartTheme') {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      
+      debounceTimerRef.current = setTimeout(() => {
+        setPreference(key, value);
+        debounceTimerRef.current = null;
+      }, 100);
+    } else {
+      // No debouncing for other preferences
+      setPreference(key, value);
+    }
+    
+    showSaveNotification();
+  }, [preferences.enableHaptics, isAppleDevice, setPreference, showSaveNotification]);
   
   // Reset all preferences
-  const handleResetPreferences = () => {
+  const handleResetPreferences = useCallback(() => {
     // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
+    if (preferences.enableHaptics && isAppleDevice) {
       haptics.warning();
     }
     
     resetPreferences();
-    setShowSaveNotice(true);
-    
-    // Hide notification after 3 seconds
-    setTimeout(() => {
-      setShowSaveNotice(false);
-    }, 3000);
-  };
+    showSaveNotification();
+  }, [preferences.enableHaptics, isAppleDevice, resetPreferences, showSaveNotification]);
+  
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      if (noticeTimerRef.current) {
+        clearTimeout(noticeTimerRef.current);
+      }
+    };
+  }, []);
   
   // Handle tab change with haptic feedback
   const handleTabChange = (index: number) => {

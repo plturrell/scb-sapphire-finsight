@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { KPICard, ChartCard, TableCard, AlertCard } from '@/components/cards';
 import { TrendingUp, TrendingDown, AlertCircle, Sparkles, BarChart3 } from 'lucide-react';
 import AllocationPieChart from '@/components/charts/AllocationPieChart';
 import { getGrokCompletion } from '@/lib/grok-api';
 // Import the report service for simulations
 import * as ReportService from '@/lib/report-service';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { useIOS } from '@/hooks/useResponsive';
+import { useMicroInteractions } from '@/hooks/useMicroInteractions';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 
 /**
  * Dashboard MVP for SCB Sapphire FinSight
@@ -110,6 +114,42 @@ const Dashboard: React.FC = () => {
     allocationDetails: true,
     aiInsights: true
   });
+  
+  // iOS device detection
+  const isAppleDevice = useIOS();
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
+  
+  // Multi-tasking mode detection for iPad
+  const [isMultiTasking, setIsMultiTasking] = useState(false);
+  const [mode, setMode] = useState<'full' | 'split-view' | 'slide-over'>('full');
+
+  // Detect multi-tasking mode
+  useEffect(() => {
+    const checkMultiTaskingMode = () => {
+      const width = window.innerWidth;
+      // Detect if we're in multi-tasking mode on iPad
+      if (isAppleDevice) {
+        if (width < 768 && width > 320) {
+          setIsMultiTasking(true);
+          setMode(width < 400 ? 'slide-over' : 'split-view');
+        } else {
+          setIsMultiTasking(false);
+          setMode('full');
+        }
+      }
+    };
+    
+    setIsPlatformDetected(true);
+    checkMultiTaskingMode();
+    
+    window.addEventListener('resize', checkMultiTaskingMode);
+    window.addEventListener('orientationchange', checkMultiTaskingMode);
+    
+    return () => {
+      window.removeEventListener('resize', checkMultiTaskingMode);
+      window.removeEventListener('orientationchange', checkMultiTaskingMode);
+    };
+  }, [isAppleDevice]);
   
   // Fetch financial data
   const { data, loading, error } = useFinancialData();
@@ -252,18 +292,80 @@ const Dashboard: React.FC = () => {
     }
   ];
 
+  const { isDarkMode, preferences } = useUIPreferences();
+  const { haptic } = useMicroInteractions();
+  
+  // Memoize dashboard data
+  const dashboardData = useMemo(() => ({
+    kpiData,
+    tableData,
+    allocationData,
+    alerts
+  }), [kpiData, tableData, allocationData, alerts]);
+  
+  // Role change handler with haptics
+  const memoizedRoleChangeHandler = useCallback((role: string) => {
+    if (preferences.enableHaptics) {
+      // Enhanced haptic feedback for iOS devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'medium' });
+      } else if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(5);
+      }
+    }
+    handleRoleChange(role);
+  }, [preferences.enableHaptics, isAppleDevice, haptic]);
+  
   return (
-    <DashboardLayout 
-      title="Financial Dashboard" 
-      onRoleChange={handleRoleChange}
-      userRole={userRole}
+    <ScbBeautifulUI 
+      pageTitle="Financial Dashboard"
+      showNewsBar={preferences.enableNewsBar}
     >
       {/* Role-based view content */}
-      <div className="mb-2 px-4 py-2 bg-[rgb(var(--scb-light-blue-10))] rounded-md flex items-center">
+      <div className={`mb-2 px-4 py-2 rounded-md flex items-center ${isDarkMode ? 'bg-blue-900/20' : 'bg-[rgb(var(--scb-light-blue-10))]'}`}>
         <Sparkles className="text-[rgb(var(--scb-honolulu-blue))] mr-2" size={18} />
-        <span className="text-sm">
+        <span className={`text-sm ${isDarkMode ? 'text-gray-200' : ''}`}>
           <span className="font-medium">Current view:</span> {userRole === 'executive' ? 'Executive Summary' : userRole === 'analyst' ? 'Detailed Analysis' : 'Operations View'}
         </span>
+        
+        {/* Role selector */}
+        <div className="ml-auto">
+          {isAppleDevice && isPlatformDetected ? (
+            <div className={`${isMultiTasking && mode === 'slide-over' ? 'flex flex-col space-y-1.5' : 'flex space-x-1.5'}`}>
+              <EnhancedTouchButton
+                variant={userRole === 'executive' ? 'primary' : 'secondary'}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                onClick={() => memoizedRoleChangeHandler('executive')}
+              >
+                Executive
+              </EnhancedTouchButton>
+              <EnhancedTouchButton
+                variant={userRole === 'analyst' ? 'primary' : 'secondary'}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                onClick={() => memoizedRoleChangeHandler('analyst')}
+              >
+                Analyst
+              </EnhancedTouchButton>
+              <EnhancedTouchButton
+                variant={userRole === 'operations' ? 'primary' : 'secondary'}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                onClick={() => memoizedRoleChangeHandler('operations')}
+              >
+                Operations
+              </EnhancedTouchButton>
+            </div>
+          ) : (
+            <select 
+              value={userRole}
+              onChange={(e) => memoizedRoleChangeHandler(e.target.value)}
+              className={`text-sm rounded border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'}`}
+            >
+              <option value="executive">Executive</option>
+              <option value="analyst">Analyst</option>
+              <option value="operations">Operations</option>
+            </select>
+          )}
+        </div>
       </div>
       <div>
         {/* Error state handling */}
@@ -309,7 +411,13 @@ const Dashboard: React.FC = () => {
         )}
         
         {!loading && !error && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+          <div className={`grid grid-cols-1 ${
+            isAppleDevice && isPlatformDetected && isMultiTasking && mode === 'slide-over'
+              ? 'gap-3 mb-3'
+              : isAppleDevice && isPlatformDetected && isMultiTasking
+                ? 'sm:grid-cols-2 gap-3 mb-4'
+                : 'sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6'
+          }`}>
             <KPICard
               title="Total Assets"
               value={financialMetrics.totalAssets.value}
@@ -362,9 +470,21 @@ const Dashboard: React.FC = () => {
         </div>
         )}
         
-        {/* Main content - adapts based on user role */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          <div className={`${userRole === 'executive' ? 'lg:col-span-3' : 'lg:col-span-2'} order-2 lg:order-1`}>
+        {/* Main content - adapts based on user role and multi-tasking mode */}
+        <div className={`grid grid-cols-1 ${
+          isAppleDevice && isPlatformDetected && isMultiTasking && mode === 'slide-over'
+            ? 'gap-3'
+            : isAppleDevice && isPlatformDetected && isMultiTasking
+              ? 'gap-3'
+              : 'lg:grid-cols-3 gap-4 md:gap-6'
+        }`}>
+          <div className={`${
+            userRole === 'executive' 
+              ? 'lg:col-span-3' 
+              : isAppleDevice && isPlatformDetected && isMultiTasking
+                ? 'col-span-1'
+                : 'lg:col-span-2'
+          } order-2 lg:order-1`}>
             <ChartCard
               title="Asset Allocation"
               subtitle={userRole === 'executive' 
@@ -488,7 +608,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </ScbBeautifulUI>
   );
 };
 

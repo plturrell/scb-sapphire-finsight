@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Sparkles, RefreshCw, Info, BarChart3, PieChart, HelpCircle, ChevronRight, Filter, GridIcon, Search, Settings } from 'lucide-react';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import EnhancedForceDirectedGraph from '@/components/EnhancedForceDirectedGraph';
-import EnhancedSankeyChart from '@/components/charts/EnhancedSankeyChart';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedLoadingSpinner from '@/components/EnhancedLoadingSpinner';
+import useMultiTasking from '@/hooks/useMultiTasking';
+import { haptics } from '@/lib/haptics';
+import { useMediaQuery } from 'react-responsive';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { 
+  Sparkles, RefreshCw, Info, BarChart3, PieChart, HelpCircle, 
+  ChevronRight, Filter, GridIcon, Search, Settings, Download, Share2 
+} from 'lucide-react';
 import * as d3 from 'd3';
 
 // Define GraphNode interface similar to the one in ForceDirectedGraph.tsx
@@ -169,14 +178,99 @@ const KnowledgeDashboard: React.FC = () => {
   const [showAiInsights, setShowAiInsights] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
   
-  // Function to regenerate the graph with AI insights
+  // Platform detection state
+  const [isMounted, setIsMounted] = useState(false);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
+  
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
+  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  const { isDarkMode, preferences } = useUIPreferences();
+  
+  // Detect platform on mount
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check if we're on an Apple platform
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // Check if we're on iPad specifically
+    const isIpad = /iPad/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && 
+       navigator.maxTouchPoints > 1 &&
+       !navigator.userAgent.includes('iPhone'));
+    
+    setIsAppleDevice(isIOS);
+    setIsIPad(isIpad);
+    setPlatformDetected(true);
+  }, []);
+  
+  // Function to regenerate the graph with AI insights with haptic feedback
   const regenerateWithAI = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     setIsLoading(true);
     setTimeout(() => {
       setGraphData(generateKnowledgeGraphData(true));
       setShowAiInsights(true);
       setIsLoading(false);
+      
+      // Success haptic feedback when complete on Apple devices
+      if (isAppleDevice) {
+        haptics.success();
+      }
     }, 1500);
+  };
+  
+  // Handle group selection with haptic feedback
+  const handleGroupSelect = (group: string | null) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+    
+    setSelectedGroup(group);
+  };
+  
+  // Handle tile click with haptic feedback
+  const handleTileClick = (tileId: string, link?: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    // Navigate to the link if provided
+    if (link) {
+      window.location.href = link;
+    } else {
+      console.log(`Opening tile: ${tileId}`);
+      // In a real application, we would open the tile's content
+    }
+  };
+  
+  // Handle download action with haptic feedback
+  const handleDownloadClick = () => {
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    // In a real application, this would trigger a download
+    alert('Downloading knowledge graph as PDF...');
+  };
+
+  // Handle share action with haptic feedback
+  const handleShareClick = () => {
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    // In a real application, this would open a share dialog
+    alert('Opening share dialog...');
   };
   
   // Filter data by group if a group is selected
@@ -199,225 +293,302 @@ const KnowledgeDashboard: React.FC = () => {
   }, [graphData, selectedGroup]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Light gray top header with SCB logo */}
-      <header className="bg-[#f2f2f2] border-b border-[rgb(var(--scb-border))]">
-        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-          <div className="flex items-center">
-            <Image
-              src="/images/sc-logo.png"
-              alt="Standard Chartered Bank"
-              width={180}
-              height={40}
-              className="h-8 w-auto"
-            />
-            <div className="h-6 w-px bg-gray-300 mx-4"></div>
-            <h1 className="text-xl font-medium text-[rgb(var(--scb-primary))]">Sapphire FinSight</h1>
+    <ScbBeautifulUI 
+      showNewsBar={!isSmallScreen && !isMultiTasking} 
+      pageTitle="Knowledge Dashboard" 
+      showTabs={isAppleDevice}
+    >
+      <div className={`${isMultiTasking && mode === 'slide-over' ? 'px-3 py-2' : 'px-6 py-4'} max-w-6xl mx-auto`}>
+        {/* Dashboard header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className={`text-2xl font-semibold ${
+              isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+            }`}>Knowledge Dashboard</h1>
+            <p className={`mt-1 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>Visualize and explore financial knowledge connections</p>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="fiori-input py-1.5 pl-8 pr-3 text-sm w-48"
-              />
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          {/* Platform-specific action buttons for Apple devices */}
+          {isAppleDevice && (
+            <div className={`flex ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'gap-3'}`}>
+              <EnhancedTouchButton
+                onClick={handleDownloadClick}
+                variant={isDarkMode ? "dark" : "secondary"}
+                className="flex items-center gap-1"
+                size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+              >
+                <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                <span>Download</span>
+              </EnhancedTouchButton>
+              
+              <EnhancedTouchButton
+                onClick={handleShareClick}
+                variant={isDarkMode ? "dark" : "secondary"}
+                className="flex items-center gap-1"
+                size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+              >
+                <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                <span>Share</span>
+              </EnhancedTouchButton>
             </div>
-            
-            <button className="fiori-btn-ghost rounded-full p-1.5">
-              <Settings className="w-5 h-5 text-gray-600" />
-            </button>
-            
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[rgb(var(--scb-primary))] flex items-center justify-center">
-                <span className="text-white text-sm font-medium">JS</span>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
-      </header>
-      
-      {/* Main content */}
-      <main className="flex-1 bg-[rgba(var(--scb-light-bg),0.5)] p-6">
-        <div className="container mx-auto">
-          {/* Dashboard header */}
-          <div className="mb-6">
-            <h2 className="text-2xl font-medium text-[rgb(var(--scb-primary))]">Knowledge Dashboard</h2>
-            <p className="text-gray-600 mt-1">Visualize and explore financial knowledge connections</p>
-          </div>
-          
-          {/* Group filter badges */}
-          <div className="mb-6 flex flex-wrap gap-2">
-            {['All', 'Financial', 'Market', 'Economic', 'Regulatory', 'Risk', 'Technology', 'Client', 'Internal'].map(group => (
+        
+        {/* Group filter badges */}
+        <div className={`mb-6 flex flex-wrap ${isMultiTasking && mode === 'slide-over' ? 'gap-1.5' : 'gap-2'}`}>
+          {['All', 'Financial', 'Market', 'Economic', 'Regulatory', 'Risk', 'Technology', 'Client', 'Internal'].map(group => (
+            isAppleDevice ? (
+              <EnhancedTouchButton
+                key={group}
+                onClick={() => handleGroupSelect(group === 'All' ? null : group)}
+                variant={(group === 'All' && !selectedGroup) || selectedGroup === group ? 'primary' : 'secondary'}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                className={`rounded-full ${isMultiTasking && mode === 'slide-over' ? 'text-xs py-1 px-2' : ''}`}
+              >
+                {group}
+              </EnhancedTouchButton>
+            ) : (
               <button
                 key={group}
-                onClick={() => setSelectedGroup(group === 'All' ? null : group)}
+                onClick={() => handleGroupSelect(group === 'All' ? null : group)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   (group === 'All' && !selectedGroup) || selectedGroup === group
                     ? 'bg-[rgb(var(--scb-primary))] text-white'
-                    : 'bg-white text-gray-700 border border-[rgb(var(--scb-border))] hover:bg-gray-50'
+                    : isDarkMode 
+                      ? 'bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600'
+                      : 'bg-white text-gray-700 border border-[rgb(var(--scb-border))] hover:bg-gray-50'
                 }`}
               >
                 {group}
               </button>
-            ))}
-          </div>
-          
-          {/* Fiori Launch Pad Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {/* Main visualization - spans 2x2 */}
-            <div className="col-span-full lg:col-span-2 lg:row-span-2 bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-5 h-[600px]">
-              <div className="h-full">
+            )
+          ))}
+        </div>
+        
+        {/* Fiori Launch Pad Grid */}
+        <div className={`grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'gap-3' : 'md:grid-cols-2 lg:grid-cols-4 gap-5'}`}>
+          {/* Main visualization - spans 2x2 */}
+          <div className={`${isMultiTasking ? 'col-span-1' : 'col-span-full lg:col-span-2 lg:row-span-2'} 
+            ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} 
+            rounded-lg shadow-sm border p-5 
+            ${isMultiTasking ? (mode === 'slide-over' ? 'h-[400px]' : 'h-[500px]') : 'h-[600px]'}`}>
+            <div className="h-full">
+              {isLoading ? (
+                <div className="h-full flex items-center justify-center">
+                  <EnhancedLoadingSpinner
+                    variant="primary"
+                    size="lg"
+                    message="Generating insights..."
+                    isAppleDevice={isAppleDevice}
+                  />
+                </div>
+              ) : (
                 <EnhancedForceDirectedGraph
                   data={filteredData}
                   title="Knowledge Graph Explorer"
                   showControls={true}
-                  showLegend={true}
+                  showLegend={!isMultiTasking || mode !== 'slide-over'}
+                  isAppleDevice={isAppleDevice}
+                  isIPad={isIPad}
+                  isMultiTasking={isMultiTasking}
+                  multiTaskingMode={mode}
+                  orientation={orientation}
+                  enableHaptics={isAppleDevice}
                   onRegenerateClick={!showAiInsights ? regenerateWithAI : undefined}
                 />
-              </div>
+              )}
             </div>
-            
-            {/* Other dashboard tiles */}
-            {demoTiles.filter(tile => tile.id !== 'knowledge-graph').map(tile => (
+          </div>
+          
+          {/* Other dashboard tiles */}
+          {(!isMultiTasking || mode !== 'slide-over' || !isAppleDevice) && 
+            demoTiles.filter(tile => tile.id !== 'knowledge-graph').map(tile => (
               <div 
                 key={tile.id}
-                className={`bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-4 hover:shadow-md transition-shadow ${
-                  tile.size === 'medium' ? 'lg:col-span-2' : ''
+                className={`${
+                  isDarkMode ? 'bg-gray-800 border-gray-700 hover:shadow-lg' : 'bg-white border-[rgb(var(--scb-border))] hover:shadow-md'
+                } rounded-lg shadow-sm border p-4 ${preferences.enableAnimations ? 'transition-shadow' : ''} ${
+                  tile.size === 'medium' && !isMultiTasking ? 'lg:col-span-2' : ''
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">
                     {tile.icon}
-                    <h3 className="text-base font-medium ml-2 text-[rgb(var(--scb-dark-text))]">{tile.title}</h3>
+                    <h3 className={`text-base font-medium ml-2 ${
+                      isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-text))]'
+                    }`}>{tile.title}</h3>
                   </div>
                   {tile.badge && (
-                    <span className="bg-[rgba(var(--scb-accent),0.1)] text-[rgb(var(--scb-accent))] text-xs px-2 py-0.5 rounded">
+                    <span className={`${
+                      isDarkMode ? 'bg-opacity-20 bg-blue-500' : 'bg-[rgba(var(--scb-accent),0.1)]'
+                    } text-[rgb(var(--scb-accent))] text-xs px-2 py-0.5 rounded`}>
                       {tile.badge}
                     </span>
                   )}
                 </div>
                 
-                <p className="text-sm text-gray-600 mb-4">{tile.description}</p>
+                <p className={`text-sm mb-4 ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>{tile.description}</p>
                 
-                {tile.link ? (
-                  <Link href={tile.link} className="flex items-center text-[rgb(var(--scb-primary))] text-sm font-medium">
+                {isAppleDevice ? (
+                  <EnhancedTouchButton
+                    onClick={() => handleTileClick(tile.id, tile.link)}
+                    variant={isDarkMode ? "dark-ghost" : "ghost"}
+                    size="sm"
+                    className={`flex items-center text-sm font-medium ${
+                      isDarkMode ? 'text-blue-400' : 'text-[rgb(var(--scb-primary))]'
+                    }`}
+                  >
                     <span>Open</span>
                     <ChevronRight className="w-4 h-4 ml-1" />
-                  </Link>
+                  </EnhancedTouchButton>
                 ) : (
-                  <button className="flex items-center text-[rgb(var(--scb-primary))] text-sm font-medium">
-                    <span>Open</span>
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </button>
+                  tile.link ? (
+                    <Link 
+                      href={tile.link} 
+                      className={`flex items-center text-sm font-medium ${
+                        isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-[rgb(var(--scb-primary))]'
+                      } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                      onClick={() => handleTileClick(tile.id, tile.link)}
+                    >
+                      <span>Open</span>
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Link>
+                  ) : (
+                    <button 
+                      className={`flex items-center text-sm font-medium ${
+                        isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-[rgb(var(--scb-primary))]'
+                      } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                      onClick={() => handleTileClick(tile.id)}
+                    >
+                      <span>Open</span>
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </button>
+                  )
                 )}
               </div>
-            ))}
-          </div>
-          
-          {/* AI Insights Panel - only shown when AI data is available */}
-          {showAiInsights && graphData.aiMetadata && (
-            <div className="mt-6 bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-5">
-              <div className="flex items-start gap-3">
-                <div className="bg-[rgba(var(--scb-accent),0.1)] p-2 rounded-full">
-                  <Sparkles className="w-5 h-5 text-[rgb(var(--scb-accent))]" />
-                </div>
+            ))
+          }
+        </div>
+        
+        {/* AI Insights Panel - only shown when AI data is available */}
+        {showAiInsights && graphData.aiMetadata && (
+          <div className={`mt-6 ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'
+          } rounded-lg shadow-sm border ${isMultiTasking && mode === 'slide-over' ? 'p-3' : 'p-5'}`}>
+            <div className="flex items-start gap-3">
+              <div className={`${
+                isDarkMode ? 'bg-blue-900 bg-opacity-30' : 'bg-[rgba(var(--scb-accent),0.1)]'
+              } p-2 rounded-full flex-shrink-0`}>
+                <Sparkles className={`${isMultiTasking && mode === 'slide-over' ? 'w-4 h-4' : 'w-5 h-5'} text-[rgb(var(--scb-accent))]`} />
+              </div>
+              
+              <div className="flex-1">
+                <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium ${
+                  isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                }`}>AI-Generated Insights</h3>
+                <p className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                } mt-2`}>{graphData.aiMetadata.insightSummary}</p>
                 
-                <div className="flex-1">
-                  <h3 className="text-lg font-medium text-[rgb(var(--scb-primary))]">AI-Generated Insights</h3>
-                  <p className="text-gray-700 mt-2">{graphData.aiMetadata.insightSummary}</p>
-                  
-                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-[rgba(var(--scb-light-bg),0.5)] p-3 rounded-md">
-                      <h4 className="text-sm font-medium text-[rgb(var(--scb-primary))]">Key Focus Areas</h4>
-                      <ul className="mt-2 space-y-1 text-sm">
-                        <li className="flex items-start gap-1">
-                          <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                          <span>ESG Investments (High Confidence)</span>
-                        </li>
-                        <li className="flex items-start gap-1">
-                          <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                          <span>Fintech Disruption</span>
-                        </li>
-                        <li className="flex items-start gap-1">
-                          <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                          <span>Emerging Markets</span>
-                        </li>
-                      </ul>
-                    </div>
-                    
-                    <div className="bg-[rgba(var(--scb-light-bg),0.5)] p-3 rounded-md">
-                      <h4 className="text-sm font-medium text-[rgb(var(--scb-primary))]">Strategic Implications</h4>
-                      <ul className="mt-2 space-y-1 text-sm">
-                        <li className="flex items-start gap-1">
-                          <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                          <span>Strengthen digital banking to counter fintech disruption</span>
-                        </li>
-                        <li className="flex items-start gap-1">
-                          <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                          <span>Develop comprehensive ESG investment offerings</span>
-                        </li>
-                      </ul>
-                    </div>
-                    
-                    <div className="bg-[rgba(var(--scb-light-bg),0.5)] p-3 rounded-md">
-                      <h4 className="text-sm font-medium text-[rgb(var(--scb-primary))]">Risk Assessment</h4>
-                      <ul className="mt-2 space-y-1 text-sm">
-                        <li className="flex items-start gap-1">
-                          <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                          <span>Market volatility in emerging markets</span>
-                        </li>
-                        <li className="flex items-start gap-1">
-                          <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                          <span>Increased competition from fintech companies</span>
-                        </li>
-                      </ul>
-                    </div>
+                <div className={`mt-4 grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'md:grid-cols-3 gap-4'}`}>
+                  <div className={`${
+                    isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
+                  } p-3 rounded-md`}>
+                    <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
+                      isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                    }`}>Key Focus Areas</h4>
+                    <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
+                      isDarkMode ? 'text-gray-300' : ''
+                    }`}>
+                      <li className="flex items-start gap-1">
+                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
+                        <span>ESG Investments (High Confidence)</span>
+                      </li>
+                      <li className="flex items-start gap-1">
+                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
+                        <span>Fintech Disruption</span>
+                      </li>
+                      <li className="flex items-start gap-1">
+                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
+                        <span>Emerging Markets</span>
+                      </li>
+                    </ul>
                   </div>
                   
-                  <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Info className="w-3.5 h-3.5" />
-                      <span>Confidence Score: {(graphData.aiMetadata.confidenceScore * 100).toFixed(0)}%</span>
-                    </div>
-                    <div>
-                      Generated: {new Date(graphData.aiMetadata.generatedAt).toLocaleString()}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span>Sources:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {graphData.aiMetadata.dataSource.map((source, idx) => (
-                          <span key={idx} className="scb-chip scb-chip-blue text-[10px] py-0.5 px-2">
-                            {source}
-                          </span>
-                        ))}
-                      </div>
+                  <div className={`${
+                    isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
+                  } p-3 rounded-md`}>
+                    <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
+                      isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                    }`}>Strategic Implications</h4>
+                    <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
+                      isDarkMode ? 'text-gray-300' : ''
+                    }`}>
+                      <li className="flex items-start gap-1">
+                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
+                        <span>Strengthen digital banking to counter fintech disruption</span>
+                      </li>
+                      <li className="flex items-start gap-1">
+                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
+                        <span>Develop comprehensive ESG investment offerings</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className={`${
+                    isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
+                  } p-3 rounded-md`}>
+                    <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
+                      isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                    }`}>Risk Assessment</h4>
+                    <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
+                      isDarkMode ? 'text-gray-300' : ''
+                    }`}>
+                      <li className="flex items-start gap-1">
+                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
+                        <span>Market volatility in emerging markets</span>
+                      </li>
+                      <li className="flex items-start gap-1">
+                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
+                        <span>Increased competition from fintech companies</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className={`mt-4 flex flex-wrap items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-2 text-[10px]' : 'gap-3 text-xs'} ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                }`}>
+                  <div className="flex items-center gap-1">
+                    <Info className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-3.5 h-3.5'}`} />
+                    <span>Confidence Score: {(graphData.aiMetadata.confidenceScore * 100).toFixed(0)}%</span>
+                  </div>
+                  <div>
+                    Generated: {new Date(graphData.aiMetadata.generatedAt).toLocaleString()}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>Sources:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {graphData.aiMetadata.dataSource.map((source, idx) => (
+                        <span key={idx} className={`${
+                          isDarkMode ? 'bg-blue-900 bg-opacity-40 text-blue-300' : 'horizon-chip horizon-chip-blue'
+                        } ${isMultiTasking && mode === 'slide-over' ? 'text-[8px] py-0 px-1.5' : 'text-[10px] py-0.5 px-2'} rounded`}>
+                          {source}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          )}
-        </div>
-      </main>
-      
-      {/* Footer */}
-      <footer className="bg-[rgb(var(--scb-primary))] text-white py-4">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
-              <p className="text-sm opacity-90">© {new Date().getFullYear()} Standard Chartered Bank. All rights reserved.</p>
-            </div>
-            <div className="flex gap-6">
-              <a href="#" className="text-sm opacity-90 hover:opacity-100">Privacy Policy</a>
-              <a href="#" className="text-sm opacity-90 hover:opacity-100">Terms of Use</a>
-              <a href="#" className="text-sm opacity-90 hover:opacity-100">Help & Support</a>
-            </div>
           </div>
-        </div>
-      </footer>
-    </div>
+        )}
+      </div>
+    </ScbBeautifulUI>
   );
 };
 

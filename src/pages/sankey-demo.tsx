@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-import Layout from '@/components/Layout';
+import React, { useState, useEffect } from 'react';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import SankeyChart from '@/components/SankeyChart';
-import { Sparkles, RefreshCw, Info, AlertTriangle } from 'lucide-react';
+import EnhancedSankeyChart from '@/components/charts/EnhancedSankeyChart';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import useMultiTasking from '@/hooks/useMultiTasking';
+import { haptics } from '@/lib/haptics';
+import { useMediaQuery } from 'react-responsive';
+import { Sparkles, RefreshCw, Info, AlertTriangle, X, Download, Share2 } from 'lucide-react';
 
 // Sample data for demonstration
 const initialSankeyData = {
@@ -129,23 +134,93 @@ const SankeyDemoPage: React.FC = () => {
   const [dataMode, setDataMode] = useState<'basic' | 'aiEnhanced' | 'expanded'>('basic');
   const [isGenerating, setIsGenerating] = useState(false);
   const [showAiMessageBar, setShowAiMessageBar] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
   
-  // Function to simulate AI generation
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
+  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  
+  // Detect platform on mount
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check if we're on an Apple platform
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // Check if we're on iPad specifically
+    const isIpad = /iPad/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && 
+       navigator.maxTouchPoints > 1 &&
+       !navigator.userAgent.includes('iPhone'));
+    
+    setIsAppleDevice(isIOS);
+    setIsIPad(isIpad);
+    setPlatformDetected(true);
+  }, []);
+  
+  // Function to simulate AI generation with haptic feedback
   const regenerateWithAI = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     setIsGenerating(true);
     setTimeout(() => {
       setDataMode('aiEnhanced');
       setIsGenerating(false);
+      
+      // Success haptic feedback when complete
+      if (isAppleDevice) {
+        haptics.success();
+      }
     }, 1500);
   };
   
-  // Function to simulate expanding the view
+  // Function to simulate expanding the view with haptic feedback
   const expandView = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     setIsGenerating(true);
     setTimeout(() => {
       setDataMode('expanded');
       setIsGenerating(false);
+      
+      // Success haptic feedback when complete
+      if (isAppleDevice) {
+        haptics.success();
+      }
     }, 1800);
+  };
+  
+  // Handle dismissing the AI message bar with haptic feedback
+  const handleDismissMessageBar = () => {
+    // Provide light haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.light();
+    }
+    
+    setShowAiMessageBar(false);
+  };
+  
+  // Handle downloading or sharing chart with haptic feedback
+  const handleActionButtonClick = (action: 'download' | 'share') => {
+    // Provide medium haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    if (action === 'download') {
+      alert('Downloading chart as PDF...');
+    } else {
+      alert('Opening share dialog...');
+    }
   };
   
   const currentData = 
@@ -154,8 +229,12 @@ const SankeyDemoPage: React.FC = () => {
     expandedSankeyData;
 
   return (
-    <Layout>
-      <div className="px-6 py-4 max-w-6xl mx-auto">
+    <ScbBeautifulUI 
+      showNewsBar={!isSmallScreen && !isMultiTasking} 
+      pageTitle="Financial Flow Analysis" 
+      showTabs={isAppleDevice}
+    >
+      <div className={`${isMultiTasking && mode === 'slide-over' ? 'px-3 py-2' : 'px-6 py-4'} max-w-6xl mx-auto`}>
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-[rgb(var(--scb-primary))]">Financial Flow Analysis</h1>
           <p className="text-gray-600 mt-1">Visualize your financial flows with AI-enhanced insights</p>
@@ -170,78 +249,139 @@ const SankeyDemoPage: React.FC = () => {
                 <span className="font-medium">AI-powered analysis:</span> Joule can enhance your financial flow visualizations with predictive insights and optimization recommendations.
               </p>
             </div>
-            <button 
-              className="text-gray-500 hover:text-gray-700"
-              onClick={() => setShowAiMessageBar(false)}
-              aria-label="Dismiss message"
-            >
-              <span className="text-xs">Dismiss</span>
-            </button>
+            {isAppleDevice ? (
+              <EnhancedTouchButton
+                onClick={handleDismissMessageBar}
+                aria-label="Dismiss message"
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <span className="text-xs">Dismiss</span>
+              </EnhancedTouchButton>
+            ) : (
+              <button 
+                className="text-gray-500 hover:text-gray-700"
+                onClick={handleDismissMessageBar}
+                aria-label="Dismiss message"
+              >
+                <span className="text-xs">Dismiss</span>
+              </button>
+            )}
           </div>
         )}
         
         {/* Mode selection controls */}
-        <div className="mb-6 flex flex-wrap gap-3">
-          <button 
-            onClick={() => setDataMode('basic')}
-            className={`fiori-btn ${dataMode === 'basic' ? 'fiori-btn-primary' : 'fiori-btn-secondary'}`}
-          >
-            Basic View
-          </button>
-          
-          <button 
-            onClick={regenerateWithAI}
-            disabled={isGenerating}
-            className={`fiori-btn ${dataMode === 'aiEnhanced' ? 'fiori-btn-primary' : 'fiori-btn-secondary'} flex items-center gap-1`}
-          >
-            {isGenerating && dataMode !== 'aiEnhanced' ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4" />
-                AI-Enhanced View
-              </>
-            )}
-          </button>
-          
-          <button 
-            onClick={expandView}
-            disabled={isGenerating}
-            className={`fiori-btn ${dataMode === 'expanded' ? 'fiori-btn-primary' : 'fiori-btn-secondary'} flex items-center gap-1`}
-          >
-            {isGenerating && dataMode !== 'expanded' ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                Expanding...
-              </>
-            ) : (
-              'Detailed View'
-            )}
-          </button>
+        <div className={`mb-6 flex flex-wrap ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'gap-3'}`}>
+          {isAppleDevice ? (
+            <>
+              <EnhancedTouchButton 
+                onClick={() => setDataMode('basic')}
+                variant={dataMode === 'basic' ? 'primary' : 'secondary'}
+                className={isMultiTasking && mode === 'slide-over' ? 'text-sm py-1.5 px-3' : ''}
+              >
+                Basic View
+              </EnhancedTouchButton>
+              
+              <EnhancedTouchButton 
+                onClick={regenerateWithAI}
+                disabled={isGenerating}
+                variant={dataMode === 'aiEnhanced' ? 'primary' : 'secondary'}
+                className={`flex items-center gap-1 ${isMultiTasking && mode === 'slide-over' ? 'text-sm py-1.5 px-3' : ''}`}
+              >
+                {isGenerating && dataMode !== 'aiEnhanced' ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    AI-Enhanced View
+                  </>
+                )}
+              </EnhancedTouchButton>
+              
+              <EnhancedTouchButton 
+                onClick={expandView}
+                disabled={isGenerating}
+                variant={dataMode === 'expanded' ? 'primary' : 'secondary'}
+                className={`flex items-center gap-1 ${isMultiTasking && mode === 'slide-over' ? 'text-sm py-1.5 px-3' : ''}`}
+              >
+                {isGenerating && dataMode !== 'expanded' ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Expanding...
+                  </>
+                ) : (
+                  'Detailed View'
+                )}
+              </EnhancedTouchButton>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={() => setDataMode('basic')}
+                className={`fiori-btn ${dataMode === 'basic' ? 'fiori-btn-primary' : 'fiori-btn-secondary'}`}
+              >
+                Basic View
+              </button>
+              
+              <button 
+                onClick={regenerateWithAI}
+                disabled={isGenerating}
+                className={`fiori-btn ${dataMode === 'aiEnhanced' ? 'fiori-btn-primary' : 'fiori-btn-secondary'} flex items-center gap-1`}
+              >
+                {isGenerating && dataMode !== 'aiEnhanced' ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    AI-Enhanced View
+                  </>
+                )}
+              </button>
+              
+              <button 
+                onClick={expandView}
+                disabled={isGenerating}
+                className={`fiori-btn ${dataMode === 'expanded' ? 'fiori-btn-primary' : 'fiori-btn-secondary'} flex items-center gap-1`}
+              >
+                {isGenerating && dataMode !== 'expanded' ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    Expanding...
+                  </>
+                ) : (
+                  'Detailed View'
+                )}
+              </button>
+            </>
+          )}
         </div>
         
         {/* SAP Fiori Information Panel - follows "Maintain Quality" principle */}
-        <div className="mb-6 p-3 bg-[rgba(var(--scb-light-bg),0.8)] border border-[rgba(var(--scb-border),0.7)] rounded-lg flex items-start gap-2">
+        <div className={`mb-6 ${isMultiTasking && mode === 'slide-over' ? 'p-2' : 'p-3'} bg-[rgba(var(--scb-light-bg),0.8)] border border-[rgba(var(--scb-border),0.7)] rounded-lg flex items-start ${isMultiTasking && mode === 'slide-over' ? 'gap-1.5' : 'gap-2'}`}>
           <div className="flex-shrink-0 mt-1">
-            <Info className="w-5 h-5 text-[rgb(var(--horizon-blue))]" />
+            <Info className={`${isMultiTasking && mode === 'slide-over' ? 'w-4 h-4' : 'w-5 h-5'} text-[rgb(var(--horizon-blue))]`} />
           </div>
           <div>
-            <h2 className="text-sm font-medium text-[rgb(var(--horizon-neutral-gray))]">About this visualization</h2>
-            <p className="text-xs mt-1 text-gray-600">
+            <h2 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium text-[rgb(var(--horizon-neutral-gray))]`}>About this visualization</h2>
+            <p className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'} mt-1 text-gray-600`}>
               This Sankey diagram shows the flow of financial resources through your organization. 
               {dataMode === 'aiEnhanced' && ' AI-enhanced elements are highlighted and include predictive values based on historical data and market trends.'}
               {dataMode === 'expanded' && ' The detailed view breaks down high-level categories into more specific components for deeper analysis.'}
             </p>
             {dataMode !== 'basic' && (
-              <div className="mt-2 flex items-center gap-1.5">
-                <div className="horizon-chip horizon-chip-blue text-[10px] py-0.5 px-2 flex items-center gap-0.5">
-                  <Sparkles className="w-3 h-3" /> 
+              <div className={`${isMultiTasking && mode === 'slide-over' ? 'mt-1.5' : 'mt-2'} flex items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-1' : 'gap-1.5'}`}>
+                <div className={`horizon-chip horizon-chip-blue ${isMultiTasking && mode === 'slide-over' ? 'text-[8px] py-0 px-1.5' : 'text-[10px] py-0.5 px-2'} flex items-center gap-0.5`}>
+                  <Sparkles className={`${isMultiTasking && mode === 'slide-over' ? 'w-2 h-2' : 'w-3 h-3'}`} /> 
                   AI Enhanced
                 </div>
-                <div className="horizon-chip text-[10px] py-0.5 px-2">
+                <div className={`horizon-chip ${isMultiTasking && mode === 'slide-over' ? 'text-[8px] py-0 px-1.5' : 'text-[10px] py-0.5 px-2'}`}>
                   Confidence: {dataMode === 'aiEnhanced' ? '82%' : '89%'}
                 </div>
               </div>
@@ -251,76 +391,125 @@ const SankeyDemoPage: React.FC = () => {
         
         {/* Warning for demo purposes */}
         {(dataMode === 'aiEnhanced' || dataMode === 'expanded') && (
-          <div className="mb-6 p-3 bg-[rgba(var(--horizon-red),0.05)] border border-[rgba(var(--horizon-red),0.2)] rounded-lg flex items-start gap-2">
+          <div className={`mb-6 ${isMultiTasking && mode === 'slide-over' ? 'p-2' : 'p-3'} bg-[rgba(var(--horizon-red),0.05)] border border-[rgba(var(--horizon-red),0.2)] rounded-lg flex items-start ${isMultiTasking && mode === 'slide-over' ? 'gap-1.5' : 'gap-2'}`}>
             <div className="flex-shrink-0 mt-0.5">
-              <AlertTriangle className="w-4 h-4 text-[rgb(var(--horizon-red))]" />
+              <AlertTriangle className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} text-[rgb(var(--horizon-red))]`} />
             </div>
-            <div className="text-xs text-gray-700">
+            <div className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'} text-gray-700`}>
               <p className="font-medium">Demo Purposes Only</p>
               <p className="mt-0.5">
                 This is a demonstration of AI-enhanced visualization capabilities. In a production environment, 
                 predictions would be based on real-time data analysis and machine learning models trained on your financial data.
+                {isMultiTasking && mode === 'slide-over' && ''}
               </p>
             </div>
           </div>
         )}
         
         {/* The Sankey chart */}
-        <div className="border border-[rgb(var(--scb-border))] rounded-lg p-4 bg-white h-[600px]">
-          <SankeyChart 
-            data={currentData}
-            width={850}
-            height={500}
-            title={dataMode === 'basic' ? 'Financial Flow Analysis' : 
-                  dataMode === 'aiEnhanced' ? 'AI-Enhanced Financial Flow Analysis' : 
-                  'Detailed Financial Flow Breakdown'}
-            showAIControls={true}
-            onRegenerateClick={
-              dataMode === 'basic' ? regenerateWithAI : 
-              dataMode === 'aiEnhanced' ? expandView : undefined
-            }
-          />
+        <div className={`border border-[rgb(var(--scb-border))] rounded-lg ${isMultiTasking && mode === 'slide-over' ? 'p-2' : 'p-4'} bg-white ${isMultiTasking ? (mode === 'slide-over' ? 'h-[400px]' : 'h-[500px]') : 'h-[600px]'}`}>
+          {isAppleDevice ? (
+            <EnhancedSankeyChart 
+              data={currentData}
+              width={isMultiTasking ? (mode === 'slide-over' ? 320 : 650) : 850}
+              height={isMultiTasking ? (mode === 'slide-over' ? 350 : 450) : 500}
+              title={dataMode === 'basic' ? 'Financial Flow Analysis' : 
+                    dataMode === 'aiEnhanced' ? 'AI-Enhanced Financial Flow Analysis' : 
+                    'Detailed Financial Flow Breakdown'}
+              showAIControls={true}
+              isMultiTasking={isMultiTasking}
+              multiTaskingMode={mode}
+              orientation={orientation}
+              enableHaptics={true}
+              adaptiveLayout={true}
+              onRegenerateClick={
+                dataMode === 'basic' ? regenerateWithAI : 
+                dataMode === 'aiEnhanced' ? expandView : undefined
+              }
+              onDownloadClick={() => handleActionButtonClick('download')}
+              onShareClick={() => handleActionButtonClick('share')}
+            />
+          ) : (
+            <SankeyChart 
+              data={currentData}
+              width={isSmallScreen ? 320 : 850}
+              height={isSmallScreen ? 350 : 500}
+              title={dataMode === 'basic' ? 'Financial Flow Analysis' : 
+                    dataMode === 'aiEnhanced' ? 'AI-Enhanced Financial Flow Analysis' : 
+                    'Detailed Financial Flow Breakdown'}
+              showAIControls={true}
+              onRegenerateClick={
+                dataMode === 'basic' ? regenerateWithAI : 
+                dataMode === 'aiEnhanced' ? expandView : undefined
+              }
+            />
+          )}
         </div>
         
         {/* SAP Fiori Horizon Legend */}
-        <div className="mt-4 p-3 bg-[rgba(var(--scb-light-bg),0.5)] border border-[rgba(var(--scb-border),0.3)] rounded-lg">
+        <div className={`mt-4 ${isMultiTasking && mode === 'slide-over' ? 'p-2' : 'p-3'} bg-[rgba(var(--scb-light-bg),0.5)] border border-[rgba(var(--scb-border),0.3)] rounded-lg`}>
           <h3 className="text-sm font-medium text-[rgb(var(--horizon-neutral-gray))]">Legend</h3>
-          <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className={`mt-2 grid ${isMultiTasking && mode === 'slide-over' ? 'grid-cols-2 gap-2' : 'grid-cols-2 sm:grid-cols-4 gap-3'}`}>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm" style={{backgroundColor: 'rgb(15, 40, 109)'}}></div>
-              <span className="text-xs">Investment</span>
+              <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'}`}>Investment</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm" style={{backgroundColor: 'rgb(43, 83, 0)'}}></div>
-              <span className="text-xs">Income</span>
+              <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'}`}>Income</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm" style={{backgroundColor: 'rgb(195, 0, 51)'}}></div>
-              <span className="text-xs">Expense</span>
+              <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'}`}>Expense</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-sm" style={{backgroundColor: 'rgb(0, 112, 122)'}}></div>
-              <span className="text-xs">Equity</span>
+              <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'}`}>Equity</span>
             </div>
           </div>
           
           {(dataMode === 'aiEnhanced' || dataMode === 'expanded') && (
-            <div className="mt-3 pt-3 border-t border-[rgba(var(--scb-border),0.5)]">
-              <div className="flex flex-wrap gap-4">
+            <div className={`mt-3 pt-3 border-t border-[rgba(var(--scb-border),0.5)]`}>
+              <div className={`flex flex-wrap ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'gap-4'}`}>
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-3 h-3 text-[rgb(var(--scb-accent))]" />
-                  <span className="text-xs">AI Enhanced Flow</span>
+                  <Sparkles className={`${isMultiTasking && mode === 'slide-over' ? 'w-2.5 h-2.5' : 'w-3 h-3'} text-[rgb(var(--scb-accent))]`} />
+                  <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'}`}>AI Enhanced Flow</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[rgb(var(--scb-accent))]"></div>
-                  <span className="text-xs">AI Prediction Available</span>
+                  <div className={`${isMultiTasking && mode === 'slide-over' ? 'w-2.5 h-2.5' : 'w-3 h-3'} rounded-full bg-[rgb(var(--scb-accent))]`}></div>
+                  <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-xs'}`}>AI Prediction Available</span>
                 </div>
               </div>
             </div>
           )}
         </div>
+        
+        {/* Action buttons - only shown on Apple devices */}
+        {isAppleDevice && (
+          <div className={`mt-4 flex ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'gap-3'} justify-end`}>
+            <EnhancedTouchButton
+              onClick={() => handleActionButtonClick('download')}
+              variant="secondary"
+              className="flex items-center gap-1"
+              size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+            >
+              <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+              <span>Download</span>
+            </EnhancedTouchButton>
+            
+            <EnhancedTouchButton
+              onClick={() => handleActionButtonClick('share')}
+              variant="secondary"
+              className="flex items-center gap-1"
+              size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+            >
+              <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+              <span>Share</span>
+            </EnhancedTouchButton>
+          </div>
+        )}
       </div>
-    </Layout>
+    </ScbBeautifulUI>
   );
 };
 

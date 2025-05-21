@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,6 +22,7 @@ import {
   Check
 } from 'lucide-react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
 
 // Sample data for help categories
 const helpCategories = [
@@ -124,6 +125,12 @@ export default function Help() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('getting-started');
   const [expandedFaqs, setExpandedFaqs] = useState<string[]>([]);
+  const { isDarkMode, preferences } = useUIPreferences();
+  
+  // Helper function to get animation class if animations are enabled
+  const getAnimationClass = (className: string) => {
+    return preferences.enableAnimations ? className : '';
+  };
   
   const toggleFaq = (faqId: string) => {
     if (expandedFaqs.includes(faqId)) {
@@ -154,48 +161,78 @@ export default function Help() {
     selectedCategory === 'all' || doc.category === selectedCategory
   );
 
+  // Memoize toggle function with haptic feedback
+  const toggleFaqWithHaptics = useCallback((faqId: string) => {
+    // Add haptic feedback if enabled
+    if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(5);
+    }
+    toggleFaq(faqId);
+  }, [preferences.enableHaptics, toggleFaq]);
+  
   return (
-    <ScbBeautifulUI pageTitle="Help Center" showNewsBar={false}>
+    <ScbBeautifulUI 
+      pageTitle="Help Center" 
+      showNewsBar={preferences.enableNewsBar && false}
+      showTabs={preferences.mobileNavStyle === 'tab'}
+    >
       <Head>
         <title>Help Center | SCB Sapphire FinSight</title>
       </Head>
 
       <div className="space-y-6">
         {/* Help Center Header with Search */}
-        <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6">
+        <div className={`rounded-lg shadow-sm border p-6 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl font-medium text-[rgb(var(--scb-dark-gray))]">
+            <h2 className={`text-2xl font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
               How can we help you today?
             </h2>
-            <p className="text-[rgb(var(--scb-dark-gray))] mt-2 mb-6">
+            <p className={`mt-2 mb-6 ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
               Search our knowledge base or browse the help topics below
             </p>
             
             <div className="relative max-w-xl mx-auto">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-[rgb(var(--scb-dark-gray))]" />
+                <Search className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
               </div>
               <input
                 type="text"
                 placeholder="Search for help articles, tutorials, FAQs..."
-                className="scb-input pl-10 w-full py-3"
+                className={`pl-10 w-full py-3 rounded-lg ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                    : 'bg-white border-[rgb(var(--scb-border))] text-[rgb(var(--scb-dark-gray))]'
+                }`}
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  // Add haptic feedback if enabled
+                  if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
+                    navigator.vibrate(2);
+                  }
+                }}
               />
             </div>
           </div>
         </div>
         
         {/* Help Categories */}
-        <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-5">
+        <div className={`rounded-lg shadow-sm border p-5 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
           <div className="flex overflow-x-auto no-scrollbar pb-2 gap-2">
             <button
-              onClick={() => setSelectedCategory('all')}
+              onClick={() => {
+                setSelectedCategory('all');
+                if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
+                  navigator.vibrate(5);
+                }
+              }}
               className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
                 selectedCategory === 'all'
                   ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
-                  : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
-              }`}
+                  : isDarkMode 
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                    : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
+              } ${preferences.enableAnimations ? 'transition-all hover:shadow-sm' : ''}`}
             >
               All Topics
             </button>
@@ -203,11 +240,20 @@ export default function Help() {
             {helpCategories.map(category => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors flex items-center ${
+                onClick={() => {
+                  setSelectedCategory(category.id);
+                  if (preferences.enableHaptics && typeof navigator !== 'undefined' && navigator.vibrate) {
+                    navigator.vibrate(5);
+                  }
+                }}
+                className={`px-4 py-2 rounded-full whitespace-nowrap flex items-center ${
+                  preferences.enableAnimations ? 'transition-all hover:shadow-sm' : ''
+                } ${
                   selectedCategory === category.id
                     ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
-                    : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
+                    : isDarkMode 
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                      : 'bg-[rgba(var(--scb-light-gray),0.5)] text-[rgb(var(--scb-dark-gray))]'
                 }`}
               >
                 <category.icon className="h-4 w-4 mr-2" />
@@ -220,39 +266,69 @@ export default function Help() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - FAQs */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] overflow-hidden">
-              <div className="px-6 py-4 border-b border-[rgb(var(--scb-border))]">
-                <h3 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))]">Frequently Asked Questions</h3>
+            <div className={`rounded-lg shadow-sm border overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'}`}>
+              <div className={`px-6 py-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
+                <h3 className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>Frequently Asked Questions</h3>
               </div>
               
-              <div className="p-0 divide-y divide-[rgb(var(--scb-border))]">
+              <div className={`p-0 divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-[rgb(var(--scb-border))]'}`}>
                 {filteredFaqs.length > 0 ? (
                   filteredFaqs.map(faq => (
-                    <div key={faq.id} className="border-b border-[rgb(var(--scb-border))]">
+                    <div key={faq.id} className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
                       <button
-                        className="w-full text-left px-6 py-4 flex items-center justify-between"
-                        onClick={() => toggleFaq(faq.id)}
+                        className={`w-full text-left px-6 py-4 flex items-center justify-between focus:outline-none ${
+                          isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                        } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                        onClick={() => toggleFaqWithHaptics(faq.id)}
                       >
-                        <span className="font-medium text-[rgb(var(--scb-dark-gray))]">{faq.question}</span>
-                        <ChevronDown className={`h-5 w-5 text-[rgb(var(--scb-dark-gray))] transition-transform ${
-                          expandedFaqs.includes(faq.id) ? 'transform rotate-180' : ''
-                        }`} />
+                        <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                          {faq.question}
+                        </span>
+                        <ChevronDown className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'} ${
+                          preferences.enableAnimations ? 'transition-transform' : ''
+                        } ${expandedFaqs.includes(faq.id) ? 'transform rotate-180' : ''}`} />
                       </button>
                       
                       {expandedFaqs.includes(faq.id) && (
-                        <div className="px-6 pb-4">
-                          <p className="text-sm text-[rgb(var(--scb-dark-gray))]">{faq.answer}</p>
+                        <div className={`px-6 pb-4 ${preferences.enableAnimations ? getAnimationClass('animate-fadeIn') : ''}`}>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                            {faq.answer}
+                          </p>
                           
                           <div className="mt-3 flex justify-between items-center">
-                            <span className="text-xs text-[rgb(var(--scb-dark-gray))] opacity-70">
+                            <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))] opacity-70'}`}>
                               Was this helpful?
                             </span>
                             <div className="flex items-center gap-2">
-                              <button className="p-1.5 rounded-md border border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]">
+                              <button 
+                                className={`p-1.5 rounded-md border ${isDarkMode 
+                                  ? 'border-gray-600 hover:bg-gray-700' 
+                                  : 'border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]'
+                                } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                                onClick={() => {
+                                  if (preferences.enableHaptics) {
+                                    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                                      navigator.vibrate(5);
+                                    }
+                                  }
+                                }}
+                              >
                                 <Check className="h-3.5 w-3.5 text-[rgb(var(--scb-american-green))]" />
                               </button>
-                              <button className="p-1.5 rounded-md border border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]">
-                                <PlusCircle className="h-3.5 w-3.5 text-[rgb(var(--scb-dark-gray))]" />
+                              <button 
+                                className={`p-1.5 rounded-md border ${isDarkMode 
+                                  ? 'border-gray-600 hover:bg-gray-700' 
+                                  : 'border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]'
+                                } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                                onClick={() => {
+                                  if (preferences.enableHaptics) {
+                                    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                                      navigator.vibrate(5);
+                                    }
+                                  }
+                                }}
+                              >
+                                <PlusCircle className={`h-3.5 w-3.5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
                               </button>
                             </div>
                           </div>
@@ -262,9 +338,11 @@ export default function Help() {
                   ))
                 ) : (
                   <div className="py-12 text-center">
-                    <HelpCircle className="h-12 w-12 mx-auto text-[rgb(var(--scb-dark-gray))] opacity-20 mb-3" />
-                    <h4 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))]">No FAQs found</h4>
-                    <p className="text-sm text-[rgb(var(--scb-dark-gray))] opacity-70 mt-1 max-w-sm mx-auto">
+                    <HelpCircle className={`h-12 w-12 mx-auto mb-3 ${isDarkMode ? 'text-gray-600' : 'text-[rgb(var(--scb-dark-gray))] opacity-20'}`} />
+                    <h4 className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                      No FAQs found
+                    </h4>
+                    <p className={`text-sm mt-1 max-w-sm mx-auto ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))] opacity-70'}`}>
                       Try a different search term or category to find the information you're looking for.
                     </p>
                   </div>
@@ -282,18 +360,41 @@ export default function Help() {
             </div>
             
             {/* Video Tutorials */}
-            <div className="mt-6 bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] overflow-hidden">
-              <div className="px-6 py-4 border-b border-[rgb(var(--scb-border))]">
-                <h3 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))]">Video Tutorials</h3>
+            <div className={`mt-6 rounded-lg shadow-sm border overflow-hidden ${
+              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'
+            }`}>
+              <div className={`px-6 py-4 border-b ${
+                isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'
+              }`}>
+                <h3 className={`text-lg font-medium ${
+                  isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                }`}>Video Tutorials</h3>
               </div>
               
               <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {filteredTutorials.map(tutorial => (
-                  <div key={tutorial.id} className="border border-[rgb(var(--scb-border))] rounded-lg overflow-hidden group transition-shadow hover:shadow-md">
-                    <div className="relative h-32 bg-[rgba(var(--scb-light-gray),0.3)]">
+                  <div 
+                    key={tutorial.id} 
+                    className={`rounded-lg overflow-hidden group ${
+                      preferences.enableAnimations ? 'transition-shadow hover:shadow-md' : ''
+                    } ${
+                      isDarkMode 
+                        ? 'border border-gray-700 hover:border-gray-600' 
+                        : 'border border-[rgb(var(--scb-border))]'
+                    }`}
+                  >
+                    <div className={`relative h-32 ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-gray),0.3)]'
+                    }`}>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="absolute inset-0 bg-black opacity-50 group-hover:opacity-60 transition-opacity"></div>
-                        <Play className="h-10 w-10 text-white opacity-80 group-hover:opacity-100 transition-opacity z-10" />
+                        <div className={`absolute inset-0 bg-black ${
+                          isDarkMode ? 'opacity-70' : 'opacity-50'
+                        } group-hover:opacity-60 ${
+                          preferences.enableAnimations ? 'transition-opacity' : ''
+                        }`}></div>
+                        <Play className={`h-10 w-10 text-white opacity-80 group-hover:opacity-100 z-10 ${
+                          preferences.enableAnimations ? 'transition-opacity' : ''
+                        }`} />
                       </div>
                       <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-0.5 rounded z-10 flex items-center">
                         <Clock className="h-3 w-3 mr-1" />
@@ -302,14 +403,23 @@ export default function Help() {
                     </div>
                     
                     <div className="p-3">
-                      <h4 className="text-sm font-medium text-[rgb(var(--scb-dark-gray))]">{tutorial.title}</h4>
+                      <h4 className={`text-sm font-medium ${
+                        isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                      }`}>{tutorial.title}</h4>
                     </div>
                   </div>
                 ))}
               </div>
               
-              <div className="px-6 py-4 border-t border-[rgb(var(--scb-border))]">
-                <Link href="#" className="text-sm text-[rgb(var(--scb-honolulu-blue))] font-medium flex items-center">
+              <div className={`px-6 py-4 border-t ${
+                isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'
+              }`}>
+                <Link 
+                  href="#" 
+                  className={`text-sm text-[rgb(var(--scb-honolulu-blue))] font-medium flex items-center ${
+                    isDarkMode ? 'hover:text-blue-400' : ''
+                  }`}
+                >
                   <span>View all tutorials</span>
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Link>
@@ -320,16 +430,31 @@ export default function Help() {
           {/* Right Column - Contact and Resources */}
           <div className="lg:col-span-1 space-y-6">
             {/* Documentation */}
-            <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] overflow-hidden">
-              <div className="px-5 py-3 border-b border-[rgb(var(--scb-border))]">
-                <h3 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">Documentation</h3>
+            <div className={`rounded-lg shadow-sm border overflow-hidden ${
+              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'
+            }`}>
+              <div className={`px-5 py-3 border-b ${
+                isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'
+              }`}>
+                <h3 className={`text-base font-medium ${
+                  isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                }`}>Documentation</h3>
               </div>
               
               <div className="p-4">
-                <ul className="divide-y divide-[rgb(var(--scb-border))]">
+                <ul className={`divide-y ${
+                  isDarkMode ? 'divide-gray-700' : 'divide-[rgb(var(--scb-border))]'
+                }`}>
                   {filteredDocs.map(doc => (
                     <li key={doc.id} className="py-2">
-                      <Link href={doc.url} className="flex items-center text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-honolulu-blue))]">
+                      <Link 
+                        href={doc.url} 
+                        className={`flex items-center ${
+                          isDarkMode 
+                            ? 'text-gray-300 hover:text-blue-400' 
+                            : 'text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-honolulu-blue))]'
+                        } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                      >
                         <FileText className="h-4 w-4 mr-3" />
                         <span className="text-sm">{doc.title}</span>
                         <ExternalLink className="h-3.5 w-3.5 ml-auto" />
@@ -341,53 +466,89 @@ export default function Help() {
             </div>
             
             {/* Contact Support */}
-            <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] overflow-hidden">
-              <div className="px-5 py-3 border-b border-[rgb(var(--scb-border))]">
-                <h3 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">Contact Support</h3>
+            <div className={`rounded-lg shadow-sm border overflow-hidden ${
+              isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'
+            }`}>
+              <div className={`px-5 py-3 border-b ${
+                isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'
+              }`}>
+                <h3 className={`text-base font-medium ${
+                  isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                }`}>Contact Support</h3>
               </div>
               
               <div className="p-4">
                 <div className="space-y-4">
                   <div className="flex items-start">
-                    <div className="bg-[rgba(var(--scb-light-gray),0.3)] p-2 rounded-full mr-3">
+                    <div className={`p-2 rounded-full mr-3 ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-gray),0.3)]'
+                    }`}>
                       <MessageCircle className="h-5 w-5 text-[rgb(var(--scb-honolulu-blue))]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-[rgb(var(--scb-dark-gray))]">Live Chat</h4>
-                      <p className="text-xs text-[rgb(var(--scb-dark-gray))] mt-1">
+                      <h4 className={`text-sm font-medium ${
+                        isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                      }`}>Live Chat</h4>
+                      <p className={`text-xs mt-1 ${
+                        isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'
+                      }`}>
                         Chat with our support team, available 24/7
                       </p>
-                      <button className="mt-2 scb-btn scb-btn-primary text-xs py-1.5 px-3">
+                      <button className={`mt-2 text-xs py-1.5 px-3 rounded-md ${
+                        isDarkMode 
+                          ? 'bg-blue-600 hover:bg-blue-500 text-white' 
+                          : 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
+                      } ${preferences.enableAnimations ? 'transition-colors' : ''}`}>
                         Start Chat
                       </button>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="bg-[rgba(var(--scb-light-gray),0.3)] p-2 rounded-full mr-3">
+                    <div className={`p-2 rounded-full mr-3 ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-gray),0.3)]'
+                    }`}>
                       <Mail className="h-5 w-5 text-[rgb(var(--scb-honolulu-blue))]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-[rgb(var(--scb-dark-gray))]">Email Support</h4>
-                      <p className="text-xs text-[rgb(var(--scb-dark-gray))] mt-1">
-                        Email us at <a href="mailto:sapphire-support@scb.com" className="text-[rgb(var(--scb-honolulu-blue))]">sapphire-support@scb.com</a>
+                      <h4 className={`text-sm font-medium ${
+                        isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                      }`}>Email Support</h4>
+                      <p className={`text-xs mt-1 ${
+                        isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'
+                      }`}>
+                        Email us at <a href="mailto:sapphire-support@scb.com" className={`${
+                          isDarkMode ? 'text-blue-400' : 'text-[rgb(var(--scb-honolulu-blue))]'
+                        }`}>sapphire-support@scb.com</a>
                       </p>
-                      <p className="text-xs text-[rgb(var(--scb-dark-gray))] opacity-70 mt-1">
+                      <p className={`text-xs mt-1 ${
+                        isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))] opacity-70'
+                      }`}>
                         Response time: Within 24 hours
                       </p>
                     </div>
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="bg-[rgba(var(--scb-light-gray),0.3)] p-2 rounded-full mr-3">
+                    <div className={`p-2 rounded-full mr-3 ${
+                      isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-gray),0.3)]'
+                    }`}>
                       <Phone className="h-5 w-5 text-[rgb(var(--scb-honolulu-blue))]" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-[rgb(var(--scb-dark-gray))]">Phone Support</h4>
-                      <p className="text-xs text-[rgb(var(--scb-dark-gray))] mt-1">
-                        Call us at <a href="tel:+18001234567" className="text-[rgb(var(--scb-honolulu-blue))]">+1 (800) 123-4567</a>
+                      <h4 className={`text-sm font-medium ${
+                        isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                      }`}>Phone Support</h4>
+                      <p className={`text-xs mt-1 ${
+                        isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'
+                      }`}>
+                        Call us at <a href="tel:+18001234567" className={`${
+                          isDarkMode ? 'text-blue-400' : 'text-[rgb(var(--scb-honolulu-blue))]'
+                        }`}>+1 (800) 123-4567</a>
                       </p>
-                      <p className="text-xs text-[rgb(var(--scb-dark-gray))] opacity-70 mt-1">
+                      <p className={`text-xs mt-1 ${
+                        isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))] opacity-70'
+                      }`}>
                         Hours: Mon-Fri, 9am-6pm (GMT+8)
                       </p>
                     </div>
@@ -397,13 +558,21 @@ export default function Help() {
             </div>
             
             {/* Quick Tips */}
-            <div className="bg-[rgba(var(--scb-light-gray),0.3)] rounded-lg border border-[rgb(var(--scb-border))] p-5">
+            <div className={`rounded-lg border p-5 ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600' 
+                : 'bg-[rgba(var(--scb-light-gray),0.3)] border-[rgb(var(--scb-border))]'
+            }`}>
               <div className="flex items-center gap-3 mb-3">
                 <Lightbulb className="h-5 w-5 text-[rgb(var(--scb-american-green))]" />
-                <h3 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">Quick Tips</h3>
+                <h3 className={`text-base font-medium ${
+                  isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'
+                }`}>Quick Tips</h3>
               </div>
               
-              <ul className="space-y-2 text-sm text-[rgb(var(--scb-dark-gray))]">
+              <ul className={`space-y-2 text-sm ${
+                isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'
+              }`}>
                 <li className="flex items-start gap-2">
                   <span className="text-[rgb(var(--scb-american-green))] font-bold mt-0.5">•</span>
                   <span>Use keyboard shortcuts (press ? to view) for faster navigation</span>
@@ -418,14 +587,25 @@ export default function Help() {
                 </li>
               </ul>
               
-              <Link href="#" className="mt-3 text-sm text-[rgb(var(--scb-honolulu-blue))] font-medium flex items-center">
+              <Link 
+                href="#" 
+                className={`mt-3 text-sm font-medium flex items-center ${
+                  isDarkMode 
+                    ? 'text-blue-400 hover:text-blue-300' 
+                    : 'text-[rgb(var(--scb-honolulu-blue))]'
+                } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+              >
                 <span>View all tips</span>
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             </div>
             
             {/* Webinar Promo */}
-            <div className="bg-[rgb(var(--scb-honolulu-blue))] text-white rounded-lg overflow-hidden relative">
+            <div className={`${
+              isDarkMode 
+                ? 'bg-gradient-to-r from-blue-800 to-blue-700' 
+                : 'bg-[rgb(var(--scb-honolulu-blue))]'
+            } text-white rounded-lg overflow-hidden relative`}>
               <div className="relative z-10 p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <Headphones className="h-5 w-5" />
@@ -440,10 +620,17 @@ export default function Help() {
                   <div className="bg-white/20 px-2 py-1 rounded">2:00 PM GMT</div>
                 </div>
                 
-                <button className="bg-white text-[rgb(var(--scb-honolulu-blue))] font-medium px-4 py-2 rounded-md text-sm">
+                <button className={`font-medium px-4 py-2 rounded-md text-sm ${
+                  isDarkMode 
+                    ? 'bg-blue-400 text-gray-900 hover:bg-blue-300' 
+                    : 'bg-white text-[rgb(var(--scb-honolulu-blue))]'
+                } ${preferences.enableAnimations ? 'transition-colors' : ''}`}>
                   Register Now
                 </button>
               </div>
+              {isDarkMode && (
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 to-blue-600/20"></div>
+              )}
             </div>
           </div>
         </div>

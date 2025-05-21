@@ -8,6 +8,8 @@ import Head from 'next/head';
 import { registerServiceWorker } from '@/lib/register-service-worker';
 import dynamic from 'next/dynamic';
 import { UIPreferencesProvider } from '@/context/UIPreferencesContext';
+import { IconSystemProvider } from '@/components/IconSystem';
+import { SFSymbolsCSS } from '@/lib/sf-symbols';
 
 // Import Emotion's createCache and StyleProvider from the correct location
 import createCache from '@emotion/cache';
@@ -258,38 +260,87 @@ export default function App({ Component, pageProps }: AppProps) {
                   100% { transform: scale(0.95); opacity: 0.8; }
                 }
 
-                /* Dark mode styles */
+                /* Dark mode variables */
+                .dark {
+                  --scb-bg-primary: 17, 24, 39 !important; /* gray-900 */
+                  --scb-bg-secondary: 31, 41, 55 !important; /* gray-800 */
+                  --scb-bg-tertiary: 55, 65, 81 !important; /* gray-700 */
+                  --scb-text-primary: 255, 255, 255 !important;
+                  --scb-text-secondary: 209, 213, 219 !important; /* gray-300 */
+                  --scb-text-tertiary: 156, 163, 175 !important; /* gray-400 */
+                  --scb-border-primary: 75, 85, 99 !important; /* gray-600 */
+                  --scb-border-secondary: 55, 65, 81 !important; /* gray-700 */
+                  --scb-highlight: 59, 130, 246 !important; /* blue-500 */
+                  --scb-highlight-hover: 96, 165, 250 !important; /* blue-400 */
+                  
+                  /* Form elements */
+                  --scb-input-bg: 31, 41, 55 !important; /* gray-800 */
+                  --scb-input-border: 75, 85, 99 !important; /* gray-600 */
+                  --scb-input-text: 209, 213, 219 !important; /* gray-300 */
+                  --scb-input-placeholder: 156, 163, 175 !important; /* gray-400 */
+                  
+                  /* Buttons */
+                  --scb-button-primary-bg: var(--scb-honolulu-blue) !important;
+                  --scb-button-primary-text: 255, 255, 255 !important;
+                  --scb-button-secondary-bg: 55, 65, 81 !important; /* gray-700 */
+                  --scb-button-secondary-text: 209, 213, 219 !important; /* gray-300 */
+                }
+                
+                /* Component styles with dark mode */
                 .dark .fiori-tile {
-                  background-color: rgb(31, 41, 55) !important;
-                  border-color: rgb(55, 65, 81) !important;
+                  background-color: rgb(var(--scb-bg-secondary)) !important;
+                  border-color: rgb(var(--scb-border-secondary)) !important;
+                  color: rgb(var(--scb-text-primary)) !important;
                 }
                 
                 .dark .scb-title {
-                  color: rgb(255, 255, 255) !important;
+                  color: rgb(var(--scb-text-primary)) !important;
                 }
                 
                 .dark .scb-section-header {
-                  color: rgb(209, 213, 219) !important;
+                  color: rgb(var(--scb-text-secondary)) !important;
                 }
 
                 .dark .fiori-sidebar-item {
-                  color: rgb(209, 213, 219) !important;
+                  color: rgb(var(--scb-text-secondary)) !important;
                 }
                 
                 .dark .fiori-sidebar-item:hover {
-                  background-color: rgba(255, 255, 255, 0.1) !important;
+                  background-color: rgba(var(--scb-highlight), 0.1) !important;
                 }
                 
                 .dark .fiori-sidebar-item.active {
                   background-color: rgba(var(--scb-honolulu-blue), 0.2) !important;
                   border-left-color: rgb(var(--scb-honolulu-blue)) !important;
-                  color: rgb(209, 213, 219) !important;
+                  color: rgb(var(--scb-text-secondary)) !important;
+                }
+                
+                /* Form elements - dark mode */
+                .dark input, .dark select, .dark textarea {
+                  background-color: rgb(var(--scb-input-bg)) !important;
+                  border-color: rgb(var(--scb-input-border)) !important;
+                  color: rgb(var(--scb-input-text)) !important;
+                }
+                
+                .dark input::placeholder, .dark textarea::placeholder {
+                  color: rgb(var(--scb-input-placeholder)) !important;
+                }
+                
+                /* Transitions for theme switching */
+                .theme-transition {
+                  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
                 }
               `}</style>
             </Head>
             <div className="font-sans scb-app-container scb-styled">
-              {mounted && <Component {...pageProps} />}
-              {mounted && <GlobalJouleAssistant />}
+              {mounted && (
+                <IconSystemProvider>
+                  <Component {...pageProps} />
+                  <GlobalJouleAssistant />
+                  {/* Inject SF Symbols CSS */}
+                  <style jsx global>{`${SFSymbolsCSS}`}</style>
+                </IconSystemProvider>
+              )}
             </div>
           </UIPreferencesProvider>
         </ChakraProvider>

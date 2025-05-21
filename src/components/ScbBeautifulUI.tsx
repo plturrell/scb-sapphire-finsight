@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import EnhancedPerplexitySearchBar from './EnhancedPerplexitySearchBar';
 import EnhancedPerplexityNewsBar from './EnhancedPerplexityNewsBar';
@@ -8,6 +8,7 @@ import EnhancedIOSTabBar from './EnhancedIOSTabBar';
 import useMultiTasking from '../hooks/useMultiTasking';
 import useSafeArea from '../hooks/useSafeArea';
 import { haptics } from '../lib/haptics';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
 
 interface ScbBeautifulUIProps {
   children: React.ReactNode;
@@ -25,18 +26,25 @@ interface ScbBeautifulUIProps {
  */
 const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
   children,
-  showNewsBar = false,
-  showSearchBar = true,
+  showNewsBar: propShowNewsBar = false,
+  showSearchBar: propShowSearchBar = true,
   pageTitle,
-  showTabs = false
+  showTabs: propShowTabs = false
 }) => {
   const router = useRouter();
   const joule = useGlobalJouleAssistant();
   const { mode, isMultiTasking } = useMultiTasking();
   const { safeArea } = useSafeArea();
+  const { preferences, isDarkMode } = useUIPreferences();
   const [isMounted, setIsMounted] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // Use UI preferences with prop fallbacks
+  const showNewsBar = preferences.enableNewsBar && propShowNewsBar;
+  const showSearchBar = preferences.enableSearchBar && propShowSearchBar;
+  const showTabs = propShowTabs;
+  const showJoule = preferences.enableJouleAssistant;
 
   // Detect platform on mount
   useEffect(() => {
@@ -49,20 +57,24 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
     setIsIOS(isIOS);
   }, []);
 
-  const handleAnalyzeNews = (newsItem: any) => {
-    joule.analyzeNews(newsItem);
+  const handleAnalyzeNews = useCallback((newsItem: any) => {
+    // Only engage Joule if assistant is enabled
+    if (showJoule) {
+      joule.analyzeNews(newsItem);
+    }
     
-    // Add haptic feedback for iOS devices
-    if (isIOS) {
+    // Add haptic feedback for iOS devices if enabled
+    if (isIOS && preferences.enableHaptics) {
       haptics.selection();
     }
-  };
+  }, [isIOS, joule, preferences.enableHaptics, showJoule]);
   
   // Handle tab change with haptic feedback
-  const handleTabChange = (tabId: string) => {
+  const handleTabChange = useCallback((tabId: string) => {
     setActiveTab(tabId);
     
-    if (isIOS) {
+    // Add haptic feedback for iOS devices if enabled
+    if (isIOS && preferences.enableHaptics) {
       haptics.selection();
     }
     
@@ -93,8 +105,22 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
     { id: 'settings', label: 'Settings', icon: 'gear' }
   ];
   
+  // Helper functions for layout classes based on preferences
+  const getFontSizeClass = useCallback(() => {
+    switch (preferences.fontSize) {
+      case 'small': return 'text-sm';
+      case 'large': return 'text-lg';
+      default: return 'text-base';
+    }
+  }, [preferences.fontSize]);
+  
+  // Get animation classes based on preferences
+  const getAnimationClass = useCallback((animationName: string) => {
+    return preferences.enableAnimations ? animationName : '';
+  }, [preferences.enableAnimations]);
+  
   // Use iOS-specific tab bar as the compact navigation
-  const CompactNavigation = () => (
+  const CompactNavigation = useCallback(() => (
     showTabs && isIOS ? (
       <EnhancedIOSTabBar
         items={tabItems}
@@ -102,10 +128,12 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
         onChange={handleTabChange}
         respectSafeArea={true}
         floating={false}
-        className="border-t border-gray-200 dark:border-gray-700"
+        showLabels={preferences.showLabels} 
+        enableHaptics={preferences.enableHaptics}
+        className={`border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
       />
     ) : null
-  );
+  ), [showTabs, isIOS, activeTab, handleTabChange, preferences.showLabels, preferences.enableHaptics, isDarkMode]);
 
   return (
     <ResponsiveAppLayout
@@ -116,16 +144,18 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
         // Handle mode changes if needed
       }}
     >
-      <div className="flex flex-col w-full">
+      <div className={`flex flex-col w-full ${getFontSizeClass()}`}>
         {/* Page header with search bar */}
         {showSearchBar && (
           <div className={`
             mb-6 flex flex-col items-center gap-4
             ${isMultiTasking && mode === 'slide-over' ? 'mb-4 gap-2' : ''}
+            ${getAnimationClass('animate-fadeIn')}
           `}>
             {pageTitle && (
               <h1 className={`
-                scb-title font-bold text-[rgb(var(--scb-honolulu-blue))] self-start
+                scb-title font-bold self-start
+                ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-honolulu-blue))]'}
                 ${isMultiTasking && mode === 'slide-over' ? 'text-xl' : 'text-2xl'}
               `}>
                 {pageTitle}
@@ -136,7 +166,7 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
         )}
 
         {/* Main content */}
-        <div className="flex flex-1 gap-6">
+        <div className={`flex flex-1 gap-6 ${getAnimationClass('animate-fadeIn')}`}>
           {/* Left content area */}
           <div className={`flex-1 ${showNewsBar && !isMultiTasking ? 'md:mr-80' : ''}`}>
             {children}
@@ -145,12 +175,17 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
           {/* News sidebar (if enabled) - hide in slide-over mode */}
           {showNewsBar && (!isMultiTasking || mode !== 'slide-over') && (
             <div className={`
-              hidden md:block fixed top-16 bottom-0 right-0 border-l border-[rgb(var(--scb-border))]
+              hidden md:block fixed top-16 bottom-0 right-0 
+              ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} border-l
               ${isMultiTasking ? 'w-64' : 'w-80'}
+              ${getAnimationClass('animate-slide-in')}
             `} style={{
               paddingBottom: safeArea.bottom > 0 ? `${safeArea.bottom}px` : 0
             }}>
-              <EnhancedPerplexityNewsBar onAnalyzeNews={handleAnalyzeNews} />
+              <EnhancedPerplexityNewsBar 
+                onAnalyzeNews={handleAnalyzeNews}
+                enableHaptics={preferences.enableHaptics}
+              />
             </div>
           )}
         </div>

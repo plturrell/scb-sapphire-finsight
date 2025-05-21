@@ -1,8 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { useNetworkAwareLoading, useNetworkLazyLoad } from '@/hooks/useNetworkAwareLoading';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useOptimizedImageLoading, useIOSOptimizations } from '@/lib/performance';
 import EnhancedLoadingSpinner from './EnhancedLoadingSpinner';
-import { ImageOff, WifiOff, Wifi, AlertCircle } from 'lucide-react';
+import { ImageOff, WifiOff, Wifi, AlertCircle, LifeBuoy } from 'lucide-react';
 
 interface ImageSource {
   high: string;
@@ -29,12 +30,27 @@ interface EnhancedNetworkAwareImageProps {
   useNextImage?: boolean;
   loadingComponent?: React.ReactNode;
   errorComponent?: React.ReactNode;
+  
+  // Enhanced options
+  blurhash?: string;
+  fadeInDuration?: number;
+  placeholderColor?: string;
+  disableAnimation?: boolean;
+  quality?: 'low' | 'medium' | 'high' | 'auto';
+  optimizationLevel?: 'aggressive' | 'balanced' | 'minimal' | 'none';
+  crossOrigin?: 'anonymous' | 'use-credentials';
+  draggable?: boolean;
+  disableContextMenu?: boolean;
+  formats?: ('webp' | 'avif' | 'jpg' | 'png')[];
+  loadingStrategy?: 'lazy' | 'eager' | 'progressive' | 'deferred';
+  usePlatformOptimizations?: boolean;
 }
 
 /**
  * EnhancedNetworkAwareImage Component
  * A network-aware image component with SCB Beautiful UI styling
  * that adapts loading behavior based on network conditions and device capabilities
+ * Optimized for iOS/iPadOS with advanced caching, progressive loading, and performance adaptation
  */
 export default function EnhancedNetworkAwareImage({
   sources,
@@ -54,15 +70,108 @@ export default function EnhancedNetworkAwareImage({
   useNextImage = false,
   loadingComponent,
   errorComponent,
+  // Enhanced options
+  blurhash,
+  fadeInDuration = 300,
+  placeholderColor,
+  disableAnimation = false,
+  quality = 'auto',
+  optimizationLevel = 'balanced',
+  crossOrigin,
+  draggable = false,
+  disableContextMenu = false,
+  formats = ['webp', 'jpg'],
+  loadingStrategy = 'lazy',
+  usePlatformOptimizations = true,
 }: EnhancedNetworkAwareImageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  
+  // Basic loading hooks
   const { getImageSrc, connection, strategy } = useNetworkAwareLoading();
   const { isVisible, isLoaded } = useNetworkLazyLoad(containerRef);
-  const { prefersColorScheme, tier } = useDeviceCapabilities();
+  const { deviceType, prefersColorScheme, tier, pixelRatio, colorGamut } = useDeviceCapabilities();
+  
+  // iOS optimizations
+  const { optimizations, isIOSDevice } = useIOSOptimizations();
+  
+  // Determine effective loading priority based on device and user preference
+  const effectivePriority = useMemo(() => {
+    if (priority) return 'high';
+    return optimizationLevel === 'aggressive' ? 'low' : 
+           optimizationLevel === 'balanced' ? 'medium' : 'high';
+  }, [priority, optimizationLevel]);
+  
+  // Determine formats based on device support
+  const effectiveFormats = useMemo(() => {
+    // iOS 16+ and modern Safari support AVIF
+    if (isIOSDevice && formats.includes('avif') && 
+        /iPhone OS 16_|iPad OS 16_|Version\/16/.test(navigator.userAgent)) {
+      return ['avif', ...formats.filter(f => f !== 'avif')];
+    }
+    return formats;
+  }, [formats, isIOSDevice]);
+  
+  // Enhanced image loading with iOS optimizations
+  const optimizedSrc = useMemo(() => {
+    const baseImageSrc = sources.high || sources.medium || sources.low || sources.placeholder;
+    
+    // Override with specific quality version if available
+    const qualityOverride = quality === 'high' ? sources.high : 
+                          quality === 'medium' ? sources.medium :
+                          quality === 'low' ? sources.low : undefined;
+                          
+    // If specific quality was requested and available, use it directly                    
+    if (qualityOverride) return qualityOverride;
+    
+    // Otherwise determine best source based on device and network conditions
+    if (optimizations.useLowResTextures || connection.saveData) {
+      return sources.low || sources.medium || sources.placeholder;
+    } else if (tier === 'low' || connection.type === 'slow-2g' || connection.type === '2g') {
+      return sources.medium || sources.low || sources.placeholder;
+    } else if (pixelRatio >= 2 && tier === 'high') {
+      return sources.high || sources.medium;
+    }
+    
+    // Default case
+    return baseImageSrc;
+  }, [sources, connection, tier, pixelRatio, quality, optimizations]);
+  
+  // Use enhanced image loading hook
+  const { 
+    imageSrc, 
+    blurDataURL,
+    isLoaded: isImageLoaded, 
+    loadingProgress,
+    error, 
+    handleImageLoad: onOptimizedImageLoad, 
+    handleImageError: onOptimizedImageError,
+    getImageStyle,
+    getPlaceholderStyle,
+    lowPowerMode
+  } = useOptimizedImageLoading(
+    optimizedSrc,
+    sources.placeholder,
+    {
+      preload: priority,
+      lazyLoad: loadingStrategy === 'lazy',
+      priority: effectivePriority,
+      formats: effectiveFormats,
+      responsive: true,
+      fadeDuration,
+      blurhash,
+      placeholder: blur ? 'blur' : (placeholderColor ? 'color' : 'none'),
+      placeholderColor: placeholderColor || 
+                       (theme === 'dark' ? '#333333' : '#f0f0f0'),
+      crossOrigin
+    }
+  );
+  
+  // Main component states
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
-  const [currentSrc, setCurrentSrc] = useState<string>('');
   const [retryCount, setRetryCount] = useState(0);
+  const [loadingPhase, setLoadingPhase] = useState<'placeholder' | 'low-quality' | 'high-quality'>('placeholder');
   const maxRetries = 2;
 
   // Determine effective theme based on props or system preference
@@ -73,7 +182,7 @@ export default function EnhancedNetworkAwareImage({
     light: {
       primary: 'rgb(var(--scb-honolulu-blue, 0, 114, 170))', // #0072AA
       background: 'white',
-      placeholder: '#f0f0f0',
+      placeholder: placeholderColor || '#f0f0f0',
       text: '#333333',
       textLight: '#666666',
       error: 'rgb(var(--scb-persian-red, 204, 0, 0))', // #CC0000
@@ -87,7 +196,7 @@ export default function EnhancedNetworkAwareImage({
     dark: {
       primary: 'rgb(0, 142, 211)', // Lighter for dark mode
       background: '#121212', 
-      placeholder: '#333333',
+      placeholder: placeholderColor || '#333333',
       text: '#e0e0e0',
       textLight: '#a0a0a0',
       error: 'rgb(255, 99, 99)', // Lighter red for dark mode
@@ -110,15 +219,11 @@ export default function EnhancedNetworkAwareImage({
     rounded === 'lg' ? '12px' :
     rounded === 'full' ? '9999px' : '8px';
 
-  // Determine which image to load
-  useEffect(() => {
-    const src = getImageSrc(sources);
-    setCurrentSrc(src);
-  }, [sources, getImageSrc]);
-
   // Handle image loading
   const handleImageLoad = () => {
     setImageLoading(false);
+    setLoadingPhase('high-quality');
+    onOptimizedImageLoad();
     onLoad?.();
   };
 
@@ -135,20 +240,23 @@ export default function EnhancedNetworkAwareImage({
       let retrySrc = '';
       if (retryCount === 0 && sources.medium) {
         retrySrc = sources.medium;
+        setLoadingPhase('low-quality');
       } else if (sources.low) {
         retrySrc = sources.low;
+        setLoadingPhase('low-quality');
       } else if (sources.placeholder) {
         retrySrc = sources.placeholder;
+        setLoadingPhase('placeholder');
       }
       
       if (retrySrc) {
-        setCurrentSrc(retrySrc);
         setImageError(false);
         setImageLoading(true);
         return;
       }
     }
     
+    onOptimizedImageError(new Error('Failed to load image'));
     onError?.(new Error('Failed to load image'));
   };
 
@@ -157,38 +265,55 @@ export default function EnhancedNetworkAwareImage({
     if (imageError) {
       setImageError(false);
       setImageLoading(true);
-      
-      // Try with original source again
-      const src = getImageSrc(sources);
-      setCurrentSrc(src);
+      setLoadingPhase('placeholder');
+      setRetryCount(0);
     }
   };
 
-  // Preload image if priority
+  // Apply iOS-specific optimizations
   useEffect(() => {
-    if (priority && currentSrc) {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = currentSrc;
-      link.setAttribute('fetchpriority', 'high');
-      document.head.appendChild(link);
-      
-      return () => {
-        document.head.removeChild(link);
-      };
+    if (!imageRef.current || !isIOSDevice || !usePlatformOptimizations) return;
+    
+    // Apply iOS Safari-specific optimizations for better performance
+    const img = imageRef.current;
+    
+    // Apply GPU acceleration for smoother animations on iOS
+    if (!disableAnimation) {
+      img.style.transform = 'translateZ(0)';
+      img.style.backfaceVisibility = 'hidden';
     }
-  }, [priority, currentSrc]);
+    
+    // Apply system-level optimizations based on device state
+    if (optimizations.reducedAnimations || lowPowerMode) {
+      img.style.transition = 'none'; // Disable transitions in low power mode
+    }
+    
+    // Force hardware acceleration for images on iOS
+    img.style.willChange = 'transform';
+    
+    return () => {
+      // Clean up styles
+      img.style.willChange = 'auto';
+    };
+  }, [isIOSDevice, optimizations, disableAnimation, lowPowerMode, usePlatformOptimizations]);
 
-  const shouldShowImage = priority || isLoaded || connection.saveData;
-  const showPlaceholder = !shouldShowImage || imageLoading;
+  // Determine if we should show image or placeholder
+  const shouldShowImage = priority || isLoaded || connection.saveData || loadingStrategy === 'eager';
+  const showPlaceholder = !isImageLoaded || imageLoading;
 
+  // Apply iOS optimizations to container style
   const containerStyle: React.CSSProperties = {
     borderRadius,
     border: `1px solid ${currentColors.border}`,
     overflow: 'hidden',
     position: 'relative',
-    ...(aspectRatio ? { paddingBottom: `${(1 / aspectRatio) * 100}%` } : {})
+    ...(aspectRatio ? { paddingBottom: `${(1 / aspectRatio) * 100}%` } : {}),
+    // iOS optimizations
+    ...(isIOSDevice && usePlatformOptimizations ? {
+      WebkitTapHighlightColor: 'transparent', // Remove tap highlight on iOS
+      WebkitTouchCallout: disableContextMenu ? 'none' : 'default', // Disable context menu if requested
+      transform: disableAnimation ? 'none' : 'translateZ(0)', // Force GPU acceleration
+    } : {})
   };
 
   // Get network status color
@@ -206,6 +331,45 @@ export default function EnhancedNetworkAwareImage({
   const NetworkIcon = connection.type === 'offline' ? WifiOff : 
     (connection.type === 'slow-2g' || connection.type === '2g') ? AlertCircle : Wifi;
 
+  // Determine loading indicator based on device capabilities and loading progress
+  const LoadingIndicator = () => {
+    // Show progress bar on iOS for better UX
+    if (isIOSDevice && usePlatformOptimizations && loadingProgress > 0 && loadingProgress < 100) {
+      return (
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 bg-opacity-30">
+          <div 
+            className="h-full bg-white"
+            style={{ 
+              width: `${loadingProgress}%`,
+              transition: 'width 0.3s ease-out'
+            }}
+          />
+        </div>
+      );
+    }
+    
+    // Default spinner for other devices
+    return <EnhancedLoadingSpinner size="sm" theme={theme} />;
+  };
+
+  // Power mode indicator for iOS
+  const PowerModeIndicator = () => {
+    if (!isIOSDevice || !usePlatformOptimizations || !lowPowerMode) return null;
+    
+    return (
+      <div 
+        className="absolute bottom-2 left-2 text-xs px-1.5 py-0.5 rounded flex items-center gap-1"
+        style={{ 
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          color: 'white',
+        }}
+      >
+        <LifeBuoy className="w-2.5 h-2.5" />
+        <span className="text-[10px]">Low Power</span>
+      </div>
+    );
+  };
+
   return (
     <div
       ref={containerRef}
@@ -213,21 +377,39 @@ export default function EnhancedNetworkAwareImage({
       style={containerStyle}
       role="img"
       aria-label={alt}
+      onContextMenu={disableContextMenu ? e => e.preventDefault() : undefined}
     >
-      {/* Loading placeholder */}
-      {showPlaceholder && !loadingComponent && (
+      {/* Blur hash placeholder */}
+      {(showPlaceholder || !isImageLoaded) && blurDataURL && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ 
+            backgroundImage: `url(${blurDataURL})`,
+            filter: 'blur(20px)',
+            transform: 'scale(1.2)',
+            opacity: isImageLoaded ? 0 : 1,
+            transition: `opacity ${fadeInDuration}ms ease-out`,
+          }}
+        />
+      )}
+      
+      {/* Color placeholder */}
+      {(showPlaceholder || !isImageLoaded) && !blurDataURL && (
         <div 
           className={`absolute inset-0 ${blur ? 'backdrop-blur-sm' : ''}`}
           style={{ 
             backgroundColor: currentColors.placeholder,
-            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            opacity: isImageLoaded ? 0 : 1,
+            transition: `opacity ${fadeInDuration}ms ease-out`,
+            animation: disableAnimation ? 'none' : 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
           }}
-        >
-          {imageLoading && !imageError && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <EnhancedLoadingSpinner size="sm" theme={theme} />
-            </div>
-          )}
+        />
+      )}
+      
+      {/* Loading indicator */}
+      {imageLoading && !imageError && !loadingComponent && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <LoadingIndicator />
         </div>
       )}
       
@@ -238,24 +420,32 @@ export default function EnhancedNetworkAwareImage({
         </div>
       )}
 
-      {/* Main image */}
-      {shouldShowImage && currentSrc && !imageError && !useNextImage && (
+      {/* Main image with iOS optimizations */}
+      {shouldShowImage && imageSrc && !imageError && !useNextImage && (
         <img
-          src={currentSrc}
+          ref={imageRef}
+          src={imageSrc}
           alt={alt}
           className="absolute inset-0 w-full h-full horizon-image"
           style={{ 
+            ...getImageStyle(),
             objectFit,
-            opacity: imageLoading ? 0 : 1,
-            transition: 'opacity 0.3s ease-out',
             filter: theme === 'dark' ? 'brightness(0.9)' : 'none',
+            // iOS optimizations
+            ...(isIOSDevice && usePlatformOptimizations ? {
+              WebkitBackfaceVisibility: 'hidden',
+              WebkitPerspective: '1000',
+              WebkitTransform: 'translate3d(0,0,0)',
+              WebkitTransformStyle: 'preserve-3d',
+            } : {})
           }}
           loading={priority ? 'eager' : 'lazy'}
-          decoding="async"
+          decoding={isIOSDevice ? 'sync' : 'async'} // Use sync decoding on iOS for better perceived performance
           onLoad={handleImageLoad}
           onError={handleImageError}
           fetchPriority={priority ? 'high' : 'auto'}
-          quality={Math.round(strategy.compressionQuality * 100)}
+          crossOrigin={crossOrigin}
+          draggable={draggable}
         />
       )}
 
@@ -319,7 +509,7 @@ export default function EnhancedNetworkAwareImage({
         </div>
       )}
 
-      {/* Network indicator */}
+      {/* Network indicators */}
       {showNetworkIndicator && connection.saveData && (
         <div 
           className="absolute top-2 right-2 text-xs px-2 py-1 rounded-sm flex items-center gap-1"
@@ -332,6 +522,23 @@ export default function EnhancedNetworkAwareImage({
           <span>Data Saver</span>
         </div>
       )}
+      
+      {/* Loading progress indicator (when visible) */}
+      {shouldShowImage && loadingProgress > 0 && loadingProgress < 100 && !imageLoading && (
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-200 bg-opacity-30">
+          <div 
+            className="h-full"
+            style={{ 
+              width: `${loadingProgress}%`,
+              backgroundColor: currentColors.primary,
+              transition: 'width 0.3s ease-out'
+            }}
+          />
+        </div>
+      )}
+      
+      {/* iOS low power mode indicator */}
+      <PowerModeIndicator />
     </div>
   );
 }

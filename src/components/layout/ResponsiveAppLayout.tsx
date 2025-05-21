@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import ModernLayout from '../ModernLayout';
 import MultiTaskingLayout from './MultiTaskingLayout';
 import useMultiTasking from '../../hooks/useMultiTasking';
 import useSafeArea from '../../hooks/useSafeArea';
 import { haptics } from '../../lib/haptics';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import EnhancedLayout from '../EnhancedLayout';
 
 interface ResponsiveAppLayoutProps {
   children: React.ReactNode;
@@ -34,6 +36,7 @@ const ResponsiveAppLayout: React.FC<ResponsiveAppLayoutProps> = ({
   onModeChange
 }) => {
   const router = useRouter();
+  const { preferences, isDarkMode } = useUIPreferences();
   const [isMounted, setIsMounted] = useState(false);
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
@@ -59,8 +62,8 @@ const ResponsiveAppLayout: React.FC<ResponsiveAppLayoutProps> = ({
     setIsIOS(isIOS);
     setPlatformDetected(true);
     
-    // Provide haptic feedback when layout is first mounted
-    if (isIOS) {
+    // Provide haptic feedback when layout is first mounted if enabled
+    if (isIOS && preferences.enableHaptics) {
       haptics.light();
     }
   }, []);
@@ -75,16 +78,20 @@ const ResponsiveAppLayout: React.FC<ResponsiveAppLayoutProps> = ({
   // Show fallback during SSR or before detection
   if (!isMounted || !isPlatformDetected) {
     return (
-      <ModernLayout>
+      <EnhancedLayout
+        title={pageTitle}
+        headerStyle={preferences.headerStyle}
+        sidebarExpanded={preferences.sidebarExpanded}
+      >
         <div className="w-full">
           {pageTitle && (
-            <h1 className="text-2xl font-bold mb-6">
+            <h1 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
               {pageTitle}
             </h1>
           )}
           {children}
         </div>
-      </ModernLayout>
+      </EnhancedLayout>
     );
   }
 
@@ -127,18 +134,17 @@ const ResponsiveAppLayout: React.FC<ResponsiveAppLayoutProps> = ({
     );
   }
 
-  // Use standard layout for non-iPad devices
+  // Use enhanced layout for non-iPad devices
   return (
-    <ModernLayout>
-      <div className="w-full">
-        {pageTitle && (
-          <h1 className="text-2xl font-bold mb-6">
-            {pageTitle}
-          </h1>
-        )}
+    <EnhancedLayout
+      title={pageTitle}
+      headerStyle={preferences.headerStyle}
+      sidebarExpanded={preferences.sidebarExpanded}
+    >
+      <div className={`w-full ${preferences.layoutDensity === 'compact' ? 'space-y-3' : preferences.layoutDensity === 'spacious' ? 'space-y-6' : 'space-y-4'}`}>
         {children}
       </div>
-    </ModernLayout>
+    </EnhancedLayout>
   );
 };
 

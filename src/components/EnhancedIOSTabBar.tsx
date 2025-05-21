@@ -1,19 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities';
 import { useApplePhysics } from '../hooks/useApplePhysics';
-import { useSafeArea, safeAreaCss } from '../hooks/useSafeArea';
+import { useSafeArea } from '../hooks/useSafeArea';
 import haptics from '../lib/haptics';
+import { Icon, useIconSystem } from './IconSystem';
+import EnhancedIOSIcon from './EnhancedIOSIcon';
+import { useSFSymbolsSupport } from '../lib/sf-symbols';
 
 export interface IOSTabItem {
   key: string;
   label: string;
-  icon: React.ReactNode;
-  activeIcon?: React.ReactNode; // Optional different icon for active state
+  // Support for SF Symbol names and legacy React nodes
+  icon: string | React.ReactNode;
+  activeIcon?: string | React.ReactNode; // Optional different icon for active state
   href: string;
   badge?: number | string; // Optional badge count/text
   badgeColor?: string; // Optional badge color
   disabled?: boolean;
+  // iOS-specific properties
+  sfSymbolVariant?: 'none' | 'fill';
+  sfSymbolWeight?: 'regular' | 'medium' | 'semibold';
 }
 
 export interface EnhancedIOSTabBarProps {
@@ -43,8 +50,16 @@ export interface EnhancedIOSTabBarProps {
  * Enhanced iOS Tab Bar
  * 
  * A tab bar navigation component that follows iOS design guidelines with
- * proper animations, haptic feedback, and automatic adaptation for
+ * proper animations, haptic feedback, SF Symbols integration, and automatic adaptation for
  * different iOS devices (including notches, home indicators, etc.)
+ * 
+ * Features:
+ * - Native SF Symbols support on iOS/iPadOS
+ * - Automatic fallback to appropriate icons on other platforms
+ * - System-adaptive appearance (dark mode, reduced motion)
+ * - Safe area awareness (home indicator, notches)
+ * - Haptic feedback
+ * - Floating or standard styles
  */
 const EnhancedIOSTabBar: React.FC<EnhancedIOSTabBarProps> = ({
   items,
@@ -73,6 +88,8 @@ const EnhancedIOSTabBar: React.FC<EnhancedIOSTabBarProps> = ({
     motion: animated && !prefersReducedMotion ? 'emphasized' : 'subtle',
     respectReduceMotion: true
   });
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const iconSystem = useIconSystem();
   
   // Determine active tab based on router or prop
   const [activeTab, setActiveTab] = useState<string>('');
@@ -105,6 +122,44 @@ const EnhancedIOSTabBar: React.FC<EnhancedIOSTabBarProps> = ({
   // Determine effective theme
   const effectiveTheme = theme === 'auto' ? prefersColorScheme : theme;
   const isDark = effectiveTheme === 'dark';
+  
+  // Helper to render the appropriate icon based on type
+  const renderTabIcon = (item: IOSTabItem, isActive: boolean, isDark: boolean) => {
+    const activeColor = isDark ? 'rgb(10, 132, 255)' : 'rgb(0, 122, 255)';
+    const inactiveColor = isDark ? 'rgb(170, 170, 170)' : 'rgb(130, 130, 130)';
+    const iconToRender = isActive && item.activeIcon ? item.activeIcon : item.icon;
+    
+    // If icon is a string, treat it as SF Symbol name
+    if (typeof iconToRender === 'string') {
+      // Use EnhancedIOSIcon for best iOS integration
+      if (isAppleDevice && sfSymbolsSupported) {
+        return (
+          <EnhancedIOSIcon
+            name={iconToRender}
+            size={24}
+            color={isActive ? activeColor : inactiveColor}
+            variant={isActive ? (item.sfSymbolVariant || 'fill') : 'none'}
+            weight={isActive ? (item.sfSymbolWeight || 'semibold') : 'regular'}
+            renderingMode="hierarchical"
+            role="navigation"
+            adaptToSystem={true}
+          />
+        );
+      }
+      
+      // Fall back to universal Icon component
+      return (
+        <Icon
+          name={iconToRender}
+          size={24}
+          color={isActive ? activeColor : inactiveColor}
+        />
+      );
+    }
+    
+    // If icon is a React node, render it directly
+    return iconToRender;
+  };
   
   // Determine tab bar height based on device and settings
   const getTabBarHeight = () => {
@@ -247,8 +302,8 @@ const EnhancedIOSTabBar: React.FC<EnhancedIOSTabBarProps> = ({
                     transition: animated ? `color ${physics.duration}ms ease-in-out` : 'none'
                   }}
                 >
-                  {/* Show active or inactive icon */}
-                  {isActive && item.activeIcon ? item.activeIcon : item.icon}
+                  {/* Render icon based on type (SF Symbol string or React node) */}
+                  {renderTabIcon(item, isActive, isDark)}
                   
                   {/* Badge (if present) */}
                   {item.badge && (

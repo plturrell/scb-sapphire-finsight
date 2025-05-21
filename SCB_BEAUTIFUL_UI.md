@@ -200,53 +200,70 @@ These specialized components provide Monte Carlo simulation capabilities for Vie
 
 We've added extensive optimizations for Apple platforms to achieve a 9.8/10 UI rating across all channels:
 
-1. **Platform-specific Animation Physics**
+1. **SF Symbols Integration**
+   - Native Apple SF Symbols support with cross-platform fallbacks
+   - Hierarchical rendering, multi-color support, and animations
+   - Path: `/src/lib/sf-symbols.ts` and `/src/components/SFSymbol.tsx`
+
+2. **Enhanced Icon System**
+   - Universal icon component with platform-specific optimizations
+   - Automatic selection of appropriate icon system based on platform
+   - Path: `/src/components/IconSystem.tsx` and `/src/components/EnhancedIOSIcon.tsx`
+
+3. **iOS Navigation Components**
+   - Complete suite of native iOS-style navigation with SF Symbols integration
+   - Navigation Bar: Top bar with large titles, back buttons and action items
+   - Tab Bar: Bottom navigation with safe area support and haptic feedback
+   - Breadcrumb: Adaptive breadcrumb trail with compact mode for small screens
+   - Path: `/src/components/EnhancedIOSNavBar.tsx`, `/src/components/EnhancedIOSTabBar.tsx`, and `/src/components/EnhancedIOSBreadcrumb.tsx`
+
+4. **Platform-specific Animation Physics**
    - Apple-calibrated spring animations matching native iOS, iPadOS, and macOS
    - Path: `/src/hooks/useApplePhysics.ts`
 
-2. **Safe Area Handling**
+5. **Safe Area Handling**
    - Comprehensive support for notched devices, Dynamic Island, and home indicators
    - Path: `/src/hooks/useSafeArea.ts`
 
-3. **Haptic Feedback**
+6. **Haptic Feedback**
    - iOS-style haptic patterns for interactive elements
    - Path: `/src/lib/haptics.ts`
 
-4. **macOS Sonoma-style Dialog**
+7. **macOS Sonoma-style Dialog**
    - Translucent backdrop effects with frosted glass appearance
    - Path: `/src/components/EnhancedSonomaDialog.tsx`
 
-5. **iOS Tab Bar Navigation**
-   - iOS-styled bottom tab bar navigation with safe area support
-   - Path: `/src/components/EnhancedIOSTabBar.tsx`
-
-6. **Safari Form Controls**
+8. **Safari Form Controls**
    - Platform-optimized input and select controls with iOS styling
    - Path: `/src/components/EnhancedSafariInput.tsx` and `/src/components/EnhancedSafariSelect.tsx`
 
-7. **iPad Multi-tasking Support**
+9. **iPad Multi-tasking Support**
    - Optimized layouts for Split View, Slide Over, and Stage Manager
    - Path: `/src/hooks/useMultiTasking.ts` and `/src/components/layout/MultiTaskingLayout.tsx`
 
-8. **iPadOS Drag and Drop**
-   - Cross-window drag and drop support for iPad multi-tasking
-   - Path: `/src/hooks/useDragAndDrop.ts`
+10. **iPadOS Drag and Drop**
+    - Cross-window drag and drop support for iPad multi-tasking
+    - Path: `/src/hooks/useDragAndDrop.ts`
 
-9. **Apple Pencil Support**
-   - Pressure-sensitive drawing and annotations for charts
-   - Path: `/src/components/charts/EnhancedPencilChart.tsx`
+11. **Apple Pencil Support**
+    - Pressure-sensitive drawing and annotations for charts
+    - Path: `/src/components/charts/EnhancedPencilChart.tsx`
 
-10. **iOS-optimized Data Visualization**
+12. **iOS-optimized Data Visualization**
     - Mobile-optimized charts with iOS-specific interaction patterns
     - Path: `/src/components/charts/EnhancedIOSDataVisualization.tsx`
 
-11. **iPad Gesture Support**
+13. **iPad Gesture Support**
     - Multi-touch gesture recognition for pinch, rotate, and swipe
     - Path: `/src/hooks/useGestures.ts` and `/src/components/EnhancedGestureView.tsx`
 
-12. **Adaptive Loading**
+14. **Adaptive Loading**
     - Network and device capability aware loading strategies
     - Path: `/src/components/NetworkAwareDataLoader.tsx` and `/src/hooks/useDeviceCapabilities.ts`
+
+15. **Demo Pages**
+    - Showcases for iOS navigation and icon system
+    - Path: `/src/pages/ios-navigation-demo.tsx`
 
 ## Style Variables
 
@@ -263,9 +280,9 @@ The core styling variables are defined in `/src/styles/globals.css` and include:
 - Dark mode variables
 - Platform-specific variables for iOS, iPadOS, and macOS
 
-## Usage Example
+## Usage Examples
 
-Here's a quick example of how to use these enhanced components:
+### Complete Dashboard with Financial Data Visualization
 
 ```tsx
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
@@ -399,6 +416,142 @@ export default function Dashboard() {
         </>
       )}
     </ScbBeautifulUI>
+  );
+}
+```
+
+### iOS-style Navigation with SF Symbols
+
+```tsx
+import { IconSystemProvider } from '@/components/IconSystem';
+import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
+import EnhancedIOSTabBar from '@/components/EnhancedIOSTabBar';
+import EnhancedIOSBreadcrumb from '@/components/EnhancedIOSBreadcrumb';
+import { ICONS } from '@/components/IconSystem';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useRouter } from 'next/router';
+
+export default function IOSStyleApp() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('home');
+  const { prefersColorScheme } = useDeviceCapabilities();
+  const isDark = prefersColorScheme === 'dark';
+  
+  // Handle tab changes
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    router.push(`/app?tab=${key}`, undefined, { shallow: true });
+  };
+  
+  // Define tabs with SF Symbol names
+  const tabs = [
+    {
+      key: 'home',
+      label: 'Home',
+      icon: ICONS.HOME,
+      href: '/app?tab=home',
+      sfSymbolVariant: 'fill',
+    },
+    {
+      key: 'analytics',
+      label: 'Analytics',
+      icon: 'chart.bar.xaxis',
+      activeIcon: 'chart.bar.fill.xaxis',
+      href: '/app?tab=analytics',
+    },
+    {
+      key: 'reports',
+      label: 'Reports',
+      icon: 'doc.text',
+      href: '/app?tab=reports',
+      badge: 3,
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: ICONS.SETTINGS,
+      href: '/app?tab=settings',
+    },
+  ];
+  
+  // Define breadcrumbs based on active tab
+  const getBreadcrumbs = () => {
+    const basePath = [
+      { label: 'Home', href: '/app?tab=home', icon: 'house' }
+    ];
+    
+    switch(activeTab) {
+      case 'analytics':
+        return [
+          ...basePath,
+          { label: 'Analytics', href: '/app?tab=analytics', icon: 'chart.bar.xaxis' }
+        ];
+      case 'reports':
+        return [
+          ...basePath,
+          { label: 'Reports', href: '/app?tab=reports', icon: 'doc.text' }
+        ];
+      case 'settings':
+        return [
+          ...basePath,
+          { label: 'Settings', href: '/app?tab=settings', icon: 'gear' }
+        ];
+      default:
+        return basePath;
+    }
+  };
+
+  return (
+    <IconSystemProvider>
+      <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+        {/* iOS Navigation Bar */}
+        <EnhancedIOSNavBar 
+          title={activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+          subtitle="SCB Financial Application"
+          largeTitle={true}
+          blurred={true}
+          showBackButton={activeTab !== 'home'}
+          theme={isDark ? 'dark' : 'light'}
+          rightActions={[
+            {
+              icon: 'person.crop.circle',
+              label: 'Profile',
+              onPress: () => {}
+            }
+          ]}
+          respectSafeArea={true}
+          hapticFeedback={true}
+        />
+        
+        {/* Breadcrumb Navigation */}
+        <div className={`px-4 py-2 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+          <EnhancedIOSBreadcrumb 
+            items={getBreadcrumbs()}
+            showIcons={true}
+            hapticFeedback={true}
+            theme={isDark ? 'dark' : 'light'}
+          />
+        </div>
+        
+        {/* Content Area */}
+        <main className="p-4 pb-20">
+          {/* Your page content goes here */}
+        </main>
+        
+        {/* iOS-style Tab Bar */}
+        <EnhancedIOSTabBar 
+          items={tabs}
+          currentTab={activeTab}
+          onChange={handleTabChange}
+          blurred={true}
+          floating={true}
+          hapticFeedback={true}
+          showLabels={true}
+          theme={isDark ? 'dark' : 'light'}
+          respectSafeArea={true}
+        />
+      </div>
+    </IconSystemProvider>
   );
 }
 ```

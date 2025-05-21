@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 // Define the UI preferences interface
 export interface UIPreferences {
@@ -97,53 +97,74 @@ export const UIPreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
   
-  // Update dark mode based on preferences and system preference
+  // Set up system theme preference listener once
   useEffect(() => {
-    const updateDarkMode = () => {
-      const { theme } = preferences;
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       
-      if (theme === 'dark') {
-        setIsDarkMode(true);
-        return;
-      }
+      // Initial check
+      const systemPrefersDark = mediaQuery.matches;
       
-      if (theme === 'light') {
-        setIsDarkMode(false);
-        return;
-      }
-      
-      // For 'system' theme, check system preference
-      if (typeof window !== 'undefined') {
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        setIsDarkMode(systemPrefersDark);
-        
-        // Add listener for system preference changes
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleChange = (e: MediaQueryListEvent) => {
+      // Handler for preference changes
+      const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+        if (preferences.theme === 'system') {
           setIsDarkMode(e.matches);
-        };
-        
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
-      }
-    };
+        }
+      };
+      
+      // Add listener
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+      
+      // Cleanup
+      return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    }
+  }, [preferences.theme]); // Only recreate when theme preference changes
+  
+  // Update dark mode based on preferences
+  useEffect(() => {
+    const { theme } = preferences;
     
-    updateDarkMode();
+    if (theme === 'dark') {
+      setIsDarkMode(true);
+      return;
+    }
+    
+    if (theme === 'light') {
+      setIsDarkMode(false);
+      return;
+    }
+    
+    // For 'system' theme, check system preference
+    if (typeof window !== 'undefined') {
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(systemPrefersDark);
+    }
   }, [preferences.theme]);
   
-  // Apply theme to document
+  // Apply theme to document with smooth transitions
   useEffect(() => {
     if (typeof document !== 'undefined') {
+      // Add transition class first
+      document.documentElement.classList.add('theme-transition');
+      
+      // Toggle dark mode class
       if (isDarkMode) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
+      
+      // Remove transition class after the transition completes to avoid interfering with other animations
+      const transitionTimeout = setTimeout(() => {
+        document.documentElement.classList.remove('theme-transition');
+      }, 300); // Should match the transition duration in CSS
+      
+      return () => clearTimeout(transitionTimeout);
     }
   }, [isDarkMode]);
   
-  // Update a single preference
-  const setPreference = <K extends keyof UIPreferences>(key: K, value: UIPreferences[K]) => {
+  // Update a single preference - memoized to avoid recreating on every render
+  const setPreference = useCallback(<K extends keyof UIPreferences>(key: K, value: UIPreferences[K]) => {
     setPreferences(prev => ({
       ...prev,
       [key]: value
@@ -161,10 +182,10 @@ export const UIPreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error('Error saving UI preferences:', error);
     }
-  };
+  }, [preferences]);
   
-  // Reset all preferences to defaults
-  const resetPreferences = () => {
+  // Reset all preferences to defaults - memoized
+  const resetPreferences = useCallback(() => {
     setPreferences(defaultPreferences);
     
     try {
@@ -174,10 +195,10 @@ export const UIPreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error('Error resetting UI preferences:', error);
     }
-  };
+  }, []);
   
-  // Save all current preferences to storage
-  const savePreferences = () => {
+  // Save all current preferences to storage - memoized
+  const savePreferences = useCallback(() => {
     try {
       if (typeof window !== 'undefined') {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
@@ -185,18 +206,19 @@ export const UIPreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       console.error('Error saving UI preferences:', error);
     }
-  };
+  }, [preferences]);
+  
+  // Memoize context value to prevent unnecessary renders
+  const contextValue = useMemo(() => ({
+    preferences,
+    setPreference,
+    resetPreferences,
+    savePreferences,
+    isDarkMode
+  }), [preferences, setPreference, resetPreferences, savePreferences, isDarkMode]);
   
   return (
-    <UIPreferencesContext.Provider 
-      value={{ 
-        preferences, 
-        setPreference, 
-        resetPreferences, 
-        savePreferences,
-        isDarkMode
-      }}
-    >
+    <UIPreferencesContext.Provider value={contextValue}>
       {children}
     </UIPreferencesContext.Provider>
   );

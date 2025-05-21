@@ -1,0 +1,188 @@
+/**
+ * SCB Accessibility Styles
+ * 
+ * These styles apply enhancements for various accessibility preferences.
+ * They're designed to be toggled via classes on the <html> element.
+ */
+
+/* High Contrast Mode */
+:root.high-contrast {
+  /* Increase text contrast */
+  --foreground: 0 0% 0%; /* Black text for light mode */
+  --background: 0 0% 100%; /* White background for light mode */
+  
+  /* Stronger borders */
+  --border: 0 0% 40%; /* Darker borders */
+  
+  /* Increased contrast for interactive elements */
+  --primary: 215 100% 40%; /* Deeper blue */
+  --primary-foreground: 0 0% 100%; /* White text on primary */
+  
+  /* Secondary elements with higher contrast */
+  --secondary: 0 0% 20%; /* Very dark gray */
+  --secondary-foreground: 0 0% 100%; /* White text */
+  
+  /* Alert colors with stronger contrast */
+  --destructive: 0 100% 40%; /* Deeper red */
+  --success: 120 100% 25%; /* Deeper green */
+  --warning: 35 100% 45%; /* More visible orange */
+  
+  /* Increase button contrast */
+  --fiori-button-primary-bg: 215 100% 40%; /* Deeper blue */
+  --fiori-button-secondary-bg: 0 0% 95%; /* Near white */
+}
+
+/* High Contrast Dark Mode */
+:root.dark-mode.high-contrast {
+  /* High contrast dark theme */
+  --foreground: 0 0% 100%; /* White text */
+  --background: 0 0% 0%; /* Black background */
+  
+  /* Stronger borders for dark mode */
+  --border: 0 0% 70%; /* Light gray borders */
+  
+  /* Increased contrast for dark mode elements */
+  --primary: 215 100% 65%; /* Brighter blue */
+  --primary-foreground: 0 0% 0%; /* Black text on primary */
+  
+  /* Dark mode secondary with higher contrast */
+  --secondary: 0 0% 80%; /* Light gray */
+  --secondary-foreground: 0 0% 0%; /* Black text */
+  
+  /* Alert colors with higher visibility in dark mode */
+  --destructive: 0 100% 70%; /* Brighter red */
+  --success: 120 100% 60%; /* Brighter green */
+  --warning: 40 100% 70%; /* Brighter yellow */
+  
+  /* Increase button contrast */
+  --fiori-button-primary-bg: 215 100% 65%; /* Brighter blue */
+  --fiori-button-secondary-bg: 0 0% 80%; /* Light gray */
+}
+
+/* Apply a thicker focus ring in high contrast mode */
+:root.high-contrast *:focus {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduced Motion Preferences */
+:root.hide-animations * {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+/* Even with reduced motion enabled, display focus outlines */
+@media (prefers-reduced-motion: reduce) {
+  :root:not(.show-animations) * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+  
+  /* Preserve focus indicators */
+  :focus {
+    outline: auto;
+  }
+}
+
+/* Reduced Sidebars for more content space */
+:root.reduce-sidebars .fiori-sidebar,
+:root.reduce-sidebars .sapui5-sidebar,
+:root.reduce-sidebars [role="complementary"] {
+  width: 12rem !important; /* Reduced from 16rem */
+  min-width: 12rem !important;
+}
+
+@media (max-width: 768px) {
+  :root.reduce-sidebars .fiori-sidebar,
+  :root.reduce-sidebars .sapui5-sidebar,
+  :root.reduce-sidebars [role="complementary"] {
+    width: 8rem !important;
+    min-width: 8rem !important;
+  }
+  
+  /* Hide sidebar text, show only icons */
+  :root.reduce-sidebars .fiori-sidebar-item span,
+  :root.reduce-sidebars .sapui5-sidebar-item span {
+    display: none;
+  }
+}
+
+/* Hide notifications */
+:root.hide-notifications .notification-badge,
+:root.hide-notifications [role="alert"]:not(.critical),
+:root.hide-notifications [aria-live="polite"] {
+  display: none !important;
+}
+
+/* Font scaling support - handled mostly via JS */
+@media (min-resolution: 96dpi) {
+  :root {
+    font-size: 16px; /* Base font size */
+  }
+}
+
+/* Support for screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Better color contrast for specific components */
+:root.high-contrast .fiori-btn-primary {
+  background-color: hsl(215, 100%, 40%);
+}
+
+:root.high-contrast.dark-mode .fiori-btn-primary {
+  background-color: hsl(215, 100%, 65%);
+  color: #000;
+}
+
+/* Better keyboard focus indicators */
+:root.high-contrast a:focus,
+:root.high-contrast button:focus,
+:root.high-contrast input:focus,
+:root.high-contrast select:focus,
+:root.high-contrast textarea:focus {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 2px !important;
+}
+
+/* Better indication of clickable elements */
+:root.high-contrast a,
+:root.high-contrast button,
+:root.high-contrast [role="button"] {
+  text-decoration: underline;
+}
+
+/* Skip navigation link - visible only on focus */
+.skip-nav {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  z-index: 9999;
+  padding: 0.5rem 1rem;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-weight: 500;
+  text-decoration: none;
+  border: 2px solid hsl(var(--border));
+}
+
+.skip-nav:focus {
+  top: 0.5rem;
+  left: 0.5rem;
+}
+
+/* Helper for scaling touch targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}

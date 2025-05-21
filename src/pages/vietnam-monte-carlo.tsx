@@ -329,12 +329,19 @@ const VietnamMonteCarloPage: NextPage = () => {
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <ModernLayout>
+      <ScbBeautifulUI 
+        pageTitle="Vietnam Monte Carlo" 
+        showTabs={isAppleDevice}
+        showNewsBar={!isMultiTasking && !isIPad}
+      >
         <Head>
           <title>Vietnam Tariff Monte Carlo Simulation | SCB FinSight</title>
         </Head>
 
-        <Container maxWidth="xl">
+        <Container 
+          maxWidth={isMultiTasking && mode === 'slide-over' ? false : "xl"}
+          sx={{ px: isMultiTasking && mode === 'slide-over' ? 1 : 2 }}
+        >
           <Box sx={{ mb: 4 }}>
             <Typography variant="h4" component="h1" gutterBottom>
               Tariff Monte Carlo Simulation
@@ -352,7 +359,13 @@ const VietnamMonteCarloPage: NextPage = () => {
               <Button 
                 color="inherit" 
                 size="small" 
-                onClick={() => setError(null)}
+                onClick={() => {
+                  // Provide light haptic feedback for dismissal on Apple devices
+                  if (isAppleDevice) {
+                    haptics.light();
+                  }
+                  setError(null);
+                }}
               >
                 Dismiss
               </Button>
@@ -412,40 +425,64 @@ const VietnamMonteCarloPage: NextPage = () => {
 
           {/* Action Buttons */}
           <Grid item xs={12}>
-            <Paper elevation={0} sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.12)' }}>
+            <Paper elevation={0} sx={{ p: isMultiTasking && mode === 'slide-over' ? 1 : 2, border: '1px solid rgba(0, 0, 0, 0.12)' }}>
               <Grid container spacing={2} justifyContent="space-between">
                 <Grid item>
-                  <Button
-                    variant="contained"
-                    startIcon={<Play />}
-                    disabled={simulationStatus === 'running' || !config}
-                    onClick={() => config && handleRunSimulation(config)}
-                    sx={{ 
-                      bgcolor: '#042278', 
-                      '&:hover': { bgcolor: '#031a5e' }
-                    }}
-                  >
-                    {simulationStatus === 'running' ? (
-                      <>
-                        <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
-                        Running Simulation
-                      </>
-                    ) : 'Run Simulation'}
-                  </Button>
+                  {isAppleDevice && isPlatformDetected ? (
+                    <EnhancedTouchButton
+                      variant="primary"
+                      label={simulationStatus === 'running' ? "Running Simulation" : "Run Simulation"}
+                      iconLeft={simulationStatus === 'running' ? 
+                        <CircularProgress size={20} color="inherit" /> : 
+                        <Play className="w-4 h-4" />
+                      }
+                      onClick={() => config && handleRunSimulation(config)}
+                      disabled={simulationStatus === 'running' || !config}
+                      isLoading={simulationStatus === 'running'}
+                    />
+                  ) : (
+                    <Button
+                      variant="contained"
+                      startIcon={<Play />}
+                      disabled={simulationStatus === 'running' || !config}
+                      onClick={() => config && handleRunSimulation(config)}
+                      sx={{ 
+                        bgcolor: '#042278', 
+                        '&:hover': { bgcolor: '#031a5e' }
+                      }}
+                    >
+                      {simulationStatus === 'running' ? (
+                        <>
+                          <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
+                          Running Simulation
+                        </>
+                      ) : 'Run Simulation'}
+                    </Button>
+                  )}
                 </Grid>
                 <Grid item>
-                  <Button
-                    variant="contained"
-                    startIcon={<Download />}
-                    disabled={simulationStatus !== 'completed'}
-                    onClick={handleGenerateReport}
-                    sx={{ 
-                      bgcolor: '#3267d4', 
-                      '&:hover': { bgcolor: '#2a55b2' }
-                    }}
-                  >
-                    Generate Detailed Report
-                  </Button>
+                  {isAppleDevice && isPlatformDetected ? (
+                    <EnhancedTouchButton
+                      variant="secondary"
+                      label="Generate Detailed Report"
+                      iconLeft={<Download className="w-4 h-4" />}
+                      onClick={handleGenerateReport}
+                      disabled={simulationStatus !== 'completed'}
+                    />
+                  ) : (
+                    <Button
+                      variant="contained"
+                      startIcon={<Download />}
+                      disabled={simulationStatus !== 'completed'}
+                      onClick={handleGenerateReport}
+                      sx={{ 
+                        bgcolor: '#3267d4', 
+                        '&:hover': { bgcolor: '#2a55b2' }
+                      }}
+                    >
+                      Generate Detailed Report
+                    </Button>
+                  )}
                 </Grid>
               </Grid>
             </Paper>
@@ -472,7 +509,7 @@ const VietnamMonteCarloPage: NextPage = () => {
           </Typography>
         </Box>
       </Container>
-    </ModernLayout>
+    </ScbBeautifulUI>
     </ThemeProvider>
   );
 };

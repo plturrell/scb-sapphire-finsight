@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import DashboardLayout from '../components/layout/DashboardLayout';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import TariffAlertDashboard from '../components/TariffAlertDashboard';
 import VietnamTariffVisualization from '../components/VietnamTariffVisualization';
 import { OntologyManager } from '../services/OntologyManager';
@@ -9,8 +9,17 @@ import { SearchManager } from '../services/SearchManager';
 import { NotificationCenter } from '../services/NotificationCenter';
 import { VietnamTariffAnalyzer } from '../services/VietnamTariffAnalyzer';
 import { TariffAlert } from '../types';
-import { Tabs, Tab, Box, Typography, Alert, AlertTitle, Button } from '@mui/material';
-import { Briefcase, Map, BarChart2, AlertTriangle } from 'lucide-react';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { useIOS, useMediaQuery } from '../hooks/useResponsive';
+import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities';
+import { useMicroInteractions } from '../hooks/useMicroInteractions';
+import EnhancedTouchButton from '../components/EnhancedTouchButton';
+import { 
+  Briefcase, Map, BarChart2, AlertTriangle, 
+  RefreshCw, Globe, RotateCw, Pause, Play, 
+  StopCircle, Workflow, Download, Share2, Bell, 
+  HelpCircle, Info
+} from 'lucide-react';
 
 // Import mock data for initial development (will be replaced by real data in production)
 import { mockTariffAlerts } from '../mock/tariffAlerts';
@@ -31,9 +40,60 @@ const TariffScannerPage: NextPage = () => {
   const [selectedTab, setSelectedTab] = useState<string>('general');
   const [vietnamAnalyzerStatus, setVietnamAnalyzerStatus] = useState<'initializing' | 'ready' | 'error'>('initializing');
   
+  // Platform detection and UI enhancement hooks
+  const isAppleDevice = useIOS();
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
+  const { haptic } = useMicroInteractions();
+  const { touchCapable } = useDeviceCapabilities();
+  const { isDarkMode } = useUIPreferences();
+  
+  // Multi-tasking mode detection for iPad
+  const [isMultiTasking, setIsMultiTasking] = useState(false);
+  const [mode, setMode] = useState<'full' | 'split-view' | 'slide-over'>('full');
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
+  
   const monteCarloWorker = useRef<Worker | null>(null);
   const searchManager = useRef<SearchManager | null>(null);
   const vietnamAnalyzer = useRef<VietnamTariffAnalyzer | null>(null);
+  
+  // Detect multi-tasking mode on iPad
+  useEffect(() => {
+    const checkMultiTaskingMode = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      // Set orientation
+      setOrientation(width > height ? 'landscape' : 'portrait');
+      
+      // Typical iPad sizes in various modes (approximate)
+      if (isAppleDevice) {
+        // Detect if we're in multi-tasking mode
+        if (width < 768 && width > 320) {
+          setIsMultiTasking(true);
+          setMode(width < 400 ? 'slide-over' : 'split-view');
+        } else {
+          setIsMultiTasking(false);
+          setMode('full');
+        }
+      } else {
+        setIsMultiTasking(false);
+        setMode('full');
+      }
+    };
+    
+    // Run once immediately
+    setIsPlatformDetected(true);
+    checkMultiTaskingMode();
+    
+    // Add event listeners for changes
+    window.addEventListener('resize', checkMultiTaskingMode);
+    window.addEventListener('orientationchange', checkMultiTaskingMode);
+    
+    return () => {
+      window.removeEventListener('resize', checkMultiTaskingMode);
+      window.removeEventListener('orientationchange', checkMultiTaskingMode);
+    };
+  }, [isAppleDevice]);
   
   // Initialize systems
   useEffect(() => {
@@ -208,6 +268,11 @@ const TariffScannerPage: NextPage = () => {
         if (ontology) {
           updateOntologyWithSimulation(data, ontology);
         }
+        
+        // Provide haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptic({ intensity: 'medium' });
+        }
         break;
       
       case 'SIMULATION_PAUSED':
@@ -276,6 +341,11 @@ const TariffScannerPage: NextPage = () => {
     
     // Update alerts state
     setAlerts(prevAlerts => [newAlert, ...prevAlerts]);
+    
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
   };
   
   const estimateImpactSeverity = (tariffInfo: any) => {
@@ -333,6 +403,11 @@ const TariffScannerPage: NextPage = () => {
       });
       
       setSimulationStatus('running');
+      
+      // Provide haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'light' });
+      }
     }
   };
   
@@ -372,24 +447,44 @@ const TariffScannerPage: NextPage = () => {
       });
       
       setSimulationStatus('running');
+      
+      // Provide haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'medium' });
+      }
     }
   };
   
   const handlePauseSimulation = () => {
     if (monteCarloWorker.current) {
       monteCarloWorker.current.postMessage({ type: 'PAUSE_SIMULATION' });
+      
+      // Provide haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'light' });
+      }
     }
   };
   
   const handleResumeSimulation = () => {
     if (monteCarloWorker.current) {
       monteCarloWorker.current.postMessage({ type: 'RESUME_SIMULATION' });
+      
+      // Provide haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'light' });
+      }
     }
   };
   
   const handleStopSimulation = () => {
     if (monteCarloWorker.current) {
       monteCarloWorker.current.postMessage({ type: 'STOP_SIMULATION' });
+      
+      // Provide haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'medium' });
+      }
     }
   };
   
@@ -399,12 +494,22 @@ const TariffScannerPage: NextPage = () => {
         type: 'STEP_SIMULATION', 
         config: { steps } 
       });
+      
+      // Provide haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'light' });
+      }
     }
   };
   
   const handleTriggerManualSearch = (params: any) => {
     if (searchManager.current) {
       searchManager.current.performManualSearch(params);
+      
+      // Provide haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptic({ intensity: 'medium' });
+      }
     }
   };
   
@@ -412,6 +517,11 @@ const TariffScannerPage: NextPage = () => {
     if (vietnamAnalyzer.current && vietnamAnalyzerStatus === 'ready') {
       try {
         setSimulationStatus('running');
+        
+        // Provide haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptic({ intensity: 'medium' });
+        }
         
         // Run Vietnam-specific analysis with provided parameters
         const results = await vietnamAnalyzer.current.analyzeVietnamImpact({
@@ -424,154 +534,486 @@ const TariffScannerPage: NextPage = () => {
         
         setVietnamSimulationData(results);
         setSimulationStatus('complete');
+        
+        // Success haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptic({ intensity: 'light' });
+        }
       } catch (error) {
         console.error('Error running Vietnam tariff analysis:', error);
         setSimulationStatus('idle');
+        
+        // Error haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptic({ intensity: 'heavy' });
+        }
       }
     }
+  };
+  
+  const handleTabChange = (tab: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    setSelectedTab(tab);
+  };
+  
+  const handleRetry = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    window.location.reload();
+  };
+  
+  const handleShareClick = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    
+    // Implement share functionality (e.g., open share sheet on iOS)
+    alert('Sharing tariff analysis results...');
+  };
+  
+  const handleExportClick = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    
+    // Implement export functionality
+    alert('Exporting tariff analysis results...');
   };
 
   return (
     <>
       <Head>
-        <title>Tariff Alert Scanner | SCB Sapphire FinSight</title>
+        <title>Tariff Scanner | SCB Sapphire FinSight</title>
         <meta name="description" content="Real-time tariff monitoring and impact analysis for ASEAN countries with Vietnam focus" />
       </Head>
       
-      <DashboardLayout>
+      <ScbBeautifulUI 
+        showNewsBar={!isMultiTasking} 
+        pageTitle="Tariff Scanner" 
+        showTabs={isAppleDevice}
+      >
         {loadingState === 'loading' && (
-          <div className="flex justify-center items-center h-screen bg-gray-50">
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <div className="text-center">
-              <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-              <h2 className="text-lg font-medium text-gray-900">Loading Tariff Alert Scanner</h2>
-              <p className="text-sm text-gray-600">Initializing systems and loading data...</p>
+              <div className="animate-spin h-10 w-10 border-4 border-[rgb(var(--scb-honolulu-blue))] border-t-transparent rounded-full mx-auto mb-4"></div>
+              <h2 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-lg'} mb-2`}>
+                Loading Tariff Alert Scanner
+              </h2>
+              <p className={`text-[rgb(var(--scb-dark-gray))] opacity-70 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                Initializing systems and loading data...
+              </p>
             </div>
           </div>
         )}
         
         {loadingState === 'error' && (
-          <div className="flex justify-center items-center h-screen bg-gray-50">
-            <div className="text-center p-6 bg-white rounded-lg shadow-md max-w-md">
-              <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="text-center p-6 bg-white dark:bg-[rgba(var(--scb-dark-gray),0.1)] rounded-lg shadow-sm border border-[rgb(var(--scb-border))] max-w-md">
+              <div className="h-12 w-12 rounded-full bg-[rgba(var(--destructive),0.1)] flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="text-[rgb(var(--destructive))]" size={24} />
               </div>
-              <h2 className="text-lg font-medium text-gray-900 mb-2">Failed to Initialize</h2>
-              <p className="text-sm text-gray-600 mb-4">
+              <h2 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-lg'} mb-2`}>
+                Failed to Initialize
+              </h2>
+              <p className={`text-[rgb(var(--scb-dark-gray))] opacity-70 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-4`}>
                 We encountered an error while loading the Tariff Alert Scanner. This could be due to a network issue or missing data.
               </p>
-              <button 
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                onClick={() => window.location.reload()}
-              >
-                Retry
-              </button>
+              
+              {isAppleDevice && isPlatformDetected ? (
+                <EnhancedTouchButton
+                  onClick={handleRetry}
+                  variant="primary"
+                  className="w-full"
+                  size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'md'}
+                >
+                  <RefreshCw className="mr-2" size={isMultiTasking && mode === 'slide-over' ? 12 : 16} />
+                  Retry
+                </EnhancedTouchButton>
+              ) : (
+                <button 
+                  className="px-4 py-2 bg-[rgb(var(--scb-honolulu-blue))] text-white font-medium rounded-md hover:bg-[rgba(var(--scb-honolulu-blue),0.9)] w-full"
+                  onClick={handleRetry}
+                >
+                  <RefreshCw className="inline-block mr-2" size={16} />
+                  Retry
+                </button>
+              )}
             </div>
           </div>
         )}
         
         {loadingState === 'ready' && (
-          <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
-              <Tabs 
-                value={selectedTab} 
-                onChange={(_, newValue) => setSelectedTab(newValue)}
-                aria-label="Tariff analysis tabs"
-                sx={{ 
-                  '& .MuiTab-root': { 
-                    textTransform: 'none',
-                    fontFamily: 'Proxima Nova, Arial, sans-serif'
-                  }
-                }}
-              >
-                <Tab 
-                  icon={<Briefcase size={16} />} 
-                  iconPosition="start" 
-                  label="ASEAN Tariff Scanner" 
-                  value="general" 
-                />
-                <Tab 
-                  icon={<Map size={16} />} 
-                  iconPosition="start" 
-                  label="Vietnam Focus" 
-                  value="vietnam" 
-                />
-              </Tabs>
-            </Box>
-            
-            {selectedTab === 'general' && (
-              <TariffAlertDashboard 
-                alerts={alerts}
-                simulationData={simulationData}
-                simulationStatus={simulationStatus}
-                onRunSimulation={handleRunSimulation}
-                onPauseSimulation={handlePauseSimulation}
-                onResumeSimulation={handleResumeSimulation}
-                onStopSimulation={handleStopSimulation}
-                onStepSimulation={handleStepSimulation}
-                onTriggerManualSearch={handleTriggerManualSearch}
-              />
+          <div className={`space-y-6 ${isMultiTasking && mode === 'slide-over' ? 'px-2' : ''}`}>
+            {/* Platform-specific action buttons */}
+            {isAppleDevice && isPlatformDetected && (
+              <div className="flex justify-end">
+                <div className={`flex items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'gap-3'}`}>
+                  <EnhancedTouchButton
+                    onClick={handleShareClick}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                    size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                  >
+                    <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                    <span>Share</span>
+                  </EnhancedTouchButton>
+                  
+                  <EnhancedTouchButton
+                    onClick={handleExportClick}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                    size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                  >
+                    <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                    <span>Export</span>
+                  </EnhancedTouchButton>
+                </div>
+              </div>
             )}
             
-            {selectedTab === 'vietnam' && (
-              <Box>
-                {vietnamAnalyzerStatus === 'initializing' && (
-                  <Box display="flex" justifyContent="center" alignItems="center" p={4}>
-                    <div className="animate-spin h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full mr-4"></div>
-                    <Typography variant="body1">Initializing Vietnam Tariff Analyzer...</Typography>
-                  </Box>
-                )}
-                
-                {vietnamAnalyzerStatus === 'error' && (
-                  <Alert severity="error" sx={{ mb: 3 }}>
-                    <AlertTitle>Vietnam Analyzer Error</AlertTitle>
-                    Failed to initialize the Vietnam tariff analysis system. Using limited functionality with mock data.
-                    <Button 
-                      variant="outlined" 
-                      size="small" 
-                      startIcon={<AlertTriangle size={16} />}
-                      sx={{ mt: 1 }}
-                      onClick={() => window.location.reload()}
-                    >
-                      Retry Initialization
-                    </Button>
-                  </Alert>
-                )}
-                
-                <Typography variant="h5" sx={{ mb: 2, color: '#0F5EA2', fontFamily: 'Proxima Nova, Arial, sans-serif' }}>
-                  Vietnam Tariff Impact Analysis System
-                </Typography>
-                
-                <Box sx={{ mb: 3 }}>
-                  <Alert severity="info" sx={{ mb: 2 }}>
-                    <AlertTitle>Vietnam Focus</AlertTitle>
-                    This specialized view provides Vietnam-specific tariff impact analysis using RDF ontologies, real-time Reuters/Bloomberg feeds, and Monte Carlo simulations.
-                  </Alert>
+            {/* Tabs */}
+            <div className={`border-b border-[rgb(var(--scb-border))]`}>
+              <div className="flex space-x-6">
+                <button
+                  className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                    selectedTab === 'general' 
+                      ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                      : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                  }`}
+                  onClick={() => handleTabChange('general')}
+                >
+                  <Briefcase size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
+                  <span>ASEAN Tariff Scanner</span>
+                </button>
+                <button
+                  className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                    selectedTab === 'vietnam' 
+                      ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                      : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                  }`}
+                  onClick={() => handleTabChange('vietnam')}
+                >
+                  <Map size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
+                  <span>Vietnam Focus</span>
+                </button>
+              </div>
+            </div>
+            
+            {/* Tab Panels */}
+            <div className="mt-6">
+              {selectedTab === 'general' && (
+                <div className={isMultiTasking ? 'px-1' : ''}>
+                  <div className="pb-4">
+                    <h2 className={`font-semibold text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-xl'} mb-2`}>
+                      ASEAN Tariff Analysis
+                    </h2>
+                    <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                      Monitor and analyze the impact of tariff changes across ASEAN countries. This system combines real-time data with advanced financial modeling.
+                    </p>
+                  </div>
                   
-                  <Typography variant="subtitle1" gutterBottom>
-                    <BarChart2 size={16} style={{ marginRight: '8px', display: 'inline', verticalAlign: 'text-bottom' }} />
-                    Vietnam Tariff Insights
-                  </Typography>
+                  <div className="mb-4">
+                    <div className={`flex ${isMultiTasking && mode === 'slide-over' ? 'flex-col gap-2' : 'flex-wrap items-center gap-3'}`}>
+                      {simulationStatus === 'idle' && (
+                        isAppleDevice && isPlatformDetected ? (
+                          <EnhancedTouchButton
+                            onClick={() => handleRunSimulation({
+                              iterations: 5000,
+                              timeHorizon: 24,
+                              confidenceRequired: 0.9
+                            })}
+                            variant="primary"
+                            size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                            className="flex items-center gap-1.5"
+                          >
+                            <RotateCw className={isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} />
+                            <span>Run Simulation</span>
+                          </EnhancedTouchButton>
+                        ) : (
+                          <button
+                            onClick={() => handleRunSimulation({
+                              iterations: 5000,
+                              timeHorizon: 24,
+                              confidenceRequired: a0.9
+                            })}
+                            className="bg-[rgb(var(--scb-honolulu-blue))] text-white py-1.5 px-3 text-sm font-medium rounded flex items-center gap-1.5"
+                          >
+                            <RotateCw size={16} />
+                            <span>Run Simulation</span>
+                          </button>
+                        )
+                      )}
+                    
+                      {simulationStatus === 'running' && (
+                        <>
+                          {isAppleDevice && isPlatformDetected ? (
+                            <EnhancedTouchButton
+                              onClick={handlePauseSimulation}
+                              variant="secondary"
+                              size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                              className="flex items-center gap-1.5"
+                            >
+                              <Pause className={isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} />
+                              <span>Pause</span>
+                            </EnhancedTouchButton>
+                          ) : (
+                            <button
+                              onClick={handlePauseSimulation}
+                              className="bg-[rgb(var(--scb-dark-gray))] text-white py-1.5 px-3 text-sm font-medium rounded flex items-center gap-1.5"
+                            >
+                              <Pause size={16} />
+                              <span>Pause</span>
+                            </button>
+                          )}
+                        
+                          {isAppleDevice && isPlatformDetected ? (
+                            <EnhancedTouchButton
+                              onClick={handleStopSimulation}
+                              variant="secondary"
+                              size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                              className="flex items-center gap-1.5"
+                            >
+                              <StopCircle className={isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} />
+                              <span>Stop</span>
+                            </EnhancedTouchButton>
+                          ) : (
+                            <button
+                              onClick={handleStopSimulation}
+                              className="bg-[rgb(var(--scb-dark-gray))] text-white py-1.5 px-3 text-sm font-medium rounded flex items-center gap-1.5"
+                            >
+                              <StopCircle size={16} />
+                              <span>Stop</span>
+                            </button>
+                          )}
+                        </>
+                      )}
+                    
+                      {simulationStatus === 'paused' && (
+                        <>
+                          {isAppleDevice && isPlatformDetected ? (
+                            <EnhancedTouchButton
+                              onClick={handleResumeSimulation}
+                              variant="primary"
+                              size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                              className="flex items-center gap-1.5"
+                            >
+                              <Play className={isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} />
+                              <span>Resume</span>
+                            </EnhancedTouchButton>
+                          ) : (
+                            <button
+                              onClick={handleResumeSimulation}
+                              className="bg-[rgb(var(--scb-honolulu-blue))] text-white py-1.5 px-3 text-sm font-medium rounded flex items-center gap-1.5"
+                            >
+                              <Play size={16} />
+                              <span>Resume</span>
+                            </button>
+                          )}
+                        
+                          {isAppleDevice && isPlatformDetected ? (
+                            <EnhancedTouchButton
+                              onClick={handleStopSimulation}
+                              variant="secondary"
+                              size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                              className="flex items-center gap-1.5"
+                            >
+                              <StopCircle className={isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} />
+                              <span>Stop</span>
+                            </EnhancedTouchButton>
+                          ) : (
+                            <button
+                              onClick={handleStopSimulation}
+                              className="bg-[rgb(var(--scb-dark-gray))] text-white py-1.5 px-3 text-sm font-medium rounded flex items-center gap-1.5"
+                            >
+                              <StopCircle size={16} />
+                              <span>Stop</span>
+                            </button>
+                          )}
+                        </>
+                      )}
+                    
+                      {simulationStatus === 'complete' && (
+                        isAppleDevice && isPlatformDetected ? (
+                          <EnhancedTouchButton
+                            onClick={() => handleRunSimulation({
+                              iterations: 10000,
+                              timeHorizon: 24,
+                              confidenceRequired: 0.95
+                            })}
+                            variant="primary"
+                            size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                            className="flex items-center gap-1.5"
+                          >
+                            <RotateCw className={isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} />
+                            <span>Run Again</span>
+                          </EnhancedTouchButton>
+                        ) : (
+                          <button
+                            onClick={() => handleRunSimulation({
+                              iterations: 10000,
+                              timeHorizon: 24,
+                              confidenceRequired: 0.95
+                            })}
+                            className="bg-[rgb(var(--scb-honolulu-blue))] text-white py-1.5 px-3 text-sm font-medium rounded flex items-center gap-1.5"
+                          >
+                            <RotateCw size={16} />
+                            <span>Run Again</span>
+                          </button>
+                        )
+                      )}
+                    
+                      {simulationStatus === 'running' && (
+                        <div className="ml-3 text-[rgb(var(--scb-dark-gray))] flex items-center">
+                          <div className="animate-spin h-4 w-4 border-2 border-[rgb(var(--scb-honolulu-blue))] border-t-transparent rounded-full mr-2"></div>
+                          <span className={isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}>
+                            Running simulation...
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   
-                  <Typography variant="body2" sx={{ mb: 2 }}>
-                    Monitor and analyze the impact of tariff changes on Vietnam's trade position in the ASEAN region. This system combines Vietnam customs data with RDF ontologies and SAP Fiori visualization through OData middleware.
-                  </Typography>
-                </Box>
-                
-                {vietnamAnalyzerStatus === 'ready' && vietnamAnalyzer.current && (
-                  <VietnamTariffVisualization
-                    analyzer={vietnamAnalyzer.current}
-                    timeHorizon={24}
-                    iterations={5000}
-                    isLoading={simulationStatus === 'running'}
-                  />
-                )}
-              </Box>
-            )}
-          </Box>
+                  <div className="pt-2">
+                    <TariffAlertDashboard 
+                      alerts={alerts}
+                      simulationData={simulationData}
+                      simulationStatus={simulationStatus}
+                      onRunSimulation={handleRunSimulation}
+                      onPauseSimulation={handlePauseSimulation}
+                      onResumeSimulation={handleResumeSimulation}
+                      onStopSimulation={handleStopSimulation}
+                      onStepSimulation={handleStepSimulation}
+                      onTriggerManualSearch={handleTriggerManualSearch}
+                      isMultiTasking={isMultiTasking}
+                      multiTaskingMode={mode}
+                      isAppleDevice={isAppleDevice}
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {selectedTab === 'vietnam' && (
+                <div className={isMultiTasking ? 'px-1' : ''}>
+                  {vietnamAnalyzerStatus === 'initializing' && (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin h-8 w-8 border-3 border-[rgb(var(--scb-honolulu-blue))] border-t-transparent rounded-full mr-3"></div>
+                      <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                        Initializing Vietnam Tariff Analyzer...
+                      </p>
+                    </div>
+                  )}
+                  
+                  {vietnamAnalyzerStatus === 'error' && (
+                    <div className="bg-[rgba(var(--destructive),0.1)] rounded-md p-4 mb-6">
+                      <div className="flex items-start">
+                        <AlertTriangle className="text-[rgb(var(--destructive))] mr-3 mt-0.5" size={20} />
+                        <div>
+                          <h3 className={`font-semibold text-[rgb(var(--destructive))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-1`}>
+                            Vietnam Analyzer Error
+                          </h3>
+                          <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-3`}>
+                            Failed to initialize the Vietnam tariff analysis system. Using limited functionality with mock data.
+                          </p>
+                          
+                          {isAppleDevice && isPlatformDetected ? (
+                            <EnhancedTouchButton
+                              onClick={handleRetry}
+                              variant="secondary"
+                              size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                              className="flex items-center gap-1.5"
+                            >
+                              <RefreshCw className={isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} />
+                              <span>Retry Initialization</span>
+                            </EnhancedTouchButton>
+                          ) : (
+                            <button 
+                              className="border border-[rgb(var(--scb-border))] bg-white hover:bg-gray-50 text-[rgb(var(--scb-dark-gray))] font-medium rounded px-3 py-1.5 text-sm flex items-center gap-1.5"
+                              onClick={handleRetry}
+                            >
+                              <RefreshCw size={16} />
+                              <span>Retry Initialization</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="pb-4">
+                    <h2 className={`font-semibold text-[rgb(var(--scb-primary))] ${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-xl'} mb-2`}>
+                      Vietnam Tariff Impact Analysis System
+                    </h2>
+                  </div>
+                  
+                  <div className="bg-[rgba(var(--scb-light-blue),0.2)] dark:bg-[rgba(var(--scb-dark-blue),0.2)] rounded-md p-4 mb-6">
+                    <div className="flex items-start gap-3">
+                      <Info className="text-[rgb(var(--scb-honolulu-blue))] mt-0.5" size={isMultiTasking && mode === 'slide-over' ? 16 : 20} />
+                      <div>
+                        <h3 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-1`}>
+                          Vietnam Focus
+                        </h3>
+                        <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                          This specialized view provides Vietnam-specific tariff impact analysis using RDF ontologies, real-time Reuters/Bloomberg feeds, and Monte Carlo simulations.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <BarChart2 className="text-[rgb(var(--scb-honolulu-blue))]" size={isMultiTasking && mode === 'slide-over' ? 16 : 20} />
+                      <h3 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'}`}>
+                        Vietnam Tariff Insights
+                      </h3>
+                    </div>
+                    
+                    <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-4`}>
+                      Monitor and analyze the impact of tariff changes on Vietnam's trade position in the ASEAN region. This system combines Vietnam customs data with RDF ontologies and SAP Fiori visualization.
+                    </p>
+                    
+                    <div className="pt-2">
+                      {vietnamAnalyzerStatus === 'ready' && vietnamAnalyzer.current && (
+                        <VietnamTariffVisualization
+                          analyzer={vietnamAnalyzer.current}
+                          timeHorizon={24}
+                          iterations={5000}
+                          isLoading={simulationStatus === 'running'}
+                          isMultiTasking={isMultiTasking}
+                          multiTaskingMode={mode}
+                          isAppleDevice={isAppleDevice}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         )}
-      </DashboardLayout>
+        
+        {/* Fixed notification button for iPad/iPhone */}
+        {isAppleDevice && !isMultiTasking && loadingState === 'ready' && (
+          <div className="fixed bottom-6 right-6">
+            <EnhancedTouchButton
+              onClick={() => {
+                haptic({ intensity: 'medium' });
+                alert('Simulate button pressed');
+              }}
+              variant="primary"
+              className="rounded-full p-3 shadow-lg"
+            >
+              <Workflow size={20} />
+            </EnhancedTouchButton>
+          </div>
+        )}
+      </ScbBeautifulUI>
     </>
   );
 };

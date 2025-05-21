@@ -1,47 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import {
-  Box,
-  Typography,
-  Container,
-  Grid,
-  Button,
-  CircularProgress,
-  Alert,
-  AlertTitle,
-  Paper,
-  Divider,
-  useTheme,
-  Tab,
-  Tabs,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  InputAdornment,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from '@mui/material';
-import DashboardLayout from '../components/layout/DashboardLayout';
-import VietnamMonteCarloParams, { VietnamMonteCarloConfig } from '../components/VietnamMonteCarloParams';
-import VietnamMonteCarloProbabilityDistribution from '../components/VietnamMonteCarloProbabilityDistribution';
-import VietnamMonteCarloCaseAnalysis from '../components/VietnamMonteCarloCaseAnalysis';
-import VietnamMonteCarloSensitivity from '../components/VietnamMonteCarloSensitivity';
-import VietnamMonteCarloLlmAnalysis from '../components/VietnamMonteCarloLlmAnalysis';
-import VietnamMonteCarloHistory from '../components/VietnamMonteCarloHistory';
-import { globalSimulationCache } from '../services/SimulationCache';
-import monteCarloStorageService from '../services/MonteCarloStorageService';
-import monteCarloComparisonService from '../services/MonteCarloComparisonService';
-import vietnamMonteCarloAdapter from '../services/VietnamMonteCarloAdapter';
-import businessDataCloudConnector from '../services/BusinessDataCloudConnector';
-import { SimulationInput, SimulationOutput, SimulationComparison, UUID, SimulationStatus } from '../types/MonteCarloTypes';
-import { Play, Download, AlertCircle, Save, History, Database, PanelRight, User, BarChart, RefreshCw } from 'lucide-react';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedLoadingSpinner from '@/components/EnhancedLoadingSpinner';
+import VietnamMonteCarloParams, { VietnamMonteCarloConfig } from '@/components/VietnamMonteCarloParams';
+import VietnamMonteCarloProbabilityDistribution from '@/components/VietnamMonteCarloProbabilityDistribution';
+import VietnamMonteCarloCaseAnalysis from '@/components/VietnamMonteCarloCaseAnalysis';
+import VietnamMonteCarloSensitivity from '@/components/VietnamMonteCarloSensitivity';
+import VietnamMonteCarloLlmAnalysis from '@/components/VietnamMonteCarloLlmAnalysis';
+import VietnamMonteCarloHistory from '@/components/VietnamMonteCarloHistory';
+import { globalSimulationCache } from '@/services/SimulationCache';
+import monteCarloStorageService from '@/services/MonteCarloStorageService';
+import monteCarloComparisonService from '@/services/MonteCarloComparisonService';
+import vietnamMonteCarloAdapter from '@/services/VietnamMonteCarloAdapter';
+import businessDataCloudConnector from '@/services/BusinessDataCloudConnector';
+import { SimulationInput, SimulationOutput, SimulationComparison, UUID, SimulationStatus } from '@/types/MonteCarloTypes';
+import useMultiTasking from '@/hooks/useMultiTasking';
+import { haptics } from '@/lib/haptics';
+import { useMediaQuery } from 'react-responsive';
+import { Play, Download, AlertCircle, Save, History, Database, PanelRight, User, BarChart, RefreshCw, X, Share2 } from 'lucide-react';
 
 /**
  * Enhanced Vietnam Tariff Monte Carlo Simulation Page
@@ -49,8 +27,6 @@ import { Play, Download, AlertCircle, Save, History, Database, PanelRight, User,
  * Based on the technical specification for SAP Business Data Cloud integration
  */
 const VietnamMonteCarloEnhancedPage: NextPage = () => {
-  const theme = useTheme();
-  
   // State for simulation configuration and results
   const [config, setConfig] = useState<VietnamMonteCarloConfig | null>(null);
   const [simulationStatus, setSimulationStatus] = useState<SimulationStatus>('idle');
@@ -75,8 +51,36 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<string>('simulation');
   const [comparisonView, setComparisonView] = useState<SimulationComparison | null>(null);
   
+  // Platform detection state
+  const [isMounted, setIsMounted] = useState(false);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
+  
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
+  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  
   // References
   const monteCarloWorker = useRef<Worker | null>(null);
+  
+  // Detect platform on mount
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check if we're on an Apple platform
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // Check if we're on iPad specifically
+    const isIpad = /iPad/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && 
+       navigator.maxTouchPoints > 1 &&
+       !navigator.userAgent.includes('iPhone'));
+    
+    setIsAppleDevice(isIOS);
+    setIsIPad(isIpad);
+    setPlatformDetected(true);
+  }, []);
   
   // Initialize the Monte Carlo worker and Business Data Cloud connector
   useEffect(() => {
@@ -109,6 +113,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
   
   // Handle configuration changes
   const handleConfigChange = (newConfig: VietnamMonteCarloConfig) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+    
     setConfig(newConfig);
     
     // If we're currently viewing a saved simulation, track parameter changes
@@ -155,6 +164,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
   
   // Handle running the simulation
   const handleRunSimulation = async (simConfig: VietnamMonteCarloConfig) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     setConfig(simConfig);
     setSimulationStatus('running');
     setError(null);
@@ -220,6 +234,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
       } else {
         setError('Simulation worker not available. Please refresh the page.');
         setSimulationStatus('failed');
+        
+        // Error haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptics.error();
+        }
       }
     }
   };
@@ -242,6 +261,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
       case 'SIMULATION_COMPLETE':
         // Process simulation results
         if (currentSimulation.output) {
+          // Success haptic feedback on Apple devices
+          if (isAppleDevice) {
+            haptics.success();
+          }
+          
           processSimulationResults(currentSimulation.output.id, data.results);
         }
         break;
@@ -249,6 +273,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
       case 'SIMULATION_ERROR':
         setError(data.error || 'An error occurred during simulation');
         setSimulationStatus('failed');
+        
+        // Error haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptics.error();
+        }
         
         // Update output status
         if (currentSimulation.output) {
@@ -319,16 +348,31 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
       console.error('Error processing simulation results:', error);
       setError('Error processing simulation results');
       setSimulationStatus('failed');
+      
+      // Error haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.error();
+      }
     }
   };
   
   // Handle percentile slider change
   const handleSliderChange = (value: number) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.light();
+    }
+    
     setSliderPercentile(value);
   };
   
   // Handle save simulation
   const handleSaveSimulation = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     if (currentSimulation.input && currentSimulation.output && currentSimulation.output.status === 'completed') {
       setSaveDialogOpen(true);
       
@@ -341,6 +385,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
   
   // Handle save confirmation
   const handleSaveConfirm = async () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     if (!currentSimulation.input) return;
     
     try {
@@ -375,6 +424,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
       // Close dialog
       setSaveDialogOpen(false);
       
+      // Success haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.success();
+      }
+      
       // Show success message
       if (savedToBDC) {
         alert('Simulation saved successfully to Business Data Cloud');
@@ -384,11 +438,31 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
     } catch (error) {
       console.error('Error saving simulation:', error);
       setError('Error saving simulation');
+      
+      // Error haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.error();
+      }
     }
+  };
+  
+  // Handle cancel save
+  const handleCancelSave = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.light();
+    }
+    
+    setSaveDialogOpen(false);
   };
   
   // Handle view saved simulation
   const handleViewSimulation = async (simulationId: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     try {
       // Try to get simulation input from Business Data Cloud first
       let input: SimulationInput | null = null;
@@ -459,16 +533,31 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
       // Switch to simulation tab
       setActiveTab('simulation');
       
+      // Success haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.success();
+      }
+      
       // Display Business Data Cloud integration message
       console.log('Successfully loaded simulation from Business Data Cloud');
     } catch (error) {
       console.error('Error viewing simulation:', error);
       setError(`Error viewing simulation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      
+      // Error haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.error();
+      }
     }
   };
   
   // Handle new simulation
   const handleNewSimulation = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     // Reset state
     setConfig(null);
     setSimulationStatus('idle');
@@ -487,6 +576,11 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
   
   // Handle view comparison
   const handleViewComparison = async (comparisonId: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     try {
       // Get comparison
       const comparison = await monteCarloStorageService.getSimulationComparison(comparisonId);
@@ -499,133 +593,271 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
       
       // Switch to comparison tab
       setActiveTab('comparison');
+      
+      // Success haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.success();
+      }
     } catch (error) {
       console.error('Error viewing comparison:', error);
       setError(`Error viewing comparison: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      
+      // Error haptic feedback on Apple devices
+      if (isAppleDevice) {
+        haptics.error();
+      }
     }
   };
   
   // Handle tab change
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
-    setActiveTab(newValue);
+  const handleTabChange = (newTab: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+    
+    setActiveTab(newTab);
   };
   
   // Generate detailed report
   const handleGenerateReport = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     // In a real implementation, this would call the Nvidia langchain API
     alert('This would generate a comprehensive report using Nvidia langchain structured-report-generation API');
+  };
+  
+  // Handle download action with haptic feedback
+  const handleDownloadClick = () => {
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    // In a real application, this would trigger a download
+    alert('Downloading Monte Carlo simulation results as PDF...');
+  };
+
+  // Handle share action with haptic feedback
+  const handleShareClick = () => {
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
+    // In a real application, this would open a share dialog
+    alert('Opening share dialog...');
+  };
+  
+  // Handle dismiss error
+  const handleDismissError = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.light();
+    }
+    
+    setError(null);
   };
   
   // Render simulation tab content
   const renderSimulationTab = () => {
     return (
-      <Grid container spacing={3}>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Parameter Configuration Panel */}
-        <Grid item xs={12} md={4}>
+        <div className="md:col-span-1">
           <VietnamMonteCarloParams
             initialConfig={config || undefined}
             onConfigChange={handleConfigChange}
             onRunSimulation={handleRunSimulation}
+            isAppleDevice={isAppleDevice}
+            isIPad={isIPad}
+            isMultiTasking={isMultiTasking}
+            multiTaskingMode={mode}
           />
-        </Grid>
+        </div>
 
         {/* Probability Distribution Visualization */}
-        <Grid item xs={12} md={8}>
+        <div className={`${isMultiTasking && mode === 'slide-over' ? 'md:col-span-1' : 'md:col-span-3'}`}>
           <VietnamMonteCarloProbabilityDistribution
             data={simulationResults}
             loading={simulationStatus === 'running'}
             caseBoundaries={config?.simulationSettings.caseBoundaries}
             onSliderChange={handleSliderChange}
+            isAppleDevice={isAppleDevice}
+            isIPad={isIPad}
+            isMultiTasking={isMultiTasking}
+            multiTaskingMode={mode}
           />
-        </Grid>
+        </div>
 
         {/* Case Analysis */}
-        <Grid item xs={12}>
+        <div className="col-span-1 md:col-span-full">
           <VietnamMonteCarloCaseAnalysis
             data={simulationResults}
             caseBoundaries={config?.simulationSettings.caseBoundaries}
+            isAppleDevice={isAppleDevice}
+            isIPad={isIPad}
+            isMultiTasking={isMultiTasking}
+            multiTaskingMode={mode}
           />
-        </Grid>
+        </div>
 
         {/* Sensitivity Analysis */}
-        <Grid item xs={12} md={4}>
+        <div className="md:col-span-1">
           <VietnamMonteCarloSensitivity
             parameters={sensitivityResults}
             loading={simulationStatus === 'running'}
             onDetailedAnalysis={() => alert('Detailed analysis would be shown here')}
             onExportData={() => alert('Export data functionality would be implemented here')}
+            isAppleDevice={isAppleDevice}
+            isIPad={isIPad}
+            isMultiTasking={isMultiTasking}
+            multiTaskingMode={mode}
           />
-        </Grid>
+        </div>
 
         {/* LLM Analysis */}
-        <Grid item xs={12} md={8}>
+        <div className={`${isMultiTasking && mode === 'slide-over' ? 'md:col-span-1' : 'md:col-span-3'}`}>
           <VietnamMonteCarloLlmAnalysis
             analysis={llmAnalysis}
             onGenerateReport={handleGenerateReport}
             onViewDetailedAnalysis={() => alert('Detailed analysis would be shown here')}
+            isAppleDevice={isAppleDevice}
+            isIPad={isIPad}
+            isMultiTasking={isMultiTasking}
+            multiTaskingMode={mode}
           />
-        </Grid>
+        </div>
 
         {/* Action Buttons */}
-        <Grid item xs={12}>
-          <Paper elevation={0} sx={{ p: 2, border: `1px solid ${theme.palette.divider}` }}>
-            <Grid container spacing={2} justifyContent="space-between">
-              <Grid item>
-                <Button
-                  variant="contained"
-                  startIcon={<Play />}
-                  disabled={simulationStatus === 'running' || !config}
-                  onClick={() => config && handleRunSimulation(config)}
-                  sx={{ 
-                    bgcolor: '#042278', 
-                    '&:hover': { bgcolor: '#031a5e' },
-                    mr: 1
-                  }}
-                >
-                  {simulationStatus === 'running' ? (
-                    <>
-                      <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
-                      Running Simulation
-                    </>
-                  ) : 'Run Simulation'}
-                </Button>
-                
-                <Button
-                  variant="outlined"
-                  startIcon={<Save />}
-                  disabled={simulationStatus !== 'completed'}
-                  onClick={handleSaveSimulation}
-                  sx={{ mr: 1 }}
-                >
-                  Save Simulation
-                </Button>
-                
-                <Button
-                  variant="outlined"
-                  startIcon={<RefreshCw />}
-                  onClick={handleNewSimulation}
-                >
-                  New Simulation
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  startIcon={<Download />}
-                  disabled={simulationStatus !== 'completed'}
-                  onClick={handleGenerateReport}
-                  sx={{ 
-                    bgcolor: '#3267d4', 
-                    '&:hover': { bgcolor: '#2a55b2' }
-                  }}
-                >
-                  Generate Detailed Report
-                </Button>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-      </Grid>
+        <div className="col-span-1 md:col-span-full">
+          <div className="bg-white p-4 border border-[hsl(var(--border))] rounded-lg">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap gap-2">
+                {isAppleDevice ? (
+                  <>
+                    <EnhancedTouchButton
+                      onClick={() => config && handleRunSimulation(config)}
+                      disabled={simulationStatus === 'running' || !config}
+                      variant="primary"
+                      className="flex items-center gap-1"
+                      size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+                    >
+                      {simulationStatus === 'running' ? (
+                        <>
+                          <EnhancedLoadingSpinner size="sm" variant="primary" showText={false} isAppleDevice={isAppleDevice} />
+                          <span>Running Simulation</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                          <span>Run Simulation</span>
+                        </>
+                      )}
+                    </EnhancedTouchButton>
+                    
+                    <EnhancedTouchButton
+                      onClick={handleSaveSimulation}
+                      disabled={simulationStatus !== 'completed'}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                      size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+                    >
+                      <Save className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                      <span>Save Simulation</span>
+                    </EnhancedTouchButton>
+                    
+                    <EnhancedTouchButton
+                      onClick={handleNewSimulation}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                      size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+                    >
+                      <RefreshCw className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                      <span>New Simulation</span>
+                    </EnhancedTouchButton>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => config && handleRunSimulation(config)}
+                      disabled={simulationStatus === 'running' || !config}
+                      className={`fiori-btn fiori-btn-primary flex items-center gap-1 ${(simulationStatus === 'running' || !config) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {simulationStatus === 'running' ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-1"></div>
+                          Running Simulation
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4" />
+                          Run Simulation
+                        </>
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={handleSaveSimulation}
+                      disabled={simulationStatus !== 'completed'}
+                      className={`fiori-btn fiori-btn-secondary flex items-center gap-1 ${simulationStatus !== 'completed' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <Save className="w-4 h-4" />
+                      Save Simulation
+                    </button>
+                    
+                    <button
+                      onClick={handleNewSimulation}
+                      className="fiori-btn fiori-btn-secondary flex items-center gap-1"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                      New Simulation
+                    </button>
+                  </>
+                )}
+              </div>
+              
+              <div className="flex gap-2">
+                {isAppleDevice ? (
+                  <>
+                    <EnhancedTouchButton
+                      onClick={handleGenerateReport}
+                      disabled={simulationStatus !== 'completed'}
+                      variant="primary"
+                      className="flex items-center gap-1"
+                      size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+                    >
+                      <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                      <span>Generate Report</span>
+                    </EnhancedTouchButton>
+                    
+                    <EnhancedTouchButton
+                      onClick={handleShareClick}
+                      disabled={simulationStatus !== 'completed'}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                      size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+                    >
+                      <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                      <span>Share</span>
+                    </EnhancedTouchButton>
+                  </>
+                ) : (
+                  <button
+                    onClick={handleGenerateReport}
+                    disabled={simulationStatus !== 'completed'}
+                    className={`fiori-btn fiori-btn-primary flex items-center gap-1 ${simulationStatus !== 'completed' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <Download className="w-4 h-4" />
+                    Generate Detailed Report
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   };
   
@@ -633,70 +865,83 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
   const renderComparisonTab = () => {
     if (!comparisonView) {
       return (
-        <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body1">
+        <div className="p-4 text-center bg-white border border-[hsl(var(--border))] rounded-lg">
+          <p className="text-gray-600">
             Select simulations to compare from the history tab
-          </Typography>
-        </Box>
+          </p>
+        </div>
       );
     }
     
     // In a real implementation, this would render a detailed comparison view
     return (
-      <Box>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+      <div className="bg-white p-4 border border-[hsl(var(--border))] rounded-lg">
+        <h2 className={`${isMultiTasking && mode === 'slide-over' ? 'text-lg' : 'text-xl'} font-semibold mb-4`}>
           {comparisonView.name}
-        </Typography>
+        </h2>
         
-        <Typography variant="body1" sx={{ mb: 2 }}>
+        <p className="text-gray-600 mb-4">
           {comparisonView.description || 'No description provided'}
-        </Typography>
+        </p>
         
-        <Paper elevation={0} sx={{ p: 2, border: `1px solid ${theme.palette.divider}`, mb: 3 }}>
-          <Typography variant="subtitle1" sx={{ mb: 2 }}>
+        <div className="mb-6 bg-[rgba(var(--scb-light-bg),0.5)] p-4 border border-[hsl(var(--border))] rounded-lg">
+          <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium mb-4`}>
             Parameter Differences
-          </Typography>
+          </h3>
           
-          <TableContainer component={Paper} variant="outlined">
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Parameter</TableCell>
-                  <TableCell>Differences</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-[rgba(var(--scb-light-bg),0.8)]">
+                  <th className="border border-[hsl(var(--border))] p-2 text-left">Parameter</th>
+                  <th className="border border-[hsl(var(--border))] p-2 text-left">Differences</th>
+                </tr>
+              </thead>
+              <tbody>
                 {comparisonView.comparisonResults.differenceMatrix.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{item.parameter}</TableCell>
-                    <TableCell>
+                  <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-[rgba(var(--scb-light-bg),0.3)]'}>
+                    <td className="border border-[hsl(var(--border))] p-2">{item.parameter}</td>
+                    <td className="border border-[hsl(var(--border))] p-2">
                       {item.differences.map((diff, i) => (
-                        <Box key={i} sx={{ mb: 1 }}>
-                          <Typography variant="body2">
+                        <div key={i} className="mb-1">
+                          <span className={`${diff.percentageDifference > 0 ? 'text-[rgb(var(--scb-american-green))]' : 'text-[rgb(var(--horizon-red))]'}`}>
                             {diff.percentageDifference > 0 ? '+' : ''}
                             {diff.percentageDifference.toFixed(1)}% 
+                          </span>
+                          <span className="text-gray-600 ml-1">
                             ({diff.absoluteDifference.toFixed(2)})
-                          </Typography>
-                        </Box>
+                          </span>
+                        </div>
                       ))}
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </tbody>
+            </table>
+          </div>
           
           {/* More comparison details would be rendered here */}
-        </Paper>
+        </div>
         
-        <Button
-          variant="contained"
-          onClick={() => setActiveTab('history')}
-          sx={{ bgcolor: '#042278' }}
-        >
-          Back to History
-        </Button>
-      </Box>
+        {isAppleDevice ? (
+          <EnhancedTouchButton
+            onClick={() => handleTabChange('history')}
+            variant="primary"
+            className="flex items-center gap-1"
+          >
+            <History className="w-4 h-4" />
+            <span>Back to History</span>
+          </EnhancedTouchButton>
+        ) : (
+          <button
+            onClick={() => handleTabChange('history')}
+            className="fiori-btn fiori-btn-primary flex items-center gap-1"
+          >
+            <History className="w-4 h-4" />
+            Back to History
+          </button>
+        )}
+      </div>
     );
   };
   
@@ -707,171 +952,264 @@ const VietnamMonteCarloEnhancedPage: NextPage = () => {
         onViewSimulation={handleViewSimulation}
         onCompare={handleViewComparison}
         onNewSimulation={handleNewSimulation}
+        isAppleDevice={isAppleDevice}
+        isIPad={isIPad}
+        isMultiTasking={isMultiTasking}
+        multiTaskingMode={mode}
       />
     );
   };
 
   return (
-    <DashboardLayout>
-      <Head>
-        <title>Vietnam Tariff Monte Carlo Simulation | SCB FinSight</title>
-      </Head>
-
-      <Container maxWidth="xl">
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Tariff Monte Carlo Simulation
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            Analyze probable outcomes of Vietnam tariff changes using Monte Carlo simulation
-          </Typography>
+    <ScbBeautifulUI 
+      showNewsBar={!isSmallScreen && !isMultiTasking} 
+      pageTitle="Vietnam Monte Carlo" 
+      showTabs={isAppleDevice}
+    >
+      <div className={`${isMultiTasking && mode === 'slide-over' ? 'px-3 py-2' : 'px-6 py-4'} max-w-6xl mx-auto`}>
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-[rgb(var(--scb-primary))]">Vietnam Tariff Monte Carlo Simulation</h1>
+              <p className="text-gray-600 mt-1">Analyze probable outcomes of Vietnam tariff changes using Monte Carlo simulation</p>
+            </div>
+            
+            {/* Platform-specific action buttons for Apple devices */}
+            {isAppleDevice && (
+              <div className={`flex ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'gap-3'}`}>
+                <EnhancedTouchButton
+                  onClick={handleDownloadClick}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                  size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+                  disabled={simulationStatus !== 'completed'}
+                >
+                  <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                  <span>Export</span>
+                </EnhancedTouchButton>
+                
+                <EnhancedTouchButton
+                  onClick={handleShareClick}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                  size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
+                  disabled={simulationStatus !== 'completed'}
+                >
+                  <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                  <span>Share</span>
+                </EnhancedTouchButton>
+              </div>
+            )}
+          </div>
           
-          <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 3 }}>
-            <Tabs 
-              value={activeTab} 
-              onChange={handleTabChange}
-              aria-label="simulation tabs"
-            >
-              <Tab 
-                icon={<BarChart size={16} />} 
-                iconPosition="start"
-                label="Simulation" 
-                value="simulation"
-              />
-              <Tab 
-                icon={<History size={16} />} 
-                iconPosition="start"
-                label="History" 
-                value="history"
-              />
-              <Tab 
-                icon={<PanelRight size={16} />} 
-                iconPosition="start"
-                label="Comparison" 
-                value="comparison"
+          {/* Tab navigation */}
+          <div className={`mt-6 border-b border-[hsl(var(--border))]`}>
+            <div className="flex">
+              <button
+                onClick={() => handleTabChange('simulation')}
+                className={`flex items-center gap-1 px-4 py-2 ${activeTab === 'simulation' ? 'border-b-2 border-[rgb(var(--scb-primary))] text-[rgb(var(--scb-primary))]' : 'text-gray-500'}`}
+              >
+                <BarChart className="w-4 h-4" />
+                <span>Simulation</span>
+              </button>
+              
+              <button
+                onClick={() => handleTabChange('history')}
+                className={`flex items-center gap-1 px-4 py-2 ${activeTab === 'history' ? 'border-b-2 border-[rgb(var(--scb-primary))] text-[rgb(var(--scb-primary))]' : 'text-gray-500'}`}
+              >
+                <History className="w-4 h-4" />
+                <span>History</span>
+              </button>
+              
+              <button
+                onClick={() => comparisonView && handleTabChange('comparison')}
                 disabled={!comparisonView}
-              />
-            </Tabs>
-          </Box>
-        </Box>
+                className={`flex items-center gap-1 px-4 py-2 ${
+                  !comparisonView ? 'opacity-50 cursor-not-allowed text-gray-400' : 
+                  activeTab === 'comparison' ? 'border-b-2 border-[rgb(var(--scb-primary))] text-[rgb(var(--scb-primary))]' : 
+                  'text-gray-500'
+                }`}
+              >
+                <PanelRight className="w-4 h-4" />
+                <span>Comparison</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         {error && (
-          <Alert 
-            severity="error" 
-            sx={{ mb: 3 }}
-            action={
-              <Button 
-                color="inherit" 
-                size="small" 
-                onClick={() => setError(null)}
+          <div className="mb-6 bg-[rgba(var(--horizon-red),0.05)] border border-[rgba(var(--horizon-red),0.2)] rounded-lg p-4 flex justify-between items-start">
+            <div className="flex gap-2">
+              <AlertCircle className="w-5 h-5 text-[rgb(var(--horizon-red))] mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="font-medium text-[rgb(var(--horizon-neutral-gray))]">Error</h3>
+                <p className="text-gray-700 text-sm mt-1">{error}</p>
+              </div>
+            </div>
+            
+            {isAppleDevice ? (
+              <EnhancedTouchButton
+                onClick={handleDismissError}
+                variant="ghost"
+                size="sm"
+                className="text-gray-500"
               >
-                Dismiss
-              </Button>
-            }
-          >
-            <AlertTitle>Error</AlertTitle>
-            {error}
-          </Alert>
+                <X className="w-4 h-4" />
+              </EnhancedTouchButton>
+            ) : (
+              <button
+                onClick={handleDismissError}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         )}
         
         {/* Current user indicator */}
-        <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-          <User size={16} style={{ marginRight: '8px' }} />
-          <Typography variant="body2" color="text.secondary">
-            Logged in as: <strong>{username}</strong>
-          </Typography>
+        <div className={`mb-6 flex flex-col ${isMultiTasking && !isMultiTasking ? 'sm:flex-row sm:items-center' : ''} gap-2`}>
+          <div className="flex items-center">
+            <User className="w-4 h-4 mr-2 text-gray-500" />
+            <span className="text-sm text-gray-600">
+              Logged in as: <strong>{username}</strong>
+            </span>
+          </div>
           
           {currentSimulation.input && (
-            <Box sx={{ ml: 3, display: 'flex', alignItems: 'center' }}>
-              <Database size={16} style={{ marginRight: '8px' }} />
-              <Typography variant="body2" color="text.secondary">
-                Current simulation: <strong>{currentSimulation.input.name}</strong>
-              </Typography>
-            </Box>
+            <div className="flex items-center">
+              <Database className="w-4 h-4 mr-2 text-gray-500" />
+              <span className="text-sm text-gray-600">
+                Current simulation: <strong>{currentSimulation.input.name || 'Unnamed Simulation'}</strong>
+              </span>
+            </div>
           )}
-        </Box>
+        </div>
 
         {/* Tab content */}
-        <Box sx={{ mb: 4 }}>
+        <div className="mb-8">
           {activeTab === 'simulation' && renderSimulationTab()}
           {activeTab === 'history' && renderHistoryTab()}
           {activeTab === 'comparison' && renderComparisonTab()}
-        </Box>
+        </div>
 
         {/* Additional Information */}
-        <Box sx={{ mt: 4, mb: 2 }}>
-          <Alert severity="info" icon={<AlertCircle />}>
-            <AlertTitle>About This Tool</AlertTitle>
-            <Typography variant="body2">
-              The Vietnam Tariff Monte Carlo Simulation uses stochastic modeling to simulate thousands of possible outcomes 
-              based on varying tariff parameters. It leverages GROK 3 API for advanced analysis and Nvidia's langchain 
-              for structured report generation. All simulations are saved to the Business Data Cloud for future reference.
-            </Typography>
-          </Alert>
-        </Box>
+        <div className="mt-8 mb-4">
+          <div className="bg-[rgba(var(--horizon-blue),0.05)] border border-[rgba(var(--horizon-blue),0.2)] rounded-lg p-4">
+            <div className="flex gap-2">
+              <AlertCircle className="w-5 h-5 text-[rgb(var(--horizon-blue))] mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="font-medium text-[rgb(var(--horizon-neutral-gray))]">About This Tool</h3>
+                <p className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} text-gray-700 mt-1`}>
+                  The Vietnam Tariff Monte Carlo Simulation uses stochastic modeling to simulate thousands of possible outcomes 
+                  based on varying tariff parameters. It leverages GROK 3 API for advanced analysis and Nvidia's langchain 
+                  for structured report generation. All simulations are saved to the Business Data Cloud for future reference.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <Divider sx={{ my: 4 }} />
+        <div className="border-t border-gray-200 my-4"></div>
 
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="caption" color="text.secondary">
+        <div className="mb-4">
+          <p className="text-xs text-gray-500">
             © 2025 SCB FinSight | Data updated: May 19, 2025 | Vietnam Tariff Monte Carlo Module v2.0.0
-          </Typography>
-        </Box>
-        
-        {/* Save Simulation Dialog */}
-        <Dialog open={saveDialogOpen} onClose={() => setSaveDialogOpen(false)}>
-          <DialogTitle>Save Simulation</DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Simulation Name"
-              fullWidth
-              variant="outlined"
-              value={simulationName}
-              onChange={(e) => setSimulationName(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              margin="dense"
-              label="Description"
-              fullWidth
-              multiline
-              rows={4}
-              variant="outlined"
-              value={simulationDescription}
-              onChange={(e) => setSimulationDescription(e.target.value)}
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              margin="dense"
-              label="Created By"
-              fullWidth
-              variant="outlined"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <User size={16} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setSaveDialogOpen(false)}>Cancel</Button>
-            <Button 
-              onClick={handleSaveConfirm} 
-              variant="contained"
-              sx={{ bgcolor: '#042278' }}
-            >
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Container>
-    </DashboardLayout>
+          </p>
+        </div>
+      </div>
+      
+      {/* Save Simulation Dialog */}
+      {saveDialogOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Save Simulation</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="simulation-name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Simulation Name
+                  </label>
+                  <input
+                    id="simulation-name"
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    value={simulationName}
+                    onChange={(e) => setSimulationName(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="simulation-description" className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    id="simulation-description"
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    rows={4}
+                    value={simulationDescription}
+                    onChange={(e) => setSimulationDescription(e.target.value)}
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                    Created By
+                  </label>
+                  <div className="flex items-center border border-gray-300 rounded-md p-2">
+                    <User className="w-4 h-4 text-gray-500 mr-2" />
+                    <input
+                      id="username"
+                      type="text"
+                      className="flex-1 outline-none"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex justify-end gap-2">
+                {isAppleDevice ? (
+                  <>
+                    <EnhancedTouchButton
+                      onClick={handleCancelSave}
+                      variant="secondary"
+                    >
+                      Cancel
+                    </EnhancedTouchButton>
+                    
+                    <EnhancedTouchButton
+                      onClick={handleSaveConfirm}
+                      variant="primary"
+                    >
+                      Save
+                    </EnhancedTouchButton>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleCancelSave}
+                      className="fiori-btn fiori-btn-secondary"
+                    >
+                      Cancel
+                    </button>
+                    
+                    <button
+                      onClick={handleSaveConfirm}
+                      className="fiori-btn fiori-btn-primary"
+                    >
+                      Save
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </ScbBeautifulUI>
   );
 };
 

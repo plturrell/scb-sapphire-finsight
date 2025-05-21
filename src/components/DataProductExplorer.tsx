@@ -1,188 +1,164 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Database, AlertCircle, CheckCircle } from 'lucide-react';
+import React from 'react';
+import { Database, Server, Calendar, ChevronRight, ExternalLink } from 'lucide-react';
+import { haptics } from '@/lib/haptics';
+import EnhancedTouchButton from './EnhancedTouchButton';
 
 interface DataProduct {
   id: string;
-  namespace: string;
-  version: string;
-  entityName: string;
-  entities: Record<string, any>;
-  associations?: Array<{
-    from: string;
-    to: string;
-  }>;
-  metadata?: Record<string, any>;
+  name: string;
+  description: string;
+  type: string;
+  tables: number;
+  records: number;
+  lastUpdated: string;
+  category: string;
 }
 
-export const DataProductExplorer: React.FC = () => {
-  const [products, setProducts] = useState<DataProduct[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<DataProduct | null>(null);
-  const [searchCriteria, setSearchCriteria] = useState({
-    namespace: '',
-    entityName: '',
-    version: ''
-  });
-  const [loading, setLoading] = useState(false);
-  const [health, setHealth] = useState<'healthy' | 'unhealthy' | 'unknown'>('unknown');
+interface DataProductExplorerProps {
+  products: DataProduct[];
+  isAppleDevice?: boolean;
+  isMultiTasking?: boolean;
+  multiTaskingMode?: string;
+}
 
-  useEffect(() => {
-    checkHealth();
-  }, []);
-
-  const checkHealth = async () => {
-    try {
-      const response = await fetch('/api/data-products/health');
-      const data = await response.json();
-      setHealth(data.status);
-    } catch (error) {
-      setHealth('unhealthy');
-    }
+const DataProductExplorer: React.FC<DataProductExplorerProps> = ({
+  products,
+  isAppleDevice = false,
+  isMultiTasking = false,
+  multiTaskingMode = 'fullscreen'
+}) => {
+  // Format date for display
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
-  const searchProducts = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (searchCriteria.namespace) params.append('namespace', searchCriteria.namespace);
-      if (searchCriteria.entityName) params.append('entityName', searchCriteria.entityName);
-      if (searchCriteria.version) params.append('version', searchCriteria.version);
-
-      const response = await fetch(`/api/data-products/search?${params}`);
-      const data = await response.json();
-      setProducts(data.products || []);
-    } catch (error) {
-      console.error('Error searching products:', error);
-    } finally {
-      setLoading(false);
+  // Handle product selection
+  const handleProductSelect = (product: DataProduct) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
     }
+    
+    // In a real app, this would navigate to the product detail page
+    alert(`Viewing details for ${product.name}`);
   };
-
-  const loadProduct = async (product: DataProduct) => {
-    try {
-      const response = await fetch(
-        `/api/data-products/${product.namespace}/${product.entityName}/${product.version}`
-      );
-      const data = await response.json();
-      setSelectedProduct(data);
-    } catch (error) {
-      console.error('Error loading product:', error);
+  
+  // Handle view schema
+  const handleViewSchema = (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation(); // Prevent triggering the parent card click
+    
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.light();
     }
+    
+    // In a real app, this would open the schema viewer
+    alert(`Viewing schema for product ID: ${productId}`);
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Database size={24} />
-            Data Product Explorer
-          </h1>
-          <div className="flex items-center gap-2">
-            {health === 'healthy' ? (
-              <CheckCircle className="text-green-500" size={20} />
-            ) : health === 'unhealthy' ? (
-              <AlertCircle className="text-red-500" size={20} />
-            ) : null}
-            <span className="text-sm text-gray-600">Redis Status: {health}</span>
-          </div>
+    <div>
+      {products.length === 0 ? (
+        <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-12 text-center">
+          <Database className="h-12 w-12 mx-auto text-gray-400" />
+          <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">No data products found</h3>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            Try adjusting your search or filter criteria to find what you're looking for.
+          </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <input
-            type="text"
-            placeholder="Namespace"
-            value={searchCriteria.namespace}
-            onChange={(e) => setSearchCriteria({ ...searchCriteria, namespace: e.target.value })}
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="text"
-            placeholder="Entity Name"
-            value={searchCriteria.entityName}
-            onChange={(e) => setSearchCriteria({ ...searchCriteria, entityName: e.target.value })}
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="text"
-            placeholder="Version"
-            value={searchCriteria.version}
-            onChange={(e) => setSearchCriteria({ ...searchCriteria, version: e.target.value })}
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <button
-          onClick={searchProducts}
-          disabled={loading}
-          className="w-full md:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center gap-2"
-        >
-          <Search size={20} />
-          {loading ? 'Searching...' : 'Search'}
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Search Results</h2>
-          <div className="space-y-3 max-h-96 overflow-y-auto">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                onClick={() => loadProduct(product)}
-                className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-              >
-                <div className="font-medium text-gray-900">{product.entityName}</div>
-                <div className="text-sm text-gray-600">
-                  {product.namespace} v{product.version}
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {products.map((product) => (
+            <div
+              key={product.id}
+              className={`
+                bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden
+                transition-transform duration-150
+                ${isAppleDevice ? 'hover:scale-[1.02] active:scale-[0.98] cursor-pointer' : ''}
+                ${isMultiTasking && multiTaskingMode === 'slide-over' ? 'p-3' : 'p-4'}
+              `}
+              onClick={() => handleProductSelect(product)}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-center">
+                  <div className={`
+                    rounded-md p-2 mr-3 
+                    ${product.category === 'Financial' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300' : 
+                     product.category === 'Accounting' ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300' : 
+                     product.category === 'Controlling' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300' : 
+                     'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-300'}
+                  `}>
+                    <Database className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-medium text-gray-900 dark:text-white truncate">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {product.type} • {product.category}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="text-gray-400 dark:text-gray-500">
+                  <ChevronRight className="h-5 w-5" />
                 </div>
               </div>
-            ))}
-            {products.length === 0 && (
-              <p className="text-gray-500 text-center py-8">No products found</p>
-            )}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Product Details</h2>
-          {selectedProduct ? (
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium text-gray-900">Entity Name</h3>
-                <p className="text-gray-600">{selectedProduct.entityName}</p>
-              </div>
-              <div>
-                <h3 className="font-medium text-gray-900">Namespace</h3>
-                <p className="text-gray-600">{selectedProduct.namespace}</p>
-              </div>
-              <div>
-                <h3 className="font-medium text-gray-900">Version</h3>
-                <p className="text-gray-600">{selectedProduct.version}</p>
-              </div>
-              {selectedProduct.associations && selectedProduct.associations.length > 0 && (
-                <div>
-                  <h3 className="font-medium text-gray-900">Associations</h3>
-                  <ul className="mt-2 space-y-1">
-                    {selectedProduct.associations.map((assoc, idx) => (
-                      <li key={idx} className="text-sm text-gray-600">
-                        {assoc.from} → {assoc.to}
-                      </li>
-                    ))}
-                  </ul>
+              
+              <p className={`
+                text-sm text-gray-600 dark:text-gray-300 mt-4 mb-3
+                ${isMultiTasking && multiTaskingMode === 'slide-over' ? 'line-clamp-1' : 'line-clamp-2'}
+              `}>
+                {product.description}
+              </p>
+              
+              <div className="grid grid-cols-3 gap-2 text-xs mt-3">
+                <div className="flex flex-col">
+                  <span className="text-gray-500 dark:text-gray-400">Tables</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{product.tables}</span>
                 </div>
-              )}
-              <div>
-                <h3 className="font-medium text-gray-900">Entity Data</h3>
-                <pre className="mt-2 p-3 bg-gray-100 rounded text-xs overflow-x-auto">
-                  {JSON.stringify(selectedProduct.entities, null, 2)}
-                </pre>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 dark:text-gray-400">Records</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {product.records.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-gray-500 dark:text-gray-400">Updated</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {formatDate(product.lastUpdated)}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+                {isAppleDevice ? (
+                  <EnhancedTouchButton
+                    variant="secondary"
+                    label="View Schema"
+                    iconLeft={<Server className="w-4 h-4" />}
+                    onClick={(e) => handleViewSchema(e as React.MouseEvent, product.id)}
+                    compact={true}
+                    size="small"
+                    fullWidth={false}
+                  />
+                ) : (
+                  <button
+                    className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1"
+                    onClick={(e) => handleViewSchema(e, product.id)}
+                  >
+                    <Server className="h-4 w-4" />
+                    View Schema
+                  </button>
+                )}
               </div>
             </div>
-          ) : (
-            <p className="text-gray-500 text-center py-8">Select a product to view details</p>
-          )}
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 };
+
+export default DataProductExplorer;

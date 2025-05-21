@@ -1,34 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Flex, 
-  Heading, 
-  Text, 
-  Container, 
-  VStack, 
-  Button, 
-  useColorModeValue, 
-  Tabs, 
-  TabList, 
-  TabPanels, 
-  Tab, 
-  TabPanel,
-  Alert,
-  AlertIcon,
-  Divider,
-  SimpleGrid,
-  Icon,
-  HStack,
-  Tag
-} from '@chakra-ui/react';
-import { FcDataProtection, FcFinePrint, FcMultipleDevices } from 'react-icons/fc';
-import { GiArtificialIntelligence } from 'react-icons/gi';
-import { RiDatabaseLine } from 'react-icons/ri';
-import { FaDatabase, FaNetworkWired, FaSearch } from 'react-icons/fa';
-import { useRouter } from 'next/router';
-
+import { NextPage } from 'next';
+import Head from 'next/head';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import SemanticTariffVisualizer from '../components/SemanticTariffVisualizer';
 import semanticTariffEngine from '../services/SemanticTariffEngine';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { useIOS, useMediaQuery } from '../hooks/useResponsive';
+import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities';
+import { useMicroInteractions } from '../hooks/useMicroInteractions';
+import EnhancedTouchButton from '../components/EnhancedTouchButton';
+import { HelpCircle, RefreshCw, Cpu, Database, Network, Search, BarChart2, FileText, PenTool, Download, Share2, Bell } from 'lucide-react';
 
 /**
  * Semantic Tariff Engine Page
@@ -36,16 +17,62 @@ import semanticTariffEngine from '../services/SemanticTariffEngine';
  * This page showcases the integration of Perplexity AI with Apache Jena through LangChain
  * for semantic tariff data processing and visualization.
  */
-const SemanticTariffEnginePage: React.FC = () => {
+const SemanticTariffEnginePage: NextPage = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [isInitializing, setIsInitializing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<string>('explorer');
   
-  // Colors
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const featureBg = useColorModeValue('blue.50', 'blue.900');
+  // Platform detection and UI enhancement hooks
+  const isAppleDevice = useIOS();
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
+  const { haptic } = useMicroInteractions();
+  const { touchCapable } = useDeviceCapabilities();
+  const { isDarkMode } = useUIPreferences();
+  
+  // Multi-tasking mode detection for iPad
+  const [isMultiTasking, setIsMultiTasking] = useState(false);
+  const [mode, setMode] = useState<'full' | 'split-view' | 'slide-over'>('full');
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('landscape');
+  
+  // Detect multi-tasking mode on iPad
+  useEffect(() => {
+    const checkMultiTaskingMode = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      // Set orientation
+      setOrientation(width > height ? 'landscape' : 'portrait');
+      
+      // Typical iPad sizes in various modes (approximate)
+      if (isAppleDevice) {
+        // Detect if we're in multi-tasking mode
+        if (width < 768 && width > 320) {
+          setIsMultiTasking(true);
+          setMode(width < 400 ? 'slide-over' : 'split-view');
+        } else {
+          setIsMultiTasking(false);
+          setMode('full');
+        }
+      } else {
+        setIsMultiTasking(false);
+        setMode('full');
+      }
+    };
+    
+    // Run once immediately
+    setIsPlatformDetected(true);
+    checkMultiTaskingMode();
+    
+    // Add event listeners for changes
+    window.addEventListener('resize', checkMultiTaskingMode);
+    window.addEventListener('orientationchange', checkMultiTaskingMode);
+    
+    return () => {
+      window.removeEventListener('resize', checkMultiTaskingMode);
+      window.removeEventListener('orientationchange', checkMultiTaskingMode);
+    };
+  }, [isAppleDevice]);
   
   // Initialize the semantic tariff engine
   useEffect(() => {
@@ -65,314 +92,460 @@ const SemanticTariffEnginePage: React.FC = () => {
     initEngine();
   }, []);
   
+  const handleTabChange = (tab: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    setActiveTab(tab);
+  };
+  
+  const handleReload = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    window.location.reload();
+  };
+  
+  const handleShareClick = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    
+    // Implement share functionality (e.g., open share sheet on iOS)
+    alert('Sharing semantic tariff data...');
+  };
+  
+  const handleExportClick = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    
+    // Implement export functionality
+    alert('Exporting semantic tariff data...');
+  };
+
   return (
-    <Container maxW="container.xl" py={8}>
-      {/* Hero Section */}
-      <Flex 
-        direction="column" 
-        align="center" 
-        textAlign="center"
-        bg={useColorModeValue('blue.50', 'blue.900')}
-        p={8}
-        borderRadius="lg"
-        mb={8}
+    <>
+      <Head>
+        <title>Semantic Tariff Engine | SCB Sapphire FinSight</title>
+        <meta name="description" content="Semantic tariff data processing and visualization powered by Perplexity AI and Apache Jena" />
+      </Head>
+      
+      <ScbBeautifulUI 
+        showNewsBar={!isMultiTasking} 
+        pageTitle="Semantic Tariff Engine" 
+        showTabs={isAppleDevice}
       >
-        <HStack spacing={4} mb={4}>
-          <Icon as={GiArtificialIntelligence} boxSize={10} color="blue.500" />
-          <Icon as={FaNetworkWired} boxSize={10} color="green.500" />
-          <Icon as={FaDatabase} boxSize={10} color="purple.500" />
-        </HStack>
-        <Heading size="xl" mb={4}>Semantic Tariff Engine</Heading>
-        <Text fontSize="lg" maxW="2xl" mb={6}>
-          Integrating Perplexity AI's real-time search with Apache Jena's semantic reasoning 
-          through LangChain as an integration layer to create a powerful tariff data system.
-        </Text>
-        <HStack>
-          <Tag size="lg" colorScheme="blue" borderRadius="full">Perplexity AI</Tag>
-          <Tag size="lg" colorScheme="green" borderRadius="full">Apache Jena</Tag>
-          <Tag size="lg" colorScheme="purple" borderRadius="full">LangChain</Tag>
-        </HStack>
-      </Flex>
-      
-      {/* Error Alert */}
-      {error && (
-        <Alert status="error" mb={6} borderRadius="md">
-          <AlertIcon />
-          {error}
-        </Alert>
-      )}
-      
-      {/* Main Content */}
-      <Tabs colorScheme="blue" variant="enclosed" isLazy>
-        <TabList>
-          <Tab>Tariff Explorer</Tab>
-          <Tab>Architecture</Tab>
-          <Tab>Documentation</Tab>
-        </TabList>
-        
-        <TabPanels>
-          {/* Tariff Explorer Tab */}
-          <TabPanel px={0}>
-            {isInitialized ? (
-              <SemanticTariffVisualizer />
-            ) : (
-              <Flex 
-                direction="column" 
-                align="center" 
-                justify="center" 
-                py={20}
-                borderWidth="1px"
-                borderRadius="md"
-                borderColor={borderColor}
+        <div className={`space-y-6 ${isMultiTasking && mode === 'slide-over' ? 'px-2' : ''}`}>
+          {/* Hero Section */}
+          <div className={`bg-[rgba(var(--scb-light-blue),0.2)] dark:bg-[rgba(var(--scb-dark-blue),0.2)] rounded-lg ${isMultiTasking && mode === 'slide-over' ? 'p-3' : 'p-6'}`}>
+            <div className="flex flex-col items-center text-center">
+              <div className="flex items-center gap-3 mb-4">
+                <Cpu className="text-[rgb(var(--scb-honolulu-blue))]" size={isMultiTasking && mode === 'slide-over' ? 20 : 28} />
+                <Network className="text-[rgb(var(--scb-american-green))]" size={isMultiTasking && mode === 'slide-over' ? 20 : 28} />
+                <Database className="text-[rgb(var(--scb-purple))]" size={isMultiTasking && mode === 'slide-over' ? 20 : 28} />
+              </div>
+              <h1 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xl' : 'text-3xl'} font-semibold text-[rgb(var(--scb-primary))] mb-4`}>
+                Semantic Tariff Engine
+              </h1>
+              <p className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} text-[rgb(var(--scb-dark-gray))] max-w-2xl mb-6`}>
+                Integrating Perplexity AI's real-time search with Apache Jena's semantic reasoning 
+                through LangChain as an integration layer to create a powerful tariff data system.
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
+                <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1'} bg-[rgba(var(--scb-honolulu-blue),0.2)] text-[rgb(var(--scb-honolulu-blue))] rounded-full`}>
+                  Perplexity AI
+                </span>
+                <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1'} bg-[rgba(var(--scb-american-green),0.2)] text-[rgb(var(--scb-american-green))] rounded-full`}>
+                  Apache Jena
+                </span>
+                <span className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs px-2 py-0.5' : 'text-sm px-3 py-1'} bg-[rgba(var(--scb-purple),0.2)] text-[rgb(var(--scb-purple))] rounded-full`}>
+                  LangChain
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Platform-specific action buttons */}
+          {isAppleDevice && isPlatformDetected && (
+            <div className="flex justify-end">
+              <div className={`flex items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'gap-3'}`}>
+                <EnhancedTouchButton
+                  onClick={handleShareClick}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                  size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                >
+                  <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                  <span>Share</span>
+                </EnhancedTouchButton>
+                
+                <EnhancedTouchButton
+                  onClick={handleExportClick}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                  size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                >
+                  <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                  <span>Export</span>
+                </EnhancedTouchButton>
+              </div>
+            </div>
+          )}
+          
+          {/* Error Alert */}
+          {error && (
+            <div className="bg-[rgba(var(--destructive),0.1)] text-[rgb(var(--destructive))] px-4 py-3 rounded-md flex items-center">
+              <HelpCircle className="mr-2" size={16} />
+              <span>{error}</span>
+            </div>
+          )}
+          
+          {/* Tabs */}
+          <div className={`border-b border-[rgb(var(--scb-border))]`}>
+            <div className="flex space-x-6">
+              <button
+                className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
+                  activeTab === 'explorer' 
+                    ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                    : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                }`}
+                onClick={() => handleTabChange('explorer')}
               >
-                <Icon as={FaSearch} boxSize={10} color="gray.400" mb={4} />
-                <Text fontSize="lg" fontWeight="medium" mb={2}>
-                  {isInitializing ? 'Initializing Semantic Tariff Engine...' : 'Semantic Tariff Engine Not Initialized'}
-                </Text>
-                <Text color="gray.500" textAlign="center" maxW="md" mb={6}>
-                  {isInitializing 
-                    ? 'This may take a few moments. Please wait while we connect to the semantic services.'
-                    : 'The semantic tariff engine failed to initialize. Please try reloading the page.'}
-                </Text>
-                {!isInitializing && (
-                  <Button 
-                    colorScheme="blue" 
-                    onClick={() => router.reload()}
-                  >
-                    Reload Page
-                  </Button>
+                Tariff Explorer
+              </button>
+              <button
+                className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
+                  activeTab === 'architecture' 
+                    ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                    : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                }`}
+                onClick={() => handleTabChange('architecture')}
+              >
+                Architecture
+              </button>
+              <button
+                className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
+                  activeTab === 'documentation' 
+                    ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                    : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                }`}
+                onClick={() => handleTabChange('documentation')}
+              >
+                Documentation
+              </button>
+            </div>
+          </div>
+          
+          {/* Tab Panels */}
+          <div className="mt-6">
+            {/* Tariff Explorer Tab */}
+            {activeTab === 'explorer' && (
+              <>
+                {isInitialized ? (
+                  <SemanticTariffVisualizer 
+                    isMultiTasking={isMultiTasking}
+                    multiTaskingMode={mode}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-16 border border-[rgb(var(--scb-border))] rounded-lg">
+                    <Search className="text-[rgb(var(--scb-dark-gray))] opacity-40 mb-4" size={isMultiTasking && mode === 'slide-over' ? 30 : 40} />
+                    <h3 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-lg'} mb-2`}>
+                      {isInitializing ? 'Initializing Semantic Tariff Engine...' : 'Semantic Tariff Engine Not Initialized'}
+                    </h3>
+                    <p className={`text-[rgb(var(--scb-dark-gray))] opacity-70 text-center max-w-md mb-6 ${isMultiTasking && mode === 'slide-over' ? 'text-xs px-4' : 'text-sm px-6'}`}>
+                      {isInitializing 
+                        ? 'This may take a few moments. Please wait while we connect to the semantic services.'
+                        : 'The semantic tariff engine failed to initialize. Please try reloading the page.'}
+                    </p>
+                    {!isInitializing && (
+                      isAppleDevice && isPlatformDetected ? (
+                        <EnhancedTouchButton
+                          onClick={handleReload}
+                          variant="primary"
+                          size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                        >
+                          <RefreshCw className="mr-2" size={isMultiTasking && mode === 'slide-over' ? 12 : 16} />
+                          Reload Page
+                        </EnhancedTouchButton>
+                      ) : (
+                        <button 
+                          className="bg-[rgb(var(--scb-honolulu-blue))] text-white font-medium px-4 py-2 rounded-md hover:bg-[rgba(var(--scb-honolulu-blue),0.9)] transition-colors"
+                          onClick={handleReload}
+                        >
+                          <RefreshCw className="inline-block mr-2" size={16} />
+                          Reload Page
+                        </button>
+                      )
+                    )}
+                  </div>
                 )}
-              </Flex>
+              </>
             )}
-          </TabPanel>
-          
-          {/* Architecture Tab */}
-          <TabPanel>
-            <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" mb={8}>
-              <Heading size="lg" mb={4}>System Architecture</Heading>
-              <Text mb={4}>
-                The semantic tariff engine integrates three powerful technologies to create a comprehensive
-                system for tariff data processing and analysis:
-              </Text>
-              
-              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} mt={8}>
-                {/* Perplexity AI */}
-                <Box 
-                  bg={featureBg} 
-                  p={6} 
-                  borderRadius="md" 
-                  borderWidth="1px"
-                  borderColor={borderColor}
-                >
-                  <Flex justify="center" mb={4}>
-                    <Icon as={GiArtificialIntelligence} boxSize={16} color="blue.500" />
-                  </Flex>
-                  <Heading size="md" mb={2} textAlign="center">Perplexity AI</Heading>
-                  <Divider my={4} />
-                  <VStack align="start" spacing={3}>
-                    <Text>• Real-time tariff information search</Text>
-                    <Text>• Up-to-date policy research</Text>
-                    <Text>• Impact analysis with reasoning</Text>
-                    <Text>• Data extraction from unstructured text</Text>
-                    <Text>• Support for structured JSON outputs</Text>
-                  </VStack>
-                </Box>
+            
+            {/* Architecture Tab */}
+            {activeTab === 'architecture' && (
+              <div className="bg-white dark:bg-[rgb(var(--scb-dark-background))] rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6">
+                <h2 className={`font-semibold text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-lg' : 'text-xl'} mb-4`}>
+                  System Architecture
+                </h2>
                 
-                {/* LangChain */}
-                <Box 
-                  bg={featureBg} 
-                  p={6} 
-                  borderRadius="md" 
-                  borderWidth="1px"
-                  borderColor={borderColor}
-                >
-                  <Flex justify="center" mb={4}>
-                    <Icon as={FaNetworkWired} boxSize={16} color="green.500" />
-                  </Flex>
-                  <Heading size="md" mb={2} textAlign="center">LangChain</Heading>
-                  <Divider my={4} />
-                  <VStack align="start" spacing={3}>
-                    <Text>• Integration middleware</Text>
-                    <Text>• Data transformation pipeline</Text>
-                    <Text>• Output parsing to RDF</Text>
-                    <Text>• Template-based prompting</Text>
-                    <Text>• Error handling and retries</Text>
-                  </VStack>
-                </Box>
+                <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-6`}>
+                  The semantic tariff engine integrates three powerful technologies to create a comprehensive
+                  system for tariff data processing and analysis:
+                </p>
                 
-                {/* Apache Jena */}
-                <Box 
-                  bg={featureBg} 
-                  p={6} 
-                  borderRadius="md" 
-                  borderWidth="1px"
-                  borderColor={borderColor}
-                >
-                  <Flex justify="center" mb={4}>
-                    <Icon as={FaDatabase} boxSize={16} color="purple.500" />
-                  </Flex>
-                  <Heading size="md" mb={2} textAlign="center">Apache Jena</Heading>
-                  <Divider my={4} />
-                  <VStack align="start" spacing={3}>
-                    <Text>• Semantic data storage</Text>
-                    <Text>• RDF triple representation</Text>
-                    <Text>• SPARQL query capabilities</Text>
-                    <Text>• Ontology-based reasoning</Text>
-                    <Text>• Data validation with SHACL</Text>
-                  </VStack>
-                </Box>
-              </SimpleGrid>
-              
-              <Box mt={8}>
-                <Heading size="md" mb={4}>Data Flow Architecture</Heading>
-                <Text mb={4}>
-                  The data flows through a pipeline from Perplexity's search results, through LangChain's
-                  structured output parsing, into Jena's RDF store where it becomes available for semantic
-                  querying and reasoning.
-                </Text>
+                <div className={`grid ${isMultiTasking ? 'grid-cols-1 gap-3' : 'md:grid-cols-3 gap-6'} mt-6 mb-8`}>
+                  {/* Perplexity AI */}
+                  <div className="bg-[rgba(var(--scb-light-blue),0.2)] dark:bg-[rgba(var(--scb-dark-blue),0.3)] p-5 rounded-lg border border-[rgb(var(--scb-border))]">
+                    <div className="flex justify-center mb-4">
+                      <Cpu className="text-[rgb(var(--scb-honolulu-blue))]" size={isMultiTasking && mode === 'slide-over' ? 32 : 40} />
+                    </div>
+                    <h3 className={`font-medium text-center ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-3`}>
+                      Perplexity AI
+                    </h3>
+                    <div className="border-t border-[rgb(var(--scb-border))] my-3"></div>
+                    <ul className={`space-y-2 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} text-[rgb(var(--scb-dark-gray))]`}>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Real-time tariff information search</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Up-to-date policy research</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Impact analysis with reasoning</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Data extraction from unstructured text</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Support for structured JSON outputs</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  {/* LangChain */}
+                  <div className="bg-[rgba(var(--scb-light-green),0.2)] dark:bg-[rgba(var(--scb-dark-green),0.3)] p-5 rounded-lg border border-[rgb(var(--scb-border))]">
+                    <div className="flex justify-center mb-4">
+                      <Network className="text-[rgb(var(--scb-american-green))]" size={isMultiTasking && mode === 'slide-over' ? 32 : 40} />
+                    </div>
+                    <h3 className={`font-medium text-center ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-3`}>
+                      LangChain
+                    </h3>
+                    <div className="border-t border-[rgb(var(--scb-border))] my-3"></div>
+                    <ul className={`space-y-2 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} text-[rgb(var(--scb-dark-gray))]`}>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Integration middleware</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Data transformation pipeline</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Output parsing to RDF</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Template-based prompting</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Error handling and retries</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  {/* Apache Jena */}
+                  <div className="bg-[rgba(var(--scb-light-purple),0.2)] dark:bg-[rgba(var(--scb-dark-purple),0.3)] p-5 rounded-lg border border-[rgb(var(--scb-border))]">
+                    <div className="flex justify-center mb-4">
+                      <Database className="text-[rgb(var(--scb-purple))]" size={isMultiTasking && mode === 'slide-over' ? 32 : 40} />
+                    </div>
+                    <h3 className={`font-medium text-center ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-3`}>
+                      Apache Jena
+                    </h3>
+                    <div className="border-t border-[rgb(var(--scb-border))] my-3"></div>
+                    <ul className={`space-y-2 ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} text-[rgb(var(--scb-dark-gray))]`}>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Semantic data storage</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>RDF triple representation</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>SPARQL query capabilities</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Ontology-based reasoning</span>
+                      </li>
+                      <li className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>Data validation with SHACL</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
                 
-                <Box 
-                  p={6}
-                  borderWidth="1px"
-                  borderRadius="md"
-                  borderColor={borderColor}
-                  mt={4}
-                >
-                  <VStack spacing={4} align="stretch">
-                    <HStack>
-                      <Icon as={FaSearch} boxSize={6} color="blue.500" />
-                      <Text fontWeight="bold">1. Data Acquisition</Text>
-                    </HStack>
-                    <Text pl={10}>
-                      Perplexity AI searches for tariff information using structured prompts designed
-                      to extract specific tariff details in JSON format. This includes rates, countries,
-                      product codes, effective dates, and policy information.
-                    </Text>
-                    
-                    <HStack>
-                      <Icon as={FcDataProtection} boxSize={6} />
-                      <Text fontWeight="bold">2. Data Transformation</Text>
-                    </HStack>
-                    <Text pl={10}>
-                      LangChain processes the structured JSON output and converts it to RDF triples
-                      following the tariff ontology schema. This creates semantic relationships between
-                      entities like countries, products, and policies.
-                    </Text>
-                    
-                    <HStack>
-                      <Icon as={RiDatabaseLine} boxSize={6} color="purple.500" />
-                      <Text fontWeight="bold">3. Semantic Storage</Text>
-                    </HStack>
-                    <Text pl={10}>
-                      Apache Jena stores the RDF triples in a queryable triplestore. This enables
-                      semantic reasoning about relationships between tariffs, countries, and trade policies.
-                    </Text>
-                    
-                    <HStack>
-                      <Icon as={FcFinePrint} boxSize={6} />
-                      <Text fontWeight="bold">4. Analysis & Visualization</Text>
-                    </HStack>
-                    <Text pl={10}>
-                      SPARQL queries extract insights from the semantic data model, which are then
-                      visualized through interactive charts and tables. This supports advanced analysis
-                      of tariff impacts and relationships.
-                    </Text>
-                  </VStack>
-                </Box>
-              </Box>
-            </Box>
-          </TabPanel>
-          
-          {/* Documentation Tab */}
-          <TabPanel>
-            <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md">
-              <Heading size="lg" mb={4}>Technical Documentation</Heading>
-              
-              <VStack spacing={8} align="stretch">
-                <Box>
-                  <Heading size="md" mb={3}>API Reference</Heading>
-                  <Text mb={4}>
-                    The Semantic Tariff Engine exposes the following key methods for integration with
-                    external systems:
-                  </Text>
-                  <Box 
-                    p={4} 
-                    borderWidth="1px" 
-                    borderRadius="md" 
-                    fontFamily="mono" 
-                    fontSize="sm"
-                    bg={useColorModeValue('gray.50', 'gray.700')}
-                  >
-                    <Text mb={2}><strong>searchTariffs(params)</strong> - Search for tariff information</Text>
-                    <Text mb={2}><strong>getTariffChangesByCountry(country, limit)</strong> - Get recent tariff changes</Text>
-                    <Text mb={2}><strong>calculateTariffImpact(params)</strong> - Analyze tariff impact</Text>
-                    <Text mb={2}><strong>executeSparqlQuery(query)</strong> - Run custom SPARQL queries</Text>
-                    <Text><strong>importTariffData(data)</strong> - Import external tariff data</Text>
-                  </Box>
-                </Box>
+                <div className="mt-8">
+                  <h3 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-lg'} mb-4`}>
+                    Data Flow Architecture
+                  </h3>
+                  
+                  <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-4`}>
+                    The data flows through a pipeline from Perplexity's search results, through LangChain's
+                    structured output parsing, into Jena's RDF store where it becomes available for semantic
+                    querying and reasoning.
+                  </p>
+                  
+                  <div className="border border-[rgb(var(--scb-border))] rounded-lg p-5 mt-4">
+                    <div className="space-y-5">
+                      <div>
+                        <div className="flex items-center mb-2">
+                          <Search className="text-[rgb(var(--scb-honolulu-blue))] mr-3" size={isMultiTasking && mode === 'slide-over' ? 16 : 20} />
+                          <span className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                            1. Data Acquisition
+                          </span>
+                        </div>
+                        <p className={`ml-8 text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                          Perplexity AI searches for tariff information using structured prompts designed
+                          to extract specific tariff details in JSON format. This includes rates, countries,
+                          product codes, effective dates, and policy information.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center mb-2">
+                          <PenTool className="text-[rgb(var(--scb-honolulu-blue))] mr-3" size={isMultiTasking && mode === 'slide-over' ? 16 : 20} />
+                          <span className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                            2. Data Transformation
+                          </span>
+                        </div>
+                        <p className={`ml-8 text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                          LangChain processes the structured JSON output and converts it to RDF triples
+                          following the tariff ontology schema. This creates semantic relationships between
+                          entities like countries, products, and policies.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center mb-2">
+                          <Database className="text-[rgb(var(--scb-purple))] mr-3" size={isMultiTasking && mode === 'slide-over' ? 16 : 20} />
+                          <span className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                            3. Semantic Storage
+                          </span>
+                        </div>
+                        <p className={`ml-8 text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                          Apache Jena stores the RDF triples in a queryable triplestore. This enables
+                          semantic reasoning about relationships between tariffs, countries, and trade policies.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center mb-2">
+                          <BarChart2 className="text-[rgb(var(--scb-honolulu-blue))] mr-3" size={isMultiTasking && mode === 'slide-over' ? 16 : 20} />
+                          <span className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                            4. Analysis & Visualization
+                          </span>
+                        </div>
+                        <p className={`ml-8 text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                          SPARQL queries extract insights from the semantic data model, which are then
+                          visualized through interactive charts and tables. This supports advanced analysis
+                          of tariff impacts and relationships.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Documentation Tab */}
+            {activeTab === 'documentation' && (
+              <div className="bg-white dark:bg-[rgb(var(--scb-dark-background))] rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-6">
+                <h2 className={`font-semibold text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-lg' : 'text-xl'} mb-6`}>
+                  Technical Documentation
+                </h2>
                 
-                <Box>
-                  <Heading size="md" mb={3}>Ontology Schema</Heading>
-                  <Text mb={4}>
-                    The tariff ontology defines the semantic data model using the following core classes
-                    and relationships:
-                  </Text>
-                  <Box 
-                    p={4} 
-                    borderWidth="1px" 
-                    borderRadius="md" 
-                    fontFamily="mono" 
-                    fontSize="sm"
-                    bg={useColorModeValue('gray.50', 'gray.700')}
-                  >
-                    <Text mb={2}><strong>tariff:Tariff</strong> - A duty imposed on imported/exported goods</Text>
-                    <Text mb={2}><strong>tariff:Country</strong> - A nation or sovereign state</Text>
-                    <Text mb={2}><strong>tariff:HSCode</strong> - Harmonized System Code for product classification</Text>
-                    <Text mb={2}><strong>tariff:TariffChange</strong> - A recorded change in tariff rates or policies</Text>
-                    <Text mb={2}><strong>tariff:Policy</strong> - A trade policy or agreement affecting tariffs</Text>
-                    <Text><strong>tariff:DataSource</strong> - Source of tariff information</Text>
-                  </Box>
-                </Box>
-                
-                <Box>
-                  <Heading size="md" mb={3}>Integration with LangChain</Heading>
-                  <Text mb={4}>
-                    LangChain is used as middleware to connect Perplexity AI with the semantic triplestore.
-                    Key components include:
-                  </Text>
-                  <Box 
-                    p={4} 
-                    borderWidth="1px" 
-                    borderRadius="md" 
-                    bg={useColorModeValue('gray.50', 'gray.700')}
-                  >
-                    <VStack align="start" spacing={3}>
-                      <Text><strong>Structured Output Parsers</strong> - Convert API responses to structured data</Text>
-                      <Text><strong>RDF Triple Extraction</strong> - Generate RDF from structured data</Text>
-                      <Text><strong>Advanced Prompting Templates</strong> - Specialized prompts for tariff data</Text>
-                      <Text><strong>Error Handling</strong> - Robust error recovery for API calls</Text>
-                      <Text><strong>Data Validation</strong> - Validate output before semantic storage</Text>
-                    </VStack>
-                  </Box>
-                </Box>
-                
-                <Box>
-                  <Heading size="md" mb={3}>SPARQL Query Examples</Heading>
-                  <Text mb={4}>
-                    The following SPARQL queries demonstrate how to extract insights from the semantic tariff data:
-                  </Text>
-                  <Box 
-                    p={4} 
-                    borderWidth="1px" 
-                    borderRadius="md" 
-                    fontFamily="mono" 
-                    fontSize="sm"
-                    bg={useColorModeValue('gray.50', 'gray.700')}
-                    whiteSpace="pre-wrap"
-                    overflowX="auto"
-                  >
-                    <Text fontWeight="bold" mb={2}># Query for tariffs between two countries</Text>
-                    <Text mb={4}>{`PREFIX tariff: <http://example.org/tariff/>
+                <div className="space-y-8">
+                  <div>
+                    <h3 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-3`}>
+                      API Reference
+                    </h3>
+                    <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-4`}>
+                      The Semantic Tariff Engine exposes the following key methods for integration with
+                      external systems:
+                    </p>
+                    <div className={`bg-[rgb(var(--scb-light-gray))] dark:bg-[rgba(var(--scb-dark-gray),0.3)] p-4 rounded-md font-mono ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                      <p className="mb-2"><strong>searchTariffs(params)</strong> - Search for tariff information</p>
+                      <p className="mb-2"><strong>getTariffChangesByCountry(country, limit)</strong> - Get recent tariff changes</p>
+                      <p className="mb-2"><strong>calculateTariffImpact(params)</strong> - Analyze tariff impact</p>
+                      <p className="mb-2"><strong>executeSparqlQuery(query)</strong> - Run custom SPARQL queries</p>
+                      <p><strong>importTariffData(data)</strong> - Import external tariff data</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-3`}>
+                      Ontology Schema
+                    </h3>
+                    <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-4`}>
+                      The tariff ontology defines the semantic data model using the following core classes
+                      and relationships:
+                    </p>
+                    <div className={`bg-[rgb(var(--scb-light-gray))] dark:bg-[rgba(var(--scb-dark-gray),0.3)] p-4 rounded-md font-mono ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                      <p className="mb-2"><strong>tariff:Tariff</strong> - A duty imposed on imported/exported goods</p>
+                      <p className="mb-2"><strong>tariff:Country</strong> - A nation or sovereign state</p>
+                      <p className="mb-2"><strong>tariff:HSCode</strong> - Harmonized System Code for product classification</p>
+                      <p className="mb-2"><strong>tariff:TariffChange</strong> - A recorded change in tariff rates or policies</p>
+                      <p className="mb-2"><strong>tariff:Policy</strong> - A trade policy or agreement affecting tariffs</p>
+                      <p><strong>tariff:DataSource</strong> - Source of tariff information</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className={`font-medium text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-sm' : 'text-base'} mb-3`}>
+                      Integration with LangChain
+                    </h3>
+                    <p className={`text-[rgb(var(--scb-dark-gray))] ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} mb-4`}>
+                      LangChain is used as middleware to connect Perplexity AI with the semantic triplestore.
+                      Key components include:
+                    </p>
+                    <div className={`bg-[rgb(var(--scb-light-gray))] dark:bg-[rgba(var(--scb-dark-gray),0.3)] p-4 rounded-md ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'}`}>
+                      <ul className="space-y-2">
+                        <li><strong>Structured Output Parsers</strong> - Convert API responses to structured data</li>
+                        <li><strong>RDF Triple Extraction</strong> - Generate RDF from structured data</li>
+                        <li><strong>Advanced Prompting Templates</strong> - Specialized prompts for tariff data</li>
+                        <li><strong>Error Handling</strong> - Robust error recovery for API calls</li>
+                        <li><strong>Data Validation</strong> - Validate output before semantic storage</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  {!isMultiTasking && (
+                    <div>
+                      <h3 className="font-medium text-[rgb(var(--scb-dark-gray))] text-base mb-3">
+                        SPARQL Query Examples
+                      </h3>
+                      <p className="text-[rgb(var(--scb-dark-gray))] text-sm mb-4">
+                        The following SPARQL queries demonstrate how to extract insights from the semantic tariff data:
+                      </p>
+                      <div className="bg-[rgb(var(--scb-light-gray))] dark:bg-[rgba(var(--scb-dark-gray),0.3)] p-4 rounded-md font-mono text-sm whitespace-pre-wrap overflow-x-auto">
+                        <p className="font-bold mb-2"># Query for tariffs between two countries</p>
+                        <p className="mb-4">{`PREFIX tariff: <http://example.org/tariff/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 SELECT ?tariff ?rate ?effectiveDate
@@ -384,10 +557,10 @@ WHERE {
   ?destCountry rdfs:label "United States"@en .
   ?tariff tariff:hasRate ?rate .
   ?tariff tariff:hasEffectiveDate ?effectiveDate .
-}`}</Text>
-                    
-                    <Text fontWeight="bold" mb={2}># Query for recent tariff changes</Text>
-                    <Text>{`PREFIX tariff: <http://example.org/tariff/>
+}`}</p>
+                        
+                        <p className="font-bold mb-2"># Query for recent tariff changes</p>
+                        <p>{`PREFIX tariff: <http://example.org/tariff/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 SELECT ?change ?title ?oldRate ?newRate
@@ -398,15 +571,33 @@ WHERE {
   ?change tariff:hasNewRate ?newRate .
   ?change tariff:hasAnnouncementDate ?date .
   FILTER (?date >= "2025-01-01"^^xsd:date)
-}`}</Text>
-                  </Box>
-                </Box>
-              </VStack>
-            </Box>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </Container>
+}`}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* Fixed notification button for iPad/iPhone */}
+        {isAppleDevice && !isMultiTasking && (
+          <div className="fixed bottom-6 right-6">
+            <EnhancedTouchButton
+              onClick={() => {
+                haptic({ intensity: 'medium' });
+                alert('Documentation panel opened');
+              }}
+              variant="primary"
+              className="rounded-full p-3 shadow-lg"
+            >
+              <FileText size={20} />
+            </EnhancedTouchButton>
+          </div>
+        )}
+      </ScbBeautifulUI>
+    </>
   );
 };
 
