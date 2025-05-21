@@ -22,26 +22,30 @@ const nextConfig = {
   // Disable SWC compiler due to issues on some platforms
   swcMinify: false,
   
-  // Webpack configuration with source maps
+  // Completely disable minification and source maps to avoid Terser
   webpack: (config, { isServer, dev }) => {
-    if (!isServer) {
-      // Completely disable Terser and minification
-      config.optimization.minimize = false;
+    // Disable all minimizers
+    config.optimization.minimize = false;
+    
+    // Remove any Terser plugins from the minimizer array
+    if (config.optimization.minimizer) {
       config.optimization.minimizer = [];
-      
-      // Use named modules for easier debugging
-      config.optimization.moduleIds = 'named';
-      config.optimization.chunkIds = 'named';
-      
-      // Set proper source map type based on environment
-      config.devtool = dev ? 'eval-source-map' : 'source-map';
+    }
+    
+    // Use named modules for easier debugging
+    config.optimization.moduleIds = 'named';
+    config.optimization.chunkIds = 'named';
+    
+    // Use a simpler source map strategy that doesn't require Terser
+    if (!isServer) {
+      config.devtool = 'nosources-source-map';
     }
     
     return config;
   },
   
-  // Generate a standalone build
-  output: 'standalone',
+  // Use standard build output
+  output: 'export',
   
   // Environment variables for build
   env: {
