@@ -4,11 +4,16 @@
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "cleanUrls": true,
   "env": {
-    "PERPLEXITY_API_KEY": "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",
-    "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
+    "PERPLEXITY_API_KEY": "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",
+    "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
   },
+  "rewrites": [
+    {
+      "source": "/(.*)\\.map",
+      "destination": "/_next/static/source-maps/$1.map"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -56,13 +61,6 @@
           "value": "application/json"
         }
       ]
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)\\.map$",
-      "dest": "/_next/static/source-maps/$1.map",
-      "status": 200
     }
   ]
 }
