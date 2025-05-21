@@ -301,35 +301,69 @@ export default function Analytics() {
     );
   };
   
-  // Handle data refresh
+  // Handle data refresh with iOS physics animations
   const handleRefresh = () => {
+    // Don't trigger if already refreshing
+    if (refreshing) return;
+    
     // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
+    if (isApplePlatform) {
       haptics.medium();
     }
     
     setRefreshing(true);
     
-    // Simulate a data refresh with a timeout
+    // Animate chart transition out
+    if (isApplePlatform && !prefersReducedMotion) {
+      setChartTransition(true);
+    }
+    
+    // Simulate a data refresh with a timeout (longer for iOS to show animation)
     setTimeout(() => {
+      // Reset chart transition midway
+      if (isApplePlatform && !prefersReducedMotion) {
+        setTimeout(() => {
+          setChartTransition(false);
+        }, isApplePlatform ? 400 : 0);
+      }
+      
       setRefreshing(false);
       
       // Success haptic feedback when refresh completes
-      if (isAppleDevice) {
+      if (isApplePlatform) {
         haptics.success();
       }
-    }, 1500);
+    }, isApplePlatform ? 1800 : 1200);
   };
   
-  // Handle report download
+  // Handle report download with iOS-specific loading state and haptics
   const handleDownloadReport = () => {
     // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
+    if (isApplePlatform) {
       haptics.medium();
     }
     
-    // In a real app, this would generate and download a report
-    alert('Downloading analytics report...');
+    // iOS-style handling with action sheet or notification
+    if (isApplePlatform) {
+      // Success notification after a delay
+      setTimeout(() => {
+        // Success haptic feedback when complete
+        haptics.success();
+        
+        // In a real app, this would generate and download a report
+        setSelectedDataPoint({
+          title: "Analytics Report",
+          description: "Transaction Banking Performance Q1 2025",
+          status: "Downloaded Successfully",
+          timestamp: new Date().toISOString()
+        });
+        
+        setShowDataDetail(true);
+      }, 1500);
+    } else {
+      // Standard alert for non-Apple devices
+      alert('Downloading analytics report...');
+    }
   };
   
   // Navigation bar actions
@@ -386,117 +420,304 @@ export default function Analytics() {
     { label: 'Analytics', href: '/analytics', icon: 'chart.bar.xaxis' },
   ];
 
-  // Render line chart with iOS optimizations if on Apple device
+  // Render line chart with enhanced iOS optimizations
   const renderLineChart = (dimensions: any, interactionState: any, helpers: any) => {
     const { width, height, margin, innerWidth, innerHeight } = dimensions;
-    const { formatCurrency } = helpers || {};
+    const { formatCurrency, triggerHaptic } = helpers || {};
+    const { isCompact, isExpanded, hasFocus } = interactionState || {};
+    
+    // Determine responsively sized elements based on container size
+    const fontSize = isCompact ? 10 : isExpanded ? 14 : 12;
+    const strokeWidth = isCompact ? 2 : isExpanded ? 4 : 3;
+    const dotRadius = isCompact ? 3 : isExpanded ? 5 : 4;
+    const activeDotRadius = dotRadius + 2;
+    
+    // Adjust chart visibility during transition for smoother animation
+    const opacity = chartTransition ? 0.3 : 1;
+    const transform = chartTransition ? 'translateY(10px)' : 'translateY(0)';
+    
+    // Dynamic line type based on device - straight lines look more iOS-native
+    const lineType = isApplePlatform ? 'linear' : 'monotone';
     
     return (
-      <ResponsiveContainer width={width} height={height}>
-        <LineChart data={trendData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.1)" />
-          <XAxis 
-            dataKey="month" 
-            tick={{ fontSize: interactionState?.isCompact ? 10 : 12 }}
-            stroke="#8E8E93"
-          />
-          <YAxis 
-            yAxisId="left" 
-            orientation="left" 
-            stroke={iosColors[0]}
-            tickFormatter={(value) => formatCurrency ? formatCurrency(value, 'USD').split('.')[0] : `$${value/1000}k`}
-            fontSize={interactionState?.isCompact ? 10 : 12}
-          />
-          <YAxis 
-            yAxisId="right" 
-            orientation="right" 
-            stroke={iosColors[1]}
-            fontSize={interactionState?.isCompact ? 10 : 12}
-          />
-          <Tooltip 
-            contentStyle={{
-              borderRadius: 8,
-              backgroundColor: 'rgba(255,255,255,0.95)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              border: '1px solid rgba(0,0,0,0.05)'
-            }}
-            formatter={(value: any, name: string) => {
-              if (name === 'Revenue') {
-                return formatCurrency ? formatCurrency(value, 'USD') : `$${value.toLocaleString()}`;
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          opacity,
+          transform,
+          transition: isApplePlatform ? 
+            `opacity ${iosTransitions.duration}ms ${iosTransitions.easing}, transform ${iosTransitions.duration}ms ${iosTransitions.easing}` : 
+            'none'
+        }}
+      >
+        <ResponsiveContainer width={width} height={height}>
+          <LineChart 
+            data={trendData} 
+            margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+            onClick={(data) => {
+              // Handle chart overall click for iOS integration
+              if (isApplePlatform && !data?.activePayload) {
+                triggerHaptic('light');
               }
-              return value;
             }}
-          />
-          <Line 
-            yAxisId="left" 
-            type="monotone" 
-            dataKey="revenue" 
-            stroke={iosColors[0]}
-            strokeWidth={3}
-            animationDuration={1000}
-            dot={{ r: 4, fill: 'white', stroke: iosColors[0], strokeWidth: 2 }}
-            activeDot={{ r: 6, fill: iosColors[0], stroke: 'white', strokeWidth: 2 }}
-            name="Revenue" 
-          />
-          <Line 
-            yAxisId="right" 
-            type="monotone" 
-            dataKey="accounts" 
-            stroke={iosColors[1]}
-            strokeWidth={3}
-            animationDuration={1000}
-            dot={{ r: 4, fill: 'white', stroke: iosColors[1], strokeWidth: 2 }}
-            activeDot={{ r: 6, fill: iosColors[1], stroke: 'white', strokeWidth: 2 }}
-            name="Accounts" 
-          />
-        </LineChart>
-      </ResponsiveContainer>
+          >
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              stroke={isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+              vertical={!isCompact}
+            />
+            <XAxis 
+              dataKey="month" 
+              tick={{ 
+                fontSize, 
+                fill: isDarkMode ? '#8E8E93' : '#3C3C43' 
+              }}
+              stroke={isDarkMode ? "rgba(255,255,255,0.3)" : "#8E8E93"}
+              tickLine={!isCompact}
+              axisLine={!isCompact}
+              tickMargin={8}
+            />
+            <YAxis 
+              yAxisId="left" 
+              orientation="left" 
+              stroke={iosColors[0]}
+              tickFormatter={(value) => formatCurrency ? formatCurrency(value, 'USD').split('.')[0] : `$${value/1000}k`}
+              tick={{ fontSize }}
+              tickLine={!isCompact}
+              axisLine={!isCompact}
+              tickMargin={8}
+            />
+            <YAxis 
+              yAxisId="right" 
+              orientation="right" 
+              stroke={iosColors[1]}
+              tick={{ fontSize }}
+              tickLine={!isCompact}
+              axisLine={!isCompact}
+              hide={isCompact}
+            />
+            <Tooltip 
+              contentStyle={{
+                borderRadius: 12,
+                backgroundColor: isDarkMode ? 'rgba(30,30,30,0.95)' : 'rgba(255,255,255,0.95)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                border: isDarkMode ? '1px solid rgba(60,60,60,0.8)' : '1px solid rgba(0,0,0,0.05)',
+                padding: '8px 12px',
+                fontSize: fontSize + 1,
+                color: isDarkMode ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)'
+              }}
+              formatter={(value: any, name: string) => {
+                if (isApplePlatform && triggerHaptic) {
+                  // Provide subtle feedback when hovering over data points
+                  triggerHaptic('light');
+                }
+                
+                if (name === 'Revenue') {
+                  return formatCurrency ? formatCurrency(value, 'USD') : `$${value.toLocaleString()}`;
+                }
+                return value;
+              }}
+              cursor={isApplePlatform ? { stroke: isDarkMode ? '#8E8E93' : '#3C3C43', strokeDasharray: '3 3' } : undefined}
+              wrapperStyle={{
+                outline: 'none',
+                zIndex: 100,
+                pointerEvents: 'auto'
+              }}
+            />
+            <Line 
+              yAxisId="left" 
+              type={lineType}
+              dataKey="revenue" 
+              stroke={iosColors[0]}
+              strokeWidth={strokeWidth}
+              activeDot={{
+                r: activeDotRadius,
+                fill: iosColors[0],
+                stroke: isDarkMode ? '#1C1C1E' : 'white',
+                strokeWidth: 2,
+                onMouseOver: () => isApplePlatform && triggerHaptic && triggerHaptic('light'),
+                onClick: () => {
+                  if (isApplePlatform && triggerHaptic) {
+                    triggerHaptic('medium');
+                  }
+                }
+              }}
+              dot={{
+                r: dotRadius,
+                fill: isDarkMode ? '#1C1C1E' : 'white',
+                stroke: iosColors[0],
+                strokeWidth: 2
+              }}
+              name="Revenue"
+              animationDuration={isApplePlatform ? iosTransitions.duration : 1000}
+              animationEasing={isApplePlatform ? iosTransitions.easing : 'ease'}
+              isAnimationActive={!prefersReducedMotion}
+            />
+            <Line 
+              yAxisId="right" 
+              type={lineType}
+              dataKey="accounts" 
+              stroke={iosColors[1]}
+              strokeWidth={strokeWidth}
+              activeDot={{
+                r: activeDotRadius,
+                fill: iosColors[1],
+                stroke: isDarkMode ? '#1C1C1E' : 'white',
+                strokeWidth: 2,
+                onMouseOver: () => isApplePlatform && triggerHaptic && triggerHaptic('light'),
+                onClick: () => {
+                  if (isApplePlatform && triggerHaptic) {
+                    triggerHaptic('medium');
+                  }
+                }
+              }}
+              dot={{
+                r: dotRadius,
+                fill: isDarkMode ? '#1C1C1E' : 'white',
+                stroke: iosColors[1],
+                strokeWidth: 2
+              }}
+              name="Accounts"
+              animationDuration={isApplePlatform ? iosTransitions.duration : 1000}
+              animationEasing={isApplePlatform ? iosTransitions.easing : 'ease'}
+              isAnimationActive={!prefersReducedMotion}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     );
   };
 
-  // Render pie chart with iOS optimizations if on Apple device
+  // Render pie chart with enhanced iOS optimizations
   const renderPieChart = (dimensions: any, interactionState: any, helpers: any) => {
     const { width, height } = dimensions;
-    const { formatPercentage } = helpers || {};
-    const { activeIndex } = interactionState || {};
+    const { formatPercentage, triggerHaptic } = helpers || {};
+    const { activeIndex, isCompact, isExpanded, isPinching } = interactionState || {};
+    
+    // Adjust sizes based on container and interaction state
+    const outerRadius = isCompact ? 70 : isExpanded ? 100 : 80;
+    const innerRadius = activeIndex !== null ? (outerRadius * 0.5) : (isApplePlatform ? outerRadius * 0.35 : 0);
+    
+    // Adjust chart visibility during transition for smoother animation
+    const opacity = chartTransition ? 0.3 : 1;
+    const transform = chartTransition ? 'scale(0.95)' : 'scale(1)';
+    
+    // Dynamic padding based on device
+    const paddingAngle = isApplePlatform ? 4 : 2;
+    
+    // Enhanced iOS-style label function for clean, Apple-like data visualization
+    const labelFunction = ({ name, value, percent }: { name: string, value: number, percent: number }) => {
+      if (isCompact) return '';
+      if (isApplePlatform) {
+        return `${value}%`;
+      }
+      return `${name}: ${value}%`;
+    };
     
     return (
-      <ResponsiveContainer width={width} height={height}>
-        <PieChart>
-          <Pie
-            data={pieData}
-            cx="50%"
-            cy="50%"
-            innerRadius={activeIndex !== null ? 40 : 0}
-            outerRadius={80}
-            fill={iosColors[0]}
-            dataKey="value"
-            animationDuration={800}
-            animationBegin={0}
-            paddingAngle={2}
-            label={({ name, value }) => `${name}: ${value}%`}
-            labelLine={false}
-          >
-            {pieData.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={entry.color} 
-                stroke="white" 
-                strokeWidth={activeIndex === index ? 2 : 0}
-              />
-            ))}
-          </Pie>
-          <Tooltip 
-            contentStyle={{
-              borderRadius: 8,
-              backgroundColor: 'rgba(255,255,255,0.95)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-              border: '1px solid rgba(0,0,0,0.05)'
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          opacity,
+          transform,
+          transition: isApplePlatform ? 
+            `opacity ${iosTransitions.duration}ms ${iosTransitions.easing}, transform ${iosTransitions.duration}ms ${iosTransitions.easing}` : 
+            'none'
+        }}
+      >
+        <ResponsiveContainer width={width} height={height}>
+          <PieChart
+            onClick={() => {
+              // Handle chart overall click for iOS integration
+              if (isApplePlatform && triggerHaptic) {
+                triggerHaptic('light');
+              }
             }}
-            formatter={(value: any) => formatPercentage ? formatPercentage(value, 0) : `${value}%`}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+          >
+            <Pie
+              data={pieData}
+              cx="50%"
+              cy="50%"
+              innerRadius={innerRadius}
+              outerRadius={outerRadius}
+              fill={iosColors[0]}
+              dataKey="value"
+              animationDuration={isApplePlatform ? iosTransitions.duration : 800}
+              animationEasing={isApplePlatform ? iosTransitions.easing : 'ease'}
+              isAnimationActive={!prefersReducedMotion}
+              animationBegin={isApplePlatform ? 50 : 0}
+              paddingAngle={paddingAngle}
+              label={labelFunction}
+              labelLine={!isApplePlatform}
+              onClick={(_, index) => {
+                // Provide feedback when a segment is clicked
+                if (isApplePlatform && triggerHaptic) {
+                  triggerHaptic('medium');
+                  
+                  // Select the sector when clicked (iOS style)
+                  handleSectorSelect(pieData[index]);
+                }
+              }}
+              activeIndex={isApplePlatform ? (activeIndex !== null ? [activeIndex] : undefined) : undefined}
+              activeShape={isApplePlatform ? {
+                fill: iosColors[0],
+                stroke: isDarkMode ? '#1C1C1E' : 'white',
+                strokeWidth: 3,
+                scale: 1.05,
+                shadowColor: 'rgba(0,0,0,0.2)',
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowOffsetY: 3
+              } : undefined}
+              onMouseEnter={(_, index) => {
+                // Provide subtle feedback on hover
+                if (isApplePlatform && triggerHaptic) {
+                  triggerHaptic('light');
+                }
+              }}
+            >
+              {pieData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.color} 
+                  stroke={isDarkMode ? '#1C1C1E' : 'white'} 
+                  strokeWidth={activeIndex === index ? 3 : 1}
+                  strokeOpacity={1}
+                />
+              ))}
+            </Pie>
+            <Tooltip 
+              contentStyle={{
+                borderRadius: 12,
+                backgroundColor: isDarkMode ? 'rgba(30,30,30,0.95)' : 'rgba(255,255,255,0.95)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                border: isDarkMode ? '1px solid rgba(60,60,60,0.8)' : '1px solid rgba(0,0,0,0.05)',
+                padding: '8px 12px',
+                color: isDarkMode ? 'rgba(255,255,255,0.9)' : 'rgba(0,0,0,0.8)'
+              }}
+              formatter={(value: any, name: string, props: any) => {
+                if (isApplePlatform && triggerHaptic) {
+                  // Provide subtle feedback when hovering over segments
+                  triggerHaptic('light');
+                }
+                
+                // iOS-optimized tooltip value
+                return isApplePlatform ? [
+                  `${value}%`, 
+                  name
+                ] : formatPercentage ? formatPercentage(value, 0) : `${value}%`;
+              }}
+              wrapperStyle={{
+                outline: 'none',
+                zIndex: 100,
+                pointerEvents: 'auto'
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
     );
   };
 
@@ -686,6 +907,141 @@ export default function Analytics() {
     );
   };
 
+  // iOS-specific enhanced data detail modal
+  const renderDataDetailModal = () => {
+    if (!isApplePlatform || !showDataDetail || !selectedDataPoint) return null;
+    
+    // Render iOS style card with sector details
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-50"
+        onClick={closeDataDetail}
+        style={{
+          touchAction: 'none'
+        }}
+      >
+        <div 
+          className={`w-full max-w-lg bg-white dark:bg-gray-800 rounded-t-2xl p-6 pb-10 transform transition-transform duration-300 ease-out ${
+            showDataDetail ? 'translate-y-0' : 'translate-y-full'
+          }`}
+          onClick={e => e.stopPropagation()}
+          style={{ 
+            paddingBottom: hasHomeIndicator ? `calc(1.5rem + ${safeAreaCss.bottom})` : '1.5rem' 
+          }}
+        >
+          {/* Drag handle */}
+          <div className="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-6" />
+          
+          {/* Close button */}
+          <button 
+            className="absolute top-6 right-6 text-gray-500 dark:text-gray-400"
+            onClick={closeDataDetail}
+            aria-label="Close"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          
+          {/* Content */}
+          <h3 className="text-xl font-semibold mb-3">
+            {selectedDataPoint.name || selectedDataPoint.title || 'Sector Details'}
+          </h3>
+          
+          {selectedDataPoint.status && (
+            <div className="mb-4 flex items-center">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                {selectedDataPoint.status}
+              </span>
+            </div>
+          )}
+          
+          {selectedDataPoint.description && (
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              {selectedDataPoint.description}
+            </p>
+          )}
+          
+          {/* Display data in a card */}
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 mb-4">
+            {selectedDataPoint.revenue && (
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Revenue</span>
+                <span className="font-semibold">${selectedDataPoint.revenue.toLocaleString()}</span>
+              </div>
+            )}
+            
+            {selectedDataPoint.accounts && (
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Accounts</span>
+                <span className="font-semibold">{selectedDataPoint.accounts}</span>
+              </div>
+            )}
+            
+            {selectedDataPoint.value && (
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Share</span>
+                <span className="font-semibold">{selectedDataPoint.value}%</span>
+              </div>
+            )}
+            
+            {selectedDataPoint.change !== undefined && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500 dark:text-gray-400">YoY Change</span>
+                <span className={`font-semibold ${
+                  selectedDataPoint.change > 0 ? 'text-green-600' : 
+                  selectedDataPoint.change < 0 ? 'text-red-600' : 'text-gray-600'
+                }`}>
+                  {selectedDataPoint.change > 0 ? '+' : ''}{selectedDataPoint.change}%
+                </span>
+              </div>
+            )}
+            
+            {selectedDataPoint.timestamp && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Timestamp</span>
+                <span className="font-semibold">
+                  {new Date(selectedDataPoint.timestamp).toLocaleString()}
+                </span>
+              </div>
+            )}
+          </div>
+          
+          {/* Action buttons */}
+          <div className="grid grid-cols-2 gap-3">
+            <EnhancedAppleTouchButton
+              variant="secondary"
+              fullWidth={true}
+              onClick={closeDataDetail}
+              size="md"
+              hapticFeedback={true}
+              hapticPattern="selection"
+            >
+              Close
+            </EnhancedAppleTouchButton>
+            
+            <EnhancedAppleTouchButton
+              variant="primary"
+              fullWidth={true}
+              onClick={() => {
+                haptics.action();
+                closeDataDetail();
+                // Navigate to detailed view in real app
+                alert('Viewing full details would open a dedicated page');
+              }}
+              size="md"
+              hapticFeedback={true}
+              hapticPattern="action"
+            >
+              View Full Details
+            </EnhancedAppleTouchButton>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
   return (
     <>
       {isAppleDevice ? (
@@ -698,10 +1054,16 @@ export default function Analytics() {
           tabItems={tabItems}
           navBarRightActions={navBarActions}
           showBackButton={true}
-          largeTitle={true}
+          largeTitle={!navbarHidden}
           theme={isDarkMode ? 'dark' : 'light'}
-        >
-          <div className="space-y-6">
+          navbarHidden={navbarHidden}
+          <div 
+            className="space-y-6"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            ref={chartContainerRef}
+          >
             <div className="flex justify-between items-center flex-wrap gap-2">
               <div>
                 <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mt-1`}>
@@ -936,6 +1298,8 @@ export default function Analytics() {
           </div>
         </ScbBeautifulUI>
       )}
+      {/* iOS-specific data detail modal */}
+      {renderDataDetailModal()}
     </>
   );
 }

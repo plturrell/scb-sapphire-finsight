@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
@@ -10,6 +10,8 @@ import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities';
 import { useMicroInteractions } from '../hooks/useMicroInteractions';
 import EnhancedTouchButton from '../components/EnhancedTouchButton';
 import { HelpCircle, RefreshCw, Cpu, Database, Network, Search, BarChart2, FileText, PenTool, Download, Share2, Bell } from 'lucide-react';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import SFSymbol from '@/components/SFSymbol';
 
 /**
  * Semantic Tariff Engine Page
@@ -29,6 +31,17 @@ const SemanticTariffEnginePage: NextPage = () => {
   const { haptic } = useMicroInteractions();
   const { touchCapable } = useDeviceCapabilities();
   const { isDarkMode } = useUIPreferences();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Reference for scrolling to sections
+  const tabsRef = useRef<HTMLDivElement>(null);
+  
+  // Tariff engine categories with SF Symbols icons
+  const tariffEngineCategories = [
+    { id: 'explorer', label: 'Tariff Explorer', icon: 'magnifyingglass.circle.fill', badge: null },
+    { id: 'architecture', label: 'Architecture', icon: 'square.stack.3d.up.fill', badge: null },
+    { id: 'documentation', label: 'Documentation', icon: 'doc.text.fill', badge: null }
+  ];
   
   // Multi-tasking mode detection for iPad
   const [isMultiTasking, setIsMultiTasking] = useState(false);
@@ -98,6 +111,61 @@ const SemanticTariffEnginePage: NextPage = () => {
       haptic({ intensity: 'light' });
     }
     setActiveTab(tab);
+    
+    // Scroll to the tab section if needed
+    if (tabsRef.current) {
+      tabsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  // SF Symbols Tariff Navigation Component
+  const SFSymbolsTariffNavigation = () => {
+    return (
+      <div className="mb-6 -mx-4 px-4 overflow-x-auto">
+        <div className={`flex space-x-3 py-2 ${isMultiTasking && mode === 'slide-over' ? 'min-w-max' : ''}`}>
+          {tariffEngineCategories.map((category) => (
+            <div 
+              key={category.id}
+              onClick={() => handleTabChange(category.id)}
+              className={`flex flex-col items-center p-2 rounded-xl cursor-pointer transition-colors ${
+                activeTab === category.id
+                ? 'bg-[rgba(var(--scb-honolulu-blue),0.1)] dark:bg-[rgba(var(--scb-dark-blue),0.2)]'
+                : 'hover:bg-[rgba(var(--scb-light-gray),0.3)] dark:hover:bg-[rgba(var(--scb-dark-gray),0.2)]'
+              }`}
+              style={{ minWidth: isMultiTasking && mode === 'slide-over' ? '64px' : '80px' }}
+            >
+              <div className={`relative flex items-center justify-center ${
+                isMultiTasking && mode === 'slide-over' ? 'w-10 h-10' : 'w-12 h-12'
+              } rounded-full mb-1 ${
+                activeTab === category.id
+                ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
+                : 'bg-[rgba(var(--scb-light-gray),0.3)] dark:bg-[rgba(var(--scb-dark-gray),0.3)] text-[rgb(var(--scb-dark-gray))]'
+              }`}>
+                <SFSymbol 
+                  name={category.icon} 
+                  size={isMultiTasking && mode === 'slide-over' ? 20 : 24}
+                  color={activeTab === category.id ? 'white' : undefined}
+                />
+                
+                {/* Badge indicator */}
+                {category.badge && (
+                  <div className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center rounded-full bg-[rgb(var(--scb-notification))] text-white text-xs px-1">
+                    {category.badge}
+                  </div>
+                )}
+              </div>
+              <span className={`text-center ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${
+                activeTab === category.id
+                ? 'text-[rgb(var(--scb-honolulu-blue))] font-medium'
+                : 'text-[rgb(var(--scb-dark-gray))]'
+              }`}>
+                {category.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
   
   const handleReload = () => {
@@ -205,41 +273,51 @@ const SemanticTariffEnginePage: NextPage = () => {
             </div>
           )}
           
-          {/* Tabs */}
-          <div className={`border-b border-[rgb(var(--scb-border))]`}>
-            <div className="flex space-x-6">
-              <button
-                className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
-                  activeTab === 'explorer' 
-                    ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
-                    : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
-                }`}
-                onClick={() => handleTabChange('explorer')}
-              >
-                Tariff Explorer
-              </button>
-              <button
-                className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
-                  activeTab === 'architecture' 
-                    ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
-                    : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
-                }`}
-                onClick={() => handleTabChange('architecture')}
-              >
-                Architecture
-              </button>
-              <button
-                className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
-                  activeTab === 'documentation' 
-                    ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
-                    : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
-                }`}
-                onClick={() => handleTabChange('documentation')}
-              >
-                Documentation
-              </button>
+          {/* SF Symbols Navigation (for Apple devices) */}
+          {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+            <SFSymbolsTariffNavigation />
+          )}
+          
+          {/* Traditional Tabs - Only shown when SF Symbols navigation is not available */}
+          {(!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) && (
+            <div className={`border-b border-[rgb(var(--scb-border))]`} ref={tabsRef}>
+              <div className="flex space-x-6">
+                <button
+                  className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
+                    activeTab === 'explorer' 
+                      ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                      : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                  }`}
+                  onClick={() => handleTabChange('explorer')}
+                >
+                  Tariff Explorer
+                </button>
+                <button
+                  className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
+                    activeTab === 'architecture' 
+                      ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                      : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                  }`}
+                  onClick={() => handleTabChange('architecture')}
+                >
+                  Architecture
+                </button>
+                <button
+                  className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs py-2' : 'text-sm py-3'} pb-2 px-1 font-medium border-b-2 transition-colors ${
+                    activeTab === 'documentation' 
+                      ? 'border-[rgb(var(--scb-honolulu-blue))] text-[rgb(var(--scb-honolulu-blue))]' 
+                      : 'border-transparent text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-primary))]'
+                  }`}
+                  onClick={() => handleTabChange('documentation')}
+                >
+                  Documentation
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+          
+          {/* Tab content reference */}
+          <div ref={tabsRef}></div>
           
           {/* Tab Panels */}
           <div className="mt-6">

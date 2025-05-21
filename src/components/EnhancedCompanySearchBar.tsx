@@ -36,143 +36,19 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
 }
 
 interface CompanySearchResult {
-  companyId: string;
-  companyCode: string;
-  companyName: string;
-  companyNameLocal?: string;
+  id: string;
+  name: string;
   ticker?: string;
-  industry: string;
-  country: string;
-  listingStatus: string;
-  matchScore: number;
-  dataAvailable: {
+  industry?: string;
+  sector?: string;
+  relevance?: number;
+  dataAvailable?: {
     profile: boolean;
     financials: boolean;
     filings: boolean;
     tariffData: boolean;
   };
 }
-
-// Mock company data for demonstration
-const mockCompanies: CompanySearchResult[] = [
-  {
-    companyId: 'ciq-001',
-    companyCode: 'VCG-0001',
-    companyName: 'Vietnam Dairy Products Joint Stock Company',
-    companyNameLocal: 'Công ty Cổ phần Sữa Việt Nam',
-    ticker: 'VNM',
-    industry: 'Food Products',
-    country: 'Vietnam',
-    listingStatus: 'Listed',
-    matchScore: 0.95,
-    dataAvailable: {
-      profile: true,
-      financials: true,
-      filings: true,
-      tariffData: true
-    }
-  },
-  {
-    companyId: 'ciq-002',
-    companyCode: 'VCG-0002',
-    companyName: 'FPT Corporation',
-    companyNameLocal: 'Công ty Cổ phần FPT',
-    ticker: 'FPT',
-    industry: 'Information Technology',
-    country: 'Vietnam',
-    listingStatus: 'Listed',
-    matchScore: 0.90,
-    dataAvailable: {
-      profile: true,
-      financials: true,
-      filings: true,
-      tariffData: true
-    }
-  },
-  {
-    companyId: 'ciq-003',
-    companyCode: 'VCG-0003',
-    companyName: 'Viettel Group',
-    companyNameLocal: 'Tập đoàn Viễn thông Quân đội',
-    ticker: null,
-    industry: 'Telecommunications',
-    country: 'Vietnam',
-    listingStatus: 'Private',
-    matchScore: 0.88,
-    dataAvailable: {
-      profile: true,
-      financials: false,
-      filings: false,
-      tariffData: true
-    }
-  },
-  {
-    companyId: 'ciq-004',
-    companyCode: 'VCG-0004',
-    companyName: 'Masan Group Corporation',
-    companyNameLocal: 'Công ty Cổ phần Tập đoàn Masan',
-    ticker: 'MSN',
-    industry: 'Consumer Goods',
-    country: 'Vietnam',
-    listingStatus: 'Listed',
-    matchScore: 0.85,
-    dataAvailable: {
-      profile: true,
-      financials: true,
-      filings: true,
-      tariffData: true
-    }
-  },
-  {
-    companyId: 'ciq-005',
-    companyCode: 'VCG-0005',
-    companyName: 'Vietnam Airlines JSC',
-    companyNameLocal: 'Tổng Công ty Hàng không Việt Nam',
-    ticker: 'HVN',
-    industry: 'Airlines',
-    country: 'Vietnam',
-    listingStatus: 'Listed',
-    matchScore: 0.82,
-    dataAvailable: {
-      profile: true,
-      financials: true,
-      filings: true,
-      tariffData: true
-    }
-  },
-  {
-    companyId: 'scb-001',
-    companyCode: 'SCB-001',
-    companyName: 'Standard Chartered Bank',
-    ticker: 'STAN',
-    industry: 'Banking',
-    country: 'United Kingdom',
-    listingStatus: 'Listed',
-    matchScore: 0.92,
-    dataAvailable: {
-      profile: true,
-      financials: true,
-      filings: true,
-      tariffData: false
-    }
-  },
-  {
-    companyId: 'scb-vnm',
-    companyCode: 'SCB-VNM',
-    companyName: 'Standard Chartered Bank (Vietnam) Limited',
-    companyNameLocal: 'Ngân hàng TNHH Một thành viên Standard Chartered (Việt Nam)',
-    industry: 'Banking',
-    country: 'Vietnam',
-    listingStatus: 'Subsidiary',
-    matchScore: 0.89,
-    dataAvailable: {
-      profile: true,
-      financials: true,
-      filings: false,
-      tariffData: false
-    }
-  }
-];
 
 interface EnhancedCompanySearchBarProps {
   placeholder?: string;
@@ -221,7 +97,7 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Mock search function
+  // Search function using our API service
   const performSearch = useCallback(
     debounce(async (query: string) => {
       if (query.length < 2) {
@@ -234,25 +110,39 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
       setSearchStatus({ type: 'loading', message: 'Searching companies...' });
       
       try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Filter mock data based on query
-        const results = mockCompanies.filter(company => 
-          company.companyName.toLowerCase().includes(query.toLowerCase()) ||
-          company.companyNameLocal?.toLowerCase().includes(query.toLowerCase()) ||
-          company.ticker?.toLowerCase().includes(query.toLowerCase()) ||
-          company.industry.toLowerCase().includes(query.toLowerCase())
-        );
-        
-        // Sort by match score
-        results.sort((a, b) => b.matchScore - a.matchScore);
-        
-        setSearchResults(results);
-        setSearchStatus({ 
-          type: 'success', 
-          message: `Found ${results.length} companies` 
+        // Call our API service
+        const response = await ApiService.company.searchCompanies(query, {
+          limit: 10,
         });
+        
+        if (response.success && response.results) {
+          // Map results to our interface if needed
+          const results = response.results.map((company: any) => {
+            return {
+              id: company.id,
+              name: company.name,
+              ticker: company.ticker,
+              industry: company.industry,
+              sector: company.sector,
+              relevance: company.relevance || 1.0,
+              // Generate a default data availability if not provided
+              dataAvailable: company.dataAvailable || {
+                profile: true,
+                financials: !!company.ticker, // Assume financial data available for companies with tickers
+                filings: !!company.ticker,
+                tariffData: false,
+              },
+            };
+          });
+          
+          setSearchResults(results);
+          setSearchStatus({ 
+            type: 'success', 
+            message: `Found ${results.length} companies` 
+          });
+        } else {
+          throw new Error('Invalid search response format');
+        }
       } catch (error) {
         console.error('Search error:', error);
         setSearchResults([]);
@@ -285,11 +175,11 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
 
   // Select company from results
   const selectCompany = (company: CompanySearchResult) => {
-    setSearchQuery(company.companyName);
+    setSearchQuery(company.name);
     setShowResults(false);
     
     // Add to recent searches
-    const newRecent = [company.companyName, ...recentSearches.filter(s => s !== company.companyName)].slice(0, 5);
+    const newRecent = [company.name, ...recentSearches.filter(s => s !== company.name)].slice(0, 5);
     setRecentSearches(newRecent);
     localStorage.setItem('recentCompanySearches', JSON.stringify(newRecent));
 
@@ -300,7 +190,7 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
     
     // Navigate to company page if autoNavigate is true
     if (autoNavigate) {
-      router.push(`/reports/company/${company.companyCode}`);
+      router.push(`/reports/company/${encodeURIComponent(company.id)}`);
     }
   };
 
@@ -438,7 +328,7 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
                       <div className="flex-1">
                         <div className="flex items-center">
                           <Building2 className="w-4 h-4 text-[rgb(var(--scb-dark-gray))] mr-2" />
-                          <span className="font-medium text-[rgb(var(--scb-dark-gray))]">{company.companyName}</span>
+                          <span className="font-medium text-[rgb(var(--scb-dark-gray))]">{company.name}</span>
                           {company.ticker && (
                             <span className="ml-2 text-xs horizon-chip">
                               {company.ticker}
@@ -446,17 +336,11 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
                           )}
                         </div>
                         
-                        {company.companyNameLocal && (
-                          <p className="text-xs text-[rgb(var(--scb-dark-gray))] ml-6 mt-0.5">
-                            {company.companyNameLocal}
-                          </p>
-                        )}
-                        
                         <div className="flex items-center mt-2 ml-6">
                           <span className="text-xs text-[rgb(var(--scb-dark-gray))]">
-                            {company.industry} • {company.country}
+                            {company.industry || 'Unknown'} {company.sector ? `• ${company.sector}` : ''}
                           </span>
-                          {company.listingStatus === 'Listed' && (
+                          {company.ticker && (
                             <span className="ml-2 text-xs horizon-chip-blue">
                               Listed
                             </span>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Newspaper, TrendingUp, Clock, ExternalLink, RefreshCw, Sparkles, AlertCircle, ThumbsUp, ThumbsDown } from 'lucide-react';
-import { perplexityApi } from '../lib/market-news-service';
 import { useCache } from '@/hooks';
 import SkeletonLoader from './SkeletonLoader';
 import { NewsItem } from '@/types/perplexity';
 import perplexityAnalytics from '@/services/PerplexityAnalytics';
+import ApiService from '@/services/ApiService';
 
 
 interface PerplexityNewsBarProps {
@@ -28,64 +28,40 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
       
       // Retry logic with backoff
       while (retryCount <= MAX_RETRIES) {
-        // Create a new controller for each attempt
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 second timeout (increased)
-        
         try {
           console.log(`Attempting to fetch news (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
           
-          // Use a wrapper to ensure we get proper error handling
-          const response = await fetch('/api/market-news', { 
-            signal: controller.signal,
-            headers: { 
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-cache' // Prevent caching
-            }
+          // Use our new API service
+          const response = await ApiService.marketNews.getLatestNews({
+            topic: 'financial markets',
+            limit: 10
           });
           
-          clearTimeout(timeoutId);
-          
-          if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+          if (!response.success) {
+            throw new Error('API returned unsuccessful response');
           }
           
-          const data = await response.json();
-          
-          // Check if we got a fallback response
-          if (data.fallbackContent) {
-            console.warn('Received fallback content');
-            // We still have some data to display, so just log the warning
-            // but don't throw an error
-          }
-          
-          if (!data.articles && data.fallbackContent) {
-            // Create fallback news item when API failed but returned fallback content
-            return [{
-              id: `fallback-${Date.now()}`,
-              title: 'Market News Temporarily Unavailable',
-              summary: data.fallbackContent || 'Unable to retrieve market news at this time. Please try again later.',
-              category: 'Service Alert',
-              timestamp: new Date().toISOString(),
-              source: 'System',
-              url: ''
-            }];
-          }
-          
-          if (!data.articles || !Array.isArray(data.articles)) {
+          if (!response.articles || !Array.isArray(response.articles)) {
             throw new Error('Invalid news data format');
           }
           
-          return data.articles;
-        } catch (fetchError: any) {
-          clearTimeout(timeoutId);
-          lastError = fetchError;
+          // Transform the API response to match our NewsItem format
+          const newsItems = response.articles.map((article: any) => ({
+            id: article.id || `news-${Date.now()}-${Math.random()}`,
+            title: article.title,
+            summary: article.summary,
+            category: article.category || 'General',
+            timestamp: article.timestamp || new Date().toISOString(),
+            source: article.source || 'Financial News',
+            url: article.url || '#',
+            impact: article.impact,
+            relevance: article.relevance
+          }));
           
-          if (fetchError.name === 'AbortError') {
-            console.error(`News fetch timed out (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
-          } else {
-            console.error(`News fetch error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, fetchError.message || fetchError);
-          }
+          return newsItems;
+        } catch (fetchError: any) {
+          lastError = fetchError;
+          console.error(`News fetch error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, fetchError.message || fetchError);
           
           // If we have retries left, try again with backoff
           if (retryCount < MAX_RETRIES) {
@@ -177,6 +153,10 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
     });
     
     try {
+      // First, trigger the API refresh endpoint
+      await ApiService.marketNews.refreshMarketNews('financial markets');
+      
+      // Then refresh our local cache
       await refreshNews(true); // Force a fresh fetch
     } catch (error) {
       console.error('Error refreshing news:', error);
