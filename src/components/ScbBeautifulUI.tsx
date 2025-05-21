@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import EnhancedPerplexitySearchBar from './EnhancedPerplexitySearchBar';
 import EnhancedPerplexityNewsBar from './EnhancedPerplexityNewsBar';
@@ -70,6 +70,14 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
     }
   }, [isIOS, joule, preferences.enableHaptics, showJoule]);
   
+  // Define iOS-style tabs with useMemo to prevent dependency changes
+  const tabItems = useMemo(() => [
+    { key: 'dashboard', id: 'dashboard', label: 'Dashboard', icon: 'house.fill', href: '/' },
+    { key: 'analytics', id: 'analytics', label: 'Analytics', icon: 'chart.pie.fill', href: '/analytics' },
+    { key: 'reports', id: 'reports', label: 'Reports', icon: 'doc.text.fill', href: '/reports' },
+    { key: 'settings', id: 'settings', label: 'Settings', icon: 'gear', href: '/settings' }
+  ], []);
+
   // Handle tab change with haptic feedback
   const handleTabChange = useCallback((tabId: string) => {
     setActiveTab(tabId);
@@ -97,14 +105,6 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
         router.push('/');
     }
   }, [isIOS, preferences.enableHaptics, router]);
-
-  // Define iOS-style tabs
-  const tabItems = [
-    { key: 'dashboard', id: 'dashboard', label: 'Dashboard', icon: 'house.fill', href: '/' },
-    { key: 'analytics', id: 'analytics', label: 'Analytics', icon: 'chart.pie.fill', href: '/analytics' },
-    { key: 'reports', id: 'reports', label: 'Reports', icon: 'doc.text.fill', href: '/reports' },
-    { key: 'settings', id: 'settings', label: 'Settings', icon: 'gear', href: '/settings' }
-  ];
   
   // Helper functions for layout classes based on preferences
   const getFontSizeClass = useCallback(() => {
@@ -134,7 +134,7 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
         className={`border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
       />
     ) : null
-  ), [showTabs, isIOS, activeTab, handleTabChange, preferences.showLabels, preferences.enableHaptics, isDarkMode]);
+  ), [showTabs, isIOS, activeTab, handleTabChange, preferences.showLabels, preferences.enableHaptics, isDarkMode, tabItems]);
 
   return (
     <ResponsiveAppLayout

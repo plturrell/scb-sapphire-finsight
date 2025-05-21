@@ -305,7 +305,7 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
   // Update sidebar state when preferences change
   useEffect(() => {
     setSidebarOpen(sidebarExpanded);
-  }, [preferences.sidebarExpanded]);
+  }, [preferences.sidebarExpanded, sidebarExpanded]);
 
   // Get notification icon based on type
   const getNotificationIcon = (type: string) => {

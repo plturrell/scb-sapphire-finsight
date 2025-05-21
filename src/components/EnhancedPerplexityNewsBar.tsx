@@ -15,9 +15,10 @@ interface NewsItem {
 
 interface EnhancedPerplexityNewsBarProps {
   onAnalyzeNews?: (newsItem: NewsItem) => void;
+  enableHaptics?: boolean;
 }
 
-export default function EnhancedPerplexityNewsBar({ onAnalyzeNews }: EnhancedPerplexityNewsBarProps) {
+export default function EnhancedPerplexityNewsBar({ onAnalyzeNews, enableHaptics }: EnhancedPerplexityNewsBarProps) {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);

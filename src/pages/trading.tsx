@@ -113,32 +113,13 @@ export default function Trading() {
               >
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
-              
-              {/* Only show dropdown when SF Symbols are not available */}
-              {(!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) && (
-                <div className="relative">
-                  <select 
-                    value={marketView}
-                    onChange={(e) => handleMarketViewChange(e.target.value)}
-                    className="scb-input py-1.5 pl-3 pr-8 text-sm rounded-md dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
-                  >
-                    <option value="main">Main Markets</option>
-                    <option value="forex">Forex</option>
-                    <option value="crypto">Crypto</option>
-                    <option value="commodities">Commodities</option>
-                    <option value="bonds">Bonds</option>
-                    <option value="futures">Futures</option>
-                  </select>
-                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgb(var(--scb-dark-gray))] dark:text-gray-300" />
-                </div>
-              )}
             </div>
           </div>
           
-          {/* SF Symbols Market Navigation */}
-          {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
-            <SFSymbolsMarketNavigation />
-          )}
+          {/* Enhanced Trading Navigation */}
+          <div className="px-4 py-3">
+            {renderTradingNavigation()}
+          </div>
           
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -273,18 +254,53 @@ export default function Trading() {
                 </div>
                 
                 <div className="pt-4 flex gap-4">
-                  <button
-                    type="button"
-                    className="flex-1 py-2 px-4 bg-[rgb(var(--scb-american-green))] text-white rounded-md hover:bg-[rgba(var(--scb-american-green),0.9)] transition-colors"
-                  >
-                    Buy
-                  </button>
-                  <button
-                    type="button"
-                    className="flex-1 py-2 px-4 bg-[rgb(var(--scb-muted-red))] text-white rounded-md hover:bg-[rgba(var(--scb-muted-red),0.9)] transition-colors"
-                  >
-                    Sell
-                  </button>
+                  {isAppleDevice && isPlatformDetected ? (
+                    <>
+                      {/* iOS-style buttons with icons */}
+                      <button
+                        type="button"
+                        onClick={() => isAppleDevice && haptic({ intensity: 'medium' })}
+                        className="flex-1 py-3 px-4 bg-[rgb(var(--scb-american-green))] text-white rounded-xl shadow-sm hover:bg-[rgba(var(--scb-american-green),0.9)] active:scale-95 transition-all duration-150 flex justify-center items-center gap-2"
+                      >
+                        <SFSymbol 
+                          name="arrow.up.right.circle.fill" 
+                          size={20} 
+                          color="white"
+                          renderingMode={sfSymbolsSupported ? 'hierarchical' : 'monochrome'} 
+                        />
+                        <span className="font-medium">Buy</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => isAppleDevice && haptic({ intensity: 'medium' })}
+                        className="flex-1 py-3 px-4 bg-[rgb(var(--scb-muted-red))] text-white rounded-xl shadow-sm hover:bg-[rgba(var(--scb-muted-red),0.9)] active:scale-95 transition-all duration-150 flex justify-center items-center gap-2"
+                      >
+                        <SFSymbol 
+                          name="arrow.down.right.circle.fill" 
+                          size={20} 
+                          color="white"
+                          renderingMode={sfSymbolsSupported ? 'hierarchical' : 'monochrome'} 
+                        />
+                        <span className="font-medium">Sell</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {/* Standard buttons for non-Apple devices */}
+                      <button
+                        type="button"
+                        className="flex-1 py-2 px-4 bg-[rgb(var(--scb-american-green))] text-white rounded-md hover:bg-[rgba(var(--scb-american-green),0.9)] transition-colors"
+                      >
+                        Buy
+                      </button>
+                      <button
+                        type="button"
+                        className="flex-1 py-2 px-4 bg-[rgb(var(--scb-muted-red))] text-white rounded-md hover:bg-[rgba(var(--scb-muted-red),0.9)] transition-colors"
+                      >
+                        Sell
+                      </button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
