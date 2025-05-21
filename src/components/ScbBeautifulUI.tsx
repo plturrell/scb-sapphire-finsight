@@ -87,24 +87,12 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
       haptics.selection();
     }
     
-    // Navigate based on tab
-    switch (tabId) {
-      case 'dashboard':
-        router.push('/');
-        break;
-      case 'analytics':
-        router.push('/analytics');
-        break;
-      case 'reports':
-        router.push('/reports');
-        break;
-      case 'settings':
-        router.push('/settings');
-        break;
-      default:
-        router.push('/');
+    // Find the matching tab item and navigate to its href
+    const tabItem = tabItems.find(item => item.id === tabId);
+    if (tabItem && tabItem.href) {
+      router.push(tabItem.href);
     }
-  }, [isIOS, preferences.enableHaptics, router]);
+  }, [isIOS, preferences.enableHaptics, router, tabItems]);
   
   // Helper functions for layout classes based on preferences
   const getFontSizeClass = useCallback(() => {

@@ -721,6 +721,7 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                   filterMobile={false} // In mobile view, we want to show mobile pages
                   enableHaptics={preferences.enableHaptics}
                   onClick={(item) => {
+                    router.push(item.href);
                     setSidebarOpen(false);
                     triggerHaptics();
                   }}
@@ -743,7 +744,10 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                 filterTest={preferences.hideTestPages !== false}
                 filterMobile={preferences.hideMobilePages !== false}
                 enableHaptics={preferences.enableHaptics}
-                onClick={() => triggerHaptics()}
+                onClick={(item) => {
+                  router.push(item.href);
+                  triggerHaptics();
+                }}
               />
             </div>
           </div>
@@ -765,12 +769,15 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
         <nav className={`lg:hidden fixed bottom-0 left-0 right-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t safe-bottom`}>
           <AppNavigationLinks 
             condensed={true}
-            showLabels={preferences.showLabels !== false}
-            filterTest={true}
+            showLabels={true}
+            filterTest={preferences.hideTestPages !== false}
             filterMobile={false}
-            filterCategory="Main" // Only show main navigation items in the bottom bar
+            filterCategory="Main"
             enableHaptics={preferences.enableHaptics}
-            onClick={() => triggerHaptics()}
+            onClick={(item) => {
+              router.push(item.href);
+              triggerHaptics();
+            }}
           />
         </nav>
       )}

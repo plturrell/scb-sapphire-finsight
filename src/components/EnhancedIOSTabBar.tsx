@@ -215,10 +215,13 @@ const EnhancedIOSTabBar: React.FC<EnhancedIOSTabBarProps> = ({
     
     // Call onChange handler if provided
     if (onChange) {
+      // Let the parent component handle navigation
       onChange(item.key);
+      // Don't navigate directly to avoid duplicate navigation
+      return;
     }
     
-    // Navigate to tab href
+    // Only navigate directly if no onChange handler is provided
     router.push(item.href);
   };
   

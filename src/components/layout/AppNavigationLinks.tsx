@@ -211,7 +211,12 @@ const AppNavigationLinks: React.FC<AppNavigationLinksProps> = ({
                     }
                   `}
                   title={!showLabels ? item.name : undefined}
-                  onClick={() => onClick && onClick(item)}
+                  onClick={(e) => {
+                    if (onClick) {
+                      e.preventDefault();
+                      onClick(item);
+                    }
+                  }}
                 >
                   {showIcons && (
                     <item.icon className={`flex-shrink-0 ${

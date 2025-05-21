@@ -301,6 +301,236 @@ export default function Investments() {
     );
   };
   
+  // iOS-style holding detail modal
+  const renderHoldingDetailModal = () => {
+    if (!showDetailModal || !selectedHolding) return null;
+    
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 animate-in fade-in"
+        onClick={() => {
+          setShowDetailModal(false);
+          if (isApplePlatform) haptics.light();
+        }}
+        style={{
+          backdropFilter: 'blur(3px)',
+          WebkitBackdropFilter: 'blur(3px)'
+        }}
+      >
+        <div 
+          className={`w-full max-w-lg mx-auto rounded-t-xl overflow-hidden pb-8 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+          style={{
+            transform: 'translateY(0)',
+            animation: 'slide-in-up 350ms cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+            boxShadow: '0 -2px 20px rgba(0,0,0,0.2)',
+            paddingBottom: hasHomeIndicator ? `calc(2rem + ${safeAreaCss.bottom})` : '2rem'
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Handle bar for dragging */}
+          <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3" />
+          
+          {/* Header */}
+          <div className="px-5 pt-4 pb-6 border-b border-gray-200 dark:border-gray-800">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {selectedHolding.name}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {selectedHolding.sector}
+            </p>
+          </div>
+          
+          {/* Content */}
+          <div className="px-5 py-4">
+            {/* Metrics */}
+            <div className="grid grid-cols-2 gap-5 mb-6">
+              <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-800/20' : 'bg-blue-50'}`}>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Current Value</p>
+                <p className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
+                  ${selectedHolding.value.toLocaleString()}
+                </p>
+              </div>
+              <div className={`p-4 rounded-lg ${
+                selectedHolding.change >= 0 
+                  ? isDarkMode ? 'bg-green-800/20' : 'bg-green-50'
+                  : isDarkMode ? 'bg-red-800/20' : 'bg-red-50'
+              }`}>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Daily Change</p>
+                <p className={`text-2xl font-semibold ${
+                  selectedHolding.change >= 0 
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-red-600 dark:text-red-400'
+                }`}>
+                  {selectedHolding.change >= 0 ? '+' : ''}{selectedHolding.change}%
+                </p>
+              </div>
+            </div>
+            
+            {/* Details */}
+            <div className={`p-4 rounded-lg mb-5 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Market Cap</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">$2.54T</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">52 Week High</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">$198.23</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">52 Week Low</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">$124.17</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Dividend Yield</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">0.54%</span>
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className="space-y-3">
+              <button 
+                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${isDarkMode ? 'bg-blue-600' : 'bg-blue-600'}`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.medium();
+                  setShowDetailModal(false);
+                }}
+              >
+                {sfSymbolsSupported && (
+                  <span className="sf-symbol text-white">chart.xyaxis.line</span>
+                )}
+                <span>View Details</span>
+              </button>
+              <button 
+                className={`w-full px-4 py-3 rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode 
+                    ? 'bg-gray-800 text-white border border-gray-700'
+                    : 'bg-white text-gray-800 border border-gray-300'
+                }`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.light();
+                  setShowDetailModal(false);
+                }}
+              >
+                {sfSymbolsSupported && (
+                  <span className="sf-symbol">xmark</span>
+                )}
+                <span>Close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  // iOS-style insight detail modal
+  const renderInsightDetailModal = () => {
+    if (!showInsightModal || !selectedInsight) return null;
+    
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 animate-in fade-in"
+        onClick={() => {
+          setShowInsightModal(false);
+          if (isApplePlatform) haptics.light();
+        }}
+        style={{
+          backdropFilter: 'blur(3px)',
+          WebkitBackdropFilter: 'blur(3px)'
+        }}
+      >
+        <div 
+          className={`w-full max-w-lg mx-auto rounded-t-xl overflow-hidden pb-8 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+          style={{
+            transform: 'translateY(0)',
+            animation: 'slide-in-up 350ms cubic-bezier(0.25, 0.1, 0.25, 1.0)',
+            boxShadow: '0 -2px 20px rgba(0,0,0,0.2)',
+            paddingBottom: hasHomeIndicator ? `calc(2rem + ${safeAreaCss.bottom})` : '2rem'
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Handle bar for dragging */}
+          <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3" />
+          
+          {/* Header */}
+          <div className="px-5 pt-4 pb-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center mb-2">
+              {selectedInsight.urgent && (
+                <div className={`mr-2 ${isDarkMode ? 'bg-red-900/20' : 'bg-red-100'} p-1.5 rounded-full`}>
+                  {sfSymbolsSupported ? (
+                    <span className="sf-symbol text-red-500">exclamationmark.circle</span>
+                  ) : (
+                    <Info className="h-4 w-4 text-red-500" />
+                  )}
+                </div>
+              )}
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                {selectedInsight.title}
+              </h3>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {selectedInsight.date}
+            </p>
+          </div>
+          
+          {/* Content */}
+          <div className="px-5 py-4">
+            {/* Mock content for the insight detail */}
+            <div className="prose dark:prose-invert max-w-none">
+              <p>
+                Recent market developments suggest increased volatility across global markets,
+                with key indicators pointing to potential shifts in economic policy from major central banks.
+              </p>
+              <p>
+                Investors should consider reallocating portions of their portfolio to less volatile 
+                assets while maintaining exposure to high-growth sectors that have demonstrated resilience.
+              </p>
+              <h4>Key Takeaways:</h4>
+              <ul>
+                <li>Review exposure to emerging markets</li>
+                <li>Consider defensive positions in established sectors</li>
+                <li>Monitor central bank communications carefully</li>
+                <li>Evaluate cash positions for potential opportunities</li>
+              </ul>
+            </div>
+            
+            {/* Actions */}
+            <div className="mt-6 space-y-3">
+              <button 
+                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${isDarkMode ? 'bg-blue-600' : 'bg-blue-600'}`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.medium();
+                  setShowInsightModal(false);
+                }}
+              >
+                {sfSymbolsSupported && (
+                  <span className="sf-symbol text-white">doc.text</span>
+                )}
+                <span>View Full Report</span>
+              </button>
+              <button 
+                className={`w-full px-4 py-3 rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode 
+                    ? 'bg-gray-800 text-white border border-gray-700'
+                    : 'bg-white text-gray-800 border border-gray-300'
+                }`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.light();
+                  setShowInsightModal(false);
+                }}
+              >
+                {sfSymbolsSupported && (
+                  <span className="sf-symbol">xmark</span>
+                )}
+                <span>Close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
   // Use ScbBeautifulUI instead of IOSOptimizedLayout to avoid JSX structure issues
   return (
     <ScbBeautifulUI
@@ -496,39 +726,146 @@ export default function Investments() {
         
         {/* Top Holdings */}
         <div className={`rounded-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border shadow-sm overflow-hidden`}>
-          <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className={`px-4 py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex justify-between items-center`}>
             <h3 className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Top Holdings</h3>
+            {isApplePlatform && sfSymbolsSupported && (
+              <div className="flex items-center gap-2">
+                <button 
+                  className="p-1"
+                  onClick={() => {
+                    if (isApplePlatform) haptics.light();
+                  }}
+                >
+                  <span className={`sf-symbol text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>arrow.up.arrow.down</span>
+                </button>
+                <button 
+                  className="p-1"
+                  onClick={() => {
+                    if (isApplePlatform) haptics.light();
+                  }}
+                >
+                  <span className={`sf-symbol text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>ellipsis.circle</span>
+                </button>
+              </div>
+            )}
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className={`text-xs ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-50 text-gray-500'}`}>
-                <tr>
-                  <th className="px-4 py-2 text-left">Security</th>
-                  <th className="px-4 py-2 text-left">Sector</th>
-                  <th className="px-4 py-2 text-right">Value</th>
-                  <th className="px-4 py-2 text-right">Daily Change</th>
-                </tr>
-              </thead>
-              <tbody className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
-                {topHoldingsData.map((holding) => (
-                  <tr key={holding.name} className={`${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
-                    <td className={`px-4 py-3 font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{holding.name}</td>
-                    <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`}>{holding.sector}</td>
-                    <td className={`px-4 py-3 text-right ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                      ${holding.value.toLocaleString()}
-                    </td>
-                    <td className={`px-4 py-3 text-right text-sm font-medium ${
-                      holding.change >= 0 
-                        ? 'text-green-500' 
-                        : 'text-red-500'
-                    }`}>
-                      {holding.change >= 0 ? '+' : ''}{holding.change}%
-                    </td>
+          
+          {/* Mobile-friendly list view for iOS devices */}
+          {isApplePlatform ? (
+            <div className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+              {topHoldingsData.map((holding) => (
+                <div 
+                  key={holding.name}
+                  className={`relative overflow-hidden transition-all duration-300 ${
+                    isSwiping && swipeTarget === `holding-${holding.name}`
+                      ? 'transform translate-x-20'
+                      : ''
+                  }`}
+                  data-swipe-id={`holding-${holding.name}`}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  <div 
+                    className={`px-4 py-3 flex items-center justify-between ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}
+                    onClick={() => {
+                      setSelectedHolding(holding);
+                      setShowDetailModal(true);
+                      if (isApplePlatform) haptics.selection();
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      {sfSymbolsSupported && (
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          holding.sector === 'Technology' 
+                            ? 'bg-blue-100 dark:bg-blue-900/30'
+                            : holding.sector === 'Consumer'
+                              ? 'bg-green-100 dark:bg-green-900/30' 
+                              : 'bg-purple-100 dark:bg-purple-900/30'
+                        }`}>
+                          <span className={`sf-symbol ${
+                            holding.sector === 'Technology' 
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : holding.sector === 'Consumer'
+                                ? 'text-green-600 dark:text-green-400' 
+                                : 'text-purple-600 dark:text-purple-400'
+                          }`}>
+                            {holding.sector === 'Technology' 
+                              ? 'laptopcomputer'
+                              : holding.sector === 'Consumer'
+                                ? 'cart' 
+                                : 'building.columns.fill'}
+                          </span>
+                        </div>
+                      )}
+                      <div>
+                        <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{holding.name}</p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{holding.sector}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>${holding.value.toLocaleString()}</p>
+                      <p className={`text-xs font-medium ${
+                        holding.change >= 0 
+                          ? 'text-green-500' 
+                          : 'text-red-500'
+                      }`}>
+                        {holding.change >= 0 ? '+' : ''}{holding.change}%
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Swipe action indicators - only visible during swipe */}
+                  <div 
+                    className="absolute right-0 top-0 bottom-0 flex items-center justify-center bg-blue-500 text-white overflow-hidden"
+                    style={{
+                      width: isSwiping && swipeTarget === `holding-${holding.name}` ? `${touchSwipeDistance * 0.7}px` : '0',
+                      opacity: isSwiping && swipeTarget === `holding-${holding.name}` ? (touchSwipeDistance > 50 ? 1 : touchSwipeDistance / 50) : 0,
+                      transition: 'opacity 150ms ease-out',
+                      maxWidth: '100px'
+                    }}
+                  >
+                    {sfSymbolsSupported ? (
+                      <span className="sf-symbol text-white text-lg px-4">info.circle</span>
+                    ) : (
+                      <Info className="h-5 w-5 text-white mx-4" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className={`text-xs ${isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-50 text-gray-500'}`}>
+                  <tr>
+                    <th className="px-4 py-2 text-left">Security</th>
+                    <th className="px-4 py-2 text-left">Sector</th>
+                    <th className="px-4 py-2 text-right">Value</th>
+                    <th className="px-4 py-2 text-right">Daily Change</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
+                  {topHoldingsData.map((holding) => (
+                    <tr key={holding.name} className={`${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'}`}>
+                      <td className={`px-4 py-3 font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{holding.name}</td>
+                      <td className={`px-4 py-3 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`}>{holding.sector}</td>
+                      <td className={`px-4 py-3 text-right ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                        ${holding.value.toLocaleString()}
+                      </td>
+                      <td className={`px-4 py-3 text-right text-sm font-medium ${
+                        holding.change >= 0 
+                          ? 'text-green-500' 
+                          : 'text-red-500'
+                      }`}>
+                        {holding.change >= 0 ? '+' : ''}{holding.change}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
         
         {/* Market Insights */}
