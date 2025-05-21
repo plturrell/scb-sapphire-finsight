@@ -160,21 +160,6 @@ export default function Portfolio() {
         </div>
       </div>
     );
-  };$')
-                        ? isDarkMode ? 'bg-purple-600' : 'bg-purple-500'
-                        : isDarkMode ? 'bg-blue-600' : 'bg-red-500'
-                    }
-                  `}>
-                    {category.badge.length > 4 ? category.badge.substring(0, 3) + '...' : category.badge}
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px] font-medium mt-1">{category.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    );
   };
   
   // Navigation bar actions

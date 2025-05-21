@@ -19,6 +19,7 @@ import { useIOS, useMediaQuery } from '../hooks/useResponsive';
 import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities';
 import { useMicroInteractions } from '../hooks/useMicroInteractions';
 import EnhancedTouchButton from '../components/EnhancedTouchButton';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 
 // Mock data for initial development
 import { mockTariffAlerts } from '../mock/tariffAlerts';
@@ -32,12 +33,25 @@ const TariffAlertsDashboard: NextPage = () => {
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
   const [sankeyData, setSankeyData] = useState<SankeyData | null>(null);
   const [simulationInProgress, setSimulationInProgress] = useState(false);
+  const [activeTariffCategory, setActiveTariffCategory] = useState('all');
   
   // Platform detection and UI enhancement hooks
   const isAppleDevice = useIOS();
   const [isPlatformDetected, setIsPlatformDetected] = useState(false);
   const { haptic } = useMicroInteractions();
   const { touchCapable } = useDeviceCapabilities();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Tariff alert categories with SF Symbols
+  const tariffCategories = [
+    { id: 'all', label: 'All Alerts', icon: 'exclamationmark.triangle.fill', badge: alerts.length.toString() },
+    { id: 'import', label: 'Import', icon: 'arrow.down.doc.fill', badge: alerts.filter(a => a.type === 'import').length.toString() },
+    { id: 'export', label: 'Export', icon: 'arrow.up.doc.fill', badge: alerts.filter(a => a.type === 'export').length.toString() },
+    { id: 'trade', label: 'Trade', icon: 'bag.fill', badge: alerts.filter(a => a.type === 'trade').length.toString() },
+    { id: 'regulation', label: 'Regulation', icon: 'building.2.fill', badge: alerts.filter(a => a.type === 'regulation').length.toString() },
+    { id: 'commodity', label: 'Commodity', icon: 'cart.fill', badge: alerts.filter(a => a.type === 'commodity').length.toString() },
+    { id: 'watchlist', label: 'Watchlist', icon: 'eye.fill', badge: '2' }
+  ];
   
   // Multi-tasking mode detection for iPad
   const [isMultiTasking, setIsMultiTasking] = useState(false);
@@ -300,6 +314,105 @@ const TariffAlertsDashboard: NextPage = () => {
     console.log('Alert clicked:', alert);
   };
   
+  // Handle tariff category selection
+  const handleCategorySelect = (categoryId: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    
+    setActiveTariffCategory(categoryId);
+    
+    // Filter alerts by category
+    if (categoryId === 'all') {
+      // Reset to show all alerts
+      const filtered = [...alerts];
+      applyCurrentFilters(filtered);
+    } else {
+      // Filter alerts by the selected category
+      const filtered = alerts.filter(alert => alert.type === categoryId);
+      applyCurrentFilters(filtered);
+    }
+  };
+  
+  // Helper function to apply current filters (search, countries, priorities)
+  const applyCurrentFilters = (alertsToFilter: TariffAlert[]) => {
+    let filtered = [...alertsToFilter];
+    
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(alert => 
+        alert.title.toLowerCase().includes(query) || 
+        alert.description.toLowerCase().includes(query) ||
+        alert.country.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply country filter
+    if (selectedCountries.length > 0) {
+      filtered = filtered.filter(alert => 
+        selectedCountries.includes(alert.country)
+      );
+    }
+    
+    // Apply priority filter
+    if (selectedPriorities.length > 0) {
+      filtered = filtered.filter(alert => 
+        selectedPriorities.includes(alert.priority)
+      );
+    }
+    
+    setFilteredAlerts(filtered);
+  };
+  
+  // SF Symbols Tariff Categories Navigation component
+  const SFSymbolsTariffNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`rounded-lg overflow-x-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1 mb-4`}>
+        <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
+          {tariffCategories.map((category) => (
+            <button 
+              key={category.id}
+              onClick={() => handleCategorySelect(category.id)}
+              className={`
+                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                ${activeTariffCategory === category.id
+                  ? isDarkMode 
+                    ? 'bg-blue-900/30 text-blue-400' 
+                    : 'bg-blue-50 text-blue-600'
+                  : isDarkMode 
+                    ? 'text-gray-300 hover:bg-gray-700' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }
+              `}
+            >
+              <div className="relative">
+                <span className="sf-symbol text-xl" role="img">{category.icon}</span>
+                
+                {/* Badge */}
+                {category.badge && (
+                  <span className={`
+                    absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
+                    flex items-center justify-center px-1
+                    ${isDarkMode ? 'bg-red-600' : 'bg-red-500'}
+                  `}>
+                    {category.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+  
   const { isDarkMode } = useUIPreferences();
   
   return (
@@ -327,6 +440,11 @@ const TariffAlertsDashboard: NextPage = () => {
                 Monitor and analyze tariff changes affecting your global supply chain
               </p>
             </div>
+            
+            {/* SF Symbols Tariff Categories Navigation */}
+            {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+              <SFSymbolsTariffNavigation />
+            )}
             
             {/* Platform-specific action buttons */}
             {isAppleDevice && isPlatformDetected ? (
