@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import DetailedAnalyticsTable from '@/components/DetailedAnalyticsTable.enhanced';
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedAppleTouchButton from '@/components/EnhancedAppleTouchButton';
 import { useMultiTasking } from '@/hooks/useMultiTasking';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
@@ -1057,6 +1058,7 @@ export default function Analytics() {
           largeTitle={!navbarHidden}
           theme={isDarkMode ? 'dark' : 'light'}
           navbarHidden={navbarHidden}
+        >
           <div 
             className="space-y-6"
             onTouchStart={handleTouchStart}

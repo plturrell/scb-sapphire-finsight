@@ -10,6 +10,10 @@ import { OntologyManager } from '../services/OntologyManager';
 import { SearchManager } from '../services/SearchManager';
 import { globalSimulationCache } from '../services/SimulationCache';
 import { mockVietnamTariffAlerts, vietnamProvinceData, vietnamTradeCorridors } from '../mock/vietnamTariffData';
+import { useIOS } from '../hooks/useResponsive';
+import { useMicroInteractions } from '../hooks/useMicroInteractions';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import SFSymbol from '@/components/SFSymbol';
 
 import { 
   Box, Typography, Card, CardContent, CardHeader, Grid, Button, 
@@ -41,11 +45,30 @@ const VietnamTariffImpactPage: NextPage = () => {
   const [simulationMessage, setSimulationMessage] = useState<string | null>(null);
   const [useCache, setUseCache] = useState<boolean>(true);
   
+  // Platform detection and UI enhancement hooks
+  const isAppleDevice = useIOS();
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
+  const { haptic } = useMicroInteractions();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Vietnam tariff tabs with SF Symbols icons
+  const tariffTabs = [
+    { id: 'visualization', label: 'Tariff Flow', icon: 'chart.bar', badge: null },
+    { id: 'geomap', label: 'Geographic', icon: 'map.fill', badge: null },
+    { id: 'alerts', label: 'Alerts & News', icon: 'bell.fill', badge: alerts.length.toString() }
+  ];
+  
   // Refs
   const vietnamAnalyzer = useRef<VietnamTariffAnalyzer | null>(null);
   const searchManager = useRef<SearchManager | null>(null);
   const vietnamSearchManager = useRef<VietnamSearchManager | null>(null);
   const monteCarloWorker = useRef<Worker | null>(null);
+  
+  // Platform detection effect
+  useEffect(() => {
+    // Set platform detected flag
+    setIsPlatformDetected(true);
+  }, []);
   
   // Initialize systems
   useEffect(() => {
@@ -283,7 +306,22 @@ const VietnamTariffImpactPage: NextPage = () => {
   
   // Handle tab change
   const handleTabChange = (_: React.SyntheticEvent, newValue: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    
     setActiveTab(newValue);
+  };
+  
+  // Handle SF Symbol tab change
+  const handleSFSymbolTabChange = (tabId: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    
+    setActiveTab(tabId);
   };
   
   // Handle search

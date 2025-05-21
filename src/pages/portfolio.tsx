@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import MetricCard from '@/components/MetricCard';
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
@@ -12,6 +12,8 @@ import { useMediaQuery } from 'react-responsive';
 import { haptics } from '@/lib/haptics';
 import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import { ICONS } from '@/components/IconSystem';
+import useApplePhysics from '@/hooks/useApplePhysics';
+import useSafeArea, { safeAreaCss } from '@/hooks/useSafeArea';
 import {
   BarChart,
   Bar,
@@ -35,6 +37,13 @@ const iosColors = [
   '#00C7BE'  // teal
 ];
 
+// iOS transition properties for animations
+const iosTransitions = {
+  duration: 350,
+  easing: 'cubic-bezier(0.25, 0.1, 0.25, 1.0)', // iOS animation curve
+  delay: 0
+};
+
 const portfolioData = [
   { region: 'United Kingdom', planned: 75, actual: 82 },
   { region: 'India', planned: 65, actual: 70 },
@@ -53,18 +62,39 @@ const taskData = [
 ];
 
 export default function Portfolio() {
+  // State variables for data and UI
   const [selectedBarData, setSelectedBarData] = useState<any>(null);
   const [activePortfolioCategory, setActivePortfolioCategory] = useState('overview');
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   
+  // iOS-specific state for interaction
+  const [navbarHidden, setNavbarHidden] = useState(false);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
+  const [touchSwipeDistance, setTouchSwipeDistance] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [swipeTarget, setSwipeTarget] = useState<string | null>(null);
+  
+  // Refs
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Responsive hooks
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const { mode, isMultiTasking } = useMultiTasking();
   const { isAppleDevice, deviceType } = useDeviceCapabilities();
   const { isDarkMode } = useUIPreferences();
   const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const { springPreset } = useApplePhysics({ motion: 'standard' });
+  const { safeArea, hasHomeIndicator, hasDynamicIsland, orientation } = useSafeArea();
   
-  // Determine if it's an iPad
+  // Determine if it's an iPad or iPhone
   const isIPad = deviceType === 'tablet' && isAppleDevice;
+  const isIPhone = deviceType === 'mobile' && isAppleDevice;
+  const isApplePlatform = isIPad || isIPhone;
   
   // Effect to detect platform
   useEffect(() => {

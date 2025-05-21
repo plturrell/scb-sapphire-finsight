@@ -5,8 +5,8 @@ import { KPICard, ChartCard, TableCard, AlertCard } from '@/components/cards';
 import { TrendingUp, TrendingDown, AlertCircle, Sparkles, BarChart3 } from 'lucide-react';
 import AllocationPieChart from '@/components/charts/AllocationPieChart';
 import { getGrokCompletion } from '@/lib/grok-api';
-// Import the report service for simulations
-import * as ReportService from '@/lib/report-service';
+// Import the dashboard service for real data
+import DashboardService, { FinancialData } from '@/services/DashboardService';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useMultiTasking } from '@/hooks/useMultiTasking';
@@ -32,11 +32,7 @@ interface TableColumn {
 
 // Financial data service hook to fetch data from APIs
 const useFinancialData = () => {
-  const [data, setData] = useState<{
-    assets: any;
-    performance: any;
-    risk: any;
-  } | null>(null);
+  const [data, setData] = useState<FinancialData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   
@@ -45,45 +41,9 @@ const useFinancialData = () => {
       try {
         setLoading(true);
         
-        // In a real implementation, these would call API endpoints
-        // For now, we'll simulate API calls with timeouts
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Mock API response data
-        const assets = {
-          totalValue: 2456789,
-          previousValue: 2380000,
-          targetValue: 2500000,
-          percentChange: 3.2,
-          breakdown: [
-            { id: 1, name: 'Equities', value: 1245600, allocation: 0.51, change: 0.042 },
-            { id: 2, name: 'Fixed Income', value: 756400, allocation: 0.31, change: 0.016 },
-            { id: 3, name: 'Real Estate', value: 245000, allocation: 0.10, change: -0.023 },
-            { id: 4, name: 'Alternatives', value: 196000, allocation: 0.08, change: 0.067 }
-          ]
-        };
-        
-        const performance = {
-          annualizedReturn: 8.7,
-          percentChange: 1.2,
-          targetReturn: 7.5,
-          previousReturn: 7.6
-        };
-        
-        const risk = {
-          riskScore: 64,
-          percentChange: -3.1,
-          targetScore: 60,
-          previousScore: 66,
-          monteCarloResults: {
-            worstCase: -2.1,
-            expected: 6.4,
-            bestCase: 11.2,
-            simulationCount: 5000
-          }
-        };
-        
-        setData({ assets, performance, risk });
+        // Fetch real financial data from our API service
+        const financialData = await DashboardService.getDashboardData();
+        setData(financialData);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An unknown error occurred'));
         console.error('Error fetching financial data:', err);
