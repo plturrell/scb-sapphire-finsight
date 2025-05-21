@@ -99,10 +99,10 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
 
   // Define iOS-style tabs
   const tabItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'house.fill' },
-    { id: 'analytics', label: 'Analytics', icon: 'chart.pie.fill' },
-    { id: 'reports', label: 'Reports', icon: 'doc.text.fill' },
-    { id: 'settings', label: 'Settings', icon: 'gear' }
+    { key: 'dashboard', id: 'dashboard', label: 'Dashboard', icon: 'house.fill', href: '/' },
+    { key: 'analytics', id: 'analytics', label: 'Analytics', icon: 'chart.pie.fill', href: '/analytics' },
+    { key: 'reports', id: 'reports', label: 'Reports', icon: 'doc.text.fill', href: '/reports' },
+    { key: 'settings', id: 'settings', label: 'Settings', icon: 'gear', href: '/settings' }
   ];
   
   // Helper functions for layout classes based on preferences
@@ -124,12 +124,12 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
     showTabs && isIOS ? (
       <EnhancedIOSTabBar
         items={tabItems}
-        activeItemId={activeTab}
+        currentTab={activeTab}
         onChange={handleTabChange}
         respectSafeArea={true}
         floating={false}
         showLabels={preferences.showLabels} 
-        enableHaptics={preferences.enableHaptics}
+        hapticFeedback={preferences.enableHaptics}
         className={`border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
       />
     ) : null

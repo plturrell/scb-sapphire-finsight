@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "node scripts/create-static-deployment.js",
+  "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
-  "framework": null,
-  "outputDirectory": "out",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
   "env": {
     "PERPLEXITY_API_KEY": "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",
     "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
@@ -61,6 +61,13 @@
           "value": "application/json"
         }
       ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)\\.map$",
+      "dest": "/_next/static/source-maps/$1.map",
+      "status": 200
     }
   ]
 }

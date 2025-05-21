@@ -1,0 +1,6 @@
+
+# Redirect missing source map requests to our placeholder directory
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(.*).map$ /_next/static/source-maps/$1.map [L]
+</IfModule>

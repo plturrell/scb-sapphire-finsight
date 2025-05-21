@@ -44,8 +44,8 @@ const nextConfig = {
     return config;
   },
   
-  // Use standard build output
-  output: 'export',
+  // Server-side rendering enabled for API routes
+  // output: 'export', // Commented out to allow API routes
   
   // Environment variables for build
   env: {
