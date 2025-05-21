@@ -25,8 +25,9 @@ const nextConfig = {
   // Webpack configuration with source maps
   webpack: (config, { isServer, dev }) => {
     if (!isServer) {
-      // Disable Terser but keep source maps
+      // Completely disable Terser and minification
       config.optimization.minimize = false;
+      config.optimization.minimizer = [];
       
       // Use named modules for easier debugging
       config.optimization.moduleIds = 'named';
@@ -44,8 +45,8 @@ const nextConfig = {
   
   // Environment variables for build
   env: {
-    PERPLEXITY_API_KEY: "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",
-    NEXT_PUBLIC_PERPLEXITY_API_KEY: "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"
+    PERPLEXITY_API_KEY: "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",
+    NEXT_PUBLIC_PERPLEXITY_API_KEY: "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"
   }
 }
 
