@@ -75,14 +75,33 @@ export default function Analytics() {
   const [selectedSector, setSelectedSector] = useState<any>(null);
   const [activeFilterIndex, setActiveFilterIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeAnalyticsCategory, setActiveAnalyticsCategory] = useState('overview');
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const { mode, isMultiTasking } = useMultiTasking();
   const { isAppleDevice, deviceType } = useDeviceCapabilities();
   const { isDarkMode } = useUIPreferences();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
   
   // Determine if it's an iPad
   const isIPad = deviceType === 'tablet' && isAppleDevice;
+  
+  // Effect to detect platform
+  useEffect(() => {
+    setPlatformDetected(true);
+  }, []);
+  
+  // Analytics categories with SF Symbols icons
+  const analyticsCategories = [
+    { id: 'overview', label: 'Overview', icon: 'chart.bar.doc.horizontal', badge: null },
+    { id: 'revenue', label: 'Revenue', icon: 'dollarsign.circle.fill', badge: '+5.2%' },
+    { id: 'accounts', label: 'Accounts', icon: 'person.2.fill', badge: '895' },
+    { id: 'performance', label: 'Performance', icon: 'chart.line.uptrend.xyaxis.fill', badge: null },
+    { id: 'sectors', label: 'Sectors', icon: 'rectangle.3.group.fill', badge: '10' },
+    { id: 'risk', label: 'Risk', icon: 'exclamationmark.triangle.fill', badge: '3' },
+    { id: 'custom', label: 'Custom', icon: 'slider.horizontal.3', badge: null }
+  ];
   
   const timeFilters = ['Last 30 Days', 'Last Quarter', 'Last 6 Months', 'Year to Date', 'Last 12 Months'];
 
@@ -102,6 +121,67 @@ export default function Analytics() {
       haptics.selection();
     }
     setActiveFilterIndex(index);
+  };
+  
+  // Handle analytics category selection
+  const handleCategorySelect = (categoryId: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+    setActiveAnalyticsCategory(categoryId);
+    // In a real app, this would trigger different analytics views
+    console.log(`Selected analytics category: ${categoryId}`);
+  };
+  
+  // SF Symbols Analytics Categories Navigation component
+  const SFSymbolsAnalyticsNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`rounded-lg overflow-x-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1 mb-4`}>
+        <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
+          {analyticsCategories.map((category) => (
+            <button 
+              key={category.id}
+              onClick={() => handleCategorySelect(category.id)}
+              className={`
+                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                ${activeAnalyticsCategory === category.id
+                  ? isDarkMode 
+                    ? 'bg-blue-900/30 text-blue-400' 
+                    : 'bg-blue-50 text-blue-600'
+                  : isDarkMode 
+                    ? 'text-gray-300 hover:bg-gray-700' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }
+              `}
+            >
+              <div className="relative">
+                <span className="sf-symbol text-xl" role="img">{category.icon}</span>
+                
+                {/* Badge */}
+                {category.badge && (
+                  <span className={`
+                    absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
+                    flex items-center justify-center px-1
+                    ${category.badge.startsWith('+') 
+                      ? isDarkMode ? 'bg-green-600' : 'bg-green-500' 
+                      : isDarkMode ? 'bg-blue-600' : 'bg-red-500'
+                    }
+                  `}>
+                    {category.badge.length > 4 ? category.badge.substring(0, 3) + '...' : category.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
   };
   
   // Handle data refresh
@@ -531,6 +611,11 @@ export default function Analytics() {
                 />
               </div>
             </div>
+            
+            {/* SF Symbols Analytics Categories Navigation */}
+            {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+              <SFSymbolsAnalyticsNavigation />
+            )}
             
             {/* Time Period Filter */}
             <div className="overflow-x-auto">
