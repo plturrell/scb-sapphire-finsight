@@ -616,12 +616,39 @@ export default function Reports() {
                     </td>
                     <td>
                       <div className="flex items-center space-x-2">
-                        <button className="p-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]" title="Download">
-                          <Download className="w-4 h-4" />
-                        </button>
-                        <button className="p-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]" title="Share">
-                          <Share2 className="w-4 h-4" />
-                        </button>
+                        {isAppleDevice && isPlatformDetected ? (
+                          <>
+                            <button 
+                              className="p-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]" 
+                              title="Download"
+                              onClick={() => {
+                                if (isAppleDevice) haptics.light();
+                                // Download functionality
+                              }}
+                            >
+                              <Download className="w-4 h-4" />
+                            </button>
+                            <button 
+                              className="p-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]" 
+                              title="Share"
+                              onClick={() => {
+                                if (isAppleDevice) haptics.light();
+                                // Share functionality
+                              }}
+                            >
+                              <Share2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button className="p-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]" title="Download">
+                              <Download className="w-4 h-4" />
+                            </button>
+                            <button className="p-1 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]" title="Share">
+                              <Share2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -732,195 +759,54 @@ export default function Reports() {
                   <p className="text-xs text-[hsl(var(--muted-foreground))]">First day of each quarter at 09:00 AM</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Edit</button>
-                  <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Disable</button>
+                  {isAppleDevice && isPlatformDetected ? (
+                    <>
+                      <EnhancedTouchButton 
+                        variant="secondary" 
+                        label="Edit" 
+                        size="small"
+                        onClick={() => {
+                          if (isAppleDevice) haptics.light();
+                          // Edit functionality
+                        }}
+                      />
+                      <EnhancedTouchButton 
+                        variant="secondary" 
+                        label="Disable" 
+                        size="small"
+                        onClick={() => {
+                          if (isAppleDevice) haptics.light();
+                          // Disable functionality
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Edit</button>
+                      <button className="btn-sapui5 btn-sapui5-secondary text-xs px-2 py-1">Disable</button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </div>
           <div className="px-4 py-3 border-t border-[hsl(var(--border))] flex justify-end">
-            <button className="btn-sapui5 btn-sapui5-primary">Schedule New Report</button>
+            {isAppleDevice && isPlatformDetected ? (
+              <EnhancedTouchButton
+                variant="primary"
+                label="Schedule New Report"
+                onClick={() => {
+                  if (isAppleDevice) haptics.medium();
+                  // Schedule new report functionality
+                }}
+              />
+            ) : (
+              <button className="btn-sapui5 btn-sapui5-primary">Schedule New Report</button>
+            )}
           </div>
         </div>
         
-        {/* Report Generation Modal */}
-        {showReportModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-md shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="border-b border-[hsl(var(--border))] p-4 flex justify-between items-center">
-                <h2 className="text-lg font-normal">Generate Structured Report</h2>
-                <button onClick={() => setShowReportModal(false)} className="p-1">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="p-6 space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium block">Report Topic</label>
-                  <input 
-                    type="text" 
-                    className="input-sapui5 w-full" 
-                    placeholder="Enter report topic" 
-                    value={reportConfig.topic.title}
-                    onChange={(e) => setReportConfig({
-                      ...reportConfig,
-                      topic: { ...reportConfig.topic, title: e.target.value }
-                    })}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium block">Topic Description</label>
-                  <textarea 
-                    className="input-sapui5 w-full h-24" 
-                    placeholder="Provide more details about the report topic" 
-                    value={reportConfig.topic.description}
-                    onChange={(e) => setReportConfig({
-                      ...reportConfig,
-                      topic: { ...reportConfig.topic, description: e.target.value }
-                    })}
-                  ></textarea>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium block">Timeframe</label>
-                  <select 
-                    className="input-sapui5 w-full"
-                    value={reportConfig.timeframe}
-                    onChange={(e) => setReportConfig({
-                      ...reportConfig,
-                      timeframe: e.target.value
-                    })}
-                  >
-                    <option>Last 7 days</option>
-                    <option>Last 30 days</option>
-                    <option>Last 90 days</option>
-                    <option>Year to date</option>
-                    <option>Q1 2025</option>
-                    <option>Q2 2025</option>
-                  </select>
-                </div>
-                
-                <div className="space-y-3">
-                  <label className="text-sm font-medium block">Report Structure</label>
-                  
-                  <div className="space-y-2">
-                    {reportConfig.structure.sections.map((section, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <input 
-                          type="text" 
-                          className="input-sapui5 flex-1" 
-                          value={section}
-                          onChange={(e) => {
-                            const newSections = [...reportConfig.structure.sections];
-                            newSections[index] = e.target.value;
-                            setReportConfig({
-                              ...reportConfig,
-                              structure: { ...reportConfig.structure, sections: newSections }
-                            });
-                          }}
-                        />
-                        <button 
-                          onClick={() => {
-                            const newSections = reportConfig.structure.sections.filter((_, i) => i !== index);
-                            setReportConfig({
-                              ...reportConfig,
-                              structure: { ...reportConfig.structure, sections: newSections }
-                            });
-                          }}
-                          className="p-2 hover:bg-gray-100 rounded"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                    
-                    <button 
-                      onClick={() => {
-                        const newSections = [...reportConfig.structure.sections, ''];
-                        setReportConfig({
-                          ...reportConfig,
-                          structure: { ...reportConfig.structure, sections: newSections }
-                        });
-                      }}
-                      className="btn-sapui5 w-full flex items-center justify-center space-x-1"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>Add Section</span>
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <input 
-                      type="checkbox" 
-                      id="execSummary" 
-                      checked={reportConfig.structure.includeExecutiveSummary}
-                      onChange={(e) => setReportConfig({
-                        ...reportConfig,
-                        structure: { ...reportConfig.structure, includeExecutiveSummary: e.target.checked }
-                      })}
-                    />
-                    <label htmlFor="execSummary" className="text-sm">Include Executive Summary</label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <input 
-                      type="checkbox" 
-                      id="includeTables" 
-                      checked={reportConfig.structure.includeTables}
-                      onChange={(e) => setReportConfig({
-                        ...reportConfig,
-                        structure: { ...reportConfig.structure, includeTables: e.target.checked }
-                      })}
-                    />
-                    <label htmlFor="includeTables" className="text-sm">Include Data Tables</label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <input 
-                      type="checkbox" 
-                      id="includeCharts" 
-                      checked={reportConfig.structure.includeCharts}
-                      onChange={(e) => setReportConfig({
-                        ...reportConfig,
-                        structure: { ...reportConfig.structure, includeCharts: e.target.checked }
-                      })}
-                    />
-                    <label htmlFor="includeCharts" className="text-sm">Include Visualizations</label>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="border-t border-[hsl(var(--border))] p-4 flex justify-end space-x-2">
-                <button 
-                  onClick={() => setShowReportModal(false)} 
-                  className="btn-sapui5"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={generateStructuredReport} 
-                  disabled={isGenerating}
-                  className="btn-sapui5 btn-sapui5-primary flex items-center space-x-2"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Generating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-4 h-4" />
-                      <span>Generate Report</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Report Generation Modal handled by ReportModal component */}
         
         {/* Generated Report View with Advanced AI Capabilities */}
         {generatedReport && (
@@ -928,14 +814,39 @@ export default function Reports() {
             <div className="px-4 py-3 border-b border-[hsl(var(--border))] flex justify-between items-center">
               <h3 className="text-base font-medium">{generatedReport.title}</h3>
               <div className="flex items-center space-x-2">
-                <button className="btn-sapui5 flex items-center space-x-1">
-                  <Download className="w-4 h-4" />
-                  <span>Download PDF</span>
-                </button>
-                <button className="btn-sapui5 flex items-center space-x-1">
-                  <Share2 className="w-4 h-4" />
-                  <span>Share</span>
-                </button>
+                {isAppleDevice && isPlatformDetected ? (
+                  <>
+                    <EnhancedTouchButton
+                      variant="secondary"
+                      label="Download PDF"
+                      iconLeft={<Download className="w-4 h-4" />}
+                      onClick={() => {
+                        if (isAppleDevice) haptics.medium();
+                        // Download functionality
+                      }}
+                    />
+                    <EnhancedTouchButton
+                      variant="secondary"
+                      label="Share"
+                      iconLeft={<Share2 className="w-4 h-4" />}
+                      onClick={() => {
+                        if (isAppleDevice) haptics.medium();
+                        // Share functionality
+                      }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <button className="btn-sapui5 flex items-center space-x-1">
+                      <Download className="w-4 h-4" />
+                      <span>Download PDF</span>
+                    </button>
+                    <button className="btn-sapui5 flex items-center space-x-1">
+                      <Share2 className="w-4 h-4" />
+                      <span>Share</span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
             

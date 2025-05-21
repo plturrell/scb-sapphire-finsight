@@ -1,20 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { Switch, Tabs, TabList, TabPanels, Tab, TabPanel, Select, Radio, RadioGroup, Stack } from '@chakra-ui/react';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
-import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Eye, Zap, Volume2, Bell } from 'lucide-react';
+import useMultiTasking from '@/hooks/useMultiTasking';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import { haptics } from '@/lib/haptics';
+import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Eye, Zap, Volume2, Bell, Check } from 'lucide-react';
 
 const SettingsPage = () => {
   const { preferences, setPreference, resetPreferences, isDarkMode } = useUIPreferences();
   const { deviceType, isAppleDevice, browserName } = useDeviceCapabilities();
   const [activeTab, setActiveTab] = useState(0);
+  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  const [isMounted, setIsMounted] = useState(false);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
   
   // Save changes notification
   const [showSaveNotice, setShowSaveNotice] = useState(false);
   
+  // Detect platform on mount
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check if we're on an iPad specifically
+    const isIpad = /iPad/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && 
+       navigator.maxTouchPoints > 1 &&
+       !navigator.userAgent.includes('iPhone'));
+    
+    setIsIPad(isIpad);
+    setPlatformDetected(true);
+  }, []);
+  
   // Show save notification when preferences change
   const handlePreferenceChange = <K extends keyof typeof preferences>(key: K, value: typeof preferences[K]) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+    
     setPreference(key, value);
     setShowSaveNotice(true);
     
@@ -26,6 +52,11 @@ const SettingsPage = () => {
   
   // Reset all preferences
   const handleResetPreferences = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.warning();
+    }
+    
     resetPreferences();
     setShowSaveNotice(true);
     
@@ -35,11 +66,21 @@ const SettingsPage = () => {
     }, 3000);
   };
   
+  // Handle tab change with haptic feedback
+  const handleTabChange = (index: number) => {
+    setActiveTab(index);
+    
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+  };
+  
   return (
-    <ScbBeautifulUI pageTitle="Settings">
-      <div className="max-w-4xl mx-auto">
+    <ScbBeautifulUI pageTitle="Settings" showTabs={isAppleDevice} showNewsBar={!isMultiTasking}>
+      <div className={`${isMultiTasking ? 'max-w-full' : 'max-w-4xl'} mx-auto ${isIPad && isMultiTasking && mode === 'slide-over' ? 'p-2' : 'p-4'}`}>
         {/* Settings header */}
-        <div className="mb-8">
+        <div className={`${isMultiTasking ? 'mb-4' : 'mb-8'}`}>
           <h1 className="text-2xl font-bold text-[rgb(var(--scb-honolulu-blue))] dark:text-white">
             Application Settings
           </h1>
@@ -49,7 +90,12 @@ const SettingsPage = () => {
         </div>
         
         {/* Settings tabs */}
-        <Tabs variant="enclosed" colorScheme="blue" index={activeTab} onChange={setActiveTab}>
+        <Tabs 
+          variant="enclosed" 
+          colorScheme="blue" 
+          index={activeTab} 
+          onChange={handleTabChange}
+          className={`${isMultiTasking ? 'tabs-multitasking' : ''}`}>
           <TabList>
             <Tab><div className="flex items-center"><Settings className="w-4 h-4 mr-2" /> General</div></Tab>
             <Tab><div className="flex items-center"><PaintBucket className="w-4 h-4 mr-2" /> Appearance</div></Tab>
@@ -427,17 +473,26 @@ const SettingsPage = () => {
         </Tabs>
         
         {/* Reset button */}
-        <div className="mt-8 flex justify-between items-center">
-          <button
-            className="px-4 py-2 text-sm text-red-600 hover:text-red-700 font-medium rounded-md hover:bg-red-50 transition-colors"
-            onClick={handleResetPreferences}
-          >
-            Reset to Defaults
-          </button>
+        <div className={`${isMultiTasking ? 'mt-4' : 'mt-8'} flex justify-between items-center`}>
+          {isAppleDevice && isPlatformDetected ? (
+            <EnhancedTouchButton
+              variant="danger"
+              label="Reset to Defaults"
+              onClick={handleResetPreferences}
+            />
+          ) : (
+            <button
+              className="px-4 py-2 text-sm text-red-600 hover:text-red-700 font-medium rounded-md hover:bg-red-50 transition-colors"
+              onClick={handleResetPreferences}
+            >
+              Reset to Defaults
+            </button>
+          )}
           
           {/* Save notification */}
           {showSaveNotice && (
-            <div className="bg-green-50 text-green-800 px-4 py-2 rounded-md text-sm">
+            <div className={`${isAppleDevice ? 'flex items-center' : ''} bg-green-50 text-green-800 px-4 py-2 rounded-md text-sm`}>
+              {isAppleDevice && <Check className="w-4 h-4 mr-2" />}
               Preferences saved automatically
             </div>
           )}

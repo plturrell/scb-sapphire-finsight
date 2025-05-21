@@ -16,14 +16,17 @@ import {
   useTheme
 } from '@mui/material';
 import muiTheme from '@/lib/mui-theme';
-import ModernLayout from '../components/ModernLayout';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import VietnamMonteCarloParams, { VietnamMonteCarloConfig } from '../components/VietnamMonteCarloParams';
 import VietnamMonteCarloProbabilityDistribution from '../components/VietnamMonteCarloProbabilityDistribution';
 import VietnamMonteCarloCaseAnalysis from '../components/VietnamMonteCarloCaseAnalysis';
 import VietnamMonteCarloSensitivity, { SensitivityParameter } from '../components/VietnamMonteCarloSensitivity';
 import VietnamMonteCarloLlmAnalysis, { LlmAnalysisResult } from '../components/VietnamMonteCarloLlmAnalysis';
 import { globalSimulationCache } from '../services/SimulationCache';
-import { Play, Download, AlertCircle } from 'lucide-react';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import useMultiTasking from '@/hooks/useMultiTasking';
+import { haptics } from '@/lib/haptics';
+import { Play, Download, AlertCircle, ChevronRight } from 'lucide-react';
 
 /**
  * Vietnam Tariff Monte Carlo Simulation Page
@@ -31,6 +34,13 @@ import { Play, Download, AlertCircle } from 'lucide-react';
  */
 const VietnamMonteCarloPage: NextPage = () => {
   const theme = useTheme();
+  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  
+  // Platform detection
+  const [isMounted, setIsMounted] = useState(false);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
   
   // State for simulation configuration and results
   const [config, setConfig] = useState<VietnamMonteCarloConfig | null>(null);
@@ -43,6 +53,25 @@ const VietnamMonteCarloPage: NextPage = () => {
 
   // References
   const monteCarloWorker = useRef<Worker | null>(null);
+  
+  // Detect platform on mount
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check if we're on an Apple platform
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // Check if we're on iPad specifically
+    const isIpad = /iPad/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && 
+       navigator.maxTouchPoints > 1 &&
+       !navigator.userAgent.includes('iPhone'));
+    
+    setIsAppleDevice(isIOS);
+    setIsIPad(isIpad);
+    setPlatformDetected(true);
+  }, []);
   
   // Initialize the Monte Carlo worker
   useEffect(() => {
@@ -71,6 +100,11 @@ const VietnamMonteCarloPage: NextPage = () => {
 
   // Handle running the simulation
   const handleRunSimulation = async (simConfig: VietnamMonteCarloConfig) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     setConfig(simConfig);
     setSimulationStatus('running');
     setError(null);
@@ -130,6 +164,11 @@ const VietnamMonteCarloPage: NextPage = () => {
         setSimulationResults(data.results);
         setSimulationStatus('completed');
         
+        // Provide success haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptics.success();
+        }
+        
         // Cache the results
         if (config) {
           globalSimulationCache.cacheResults(
@@ -157,6 +196,11 @@ const VietnamMonteCarloPage: NextPage = () => {
       case 'SIMULATION_ERROR':
         setError(data.error || 'An error occurred during simulation');
         setSimulationStatus('error');
+        
+        // Provide error haptic feedback on Apple devices
+        if (isAppleDevice) {
+          haptics.error();
+        }
         break;
     }
   };
@@ -263,12 +307,22 @@ const VietnamMonteCarloPage: NextPage = () => {
 
   // Generate detailed report
   const handleGenerateReport = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     // In a real implementation, this would call the Nvidia langchain API
     alert('This would generate a comprehensive report using Nvidia langchain structured-report-generation API');
   };
 
   // View detailed analysis
   const handleViewDetailedAnalysis = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     // In a real implementation, this would open a detailed analysis view
     alert('This would show a detailed analysis view with more comprehensive metrics and visualizations');
   };

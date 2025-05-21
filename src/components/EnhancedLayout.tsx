@@ -9,11 +9,16 @@ import {
   RefreshCcw, Building2, Globe, Shield, AlertTriangle, 
   Activity, TrendingUp, Layers, Database, Terminal, Sparkles
 } from 'lucide-react';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
 
 /**
  * EnhancedLayout provides a consistent layout system for all pages in the application
  * It combines the functionality of ModernLayout and DashboardLayout into a single
  * consolidated component to ensure a consistent navigation experience.
+ * 
+ * This component integrates with UIPreferencesContext to respect user preferences
+ * for layout, theme, and interactions while maintaining backward compatibility
+ * through props.
  */
 
 interface LayoutProps {
@@ -96,10 +101,18 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
   title = 'SCB Sapphire', 
   showSideMenu = true,
   showHeader = true,
-  headerStyle = 'white',
-  sidebarExpanded = true
+  headerStyle: propHeaderStyle = 'white',
+  sidebarExpanded: propSidebarExpanded = true
 }) => {
+  // Use the UI preferences context
+  const { preferences, isDarkMode } = useUIPreferences();
+  
   const router = useRouter();
+  
+  // Use preferences from context with props as fallback for backward compatibility
+  const headerStyle = preferences.headerStyle || propHeaderStyle;
+  const sidebarExpanded = preferences.sidebarExpanded !== undefined ? preferences.sidebarExpanded : propSidebarExpanded;
+  
   const [sidebarOpen, setSidebarOpen] = useState(sidebarExpanded);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -179,8 +192,16 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
+  // Apply haptic feedback if enabled
+  const triggerHaptics = () => {
+    if (preferences.enableHaptics && navigator.vibrate) {
+      navigator.vibrate(5); // Subtle vibration for feedback
+    }
+  };
+
   // Mark notification as read
   const markAsRead = (notificationId: string) => {
+    triggerHaptics();
     setNotifications(prev => 
       prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
     );
@@ -188,16 +209,19 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
 
   // Mark all as read
   const markAllAsRead = () => {
+    triggerHaptics();
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
   // Delete notification
   const deleteNotification = (notificationId: string) => {
+    triggerHaptics();
     setNotifications(prev => prev.filter(n => n.id !== notificationId));
   };
 
   // Clear all notifications
   const clearAllNotifications = () => {
+    triggerHaptics();
     setNotifications([]);
   };
 
@@ -266,22 +290,57 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
 
   const unreadCount = notifications.filter(n => !n.read).length;
   
+  // Apply header style based on preferences
   const headerClassName = headerStyle === 'blue' 
     ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
     : 'bg-white text-[rgb(var(--scb-dark-gray))] shadow-sm border-b border-gray-200';
 
+  // Apply density from preferences
+  const getDensityClasses = () => {
+    switch(preferences.layoutDensity) {
+      case 'compact':
+        return 'p-3 lg:p-4';
+      case 'spacious':
+        return 'p-5 lg:p-8';
+      case 'comfortable':
+      default:
+        return 'p-4 lg:p-6';
+    }
+  };
+
+  // Apply font size from preferences
+  const getFontSizeClasses = () => {
+    switch(preferences.fontSize) {
+      case 'small':
+        return 'text-sm';
+      case 'large':
+        return 'text-base lg:text-lg';
+      case 'medium':
+      default:
+        return 'text-base';
+    }
+  };
+
+  // Animation classes based on preferences
+  const getAnimationClasses = (defaultClass: string) => {
+    return preferences.enableAnimations ? defaultClass : '';
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-[rgb(var(--scb-light-gray))]">
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-[rgb(var(--scb-light-gray))]'}`}>
       {/* Enhanced Header */}
       {showHeader && (
-        <header className={`flex items-center px-4 z-50 h-16 ${headerClassName}`}>
+        <header className={`flex items-center px-4 z-50 h-16 ${headerClassName} ${isDarkMode && headerStyle === 'white' ? 'bg-gray-800 text-white border-gray-700' : ''}`}>
           {/* Left section - Menu and Logo */}
           <div className="flex items-center w-1/3">
             {/* Hamburger Menu Button */}
             {showSideMenu && (
               <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className={`p-2 ${headerStyle === 'blue' ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} rounded transition-colors mr-1`}
+                onClick={() => {
+                  setSidebarOpen(!sidebarOpen);
+                  triggerHaptics();
+                }}
+                className={`p-2 ${headerStyle === 'blue' || isDarkMode ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} rounded transition-colors mr-1`}
                 aria-label="Toggle menu"
               >
                 <Menu className="w-6 h-6" />
@@ -291,7 +350,7 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
             {/* Branding Area with Logo */}
             <Link href="/" className="flex items-center">
               <Image 
-                src={headerStyle === 'blue' 
+                src={headerStyle === 'blue' || isDarkMode
                   ? "https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-white-rgb.png"
                   : "https://av.sc.com/corp-en/nr/content/images/sc-lock-up-english-grey-rgb.png"
                 } 
@@ -309,7 +368,7 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
           {/* Center section - Page Title */}
           <div className="flex-1 max-w-3xl mx-auto px-4">
             {title && title !== 'SCB Sapphire' && (
-              <h1 className={`text-lg font-medium ${headerStyle === 'blue' ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+              <h1 className={`text-lg font-medium ${headerStyle === 'blue' || isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
                 {title}
               </h1>
             )}
@@ -319,18 +378,24 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
           <div className="flex items-center gap-1 lg:gap-2 w-1/3 justify-end">
             {/* App Finder - Desktop only */}
             <button 
-              className={`hidden lg:flex h-full px-3 ${headerStyle === 'blue' ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} items-center space-x-1 transition-colors rounded`}
+              className={`hidden lg:flex h-full px-3 ${headerStyle === 'blue' || isDarkMode ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} items-center space-x-1 transition-colors rounded`}
               title="App Finder"
-              onClick={() => setAppFinderOpen(true)}
+              onClick={() => {
+                setAppFinderOpen(true);
+                triggerHaptics();
+              }}
             >
               <Grid className="w-5 h-5" />
             </button>
 
             {/* Help - Desktop only */}
             <button 
-              className={`hidden lg:flex h-full px-3 ${headerStyle === 'blue' ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} transition-colors rounded`}
+              className={`hidden lg:flex h-full px-3 ${headerStyle === 'blue' || isDarkMode ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} transition-colors rounded`}
               title="Help"
-              onClick={() => router.push('/help')}
+              onClick={() => {
+                router.push('/help');
+                triggerHaptics();
+              }}
             >
               <HelpCircle className="w-5 h-5" />
             </button>
@@ -338,10 +403,11 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
             {/* Notifications with Real-time Updates */}
             <div className="relative">
               <button 
-                className={`h-full px-2 lg:px-3 ${headerStyle === 'blue' ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} relative touch-manipulation transition-colors rounded`}
+                className={`h-full px-2 lg:px-3 ${headerStyle === 'blue' || isDarkMode ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} relative touch-manipulation transition-colors rounded`}
                 onClick={() => {
                   setNotificationsOpen(!notificationsOpen);
                   if (userMenuOpen) setUserMenuOpen(false);
+                  triggerHaptics();
                 }}
                 title="Notifications"
               >
@@ -355,17 +421,17 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
               
               {/* Enhanced Notifications Panel */}
               {notificationsOpen && (
-                <div className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-gray-200">
-                  <div className="sticky top-0 bg-white border-b">
+                <div className={`absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg shadow-xl overflow-hidden z-50 border ${getAnimationClasses('animate-fadeIn')}`}>
+                  <div className={`sticky top-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b`}>
                     <div className="px-4 py-3 flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-gray-800">Notifications</h3>
+                      <h3 className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Notifications</h3>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={refreshNotifications}
-                          className={`p-1 hover:bg-gray-100 rounded transition-all ${isRefreshing ? 'animate-spin' : ''}`}
+                          className={`p-1 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} rounded transition-all ${isRefreshing ? 'animate-spin' : ''}`}
                           title="Refresh notifications"
                         >
-                          <RefreshCcw className="w-4 h-4 text-gray-600" />
+                          <RefreshCcw className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
                         </button>
                         {unreadCount > 0 && (
                           <button
@@ -382,16 +448,16 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                   <div className="max-h-[480px] overflow-y-auto">
                     {notifications.length === 0 ? (
                       <div className="px-4 py-8 text-center">
-                        <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                        <p className="text-sm text-gray-500">No notifications</p>
+                        <Bell className={`w-12 h-12 ${isDarkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-3`} />
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No notifications</p>
                       </div>
                     ) : (
-                      <div className="divide-y divide-gray-100">
+                      <div className={`divide-y ${isDarkMode ? 'divide-gray-700' : 'divide-gray-100'}`}>
                         {notifications.map((notification) => (
                           <div
                             key={notification.id}
-                            className={`px-4 py-3 hover:bg-gray-50 cursor-pointer relative group ${
-                              !notification.read ? 'bg-blue-50/50' : ''
+                            className={`px-4 py-3 ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'} cursor-pointer relative group ${
+                              !notification.read ? isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50/50' : ''
                             }`}
                             onClick={() => {
                               markAsRead(notification.id);
@@ -406,13 +472,13 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                                 {getNotificationIcon(notification.type)}
                               </div>
                               <div className="ml-3 flex-1">
-                                <p className="text-sm font-medium text-gray-900">
+                                <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                                   {notification.title}
                                 </p>
-                                <p className="text-xs text-gray-600 mt-0.5">
+                                <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} mt-0.5`}>
                                   {notification.message}
                                 </p>
-                                <p className="text-xs text-gray-400 mt-1">
+                                <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} mt-1`}>
                                   {formatTimestamp(notification.timestamp)}
                                 </p>
                               </div>
@@ -421,9 +487,9 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                                   e.stopPropagation();
                                   deleteNotification(notification.id);
                                 }}
-                                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 rounded transition-all"
+                                className={`opacity-0 group-hover:opacity-100 p-1 ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} rounded transition-all`}
                               >
-                                <X className="w-3 h-3 text-gray-500" />
+                                <X className={`w-3 h-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
                               </button>
                             </div>
                             {!notification.read && (
@@ -436,10 +502,10 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                   </div>
                   
                   {notifications.length > 0 && (
-                    <div className="px-4 py-2 border-t bg-gray-50 flex items-center justify-between">
+                    <div className={`px-4 py-2 border-t ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-100'} flex items-center justify-between`}>
                       <button
                         onClick={clearAllNotifications}
-                        className="text-xs text-gray-600 hover:text-gray-700"
+                        className={`text-xs ${isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-700'}`}
                       >
                         Clear all
                       </button>
@@ -458,47 +524,49 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
             {/* User Menu */}
             <div className="relative">
               <button 
-                className={`h-full px-2 lg:px-3 flex items-center gap-1 lg:gap-2 ${headerStyle === 'blue' ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} touch-manipulation transition-colors rounded`}
+                className={`h-full px-2 lg:px-3 flex items-center gap-1 lg:gap-2 ${headerStyle === 'blue' || isDarkMode ? 'text-white hover:bg-[rgba(255,255,255,0.1)]' : 'text-gray-700 hover:bg-gray-100'} touch-manipulation transition-colors rounded`}
                 onClick={() => {
                   setUserMenuOpen(!userMenuOpen);
                   if (notificationsOpen) setNotificationsOpen(false);
+                  triggerHaptics();
                 }}
               >
-                <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full ${headerStyle === 'blue' ? 'bg-[rgba(255,255,255,0.2)]' : 'bg-gray-200'} flex items-center justify-center`}>
-                  <User className={`w-4 h-4 ${headerStyle === 'blue' ? 'text-white' : 'text-gray-600'}`} />
+                <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full ${headerStyle === 'blue' || isDarkMode ? 'bg-[rgba(255,255,255,0.2)]' : 'bg-gray-200'} flex items-center justify-center`}>
+                  <User className={`w-4 h-4 ${headerStyle === 'blue' || isDarkMode ? 'text-white' : 'text-gray-600'}`} />
                 </div>
-                <span className="text-sm hidden md:inline font-medium">Amanda Chen</span>
+                <span className={`text-sm hidden md:inline font-medium ${getFontSizeClasses()}`}>Amanda Chen</span>
                 <ChevronDown className="w-4 h-4 hidden lg:inline" />
               </button>
               
               {/* User Actions Menu */}
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg overflow-hidden z-50">
-                  <div className="px-4 py-3 bg-gray-50 border-b">
-                    <p className="text-sm font-medium text-gray-700">Amanda Chen</p>
-                    <p className="text-xs text-gray-500">Investment Analyst</p>
+                <div className={`absolute right-0 mt-2 w-64 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg overflow-hidden z-50 ${getAnimationClasses('animate-fadeIn')}`}>
+                  <div className={`px-4 py-3 ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'} border-b`}>
+                    <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-700'}`}>Amanda Chen</p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Investment Analyst</p>
                   </div>
                   <div className="py-1">
-                    <Link href="/settings" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      <Settings className="mr-3 h-4 w-4 text-gray-400" />
+                    <Link href="/settings" className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}>
+                      <Settings className={`mr-3 h-4 w-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                       User Settings
                     </Link>
                     <button
                       onClick={() => {
                         setAppFinderOpen(true);
                         setUserMenuOpen(false);
+                        triggerHaptics();
                       }}
-                      className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className={`w-full flex items-center px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}
                     >
-                      <Grid className="mr-3 h-4 w-4 text-gray-400" />
+                      <Grid className={`mr-3 h-4 w-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                       App Finder
                     </button>
-                    <Link href="/help" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      <Info className="mr-3 h-4 w-4 text-gray-400" />
+                    <Link href="/help" className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'}`}>
+                      <Info className={`mr-3 h-4 w-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                       About FinSight
                     </Link>
-                    <Link href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-t">
-                      <LogOut className="mr-3 h-4 w-4 text-gray-400" />
+                    <Link href="#" className={`flex items-center px-4 py-2 text-sm ${isDarkMode ? 'text-gray-300 hover:bg-gray-700 border-gray-700' : 'text-gray-700 hover:bg-gray-100 border-gray-200'} border-t`}>
+                      <LogOut className={`mr-3 h-4 w-4 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                       Sign Out
                     </Link>
                   </div>
@@ -513,15 +581,24 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
       {appFinderOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="app-finder-title" role="dialog" aria-modal="true">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => setAppFinderOpen(false)} />
+            <div 
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+              onClick={() => {
+                setAppFinderOpen(false);
+                triggerHaptics();
+              }}
+            />
             
-            <div className="relative bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-xl transform transition-all">
-              <div className="sticky top-0 z-10 bg-white border-b">
+            <div className={`relative ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-xl transform transition-all ${getAnimationClasses('animate-fadeIn')}`}>
+              <div className={`sticky top-0 z-10 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b`}>
                 <div className="flex items-center justify-between p-4">
-                  <h2 id="app-finder-title" className="text-lg font-semibold text-gray-900">App Finder</h2>
+                  <h2 id="app-finder-title" className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>App Finder</h2>
                   <button
-                    onClick={() => setAppFinderOpen(false)}
-                    className="text-gray-400 hover:text-gray-500"
+                    onClick={() => {
+                      setAppFinderOpen(false);
+                      triggerHaptics();
+                    }}
+                    className={`${isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-400 hover:text-gray-500'}`}
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -530,13 +607,13 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                 {/* Search and Filter Bar */}
                 <div className="px-4 pb-3">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'} w-5 h-5`} />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search apps..."
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full pl-10 pr-4 py-2 border ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                     />
                   </div>
                   
@@ -548,7 +625,9 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                         className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                           selectedCategory === category
                             ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            : isDarkMode 
+                              ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
                         {category}
@@ -562,8 +641,8 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
               <div className="p-4 overflow-y-auto max-h-[calc(90vh-180px)]">
                 {filteredApps.length === 0 ? (
                   <div className="text-center py-8">
-                    <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">No apps found</p>
+                    <Package className={`w-12 h-12 ${isDarkMode ? 'text-gray-600' : 'text-gray-300'} mx-auto mb-3`} />
+                    <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>No apps found</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -571,14 +650,21 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                       <Link
                         key={app.id}
                         href={app.href}
-                        onClick={() => setAppFinderOpen(false)}
-                        className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 hover:border-gray-300"
+                        onClick={() => {
+                          setAppFinderOpen(false);
+                          triggerHaptics();
+                        }}
+                        className={`flex flex-col items-center p-4 rounded-lg ${
+                          isDarkMode 
+                            ? 'hover:bg-gray-700 border-gray-700 hover:border-gray-600' 
+                            : 'hover:bg-gray-50 border-gray-200 hover:border-gray-300'
+                        } transition-colors border ${getAnimationClasses('hover:scale-105 transition-transform')}`}
                       >
-                        <div className={`w-14 h-14 ${app.color} rounded-xl flex items-center justify-center mb-3`}>
+                        <div className={`w-14 h-14 ${app.color} rounded-xl flex items-center justify-center mb-3 ${getAnimationClasses('transform transition-transform')}`}>
                           <app.icon className="w-7 h-7 text-white" />
                         </div>
-                        <h3 className="text-sm font-medium text-gray-900 text-center">{app.name}</h3>
-                        <p className="text-xs text-gray-500 text-center mt-1">{app.description}</p>
+                        <h3 className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} text-center`}>{app.name}</h3>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-center mt-1`}>{app.description}</p>
                       </Link>
                     ))}
                   </div>
@@ -595,12 +681,15 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
           <div className="fixed inset-0 z-50 lg:hidden" aria-modal="true">
             <div className="fixed inset-0 bg-gray-900/50" onClick={() => setSidebarOpen(false)} />
             
-            <div className="fixed inset-y-0 left-0 w-full max-w-xs bg-white animate-slide-in">
-              <div className="flex items-center justify-between h-14 px-4 border-b">
-                <span className="text-base font-medium text-gray-800">FinSight</span>
+            <div className={`fixed inset-y-0 left-0 w-full max-w-xs ${isDarkMode ? 'bg-gray-800' : 'bg-white'} ${getAnimationClasses('animate-slide-in')}`}>
+              <div className={`flex items-center justify-between h-14 px-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                <span className={`text-base font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>FinSight</span>
                 <button
-                  onClick={() => setSidebarOpen(false)}
-                  className="p-2 -mr-2 text-gray-500 hover:text-gray-900 touch-manipulation"
+                  onClick={() => {
+                    setSidebarOpen(false);
+                    triggerHaptics();
+                  }}
+                  className={`p-2 -mr-2 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-500 hover:text-gray-900'} touch-manipulation`}
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -612,15 +701,20 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                     <Link
                       key={item.name}
                       href={item.href}
-                      onClick={() => setSidebarOpen(false)}
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        triggerHaptics();
+                      }}
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 text-sm font-medium touch-manipulation ${
                         isActive 
                           ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white' 
-                          : 'text-gray-700 hover:bg-gray-100'
+                          : isDarkMode 
+                            ? 'text-gray-300 hover:bg-gray-700' 
+                            : 'text-gray-700 hover:bg-gray-100'
                       }`}
                     >
                       <item.icon className="w-5 h-5" />
-                      <span>{item.name}</span>
+                      <span>{preferences.showLabels ? item.name : ''}</span>
                     </Link>
                   );
                 })}
@@ -631,10 +725,10 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
 
         {/* Desktop Sidebar - Collapsible */}
         {showSideMenu && (
-          <div className={`hidden lg:block ${sidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 ease-in-out bg-white border-r border-[rgb(var(--scb-border))]`}>
+          <div className={`hidden lg:block ${sidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 ease-in-out ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-r`}>
             <div className="h-full flex flex-col">
-              <div className="h-12 px-4 border-b flex items-center justify-center">
-                {sidebarOpen && <span className="text-sm font-medium text-gray-800">FinSight Spaces</span>}
+              <div className={`h-12 px-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-center`}>
+                {sidebarOpen && <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>FinSight Spaces</span>}
               </div>
               <nav className="flex-1 overflow-y-auto py-2">
                 {navigation.map((item) => {
@@ -643,11 +737,18 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                     <Link
                       key={item.name}
                       href={item.href}
-                      className={`flex items-center ${sidebarOpen ? 'px-4' : 'px-3 justify-center'} py-3 hover:bg-gray-100 transition-colors ${isActive ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white hover:bg-[rgb(var(--scb-honolulu-blue))]' : 'text-gray-700'}`}
+                      className={`flex items-center ${sidebarOpen ? 'px-4' : 'px-3 justify-center'} py-3 ${
+                        isActive 
+                          ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white hover:bg-[rgb(var(--scb-honolulu-blue))]' 
+                          : isDarkMode 
+                            ? 'text-gray-300 hover:bg-gray-700' 
+                            : 'text-gray-700 hover:bg-gray-100'
+                      } transition-colors`}
                       title={!sidebarOpen ? item.name : undefined}
+                      onClick={triggerHaptics}
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
-                      {sidebarOpen && <span className="ml-3">{item.name}</span>}
+                      {sidebarOpen && preferences.showLabels && <span className={`ml-3 ${getFontSizeClasses()}`}>{item.name}</span>}
                     </Link>
                   );
                 })}
@@ -659,34 +760,39 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* SCB Beautiful Content - Responsive padding */}
-          <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[rgb(var(--scb-light-gray))] pb-20 lg:pb-6">
-            <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-[rgb(var(--scb-border))]">
+          <main className={`flex-1 overflow-y-auto ${getDensityClasses()} ${isDarkMode ? 'bg-gray-900' : 'bg-[rgb(var(--scb-light-gray))]'} pb-20 lg:pb-6 ${getFontSizeClasses()}`}>
+            <div className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} ${getDensityClasses()} rounded-lg shadow-sm border`}>
               {children}
             </div>
           </main>
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[rgb(var(--scb-border))] safe-bottom">
-        <div className="grid grid-cols-4 gap-1">
-          {mobileNav.map((item) => {
-            const isActive = router.pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex flex-col items-center py-2 px-3 text-xs font-medium touch-manipulation ${
-                  isActive ? 'text-[rgb(var(--scb-honolulu-blue))]' : 'text-gray-600'
-                }`}
-              >
-                <item.icon className={`w-6 h-6 mb-1 ${isActive ? 'text-[rgb(var(--scb-honolulu-blue))]' : ''}`} />
-                {item.name}
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
+      {/* Mobile Bottom Navigation - only show if mobile nav style is bottom */}
+      {preferences.mobileNavStyle === 'bottom' && (
+        <nav className={`lg:hidden fixed bottom-0 left-0 right-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t safe-bottom`}>
+          <div className="grid grid-cols-4 gap-1">
+            {mobileNav.map((item) => {
+              const isActive = router.pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={triggerHaptics}
+                  className={`flex flex-col items-center py-2 px-3 text-xs font-medium touch-manipulation ${
+                    isActive 
+                      ? 'text-[rgb(var(--scb-honolulu-blue))]' 
+                      : isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                  }`}
+                >
+                  <item.icon className={`w-6 h-6 mb-1 ${isActive ? 'text-[rgb(var(--scb-honolulu-blue))]' : ''}`} />
+                  {preferences.showLabels && item.name}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </div>
   );
 };

@@ -1,0 +1,216 @@
+/* Dark Mode CSS for SCB Sapphire FinSight
+   Implements a complete dark theme using CSS variables */
+
+@layer base {
+  :root.dark-mode {
+    /* Dark Mode Standard Chartered Bank Colors */
+    --scb-honolulu-blue: 0 160 230; /* Brighter #00A0E6 for dark backgrounds */
+    --scb-american-green: 40 205 85; /* Brighter #28CD55 for dark backgrounds */
+    --scb-white: 255 255 255; /* #FFFFFF */
+    --scb-light-gray: 40 42 54; /* #28292A - Dark background */
+    --scb-dark-gray: 200 200 220; /* #C8C8DC - Light text on dark */
+    --scb-muted-red: 255 100 110; /* #FF646E - Brighter for dark mode */
+    --scb-border: 55 58 70; /* #373A46 - Subtle dividers */
+    
+    /* Dark mode content backgrounds */
+    --background: 30 32 42; /* #1E202A - Base background */
+    --foreground: 220 230 240; /* #DCE6F0 - Base text */
+    
+    /* Financial Data Color Logic */
+    --scb-neutral: 0 160 230; /* Brighter blue for dark mode */
+    --scb-positive: 40 205 85; /* Brighter green for dark mode */
+    --scb-negative: 255 100 110; /* Brighter red for dark mode */
+    
+    /* SAP Fiori Horizon Integration - Dark Mode */
+    --horizon-blue: 0 160 230; /* Brighter for dark backgrounds */
+    --horizon-green: 40 205 85; /* Brighter for dark backgrounds */
+    --horizon-red: 255 100 110; /* Brighter for dark backgrounds */
+    --horizon-neutral-gray: 200 200 220; /* Light text on dark */
+    --horizon-focus-color: 60 170 255; /* #3CAAFF - Focus state color */
+    
+    /* SAP Fiori Theming - SCB Brand Integration for Dark Mode */
+    --fiori-shell-header-bg: 20 22 28; /* #14161C - Darker shell header */
+    --fiori-shell-header-text: 220 230 240; /* Light text */
+    --fiori-sidebar-bg: 32 34 45; /* #20222D - Dark sidebar */
+    --fiori-sidebar-text: 200 200 220; /* Light text */
+    --fiori-sidebar-active-bg: 0 160 230; /* Active item highlight */
+    --fiori-sidebar-active-text: 255 255 255; /* White text */
+    --fiori-content-bg: 30 32 42; /* Main content area */
+    --fiori-tile-bg: 36 38 50; /* #242632 - Tile background */
+    --fiori-action-color: 40 205 85; /* Action buttons */
+    --fiori-button-primary-bg: 0 160 230; /* Primary buttons */
+    --fiori-button-primary-text: 255 255 255; /* White text */
+    --fiori-button-secondary-bg: 36 38 50; /* Secondary buttons */
+    --fiori-button-secondary-text: 0 160 230; /* Blue text */
+    --fiori-notification-bg: 0 160 230; /* Notifications */
+    --fiori-horizon-focus-outline: 0 0 0 0.125rem rgba(60, 170, 255, 0.75);
+    
+    /* Financial Data Presentation Variables */
+    --fiori-positive-text: 40 205 85; /* Bright green */
+    --fiori-negative-text: 255 100 110; /* Bright red */
+    --fiori-neutral-text: 0 160 230; /* Bright blue */
+    --fiori-positive-bg: rgba(40, 205, 85, 0.15); /* Green with opacity */
+    --fiori-negative-bg: rgba(255, 100, 110, 0.15); /* Red with opacity */
+    --fiori-neutral-bg: rgba(0, 160, 230, 0.15); /* Blue with opacity */
+
+    /* Modified content area variables */
+    --content-bg: 30 32 42; /* #1E202A - Base background */
+    --muted: 40 42 56; /* #282A38 - Muted areas */
+    --muted-foreground: 180 190 210; /* #B4BED2 - Muted text */
+    --accent: 65 135 190; /* #4187BE - Accent for highlights */
+    --accent-foreground: 240 245 255; /* #F0F5FF - Text on accents */
+    --border: 55 58 70; /* #373A46 - Borders */
+    --input: 45 48 60; /* #2D303C - Input fields */
+    --ring: 0 160 230; /* #00A0E6 - Focus rings */
+  }
+}
+
+/* Dark mode specific component overrides */
+:root.dark-mode .fiori-tile {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+:root.dark-mode .fiori-tile:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+:root.dark-mode .fiori-btn-primary:hover {
+  background-color: rgba(var(--fiori-button-primary-bg), 0.85);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-mode .fiori-btn-secondary:hover {
+  background-color: rgba(var(--fiori-button-primary-bg), 0.15);
+}
+
+:root.dark-mode .fiori-input {
+  background-color: rgb(var(--input));
+  border-color: rgb(var(--border));
+  color: rgb(var(--foreground));
+}
+
+:root.dark-mode .fiori-input:hover {
+  border-color: rgba(var(--horizon-blue), 0.5);
+}
+
+:root.dark-mode .fiori-input:focus {
+  border-color: rgb(var(--horizon-blue));
+  box-shadow: var(--fiori-horizon-focus-outline);
+}
+
+:root.dark-mode .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(55, 58, 70, 1) 0%,
+    rgba(65, 68, 80, 1) 50%,
+    rgba(55, 58, 70, 1) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Dark mode ai-assistant styles */
+:root.dark-mode .ai-assistant-container {
+  background-color: rgb(var(--fiori-tile-bg));
+  border-color: rgb(var(--border));
+}
+
+:root.dark-mode .ai-assistant-header {
+  background-color: rgba(var(--horizon-blue), 0.12);
+  border-color: rgb(var(--border));
+}
+
+:root.dark-mode .ai-assistant-message {
+  border-color: rgba(var(--border), 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+:root.dark-mode .ai-assistant-message.user {
+  background-color: rgba(var(--horizon-blue), 0.12);
+}
+
+:root.dark-mode .ai-assistant-message.assistant {
+  background-color: rgb(40, 42, 54);
+}
+
+:root.dark-mode .ai-assistant-source {
+  background-color: rgba(var(--horizon-blue), 0.08);
+  border-color: rgba(var(--horizon-blue), 0.3);
+}
+
+/* Dark mode for horizon chips/tags */
+:root.dark-mode .horizon-chip {
+  background-color: rgba(var(--horizon-neutral-gray), 0.15);
+  border-color: rgba(var(--horizon-neutral-gray), 0.25);
+}
+
+:root.dark-mode .horizon-chip-blue {
+  background-color: rgba(var(--horizon-blue), 0.15);
+  border-color: rgba(var(--horizon-blue), 0.25);
+}
+
+:root.dark-mode .horizon-chip-green {
+  background-color: rgba(var(--horizon-green), 0.15);
+  border-color: rgba(var(--horizon-green), 0.25);
+}
+
+/* Dark mode for tables */
+:root.dark-mode .sapui5-table th {
+  background-color: rgb(var(--muted));
+  border-color: rgb(var(--border));
+}
+
+:root.dark-mode .sapui5-table td {
+  border-color: rgb(var(--border));
+}
+
+:root.dark-mode .sapui5-table tr:hover {
+  background-color: rgba(var(--horizon-blue), 0.08);
+}
+
+/* Chart color palettes for dark mode */
+:root.dark-mode {
+  --chart-color-1: rgb(var(--scb-honolulu-blue));
+  --chart-color-2: rgb(var(--scb-american-green));
+  --chart-color-3: rgb(255, 170, 80); /* Bright orange */
+  --chart-color-4: rgb(180, 120, 240); /* Purple */
+  --chart-color-5: rgb(100, 210, 220); /* Teal */
+  --chart-color-6: rgb(255, 150, 150); /* Light red */
+  --chart-color-7: rgb(160, 210, 140); /* Light green */
+  --chart-color-8: rgb(130, 170, 255); /* Light blue */
+  
+  --chart-axis-color: rgba(180, 190, 210, 0.6); /* Light gray for axes */
+  --chart-grid-color: rgba(80, 85, 95, 0.3); /* Dark gray for gridlines */
+  --chart-tooltip-bg: rgba(36, 38, 50, 0.9); /* Dark tooltip background */
+  --chart-tooltip-border: rgba(55, 58, 70, 1); /* Tooltip border */
+}
+
+/* Dark mode dialog */
+:root.dark-mode .horizon-dialog {
+  background-color: rgb(var(--fiori-tile-bg));
+  border-color: rgb(var(--border));
+}
+
+:root.dark-mode .horizon-dialog-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Additional dark mode utility classes */
+.dark-mode-text-shadow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode-high-contrast {
+  --foreground: 240 245 255;
+  --scb-honolulu-blue: 60 180 255;
+  --scb-american-green: 70 230 120;
+}
+
+/* Media query for system dark mode preference */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    /* Apply dark-mode variables automatically unless light-mode class is present */
+    --scb-honolulu-blue: 0 160 230;
+    --scb-american-green: 40 205 85;
+    /* Repeat all dark mode variables here... */
+  }
+}
