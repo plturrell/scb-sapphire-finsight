@@ -2,6 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 import perplexityService from '@/services/PerplexityService';
 
+// Add server-side retry and timeout management
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 1000; // ms
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Handle OPTIONS requests for CORS preflight
@@ -25,77 +28,100 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Get query parameters
   const { topic = 'financial markets', limit = 5 } = req.query;
   
-  try {
-    // Validate topic parameter
-    if (Array.isArray(topic)) {
-      return res.status(400).json({ 
-        error: 'Topic must be a single string' 
-      });
-    }
-    
-    // Validate limit parameter
-    const newsLimit = Array.isArray(limit) ? 
-      parseInt(limit[0], 10) : 
-      typeof limit === 'string' ? 
-        parseInt(limit, 10) : 5;
-    
-    if (isNaN(newsLimit) || newsLimit < 1 || newsLimit > 20) {
-      return res.status(400).json({ 
-        error: 'Limit must be a number between 1 and 20' 
-      });
-    }
-    
-    // Call Perplexity API to get market news via the centralized service
-    const messages = [
-      {
-        role: 'system',
-        content: 'You are a financial news reporter providing concise, accurate summaries of the latest market developments. Focus on factual information and provide a diverse range of important financial news.'
-      },
-      {
-        role: 'user',
-        content: `Provide the latest financial market news about ${topic}. Include major market movements, significant events, and relevant information. For each news item, include a concise headline, brief summary, category, and source if available. Provide ${newsLimit} different news items.`
-      }
-    ];
-    
-    console.log('Making request to Perplexity API via centralized service for market news');
-    
-    // Use our centralized service to make the API call
-    const data = await perplexityService.callPerplexityAPI(messages, {
-      temperature: 0.2,
-      max_tokens: 2000,
-      model: 'sonar'
-    });
-    
-    const newsContent = data.choices[0]?.message?.content || '';
-    
-    // Process the news content to extract news items
-    const newsItems = processNewsContent(newsContent);
-    
-    // Return news items with timestamp
-    return res.status(200).json({
-      success: true,
-      articles: newsItems,
-      timestamp: new Date().toISOString(),
-      source: 'Perplexity API',
-      params: {
-        topic,
-        limit: newsLimit
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching market news:', error);
-    
-    // Return error message
-    return res.status(500).json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-      timestamp: new Date().toISOString(),
-      params: {
-        topic,
-        limit: typeof limit === 'string' ? parseInt(limit, 10) : 5
-      }
+  // Validate topic parameter
+  if (Array.isArray(topic)) {
+    return res.status(400).json({ 
+      error: 'Topic must be a single string',
+      success: false
     });
   }
+  
+  // Validate limit parameter
+  const newsLimit = Array.isArray(limit) ? 
+    parseInt(limit[0], 10) : 
+    typeof limit === 'string' ? 
+      parseInt(limit, 10) : 5;
+  
+  if (isNaN(newsLimit) || newsLimit < 1 || newsLimit > 20) {
+    return res.status(400).json({ 
+      error: 'Limit must be a number between 1 and 20',
+      success: false
+    });
+  }
+
+  // Prepare messages for the API call
+  const messages = [
+    {
+      role: 'system' as const,
+      content: 'You are a financial news reporter providing concise, accurate summaries of the latest market developments. Focus on factual information and provide a diverse range of important financial news.'
+    },
+    {
+      role: 'user' as const,
+      content: `Provide the latest financial market news about ${topic}. Include major market movements, significant events, and relevant information. For each news item, include a concise headline, brief summary, category, and source if available. Provide ${newsLimit} different news items.`
+    }
+  ];
+  
+  // Implement robust retry logic
+  let retries = 0;
+  let lastError: any = null;
+
+  while (retries <= MAX_RETRIES) {
+    try {
+      console.log(`Making request to Perplexity API for market news (attempt ${retries + 1}/${MAX_RETRIES + 1})`);
+      
+      // Use our centralized service to make the API call
+      const data = await perplexityService.callPerplexityAPI(messages, {
+        temperature: 0.2,
+        max_tokens: 2000,
+        model: 'sonar'
+      });
+      
+      const newsContent = data.choices[0]?.message?.content || '';
+      
+      // Process the news content to extract news items
+      const newsItems = processNewsContent(newsContent);
+      
+      // Return news items with timestamp
+      return res.status(200).json({
+        success: true,
+        articles: newsItems,
+        timestamp: new Date().toISOString(),
+        source: 'Perplexity API',
+        params: {
+          topic,
+          limit: newsLimit
+        }
+      });
+    } catch (error: any) {
+      lastError = error;
+      console.error(`Error fetching market news (attempt ${retries + 1}/${MAX_RETRIES + 1}):`, error.message || error);
+      
+      // If we have retries left, try again after a delay
+      if (retries < MAX_RETRIES) {
+        retries++;
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * retries)); // Increasing backoff
+      } else {
+        // We've exhausted all retries
+        break;
+      }
+    }
+  }
+
+  // If we get here, all retries have failed
+  const fallbackContent = `Unable to fetch market news for ${topic} after multiple attempts. Please try again later.`;
+  console.error('All retries failed for market news');
+  
+  // Return error message with fallback content
+  return res.status(500).json({
+    success: false,
+    error: lastError instanceof Error ? lastError.message : 'Unknown error occurred',
+    fallbackContent,
+    timestamp: new Date().toISOString(),
+    params: {
+      topic,
+      limit: typeof limit === 'string' ? parseInt(limit, 10) : 5
+    }
+  });
 }
 
 // Helper function to process news content into structured format

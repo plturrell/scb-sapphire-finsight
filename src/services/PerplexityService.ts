@@ -15,6 +15,7 @@ const MODEL_NAME = 'sonar';
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1000; // ms
 const REQUEST_QUEUE_INTERVAL = 300; // ms between queue processing
+const FETCH_TIMEOUT = 15000; // 15 seconds timeout for API calls
 
 // Global request queue to prevent concurrent requests
 type QueuedRequest = {
@@ -77,6 +78,29 @@ class PerplexityService {
     return `${this.apiKey.substring(0, 5)}...${this.apiKey.substring(this.apiKey.length - 4)}`;
   }
   
+  /**
+   * Fetch with timeout to prevent hanging requests
+   */
+  private async fetchWithTimeout(url: string, options: RequestInit, timeout: number = FETCH_TIMEOUT): Promise<Response> {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      return response;
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        throw new Error(`Request timed out after ${timeout}ms`);
+      }
+      throw error;
+    } finally {
+      clearTimeout(id);
+    }
+  }
+
   /**
    * Process the request queue to prevent too many concurrent API calls
    */
@@ -173,7 +197,8 @@ class PerplexityService {
         try {
           console.log(`Making Perplexity API request to model: ${model}`);
           
-          const response = await fetch(PERPLEXITY_API_URL, {
+          // Use the fetchWithTimeout method instead of direct fetch
+          const response = await this.fetchWithTimeout(PERPLEXITY_API_URL, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${this.apiKey}`,
