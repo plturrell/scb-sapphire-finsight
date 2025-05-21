@@ -1,20 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { ChevronDown, Filter, RefreshCw, ArrowUp, ArrowDown, Settings, Download, AlertTriangle } from 'lucide-react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
+import { useIOS } from '@/hooks/useResponsive';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useMicroInteractions } from '@/hooks/useMicroInteractions';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import SFSymbol from '@/components/SFSymbol';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
 
 // Trading page for SCB Sapphire FinSight
 export default function Trading() {
   const [orderType, setOrderType] = useState('market');
   const [marketView, setMarketView] = useState('main');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Platform detection and UI enhancement hooks
+  const isAppleDevice = useIOS();
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
+  const { haptic } = useMicroInteractions();
+  const { touchCapable } = useDeviceCapabilities();
+  const { isDarkMode } = useUIPreferences();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Market view categories with SF Symbols icons
+  const marketCategories = [
+    { id: 'main', label: 'Main Markets', icon: 'chart.bar.fill', badge: '4' },
+    { id: 'forex', label: 'Forex', icon: 'dollarsign.circle.fill', badge: '6' },
+    { id: 'crypto', label: 'Crypto', icon: 'bitcoinsign.circle.fill', badge: '5' },
+    { id: 'commodities', label: 'Commodities', icon: 'chart.line.uptrend.xyaxis.fill', badge: '3' },
+    { id: 'bonds', label: 'Bonds', icon: 'banknote.fill', badge: '2' },
+    { id: 'futures', label: 'Futures', icon: 'timer', badge: null }
+  ];
+  
+  // Platform detection effect
+  useEffect(() => {
+    setIsPlatformDetected(true);
+  }, []);
 
   const refreshMarketData = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    
     setIsLoading(true);
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
     }, 1500);
+  };
+  
+  // Handle market view change
+  const handleMarketViewChange = (view: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    
+    setMarketView(view);
+  };
+  
+  // SF Symbols Market Categories Navigation Component
+  const SFSymbolsMarketNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className="mb-4 bg-white dark:bg-gray-800 shadow-sm border border-[rgb(var(--scb-border))] dark:border-gray-700 rounded-lg overflow-hidden">
+        <div className="p-2 overflow-x-auto hide-scrollbar">
+          <div className="flex space-x-3 items-center">
+            {marketCategories.map((category) => (
+              <div 
+                key={category.id}
+                onClick={() => handleMarketViewChange(category.id)}
+                className={`flex flex-col items-center p-2 rounded-xl cursor-pointer transition-colors ${
+                  marketView === category.id
+                  ? 'bg-[rgba(var(--scb-honolulu-blue),0.1)] dark:bg-blue-900/30'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+                style={{ minWidth: '80px' }}
+              >
+                <div className={`relative flex items-center justify-center w-12 h-12 rounded-full mb-1 ${
+                  marketView === category.id
+                  ? 'bg-[rgb(var(--scb-honolulu-blue))]'
+                  : 'bg-gray-200 dark:bg-gray-700'
+                }`}>
+                  <SFSymbol 
+                    name={category.icon} 
+                    size={24}
+                    color={marketView === category.id ? 'white' : undefined}
+                  />
+                  
+                  {/* Badge indicator */}
+                  {category.badge && (
+                    <div className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs px-1">
+                      {category.badge}
+                    </div>
+                  )}
+                </div>
+                <span className={`text-center text-sm ${
+                  marketView === category.id
+                  ? 'text-[rgb(var(--scb-honolulu-blue))] dark:text-blue-400 font-medium'
+                  : 'text-gray-800 dark:text-gray-300'
+                }`}>
+                  {category.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -25,32 +123,44 @@ export default function Trading() {
 
       <div className="space-y-6">
         {/* Market Overview Panel */}
-        <div className="bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--scb-border))]">
-            <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))]">Market Overview</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-[rgb(var(--scb-border))] dark:border-gray-700 overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[rgb(var(--scb-border))] dark:border-gray-700">
+            <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-gray-200">Market Overview</h2>
             <div className="flex items-center gap-2">
               <button 
                 onClick={refreshMarketData}
-                className="scb-btn-ghost p-2 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                className="scb-btn-ghost p-2 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] dark:hover:bg-gray-700 transition-colors"
                 disabled={isLoading}
               >
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
-              <div className="relative">
-                <select 
-                  value={marketView}
-                  onChange={(e) => setMarketView(e.target.value)}
-                  className="scb-input py-1.5 pl-3 pr-8 text-sm rounded-md"
-                >
-                  <option value="main">Main Markets</option>
-                  <option value="forex">Forex</option>
-                  <option value="crypto">Crypto</option>
-                  <option value="commodities">Commodities</option>
-                </select>
-                <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
-              </div>
+              
+              {/* Only show dropdown when SF Symbols are not available */}
+              {(!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) && (
+                <div className="relative">
+                  <select 
+                    value={marketView}
+                    onChange={(e) => handleMarketViewChange(e.target.value)}
+                    className="scb-input py-1.5 pl-3 pr-8 text-sm rounded-md dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+                  >
+                    <option value="main">Main Markets</option>
+                    <option value="forex">Forex</option>
+                    <option value="crypto">Crypto</option>
+                    <option value="commodities">Commodities</option>
+                    <option value="bonds">Bonds</option>
+                    <option value="futures">Futures</option>
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgb(var(--scb-dark-gray))] dark:text-gray-300" />
+                </div>
+              )}
             </div>
           </div>
+          
+          {/* SF Symbols Market Navigation */}
+          {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+            <SFSymbolsMarketNavigation />
+          )}
+          
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Market indices cards */}
