@@ -7,7 +7,8 @@ import {
   Search, Bell, User, Menu, HelpCircle, ChevronDown, 
   PlusSquare, LogOut, Info, Grid, X, Home, PieChart, 
   RefreshCcw, Building2, Globe, Shield, AlertTriangle, 
-  Activity, TrendingUp, Layers, Database, Terminal, Sparkles
+  Activity, TrendingUp, Layers, Database, Terminal, Sparkles,
+  LineChart, AlertCircle, CheckCircle, Package
 } from 'lucide-react';
 import { Icons } from './IconExports';
 import { useUIPreferences } from '@/context/UIPreferencesContext';

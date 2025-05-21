@@ -329,6 +329,83 @@ const VietnamMonteCarloPage: NextPage = () => {
     // In a real implementation, this would open a detailed analysis view
     alert('This would show a detailed analysis view with more comprehensive metrics and visualizations');
   };
+  
+  // Handle Monte Carlo tab selection
+  const handleMonteCarloTabSelect = (tabId: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.light();
+    }
+    
+    setActiveMonteCarloTab(tabId);
+    
+    // In a real app, this would scroll to the corresponding section
+    const element = document.getElementById(tabId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  
+  // Monte Carlo categories with SF Symbols icons
+  const monteCarloCategories = [
+    { id: 'parameters', label: 'Parameters', icon: 'slider.horizontal.3', badge: null },
+    { id: 'distribution', label: 'Distribution', icon: 'chart.bar.fill', badge: simulationResults ? simulationResults.length.toString() : null },
+    { id: 'cases', label: 'Case Analysis', icon: 'doc.text.magnifyingglass', badge: config?.simulationSettings.caseBoundaries.length.toString() || null },
+    { id: 'sensitivity', label: 'Sensitivity', icon: 'gauge.with.needle', badge: sensitivityResults ? sensitivityResults.length.toString() : null },
+    { id: 'analysis', label: 'AI Analysis', icon: 'sparkles', badge: llmAnalysis && llmAnalysis.status === 'complete' ? 'New' : null }
+  ];
+  
+  // SF Symbols Monte Carlo Navigation component
+  const SFSymbolsMonteCarloNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <Box sx={{ mb: 3, mt: 2 }}>
+        <div className={`rounded-lg overflow-x-auto ${theme.palette.mode === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${theme.palette.mode === 'dark' ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1`}>
+          <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
+            {monteCarloCategories.map((category) => (
+              <button 
+                key={category.id}
+                onClick={() => handleMonteCarloTabSelect(category.id)}
+                className={`
+                  flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                  ${activeMonteCarloTab === category.id
+                    ? theme.palette.mode === 'dark' 
+                      ? 'bg-blue-900/30 text-blue-400' 
+                      : 'bg-blue-50 text-blue-600'
+                    : theme.palette.mode === 'dark' 
+                      ? 'text-gray-300 hover:bg-gray-700' 
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }
+                `}
+              >
+                <div className="relative">
+                  <span className="sf-symbol text-xl" role="img">{category.icon}</span>
+                  
+                  {/* Badge */}
+                  {category.badge && (
+                    <span className={`
+                      absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
+                      flex items-center justify-center px-1
+                      ${category.badge === 'New' 
+                        ? theme.palette.mode === 'dark' ? 'bg-green-600' : 'bg-green-500'
+                        : theme.palette.mode === 'dark' ? 'bg-blue-600' : 'bg-blue-500'
+                      }
+                    `}>
+                      {category.badge.length > 4 ? category.badge.substring(0, 3) + '..' : category.badge}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] font-medium mt-1">{category.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </Box>
+    );
+  };
 
   return (
     <ThemeProvider theme={muiTheme}>
@@ -353,6 +430,11 @@ const VietnamMonteCarloPage: NextPage = () => {
               Analyze probable outcomes of Vietnam tariff changes using Monte Carlo simulation
             </Typography>
           </Box>
+          
+          {/* SF Symbols Monte Carlo Navigation */}
+          {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+            <SFSymbolsMonteCarloNavigation />
+          )}
 
         {error && (
           <Alert 
@@ -381,7 +463,7 @@ const VietnamMonteCarloPage: NextPage = () => {
 
         <Grid container spacing={3}>
           {/* Parameter Configuration Panel */}
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4} id="parameters">
             <VietnamMonteCarloParams
               initialConfig={config || undefined}
               onConfigChange={handleConfigChange}
@@ -390,7 +472,7 @@ const VietnamMonteCarloPage: NextPage = () => {
           </Grid>
 
           {/* Probability Distribution Visualization */}
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={8} id="distribution">
             <VietnamMonteCarloProbabilityDistribution
               data={simulationResults}
               loading={simulationStatus === 'running'}
@@ -400,7 +482,7 @@ const VietnamMonteCarloPage: NextPage = () => {
           </Grid>
 
           {/* Case Analysis */}
-          <Grid item xs={12}>
+          <Grid item xs={12} id="cases">
             <VietnamMonteCarloCaseAnalysis
               data={simulationResults}
               caseBoundaries={config?.simulationSettings.caseBoundaries}
@@ -408,7 +490,7 @@ const VietnamMonteCarloPage: NextPage = () => {
           </Grid>
 
           {/* Sensitivity Analysis */}
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4} id="sensitivity">
             <VietnamMonteCarloSensitivity
               parameters={sensitivityResults}
               loading={simulationStatus === 'running'}
@@ -418,7 +500,7 @@ const VietnamMonteCarloPage: NextPage = () => {
           </Grid>
 
           {/* LLM Analysis */}
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={8} id="analysis">
             <VietnamMonteCarloLlmAnalysis
               analysis={llmAnalysis}
               onGenerateReport={handleGenerateReport}

@@ -1,6 +1,7 @@
 /**
- * Enhanced Company Search Bar with SCB beautiful styling and S&P Capital IQ Integration
+ * Enhanced Company Search Bar with SCB beautiful styling 
  * Real-time search with autocomplete, predictive text, and document fetching
+ * Connected to Apache Jena backend through API service
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { InlineSpinner } from './LoadingSpinner';
+import ApiService from '@/services/ApiService';
 
 // Simple debounce implementation
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {

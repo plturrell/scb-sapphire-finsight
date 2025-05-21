@@ -41,6 +41,13 @@ const iosColors = [
   '#00C7BE'  // teal
 ];
 
+// iOS-specific chart transitions for animations
+const iosTransitions = {
+  duration: 400,
+  easing: 'cubic-bezier(0.25, 0.1, 0.25, 1.0)', // iOS animation curve
+  delay: 0
+};
+
 const sectorData: TransactionSector[] = [
   { name: 'Aluminum', revenue: 500000, accounts: 120, income: 45000, assets: 2500000, deposits: 1800000, yield: 5.2, rowWa: 3.5, change: 2.5 },
   { name: 'Automotive', revenue: 750000, accounts: 85, income: 68000, assets: 3200000, deposits: 2100000, yield: 6.1, rowWa: 4.2, change: -1.2 },
@@ -77,20 +84,88 @@ export default function Analytics() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeAnalyticsCategory, setActiveAnalyticsCategory] = useState('overview');
   const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const [showDataDetail, setShowDataDetail] = useState(false);
+  const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
+  const [chartTransition, setChartTransition] = useState(false);
+  const [navbarHidden, setNavbarHidden] = useState(false);
+  const [lastScrollPosition, setLastScrollPosition] = useState(0);
+  
+  // Touch handling
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
-  const { mode, isMultiTasking } = useMultiTasking();
-  const { isAppleDevice, deviceType } = useDeviceCapabilities();
+  const { mode, isMultiTasking, windowWidth, windowHeight } = useMultiTasking();
+  const { isAppleDevice, deviceType, prefersReducedMotion } = useDeviceCapabilities();
   const { isDarkMode } = useUIPreferences();
   const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const { safeArea, hasNotch, hasHomeIndicator } = useSafeArea();
   
-  // Determine if it's an iPad
+  // Determine if it's an iOS device
   const isIPad = deviceType === 'tablet' && isAppleDevice;
+  const isiOS = deviceType === 'mobile' && isAppleDevice;
+  const isApplePlatform = isiOS || isIPad;
   
-  // Effect to detect platform
+  // Effect to detect platform and setup iOS-specific handlers
   useEffect(() => {
     setPlatformDetected(true);
-  }, []);
+    
+    // Add iOS-specific scroll handling for hiding/showing navbar
+    if (isApplePlatform) {
+      const handleScroll = () => {
+        if (typeof window !== 'undefined') {
+          const currentScrollPos = window.scrollY;
+          
+          // Show navbar when scrolling up, hide when scrolling down (after scrolling past threshold)
+          if (currentScrollPos > 100) {
+            if (currentScrollPos < lastScrollPosition) {
+              setNavbarHidden(false);
+            } else if (currentScrollPos > lastScrollPosition + 10) {
+              setNavbarHidden(true);
+            }
+          } else {
+            setNavbarHidden(false);
+          }
+          
+          setLastScrollPosition(currentScrollPos);
+        }
+      };
+      
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      // Cleanup event listener
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isApplePlatform, lastScrollPosition]);
+  
+  // iOS touch handling for gestures
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    setTouchStartY(e.touches[0].clientY);
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isApplePlatform || touchStartY === null) return;
+    
+    const currentY = e.touches[0].clientY;
+    const diff = touchStartY - currentY;
+    
+    // Pull-to-refresh gesture (when at top of page)
+    if (diff < -50 && window.scrollY <= 0 && !refreshing) {
+      handleRefresh();
+    }
+    
+    // Hide/show navbar based on scroll direction
+    if (Math.abs(diff) > 20) {
+      setNavbarHidden(diff > 0);
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    setTouchStartY(null);
+  };
   
   // Analytics categories with SF Symbols icons
   const analyticsCategories = [
@@ -105,33 +180,75 @@ export default function Analytics() {
   
   const timeFilters = ['Last 30 Days', 'Last Quarter', 'Last 6 Months', 'Year to Date', 'Last 12 Months'];
 
-  // Handle chart sector selection
+  // Handle chart sector selection with enhanced iOS interactions
   const handleSectorSelect = (sector: any) => {
-    // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
-      haptics.selection();
+    // Provide appropriate haptic feedback on Apple devices
+    if (isApplePlatform) {
+      // Use impact haptic for data selection to provide more distinctive feedback
+      haptics.impact('medium');
     }
+    
     setSelectedSector(sector);
+    
+    // Show detailed data sheet for iOS devices
+    if (isApplePlatform && sector) {
+      setSelectedDataPoint(sector);
+      
+      // Animate the transition with a slight delay
+      setTimeout(() => {
+        setShowDataDetail(true);
+      }, 200);
+    }
   };
   
-  // Handle filter change
+  // Close data detail sheet (iOS)
+  const closeDataDetail = () => {
+    if (isApplePlatform) {
+      haptics.selection();
+    }
+    setShowDataDetail(false);
+  };
+  
+  // Handle filter change with iOS-optimized feedback
   const handleFilterChange = (index: number) => {
+    // Don't do anything if already on this filter
+    if (index === activeFilterIndex) return;
+    
     // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
+    if (isApplePlatform) {
       haptics.selection();
+      
+      // Animate transitions between filter changes
+      setChartTransition(true);
+      setTimeout(() => {
+        setActiveFilterIndex(index);
+        setTimeout(() => {
+          setChartTransition(false);
+        }, 300);
+      }, 50);
+    } else {
+      // Immediate change for non-Apple devices
+      setActiveFilterIndex(index);
     }
-    setActiveFilterIndex(index);
   };
   
-  // Handle analytics category selection
+  // Handle analytics category selection with enhanced feedback
   const handleCategorySelect = (categoryId: string) => {
+    // Don't do anything if already on this category
+    if (categoryId === activeAnalyticsCategory) return;
+    
     // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
-      haptics.selection();
+    if (isApplePlatform) {
+      // Use navigation haptic since we're changing views
+      haptics.navigation();
     }
+    
     setActiveAnalyticsCategory(categoryId);
-    // In a real app, this would trigger different analytics views
-    console.log(`Selected analytics category: ${categoryId}`);
+    
+    // Reset data detail if showing
+    if (showDataDetail) {
+      setShowDataDetail(false);
+    }
   };
   
   // SF Symbols Analytics Categories Navigation component
