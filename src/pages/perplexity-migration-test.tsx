@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from '@/styles/Home.module.css';
 
 /**
  * This page tests all the migrated Perplexity API endpoints
@@ -188,13 +187,13 @@ export default function PerplexityMigrationTest() {
   };
 
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
+    <div style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
+      <main style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 0' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
           Perplexity API Migration Test
         </h1>
         
-        <p className={styles.description}>
+        <p style={{ fontSize: '1.25rem', marginBottom: '2rem', textAlign: 'center' }}>
           Test all endpoints after migrating to the centralized PerplexityService
         </p>
         
@@ -208,7 +207,7 @@ export default function PerplexityMigrationTest() {
           <button 
             onClick={testAllEndpoints} 
             disabled={loading.all}
-            className={styles.button}
+            style={{ padding: '0.5rem 1rem', backgroundColor: '#4A90E2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginRight: '8px' }}
           >
             {loading.all ? 'Testing All...' : 'Test All Endpoints'}
           </button>
@@ -216,30 +215,30 @@ export default function PerplexityMigrationTest() {
           <button 
             onClick={testDebugEndpoints} 
             disabled={loading.debug}
-            className={styles.button}
+            style={{ padding: '0.5rem 1rem', backgroundColor: '#4A90E2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             {loading.debug ? 'Testing...' : 'Test Debug Endpoint'}
           </button>
         </div>
         
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
-          <button onClick={testProxyEndpoint} disabled={loading.proxy} className={styles.button}>
+          <button onClick={testProxyEndpoint} disabled={loading.proxy} style={{ padding: '0.5rem 1rem', backgroundColor: '#4A90E2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', margin: '4px' }}>
             {loading.proxy ? 'Testing...' : 'Test Proxy Endpoint'}
           </button>
           
-          <button onClick={testSimpleEndpoint} disabled={loading.simple} className={styles.button}>
+          <button onClick={testSimpleEndpoint} disabled={loading.simple} style={{ padding: '0.5rem 1rem', backgroundColor: '#4A90E2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', margin: '4px' }}>
             {loading.simple ? 'Testing...' : 'Test Simple Endpoint'}
           </button>
           
-          <button onClick={testCentralizedEndpoint} disabled={loading.centralized} className={styles.button}>
+          <button onClick={testCentralizedEndpoint} disabled={loading.centralized} style={{ padding: '0.5rem 1rem', backgroundColor: '#4A90E2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', margin: '4px' }}>
             {loading.centralized ? 'Testing...' : 'Test Centralized Endpoint'}
           </button>
           
-          <button onClick={testMarketNewsEndpoint} disabled={loading.marketNews} className={styles.button}>
+          <button onClick={testMarketNewsEndpoint} disabled={loading.marketNews} style={{ padding: '0.5rem 1rem', backgroundColor: '#4A90E2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', margin: '4px' }}>
             {loading.marketNews ? 'Testing...' : 'Test Market News Endpoint'}
           </button>
           
-          <button onClick={testTariffSearchEndpoint} disabled={loading.tariffSearch} className={styles.button}>
+          <button onClick={testTariffSearchEndpoint} disabled={loading.tariffSearch} style={{ padding: '0.5rem 1rem', backgroundColor: '#4A90E2', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', margin: '4px' }}>
             {loading.tariffSearch ? 'Testing...' : 'Test Tariff Search Endpoint'}
           </button>
         </div>
