@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities';
 import { useSFSymbolsSupport } from '../lib/sf-symbols';
 import EnhancedIOSIcon from './EnhancedIOSIcon';

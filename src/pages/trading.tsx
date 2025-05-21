@@ -62,57 +62,35 @@ export default function Trading() {
     setMarketView(view);
   };
   
-  // SF Symbols Market Categories Navigation Component
-  const SFSymbolsMarketNavigation = () => {
-    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
-      return null;
+  // Enhanced Trading Navigation component selector based on device and platform
+  const renderTradingNavigation = () => {
+    // Classic dropdown for non-Apple devices
+    if (!isAppleDevice || !isPlatformDetected) {
+      return (
+        <div className="relative">
+          <select 
+            value={marketView}
+            onChange={(e) => handleMarketViewChange(e.target.value)}
+            className="scb-input py-1.5 pl-3 pr-8 text-sm rounded-md dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600"
+          >
+            {marketCategories.map((category) => (
+              <option key={category.id} value={category.id}>{category.label}</option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgb(var(--scb-dark-gray))] dark:text-gray-300" />
+        </div>
+      );
     }
     
+    // Enhanced navigation based on platform detection
     return (
-      <div className="mb-4 bg-white dark:bg-gray-800 shadow-sm border border-[rgb(var(--scb-border))] dark:border-gray-700 rounded-lg overflow-hidden">
-        <div className="p-2 overflow-x-auto hide-scrollbar">
-          <div className="flex space-x-3 items-center">
-            {marketCategories.map((category) => (
-              <div 
-                key={category.id}
-                onClick={() => handleMarketViewChange(category.id)}
-                className={`flex flex-col items-center p-2 rounded-xl cursor-pointer transition-colors ${
-                  marketView === category.id
-                  ? 'bg-[rgba(var(--scb-honolulu-blue),0.1)] dark:bg-blue-900/30'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-                style={{ minWidth: '80px' }}
-              >
-                <div className={`relative flex items-center justify-center w-12 h-12 rounded-full mb-1 ${
-                  marketView === category.id
-                  ? 'bg-[rgb(var(--scb-honolulu-blue))]'
-                  : 'bg-gray-200 dark:bg-gray-700'
-                }`}>
-                  <SFSymbol 
-                    name={category.icon} 
-                    size={24}
-                    color={marketView === category.id ? 'white' : undefined}
-                  />
-                  
-                  {/* Badge indicator */}
-                  {category.badge && (
-                    <div className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center rounded-full bg-red-500 text-white text-xs px-1">
-                      {category.badge}
-                    </div>
-                  )}
-                </div>
-                <span className={`text-center text-sm ${
-                  marketView === category.id
-                  ? 'text-[rgb(var(--scb-honolulu-blue))] dark:text-blue-400 font-medium'
-                  : 'text-gray-800 dark:text-gray-300'
-                }`}>
-                  {category.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <EnhancedTradingNavigation
+        categories={marketCategories}
+        activeCategory={marketView}
+        onCategoryChange={handleMarketViewChange}
+        variant="circle"
+        className="mb-2"
+      />
     );
   };
 
