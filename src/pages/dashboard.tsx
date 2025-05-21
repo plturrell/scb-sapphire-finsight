@@ -803,8 +803,423 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // iOS-style offline banner
+  const renderOfflineBanner = () => {
+    if (!showOfflineBanner || !isApplePlatform) return null;
+    
+    // Position the banner below the Dynamic Island if present
+    const topOffset = hasDynamicIsland ? '100px' : '80px';
+    
+    return (
+      <div 
+        className={`fixed left-4 right-4 z-50 pointer-events-auto notification-banner ${showOfflineBanner ? 'show' : ''}`}
+        style={{ 
+          top: topOffset,
+          maxWidth: '400px',
+          margin: '0 auto',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          ...(hasDynamicIsland && {
+            filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.1))'
+          })
+        }}
+      >
+        <div 
+          className={`p-3 rounded-xl border ${
+            isDarkMode 
+              ? 'bg-gray-800/90 border-gray-700 text-white' 
+              : 'bg-white/90 border-gray-200 text-gray-800'
+          }`}
+          style={{
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+          }}
+        >
+          <div className="flex items-center gap-3">
+            {sfSymbolsSupported ? (
+              <span className="sf-symbol text-orange-500 text-lg">wifi.slash</span>
+            ) : (
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+            )}
+            <div className="flex-1">
+              <p className="text-sm font-medium">No Internet Connection</p>
+              <p className="text-xs opacity-75">Showing cached data</p>
+            </div>
+            <button 
+              className={`px-3 py-1 text-xs rounded-lg ${
+                isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              onClick={() => {
+                setShowOfflineBanner(false);
+                if (isApplePlatform) haptics.light();
+              }}
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // iOS-style pull-to-refresh indicator with Dynamic Island awareness
+  const renderRefreshIndicator = () => {
+    if (!isRefreshing || !isApplePlatform) return null;
+    
+    // Position the refresh indicator below the Dynamic Island if present
+    const topOffset = hasDynamicIsland ? '72px' : '50px';
+    
+    return (
+      <div 
+        className="fixed top-0 left-0 right-0 flex justify-center z-40 pointer-events-none"
+        style={{ 
+          paddingTop: topOffset,
+          // Respect Dynamic Island in full-screen experiences
+          ...(hasDynamicIsland && {
+            filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.1))'
+          })
+        }}
+      >
+        <div 
+          className={`h-8 w-8 rounded-full border-2 border-blue-500 border-t-transparent ${
+            prefersReducedMotion ? '' : 'animate-spin'
+          }`}
+          style={{
+            animation: prefersReducedMotion 
+              ? 'none' 
+              : `spin ${applePhysics.config.duration * 2}ms linear infinite`
+          }}
+        />
+      </div>
+    );
+  };
+
+  // iOS-style chart detail modal
+  const renderChartDetailModal = () => {
+    if (!showChartDetailModal || !selectedChart) return null;
+    
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/40"
+        onClick={() => {
+          setShowChartDetailModal(false);
+          if (isApplePlatform) haptics.light();
+        }}
+        style={{
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          animation: prefersReducedMotion 
+            ? 'none' 
+            : `fade-in ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+        }}
+      >
+        <div 
+          className={`w-full max-w-lg mx-auto rounded-t-xl overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+          style={{
+            transform: 'translateY(0)',
+            animation: prefersReducedMotion 
+              ? 'none' 
+              : `slide-in-up ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`,
+            boxShadow: '0 -2px 20px rgba(0,0,0,0.2)',
+            paddingBottom: hasHomeIndicator ? `calc(2rem + ${safeAreaCss.bottom})` : '2rem',
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px',
+            ...(hasDynamicIsland && {
+              maxHeight: 'calc(100vh - 100px)'
+            })
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Handle bar for dragging */}
+          <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3" />
+          
+          {/* Header */}
+          <div className="px-5 pt-4 pb-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center mb-2">
+              <div className={`mr-3 p-2 rounded-full ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-100'}`}>
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-blue-600 dark:text-blue-400 text-lg">chart.pie.fill</span>
+                ) : (
+                  <BarChart3 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                )}
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                {selectedChart.title} Analysis
+              </h3>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Detailed breakdown and insights
+            </p>
+          </div>
+          
+          {/* Content */}
+          <div className="px-5 py-4">
+            <div className="space-y-6">
+              {/* Chart Summary */}
+              <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-800/20' : 'bg-blue-50'}`}>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Performance Summary</p>
+                <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                  Portfolio well diversified across {selectedChart.data?.length || 4} asset classes
+                </p>
+                <p className="text-sm mt-1 text-gray-600 dark:text-gray-400">
+                  Risk-adjusted allocation aligned with investment goals
+                </p>
+              </div>
+              
+              {/* Asset Breakdown */}
+              {selectedChart.data && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-gray-900 dark:text-white">Asset Breakdown</h4>
+                  {selectedChart.data.map((asset: any, index: number) => (
+                    <div key={index} className={`flex items-center justify-between p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-4 h-4 rounded-full" 
+                          style={{ backgroundColor: asset.color }}
+                        />
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                          {asset.name}
+                        </span>
+                      </div>
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {(asset.value * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* iOS-style Actions */}
+            <div className="mt-6 space-y-3">
+              <button 
+                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode ? 'bg-blue-600' : 'bg-blue-600'
+                } active:scale-95 transition-transform duration-100`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.medium();
+                  setShowChartDetailModal(false);
+                }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  borderRadius: '12px',
+                  minHeight: '48px',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
+              >
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-white text-[16px]">square.and.arrow.down</span>
+                ) : (
+                  <BarChart3 className="h-4 w-4" />
+                )}
+                <span>Export Analysis</span>
+              </button>
+              <button 
+                className={`w-full px-4 py-3 rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode 
+                    ? 'bg-gray-800 text-white border border-gray-700'
+                    : 'bg-white text-gray-800 border border-gray-300'
+                } active:scale-95 transition-transform duration-100`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.light();
+                  setShowChartDetailModal(false);
+                }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  borderRadius: '12px',
+                  minHeight: '48px',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
+              >
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-[16px]">xmark</span>
+                ) : (
+                  <span>✕</span>
+                )}
+                <span>Close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // iOS-style KPI detail modal
+  const renderKPIDetailModal = () => {
+    if (!showKPIDetailModal || !selectedKPI) return null;
+    
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/40"
+        onClick={() => {
+          setShowKPIDetailModal(false);
+          if (isApplePlatform) haptics.light();
+        }}
+        style={{
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          animation: prefersReducedMotion 
+            ? 'none' 
+            : `fade-in ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+        }}
+      >
+        <div 
+          className={`w-full max-w-lg mx-auto rounded-t-xl overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+          style={{
+            transform: 'translateY(0)',
+            animation: prefersReducedMotion 
+              ? 'none' 
+              : `slide-in-up ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`,
+            boxShadow: '0 -2px 20px rgba(0,0,0,0.2)',
+            paddingBottom: hasHomeIndicator ? `calc(2rem + ${safeAreaCss.bottom})` : '2rem',
+            borderTopLeftRadius: '16px',
+            borderTopRightRadius: '16px',
+            ...(hasDynamicIsland && {
+              maxHeight: 'calc(100vh - 100px)'
+            })
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Handle bar for dragging */}
+          <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto my-3" />
+          
+          {/* Header */}
+          <div className="px-5 pt-4 pb-6 border-b border-gray-200 dark:border-gray-800">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {selectedKPI.title} Details
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Comprehensive metrics and analysis
+            </p>
+          </div>
+          
+          {/* Content */}
+          <div className="px-5 py-4">
+            <div className="space-y-6">
+              {/* Current Value */}
+              <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-blue-800/20' : 'bg-blue-50'}`}>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Current Value</p>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  {typeof selectedKPI.value?.value === 'number' 
+                    ? selectedKPI.value.value.toLocaleString() 
+                    : selectedKPI.value?.value || 'N/A'}
+                </p>
+                <p className={`text-sm mt-1 ${
+                  (selectedKPI.value?.percentChange || 0) >= 0 
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-red-600 dark:text-red-400'
+                }`}>
+                  {(selectedKPI.value?.percentChange || 0) >= 0 ? '+' : ''}{(selectedKPI.value?.percentChange || 0).toFixed(2)}% from last period
+                </p>
+              </div>
+              
+              {/* Additional Metrics */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Previous</p>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {typeof selectedKPI.value?.previous === 'number' 
+                      ? selectedKPI.value.previous.toLocaleString() 
+                      : selectedKPI.value?.previous || 'N/A'}
+                  </p>
+                </div>
+                <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Target</p>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {typeof selectedKPI.value?.target === 'number' 
+                      ? selectedKPI.value.target.toLocaleString() 
+                      : selectedKPI.value?.target || 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* iOS-style Actions */}
+            <div className="mt-6 space-y-3">
+              <button 
+                className={`w-full px-4 py-3 text-white rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode ? 'bg-blue-600' : 'bg-blue-600'
+                } active:scale-95 transition-transform duration-100`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.medium();
+                  setShowKPIDetailModal(false);
+                }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  borderRadius: '12px',
+                  minHeight: '48px',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
+              >
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-white text-[16px]">chart.xyaxis.line</span>
+                ) : (
+                  <BarChart3 className="h-4 w-4" />
+                )}
+                <span>View Detailed Analysis</span>
+              </button>
+              <button 
+                className={`w-full px-4 py-3 rounded-lg flex items-center justify-center space-x-2 ${
+                  isDarkMode 
+                    ? 'bg-gray-800 text-white border border-gray-700'
+                    : 'bg-white text-gray-800 border border-gray-300'
+                } active:scale-95 transition-transform duration-100`}
+                onClick={() => {
+                  if (isApplePlatform) haptics.light();
+                  setShowKPIDetailModal(false);
+                }}
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  borderRadius: '12px',
+                  minHeight: '48px',
+                  transition: prefersReducedMotion 
+                    ? 'none' 
+                    : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                }}
+              >
+                {sfSymbolsSupported ? (
+                  <span className="sf-symbol text-[16px]">xmark</span>
+                ) : (
+                  <span>✕</span>
+                )}
+                <span>Close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
+      {/* iOS-specific refresh indicator */}
+      {renderRefreshIndicator()}
+      
+      {/* iOS-specific offline banner */}
+      {renderOfflineBanner()}
+      
+      {/* iOS-specific modal overlays */}
+      {renderKPIDetailModal()}
+
       {isAppleDevice ? (
         <IOSOptimizedLayout
           title="Financial Dashboard"
@@ -902,64 +1317,253 @@ const Dashboard: React.FC = () => {
             </div>
           )}
           
-          {/* KPI Cards */}
+          {/* KPI Cards - Enhanced with iOS touch interactions */}
           {!loading && !error && (
-            <div className={`grid grid-cols-1 ${
-              isMultiTasking && mode === 'slide-over'
-                ? 'gap-3 mb-3'
-                : isMultiTasking
-                  ? 'sm:grid-cols-2 gap-3 mb-4'
-                  : 'sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6'
-            }`}>
-              <KPICard
-                title="Total Assets"
-                value={financialMetrics.totalAssets.value}
-                valuePrefix="$"
-                percentChange={financialMetrics.totalAssets.percentChange}
-                trendDirection="up"
-                details="Total assets under management"
-                benchmark={{ 
-                  label: 'Previous Period', 
-                  value: formatCurrency(financialMetrics.totalAssets.previous) 
+            <div 
+              ref={contentRef}
+              className={`grid transition-all duration-300 ${
+                isMultiTasking && mode === 'slide-over'
+                  ? 'grid-cols-1 gap-3 mb-3'
+                  : isMultiTasking && mode === 'split-view'
+                    ? 'grid-cols-1 sm:grid-cols-2 gap-4 mb-4'
+                  : isMultiTasking && mode === 'stage-manager'
+                    ? sizeClass === 'compact' ? 'grid-cols-1 gap-3 mb-3' : 'grid-cols-2 gap-4 mb-4'
+                    : isIPad && !isMultiTasking
+                      ? 'grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6'
+                      : isIPhone
+                        ? 'grid-cols-1 gap-4 mb-6'
+                        : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6'
+              } ${getIOSClasses()}`}
+              onTouchStart={isApplePlatform ? handleTouchStart : undefined}
+              onTouchMove={isApplePlatform ? handleTouchMove : undefined}
+              onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+              style={{
+                // Apple-style scrolling physics
+                ...(isApplePlatform && {
+                  WebkitOverflowScrolling: 'touch',
+                  overscrollBehavior: 'contain',
+                  // Respect safe areas for iOS devices
+                  paddingBottom: hasHomeIndicator ? safeAreaCss.bottom : '0px',
+                  // Apply pinch zoom if active for the entire container
+                  ...(pinchState.isActive && {
+                    transform: `scale(${pinchState.scale})`,
+                    transformOrigin: 'center',
+                    transition: 'none'
+                  })
+                })
+              }}
+            >
+              <div 
+                className={`relative overflow-hidden transition-all ${
+                  isSwiping && swipeTarget === 'kpi-assets'
+                    ? 'duration-0' // No CSS transition during active swiping
+                    : `duration-${applePhysics.config.duration}`
+                }`}
+                data-swipe-id="kpi-assets"
+                onTouchStart={isApplePlatform ? handleTouchStart : undefined}
+                onTouchMove={isApplePlatform ? handleTouchMove : undefined}
+                onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+                style={{
+                  ...(isSwiping && swipeTarget === 'kpi-assets' && {
+                    transform: `translateX(${Math.min(touchSwipeDistance, 120)}px)`,
+                    transition: 'none',
+                    // Apply rubber band effect for overswipe (iOS-style physics)
+                    ...(touchSwipeDistance > 120 && {
+                      transform: `translateX(${120 + (touchSwipeDistance - 120) * 0.3}px)`
+                    })
+                  }),
+                  // Smooth spring animation back to original position
+                  ...(!isSwiping && swipeTarget === null && {
+                    transform: 'translateX(0px)',
+                    transition: `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+                  })
                 }}
-                target={{ 
-                  label: 'Target', 
-                  value: formatCurrency(financialMetrics.totalAssets.target) 
+                onClick={() => {
+                  if (isApplePlatform) {
+                    const kpiData = {
+                      id: 'assets',
+                      title: 'Total Assets',
+                      value: financialMetrics.totalAssets
+                    };
+                    setSelectedKPI(kpiData);
+                    setShowKPIDetailModal(true);
+                    haptics.selection();
+                  }
                 }}
-              />
+              >
+                <KPICard
+                  title="Total Assets"
+                  value={financialMetrics.totalAssets.value}
+                  valuePrefix="$"
+                  percentChange={financialMetrics.totalAssets.percentChange}
+                  trendDirection="up"
+                  details="Total assets under management"
+                  benchmark={{ 
+                    label: 'Previous Period', 
+                    value: formatCurrency(financialMetrics.totalAssets.previous) 
+                  }}
+                  target={{ 
+                    label: 'Target', 
+                    value: formatCurrency(financialMetrics.totalAssets.target) 
+                  }}
+                />
+                
+                {/* Swipe action indicator - only visible during swipe */}
+                <div 
+                  className="absolute right-0 top-0 bottom-0 flex items-center justify-center bg-blue-500 text-white overflow-hidden rounded-r-lg"
+                  style={{
+                    width: isSwiping && swipeTarget === 'kpi-assets' ? `${touchSwipeDistance * 0.7}px` : '0',
+                    opacity: isSwiping && swipeTarget === 'kpi-assets' ? (touchSwipeDistance > 50 ? 1 : touchSwipeDistance / 50) : 0,
+                    transition: 'opacity 150ms ease-out',
+                    maxWidth: '100px'
+                  }}
+                >
+                  {sfSymbolsSupported ? (
+                    <span className="sf-symbol text-white text-lg px-4">info.circle</span>
+                  ) : (
+                    <Info className="h-5 w-5 text-white mx-4" />
+                  )}
+                </div>
+              </div>
               
-              <KPICard
-                title="Portfolio Performance"
-                value={financialMetrics.portfolioPerformance.value}
-                valueSuffix="%"
-                percentChange={financialMetrics.portfolioPerformance.percentChange}
-                trendDirection="up"
-                details="Annualized return"
-                benchmark={{ 
-                  label: 'Previous Period', 
-                  value: financialMetrics.portfolioPerformance.previous + '%'
+              <div 
+                className={`relative overflow-hidden transition-all ${
+                  isSwiping && swipeTarget === 'kpi-performance'
+                    ? 'duration-0'
+                    : `duration-${applePhysics.config.duration}`
+                }`}
+                data-swipe-id="kpi-performance"
+                onTouchStart={isApplePlatform ? handleTouchStart : undefined}
+                onTouchMove={isApplePlatform ? handleTouchMove : undefined}
+                onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+                style={{
+                  ...(isSwiping && swipeTarget === 'kpi-performance' && {
+                    transform: `translateX(${Math.min(touchSwipeDistance, 120)}px)`,
+                    transition: 'none',
+                    ...(touchSwipeDistance > 120 && {
+                      transform: `translateX(${120 + (touchSwipeDistance - 120) * 0.3}px)`
+                    })
+                  }),
+                  ...(!isSwiping && swipeTarget === null && {
+                    transform: 'translateX(0px)',
+                    transition: `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+                  })
                 }}
-                target={{ 
-                  label: 'Target', 
-                  value: financialMetrics.portfolioPerformance.target + '%' 
+                onClick={() => {
+                  if (isApplePlatform) {
+                    const kpiData = {
+                      id: 'performance',
+                      title: 'Portfolio Performance',
+                      value: financialMetrics.portfolioPerformance
+                    };
+                    setSelectedKPI(kpiData);
+                    setShowKPIDetailModal(true);
+                    haptics.selection();
+                  }
                 }}
-              />
+              >
+                <KPICard
+                  title="Portfolio Performance"
+                  value={financialMetrics.portfolioPerformance.value}
+                  valueSuffix="%"
+                  percentChange={financialMetrics.portfolioPerformance.percentChange}
+                  trendDirection="up"
+                  details="Annualized return"
+                  benchmark={{ 
+                    label: 'Previous Period', 
+                    value: financialMetrics.portfolioPerformance.previous + '%'
+                  }}
+                  target={{ 
+                    label: 'Target', 
+                    value: financialMetrics.portfolioPerformance.target + '%' 
+                  }}
+                />
+                
+                <div 
+                  className="absolute right-0 top-0 bottom-0 flex items-center justify-center bg-blue-500 text-white overflow-hidden rounded-r-lg"
+                  style={{
+                    width: isSwiping && swipeTarget === 'kpi-performance' ? `${touchSwipeDistance * 0.7}px` : '0',
+                    opacity: isSwiping && swipeTarget === 'kpi-performance' ? (touchSwipeDistance > 50 ? 1 : touchSwipeDistance / 50) : 0,
+                    transition: 'opacity 150ms ease-out',
+                    maxWidth: '100px'
+                  }}
+                >
+                  {sfSymbolsSupported ? (
+                    <span className="sf-symbol text-white text-lg px-4">chart.line.uptrend.xyaxis</span>
+                  ) : (
+                    <Info className="h-5 w-5 text-white mx-4" />
+                  )}
+                </div>
+              </div>
               
-              <KPICard
-                title="Risk Score"
-                value={financialMetrics.riskScore.value}
-                percentChange={financialMetrics.riskScore.percentChange}
-                trendDirection="down"
-                details="Overall portfolio risk assessment"
-                benchmark={{ 
-                  label: 'Previous Score', 
-                  value: financialMetrics.riskScore.previous 
+              <div 
+                className={`relative overflow-hidden transition-all ${
+                  isSwiping && swipeTarget === 'kpi-risk'
+                    ? 'duration-0'
+                    : `duration-${applePhysics.config.duration}`
+                }`}
+                data-swipe-id="kpi-risk"
+                onTouchStart={isApplePlatform ? handleTouchStart : undefined}
+                onTouchMove={isApplePlatform ? handleTouchMove : undefined}
+                onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+                style={{
+                  ...(isSwiping && swipeTarget === 'kpi-risk' && {
+                    transform: `translateX(${Math.min(touchSwipeDistance, 120)}px)`,
+                    transition: 'none',
+                    ...(touchSwipeDistance > 120 && {
+                      transform: `translateX(${120 + (touchSwipeDistance - 120) * 0.3}px)`
+                    })
+                  }),
+                  ...(!isSwiping && swipeTarget === null && {
+                    transform: 'translateX(0px)',
+                    transition: `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+                  })
                 }}
-                target={{ 
-                  label: 'Target', 
-                  value: financialMetrics.riskScore.target 
+                onClick={() => {
+                  if (isApplePlatform) {
+                    const kpiData = {
+                      id: 'risk',
+                      title: 'Risk Score',
+                      value: financialMetrics.riskScore
+                    };
+                    setSelectedKPI(kpiData);
+                    setShowKPIDetailModal(true);
+                    haptics.selection();
+                  }
                 }}
-              />
+              >
+                <KPICard
+                  title="Risk Score"
+                  value={financialMetrics.riskScore.value}
+                  percentChange={financialMetrics.riskScore.percentChange}
+                  trendDirection="down"
+                  details="Overall portfolio risk assessment"
+                  benchmark={{ 
+                    label: 'Previous Score', 
+                    value: financialMetrics.riskScore.previous 
+                  }}
+                  target={{ 
+                    label: 'Target', 
+                    value: financialMetrics.riskScore.target 
+                  }}
+                />
+                
+                <div 
+                  className="absolute right-0 top-0 bottom-0 flex items-center justify-center bg-blue-500 text-white overflow-hidden rounded-r-lg"
+                  style={{
+                    width: isSwiping && swipeTarget === 'kpi-risk' ? `${touchSwipeDistance * 0.7}px` : '0',
+                    opacity: isSwiping && swipeTarget === 'kpi-risk' ? (touchSwipeDistance > 50 ? 1 : touchSwipeDistance / 50) : 0,
+                    transition: 'opacity 150ms ease-out',
+                    maxWidth: '100px'
+                  }}
+                >
+                  {sfSymbolsSupported ? (
+                    <span className="sf-symbol text-white text-lg px-4">shield.lefthalf.filled</span>
+                  ) : (
+                    <Info className="h-5 w-5 text-white mx-4" />
+                  )}
+                </div>
+              </div>
             </div>
           )}
           
@@ -979,29 +1583,94 @@ const Dashboard: React.FC = () => {
                     ? 'col-span-1'
                     : 'lg:col-span-2'
               } order-2 lg:order-1`}>
-                <ChartCard
-                  title="Asset Allocation"
-                  subtitle={userRole === 'executive' 
-                    ? "Executive summary of portfolio allocation" 
-                    : "Current portfolio breakdown with AI-enhanced predictions"}
-                  expandable
-                  exportable
-                  aiInsights={visibleComponents.aiInsights 
-                    ? "Your equity allocation is 5% higher than your target allocation. Based on Monte Carlo simulations (5,000+ runs), reducing equity exposure by 3-5% could optimize your risk-adjusted returns."
-                    : undefined}
-                  legendItems={allocationLegendItems}
+                {/* Enhanced Asset Allocation Chart with iOS interactions */}
+                <div 
+                  className={`relative overflow-hidden transition-all ${
+                    isSwiping && swipeTarget === 'chart-allocation'
+                      ? 'duration-0' // No CSS transition during active swiping
+                      : `duration-${applePhysics.config.duration}`
+                  }`}
+                  data-swipe-id="chart-allocation"
+                  onTouchStart={isApplePlatform ? handleTouchStart : undefined}
+                  onTouchMove={isApplePlatform ? handleTouchMove : undefined}
+                  onTouchEnd={isApplePlatform ? handleTouchEnd : undefined}
+                  style={{
+                    ...(isSwiping && swipeTarget === 'chart-allocation' && {
+                      transform: `translateX(${Math.min(touchSwipeDistance, 120)}px)`,
+                      transition: 'none',
+                      // Apply rubber band effect for overswipe (iOS-style physics)
+                      ...(touchSwipeDistance > 120 && {
+                        transform: `translateX(${120 + (touchSwipeDistance - 120) * 0.3}px)`
+                      })
+                    }),
+                    // Smooth spring animation back to original position
+                    ...(!isSwiping && swipeTarget === null && {
+                      transform: 'translateX(0px)',
+                      transition: `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+                    }),
+                    // Apply pinch zoom if active
+                    ...(pinchState.isActive && {
+                      transform: `scale(${pinchState.scale}) ${isSwiping && swipeTarget === 'chart-allocation' ? `translateX(${Math.min(touchSwipeDistance, 120)}px)` : ''}`,
+                      transformOrigin: 'center'
+                    })
+                  }}
+                  onClick={() => {
+                    if (isApplePlatform) {
+                      const chartData = {
+                        id: 'allocation',
+                        title: 'Asset Allocation',
+                        data: allocationData
+                      };
+                      setSelectedChart(chartData);
+                      setShowChartDetailModal(true);
+                      haptics.selection();
+                    }
+                  }}
                 >
-                  <div className="flex items-center justify-center h-64">
-                    <AllocationPieChart 
-                      data={allocationData}
-                      width={400}
-                      height={300}
-                      innerRadius={80}
-                      animate={true}
-                      showAIIndicators={true}
-                    />
+                  <ChartCard
+                    title="Asset Allocation"
+                    subtitle={userRole === 'executive' 
+                      ? "Executive summary of portfolio allocation" 
+                      : "Current portfolio breakdown with AI-enhanced predictions"}
+                    expandable
+                    exportable
+                    aiInsights={visibleComponents.aiInsights 
+                      ? "Your equity allocation is 5% higher than your target allocation. Based on Monte Carlo simulations (5,000+ runs), reducing equity exposure by 3-5% could optimize your risk-adjusted returns."
+                      : undefined}
+                    legendItems={allocationLegendItems}
+                  >
+                    <div className="flex items-center justify-center h-64" style={{
+                      transform: pinchState.isActive ? `scale(${pinchState.scale})` : 'scale(1)',
+                      transition: !pinchState.isActive ? `transform ${applePhysics.config.duration}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)` : 'none'
+                    }}>
+                      <AllocationPieChart 
+                        data={allocationData}
+                        width={containerDimensions.width > 0 ? Math.min(containerDimensions.width * 0.8, 400) : 400}
+                        height={300}
+                        innerRadius={80}
+                        animate={!prefersReducedMotion}
+                        showAIIndicators={true}
+                      />
+                    </div>
+                  </ChartCard>
+                  
+                  {/* Swipe action indicator - only visible during swipe */}
+                  <div 
+                    className="absolute right-0 top-0 bottom-0 flex items-center justify-center bg-blue-500 text-white overflow-hidden rounded-r-lg"
+                    style={{
+                      width: isSwiping && swipeTarget === 'chart-allocation' ? `${touchSwipeDistance * 0.7}px` : '0',
+                      opacity: isSwiping && swipeTarget === 'chart-allocation' ? (touchSwipeDistance > 50 ? 1 : touchSwipeDistance / 50) : 0,
+                      transition: 'opacity 150ms ease-out',
+                      maxWidth: '100px'
+                    }}
+                  >
+                    {sfSymbolsSupported ? (
+                      <span className="sf-symbol text-white text-lg px-4">chart.pie.fill</span>
+                    ) : (
+                      <Info className="h-5 w-5 text-white mx-4" />
+                    )}
                   </div>
-                </ChartCard>
+                </div>
     
                 {/* Sankey Flow Analysis */}
                 <div className="mt-6">

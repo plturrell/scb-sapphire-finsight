@@ -89,40 +89,43 @@ const CompanySearchBar: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Debounced search function
-  const performSearch = useCallback(
-    debounce(async (query: string) => {
-      if (query.length < 2) {
-        setSearchResults([]);
-        return;
-      }
+  // Search function
+  const searchFunction = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
 
-      setIsLoading(true);
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('/api/companies/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          query,
+          country: 'Vietnam',
+          limit: 10,
+          includeGlobal: true
+        })
+      });
+
+      if (!response.ok) throw new Error('Search failed');
       
-      try {
-        const response = await fetch('/api/companies/search', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            query,
-            country: 'Vietnam',
-            limit: 10,
-            includeGlobal: true
-          })
-        });
+      const results = await response.json();
+      setSearchResults(results.companies);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setSearchResults, setIsLoading]);
 
-        if (!response.ok) throw new Error('Search failed');
-        
-        const results = await response.json();
-        setSearchResults(results.companies);
-      } catch (error) {
-        console.error('Search error:', error);
-        setSearchResults([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 300),
-    [setSearchResults, setIsLoading]
+  // Debounced search function
+  const performSearch = useMemo(
+    () => debounce(searchFunction, 300),
+    [searchFunction]
   );
 
   // Handle search input change

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PerplexityLLMService } from '@/services/PerplexityLLMService';
+import perplexityService from '@/services/PerplexityService';
 import { LlmAnalysis, RiskLevel } from '@/types/MonteCarloTypes';
 import monteCarloStorageService from '@/services/MonteCarloStorageService';
 import vietnamMonteCarloAdapter from '@/services/VietnamMonteCarloAdapter';
@@ -448,7 +448,7 @@ const generateCustomAnalysis = async (output: any, focusAreas?: string[], custom
   
   // Use Perplexity for custom analysis if available
   try {
-    const perplexityService = new PerplexityLLMService();
+    // Use the imported perplexityService
     
     const analysisPrompt = customPrompt || `
       Analyze the following Monte Carlo simulation results with focus on: ${focusAreas?.join(', ') || 'general analysis'}

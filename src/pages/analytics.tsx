@@ -6,6 +6,7 @@ import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import EnhancedAppleTouchButton from '@/components/EnhancedAppleTouchButton';
 import EnhancedAnalyticsNavigation from '@/components/EnhancedAnalyticsNavigation';
+import analyticsService from '@/services/AnalyticsService';
 import { useMultiTasking } from '@/hooks/useMultiTasking';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
@@ -53,37 +54,14 @@ const iosTransitions = {
   delay: 0
 };
 
-const sectorData: TransactionSector[] = [
-  { name: 'Aluminum', revenue: 500000, accounts: 120, income: 45000, assets: 2500000, deposits: 1800000, yield: 5.2, rowWa: 3.5, change: 2.5 },
-  { name: 'Automotive', revenue: 750000, accounts: 85, income: 68000, assets: 3200000, deposits: 2100000, yield: 6.1, rowWa: 4.2, change: -1.2 },
-  { name: 'Cement', revenue: 420000, accounts: 95, income: 38000, assets: 1900000, deposits: 1400000, yield: 4.8, rowWa: 3.1, change: 3.8 },
-  { name: 'Chemical', revenue: 680000, accounts: 110, income: 61000, assets: 2800000, deposits: 2000000, yield: 5.6, rowWa: 3.8, change: 1.5 },
-  { name: 'Diversified', revenue: 890000, accounts: 145, income: 80000, assets: 3600000, deposits: 2500000, yield: 6.3, rowWa: 4.5, change: 4.2 },
-  { name: 'Gems', revenue: 320000, accounts: 75, income: 29000, assets: 1500000, deposits: 1100000, yield: 4.2, rowWa: 2.8, change: -0.5 },
-  { name: 'Construction', revenue: 580000, accounts: 105, income: 52000, assets: 2400000, deposits: 1700000, yield: 5.1, rowWa: 3.4, change: 2.1 },
-  { name: 'Real Estate', revenue: 720000, accounts: 90, income: 65000, assets: 3100000, deposits: 2200000, yield: 5.9, rowWa: 4.0, change: 3.6 },
-  { name: 'Telecom', revenue: 820000, accounts: 125, income: 74000, assets: 3400000, deposits: 2400000, yield: 6.2, rowWa: 4.3, change: 2.8 },
-  { name: 'Others', revenue: 550000, accounts: 130, income: 50000, assets: 2300000, deposits: 1600000, yield: 5.0, rowWa: 3.3, change: 1.8 },
-];
-
-const trendData = [
-  { month: 'Jan', revenue: 420000, accounts: 85 },
-  { month: 'Feb', revenue: 450000, accounts: 88 },
-  { month: 'Mar', revenue: 480000, accounts: 92 },
-  { month: 'Apr', revenue: 510000, accounts: 95 },
-  { month: 'May', revenue: 540000, accounts: 98 },
-  { month: 'Jun', revenue: 570000, accounts: 102 },
-];
-
-const pieData = [
-  { name: 'Diversified', value: 25, color: iosColors[0] },
-  { name: 'Telecom', value: 20, color: iosColors[1] },
-  { name: 'Automotive', value: 18, color: iosColors[2] },
-  { name: 'Real Estate', value: 15, color: iosColors[3] },
-  { name: 'Others', value: 22, color: iosColors[4] },
-];
-
 export default function Analytics() {
+  // Data states for real API integration
+  const [sectorData, setSectorData] = useState<TransactionSector[]>([]);
+  const [trendData, setTrendData] = useState<any[]>([]);
+  const [pieData, setPieData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [selectedSector, setSelectedSector] = useState<any>(null);
   const [activeFilterIndex, setActiveFilterIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -112,6 +90,42 @@ export default function Analytics() {
   const isIPad = deviceType === 'tablet' && isAppleDevice;
   const isiOS = deviceType === 'mobile' && isAppleDevice;
   const isApplePlatform = isiOS || isIPad;
+  
+  // Load data from Analytics Service
+  const loadData = async (forceRefresh = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const [sectors, trends, distribution] = await Promise.all([
+        analyticsService.getSectorData(forceRefresh),
+        analyticsService.getTrendData(forceRefresh),
+        analyticsService.getDistributionData(forceRefresh)
+      ]);
+      
+      setSectorData(sectors);
+      setTrendData(trends);
+      
+      // Convert distribution data to pie chart format with iOS colors
+      const pieChartData = distribution.map((item, index) => ({
+        name: item.name,
+        value: item.value,
+        color: iosColors[index % iosColors.length]
+      }));
+      setPieData(pieChartData);
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load analytics data');
+      console.error('Error loading analytics data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Initial data load
+  useEffect(() => {
+    loadData();
+  }, []);
   
   // Effect to detect platform and setup iOS-specific handlers
   useEffect(() => {
@@ -301,7 +315,7 @@ export default function Analytics() {
   };
   
   // Handle data refresh with iOS physics animations
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     // Don't trigger if already refreshing
     if (refreshing) return;
     
@@ -317,8 +331,10 @@ export default function Analytics() {
       setChartTransition(true);
     }
     
-    // Simulate a data refresh with a timeout (longer for iOS to show animation)
-    setTimeout(() => {
+    try {
+      // Load fresh data from API
+      await loadData(true);
+      
       // Reset chart transition midway
       if (isApplePlatform && !prefersReducedMotion) {
         setTimeout(() => {
@@ -326,13 +342,18 @@ export default function Analytics() {
         }, isApplePlatform ? 400 : 0);
       }
       
-      setRefreshing(false);
-      
       // Success haptic feedback when refresh completes
       if (isApplePlatform) {
         haptics.success();
       }
-    }, isApplePlatform ? 1800 : 1200);
+    } catch (err) {
+      console.error('Error refreshing data:', err);
+      if (isApplePlatform) {
+        haptics.error();
+      }
+    } finally {
+      setRefreshing(false);
+    }
   };
   
   // Handle report download with iOS-specific loading state and haptics
@@ -1041,6 +1062,115 @@ export default function Analytics() {
     );
   };
   
+  // Loading state
+  if (loading && sectorData.length === 0) {
+    return (
+      <>
+        {isAppleDevice ? (
+          <IOSOptimizedLayout
+            title="Analytics"
+            subtitle="Transaction Banking Performance"
+            showBreadcrumb={true}
+            breadcrumbItems={breadcrumbItems}
+            showTabBar={true}
+            tabItems={tabItems}
+            navBarRightActions={navBarActions}
+            showBackButton={true}
+            largeTitle={!navbarHidden}
+            theme={isDarkMode ? 'dark' : 'light'}
+            navbarHidden={navbarHidden}
+          >
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>Loading analytics data...</p>
+              </div>
+            </div>
+          </IOSOptimizedLayout>
+        ) : (
+          <ScbBeautifulUI 
+            showNewsBar={!isSmallScreen && !isMultiTasking} 
+            pageTitle="Analytics" 
+            showTabs={false}
+          >
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading analytics data...</p>
+              </div>
+            </div>
+          </ScbBeautifulUI>
+        )}
+      </>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <>
+        {isAppleDevice ? (
+          <IOSOptimizedLayout
+            title="Analytics"
+            subtitle="Transaction Banking Performance"
+            showBreadcrumb={true}
+            breadcrumbItems={breadcrumbItems}
+            showTabBar={true}
+            tabItems={tabItems}
+            navBarRightActions={navBarActions}
+            showBackButton={true}
+            largeTitle={!navbarHidden}
+            theme={isDarkMode ? 'dark' : 'light'}
+            navbarHidden={navbarHidden}
+          >
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Failed to Load Analytics
+                </h3>
+                <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {error}
+                </p>
+                <EnhancedTouchButton
+                  variant="primary"
+                  label="Retry"
+                  onClick={() => loadData(true)}
+                  iconLeft={<RefreshCw className="w-4 h-4" />}
+                />
+              </div>
+            </div>
+          </IOSOptimizedLayout>
+        ) : (
+          <ScbBeautifulUI 
+            showNewsBar={!isSmallScreen && !isMultiTasking} 
+            pageTitle="Analytics" 
+            showTabs={false}
+          >
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-gray-900">
+                  Failed to Load Analytics
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {error}
+                </p>
+                <button
+                  onClick={() => loadData(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Retry
+                </button>
+              </div>
+            </div>
+          </ScbBeautifulUI>
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       {isAppleDevice ? (
@@ -1091,10 +1221,17 @@ export default function Analytics() {
               </div>
             </div>
             
-            {/* SF Symbols Analytics Categories Navigation */}
-            {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
-              <SFSymbolsAnalyticsNavigation />
-            )}
+            {/* Enhanced Analytics Navigation with SF Symbols */}
+            <div className="mb-6">
+              <EnhancedAnalyticsNavigation
+                categories={analyticsCategories}
+                activeCategory={activeAnalyticsCategory}
+                onCategoryChange={handleCategorySelect}
+                variant={isMultiTasking && mode === 'slide-over' ? 'list' : deviceType === 'tablet' ? 'grid' : 'cards'}
+                timeFilter={timeFilters[activeFilterIndex]}
+                className="w-full"
+              />
+            </div>
             
             {/* Time Period Filter */}
             <div className="overflow-x-auto">
@@ -1234,6 +1371,18 @@ export default function Analytics() {
               </div>
             </div>
             
+            {/* Enhanced Analytics Navigation - Non-iOS version */}
+            <div className="mb-6">
+              <EnhancedAnalyticsNavigation
+                categories={analyticsCategories}
+                activeCategory={activeAnalyticsCategory}
+                onCategoryChange={handleCategorySelect}
+                variant="tabs"
+                timeFilter={timeFilters[activeFilterIndex]}
+                className="w-full"
+              />
+            </div>
+
             {/* Time Period Filter for non-Apple devices */}
             <div className="overflow-x-auto">
               <div className="inline-flex bg-gray-100 rounded-lg p-1 text-sm">

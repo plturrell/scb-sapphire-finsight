@@ -98,63 +98,66 @@ const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
   }, []);
 
   // Search function using our API service
-  const performSearch = useCallback(
-    debounce(async (query: string) => {
-      if (query.length < 2) {
-        setSearchResults([]);
-        setSearchStatus({ type: 'idle' });
-        return;
-      }
+  const searchFunction = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setSearchResults([]);
+      setSearchStatus({ type: 'idle' });
+      return;
+    }
 
-      setIsLoading(true);
-      setSearchStatus({ type: 'loading', message: 'Searching companies...' });
+    setIsLoading(true);
+    setSearchStatus({ type: 'loading', message: 'Searching companies...' });
+    
+    try {
+      // Call our API service
+      const response = await ApiService.company.searchCompanies(query, {
+        limit: 10,
+      });
       
-      try {
-        // Call our API service
-        const response = await ApiService.company.searchCompanies(query, {
-          limit: 10,
+      if (response.success && response.results) {
+        // Map results to our interface if needed
+        const results = response.results.map((company: any) => {
+          return {
+            id: company.id,
+            name: company.name,
+            ticker: company.ticker,
+            industry: company.industry,
+            sector: company.sector,
+            relevance: company.relevance || 1.0,
+            // Generate a default data availability if not provided
+            dataAvailable: company.dataAvailable || {
+              profile: true,
+              financials: !!company.ticker, // Assume financial data available for companies with tickers
+              filings: !!company.ticker,
+              tariffData: false,
+            },
+          };
         });
         
-        if (response.success && response.results) {
-          // Map results to our interface if needed
-          const results = response.results.map((company: any) => {
-            return {
-              id: company.id,
-              name: company.name,
-              ticker: company.ticker,
-              industry: company.industry,
-              sector: company.sector,
-              relevance: company.relevance || 1.0,
-              // Generate a default data availability if not provided
-              dataAvailable: company.dataAvailable || {
-                profile: true,
-                financials: !!company.ticker, // Assume financial data available for companies with tickers
-                filings: !!company.ticker,
-                tariffData: false,
-              },
-            };
-          });
-          
-          setSearchResults(results);
-          setSearchStatus({ 
-            type: 'success', 
-            message: `Found ${results.length} companies` 
-          });
-        } else {
-          throw new Error('Invalid search response format');
-        }
-      } catch (error) {
-        console.error('Search error:', error);
-        setSearchResults([]);
+        setSearchResults(results);
         setSearchStatus({ 
-          type: 'error', 
-          message: 'Search failed. Please try again.' 
+          type: 'success', 
+          message: `Found ${results.length} companies` 
         });
-      } finally {
-        setIsLoading(false);
+      } else {
+        throw new Error('Invalid search response format');
       }
-    }, 300),
-    [setSearchResults, setSearchStatus, setIsLoading]
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+      setSearchStatus({ 
+        type: 'error', 
+        message: 'Search failed. Please try again.' 
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setSearchResults, setSearchStatus, setIsLoading]);
+
+  // Debounced search function
+  const performSearch = useCallback(
+    debounce(searchFunction, 300),
+    [searchFunction]
   );
 
   // Handle search input change
