@@ -194,7 +194,7 @@ const KnowledgeDashboard: React.FC = () => {
   const router = useRouter();
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const { mode, isMultiTasking, orientation } = useMultiTasking();
-  const { isDarkMode: isDark, preferences } = useUIPreferences();
+  const { isDark: isDark, preferences } = useUIPreferences();
   
   // Active tab state for the iOS tab bar
   const [activeTab, setActiveTab] = useState('knowledge');
@@ -372,15 +372,23 @@ const KnowledgeDashboard: React.FC = () => {
         <IconSystemProvider>
           {isAppleDevice && isPlatformDetected ? (
             <div className={`min-h-screen ${isSmallScreen ? 'pb-20' : 'pb-16'} ${isPlatformDetected ? (isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900') : ''}`}>
-              {/* iOS Navigation Bar */}
+              {/* iOS Navigation Bar - Adapted for iPad multi-tasking */}
               <EnhancedIOSNavBar 
                 title="Knowledge Dashboard"
-                subtitle="Financial Knowledge Explorer"
-                largeTitle={true}
+                subtitle={isMultiTasking && mode === 'slide-over' ? null : "Financial Knowledge Explorer"}
+                largeTitle={!isMultiTasking || mode !== 'slide-over'}
                 blurred={true}
                 showBackButton={false}
                 theme={isDark ? 'dark' : 'light'}
-                rightActions={[
+                rightActions={isMultiTasking && mode === 'slide-over' ? [
+                  {
+                    icon: 'square.and.arrow.down',
+                    label: null, // No label in slide-over mode
+                    onPress: handleDownloadClick,
+                    variant: 'primary',
+                    size: 'small'
+                  }
+                ] : [
                   {
                     icon: 'square.and.arrow.down',
                     label: 'Export',
@@ -395,19 +403,30 @@ const KnowledgeDashboard: React.FC = () => {
                 ]}
                 respectSafeArea={true}
                 hapticFeedback={true}
+                multiTaskingMode={mode}
+                isMultiTasking={isMultiTasking}
+                compactFormatting={isMultiTasking}
               />
               
-              {/* Breadcrumb Navigation */}
-              <div className={`px-4 py-2 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-                <EnhancedIOSBreadcrumb 
-                  items={breadcrumbItems}
-                  showIcons={true}
-                  hapticFeedback={true}
-                  theme={isDark ? 'dark' : 'light'}
-                />
-              </div>
+              {/* Breadcrumb Navigation - Hide in slide-over mode to save space */}
+              {(!isMultiTasking || mode !== 'slide-over') && (
+                <div className={`px-4 py-2 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+                  <EnhancedIOSBreadcrumb 
+                    items={breadcrumbItems}
+                    showIcons={true}
+                    hapticFeedback={true}
+                    theme={isDark ? 'dark' : 'light'}
+                    compact={isMultiTasking}
+                  />
+                </div>
+              )}
               
-              <div className={`${isMultiTasking && mode === 'slide-over' ? 'px-3 py-2' : 'px-6 py-4'} max-w-6xl mx-auto`}>
+              {/* Main content container - adjusted padding for multi-tasking */}
+              <div className={`${isMultiTasking && mode === 'slide-over' 
+                ? 'px-2 py-2 overflow-x-hidden' 
+                : isMultiTasking && mode === 'split-view'
+                  ? 'px-4 py-3 max-w-4xl' 
+                  : 'px-6 py-4 max-w-6xl'} mx-auto`}>
         {/* Remove dashboard header since it's in the navbar */}
         
         {/* Group filter badges */}
@@ -446,9 +465,28 @@ const KnowledgeDashboard: React.FC = () => {
           {/* Main visualization - spans 2x2 */}
           <div className={`${isMultiTasking ? 'col-span-1' : 'col-span-full lg:col-span-2 lg:row-span-2'} 
             ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} 
-            rounded-lg shadow-sm border p-5 
-            ${isMultiTasking ? (mode === 'slide-over' ? 'h-[400px]' : 'h-[500px]') : 'h-[600px]'}`}>
-            <div className="h-full">
+            rounded-lg shadow-sm border ${isMultiTasking && mode === 'slide-over' ? 'p-3' : 'p-4'} 
+            ${isMultiTasking ? (mode === 'slide-over' ? 'h-[380px]' : 'h-[500px]') : 'h-[580px]'}`}>
+            <div className="flex justify-between items-center mb-3">
+              <h2 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                Knowledge Graph Explorer
+              </h2>
+              
+              {/* Generate AI insights button for iOS devices */}
+              {isAppleDevice && isPlatformDetected && !showAiInsights && (
+                <EnhancedTouchButton
+                  onClick={regenerateWithAI}
+                  variant={isDark ? "dark" : "primary"}
+                  size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                  className="flex items-center gap-1"
+                >
+                  <Sparkles className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                  {!isMultiTasking && <span>Generate AI Insights</span>}
+                </EnhancedTouchButton>
+              )}
+            </div>
+            
+            <div className="h-[calc(100%-32px)]">
               {isLoading ? (
                 <div className="h-full flex items-center justify-center">
                   <EnhancedLoadingSpinner
@@ -471,9 +509,20 @@ const KnowledgeDashboard: React.FC = () => {
                   orientation={orientation}
                   enableHaptics={isAppleDevice}
                   onRegenerateClick={!showAiInsights ? regenerateWithAI : undefined}
+                  darkMode={isDark}
                 />
               )}
             </div>
+            
+            {/* Interactive hint for iOS devices */}
+            {isAppleDevice && !isLoading && (
+              <div className={`text-xs text-center mt-2 ${isDark ? 'text-blue-400 opacity-70' : 'text-blue-600 opacity-70'}`}>
+                {isMultiTasking && mode === 'slide-over'
+                  ? 'Tap nodes for details'
+                  : 'Tap and drag nodes to explore connections'
+                }
+              </div>
+            )}
           </div>
           
           {/* Other dashboard tiles */}
@@ -524,7 +573,7 @@ const KnowledgeDashboard: React.FC = () => {
                     <Link 
                       href={tile.link} 
                       className={`flex items-center text-sm font-medium ${
-                        isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-[rgb(var(--scb-primary))]'
+                        isDark ? 'text-blue-400 hover:text-blue-300' : 'text-[rgb(var(--scb-primary))]'
                       } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
                       onClick={() => handleTileClick(tile.id, tile.link)}
                     >
@@ -534,7 +583,7 @@ const KnowledgeDashboard: React.FC = () => {
                   ) : (
                     <button 
                       className={`flex items-center text-sm font-medium ${
-                        isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-[rgb(var(--scb-primary))]'
+                        isDark ? 'text-blue-400 hover:text-blue-300' : 'text-[rgb(var(--scb-primary))]'
                       } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
                       onClick={() => handleTileClick(tile.id)}
                     >
@@ -551,114 +600,180 @@ const KnowledgeDashboard: React.FC = () => {
         {/* AI Insights Panel - only shown when AI data is available */}
         {showAiInsights && graphData.aiMetadata && (
           <div className={`mt-6 ${
-            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'
-          } rounded-lg shadow-sm border ${isMultiTasking && mode === 'slide-over' ? 'p-3' : 'p-5'}`}>
-            <div className="flex items-start gap-3">
-              <div className={`${
-                isDarkMode ? 'bg-blue-900 bg-opacity-30' : 'bg-[rgba(var(--scb-accent),0.1)]'
-              } p-2 rounded-full flex-shrink-0`}>
-                <Sparkles className={`${isMultiTasking && mode === 'slide-over' ? 'w-4 h-4' : 'w-5 h-5'} text-[rgb(var(--scb-accent))]`} />
+            isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'
+          } rounded-lg shadow-sm border ${isMultiTasking && mode === 'slide-over' ? 'p-3' : 'p-4'} ${isAppleDevice ? 'shadow-sm' : ''}`}>
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center">
+                <div className={`${
+                  isDark ? 'bg-blue-900 bg-opacity-30' : 'bg-[rgba(var(--scb-accent),0.1)]'
+                } p-2 rounded-full mr-3 flex-shrink-0`}>
+                  <Sparkles className={`${isMultiTasking && mode === 'slide-over' ? 'w-4 h-4' : 'w-5 h-5'} text-[rgb(var(--scb-accent))]`} />
+                </div>
+                <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium ${
+                  isDark ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                }`}>AI-Generated Insights</h3>
               </div>
               
-              <div className="flex-1">
-                <h3 className={`${isMultiTasking && mode === 'slide-over' ? 'text-base' : 'text-lg'} font-medium ${
-                  isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
-                }`}>AI-Generated Insights</h3>
-                <p className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
-                } mt-2`}>{graphData.aiMetadata.insightSummary}</p>
-                
-                <div className={`mt-4 grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : 'md:grid-cols-3 gap-4'}`}>
-                  <div className={`${
-                    isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
-                  } p-3 rounded-md`}>
-                    <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
-                      isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
-                    }`}>Key Focus Areas</h4>
-                    <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
-                      isDarkMode ? 'text-gray-300' : ''
-                    }`}>
-                      <li className="flex items-start gap-1">
-                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                        <span>ESG Investments (High Confidence)</span>
-                      </li>
-                      <li className="flex items-start gap-1">
-                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                        <span>Fintech Disruption</span>
-                      </li>
-                      <li className="flex items-start gap-1">
-                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                        <span>Emerging Markets</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div className={`${
-                    isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
-                  } p-3 rounded-md`}>
-                    <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
-                      isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
-                    }`}>Strategic Implications</h4>
-                    <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
-                      isDarkMode ? 'text-gray-300' : ''
-                    }`}>
-                      <li className="flex items-start gap-1">
-                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                        <span>Strengthen digital banking to counter fintech disruption</span>
-                      </li>
-                      <li className="flex items-start gap-1">
-                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                        <span>Develop comprehensive ESG investment offerings</span>
-                      </li>
-                    </ul>
-                  </div>
-                  
-                  <div className={`${
-                    isDarkMode ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
-                  } p-3 rounded-md`}>
-                    <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
-                      isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
-                    }`}>Risk Assessment</h4>
-                    <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
-                      isDarkMode ? 'text-gray-300' : ''
-                    }`}>
-                      <li className="flex items-start gap-1">
-                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                        <span>Market volatility in emerging markets</span>
-                      </li>
-                      <li className="flex items-start gap-1">
-                        <span className="text-[rgb(var(--scb-accent))] mt-1">•</span>
-                        <span>Increased competition from fintech companies</span>
-                      </li>
-                    </ul>
-                  </div>
+              {/* Actions for iOS devices */}
+              {isAppleDevice && (
+                <div className="flex items-center gap-2">
+                  <EnhancedTouchButton
+                    onClick={handleShareClick}
+                    variant={isDark ? "dark" : "secondary"}
+                    size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                    className="flex items-center gap-1"
+                  >
+                    <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                    {!isMultiTasking && <span>Share</span>}
+                  </EnhancedTouchButton>
                 </div>
-                
-                <div className={`mt-4 flex flex-wrap items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-2 text-[10px]' : 'gap-3 text-xs'} ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              )}
+            </div>
+            
+            <p className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${
+              isDark ? 'text-gray-300' : 'text-gray-700'
+            } mb-4`}>{graphData.aiMetadata.insightSummary}</p>
+            
+            <div className={`grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'gap-2' : isMultiTasking ? 'md:grid-cols-2 gap-3' : 'md:grid-cols-3 gap-4'}`}>
+              <div 
+                className={`${
+                  isDark ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
+                } p-3 rounded-md ${isAppleDevice ? 'cursor-pointer hover:opacity-95 active:opacity-90' : ''}`}
+                onClick={() => {
+                  if (isAppleDevice) {
+                    haptics.light();
+                    // In a real app, this would show details
+                  }
+                }}
+              >
+                <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
+                  isDark ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                }`}>Key Focus Areas</h4>
+                <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
+                  isDark ? 'text-gray-300' : ''
                 }`}>
-                  <div className="flex items-center gap-1">
-                    <Info className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-3.5 h-3.5'}`} />
-                    <span>Confidence Score: {(graphData.aiMetadata.confidenceScore * 100).toFixed(0)}%</span>
-                  </div>
-                  <div>
-                    Generated: {new Date(graphData.aiMetadata.generatedAt).toLocaleString()}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span>Sources:</span>
-                    <div className="flex flex-wrap gap-1">
-                      {graphData.aiMetadata.dataSource.map((source, idx) => (
-                        <span key={idx} className={`${
-                          isDarkMode ? 'bg-blue-900 bg-opacity-40 text-blue-300' : 'horizon-chip horizon-chip-blue'
-                        } ${isMultiTasking && mode === 'slide-over' ? 'text-[8px] py-0 px-1.5' : 'text-[10px] py-0.5 px-2'} rounded`}>
-                          {source}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <li className="flex items-start gap-1">
+                    <span className={`${isDark ? 'text-blue-400' : 'text-[rgb(var(--scb-accent))]'} mt-1`}>•</span>
+                    <span>ESG Investments (High Confidence)</span>
+                  </li>
+                  <li className="flex items-start gap-1">
+                    <span className={`${isDark ? 'text-blue-400' : 'text-[rgb(var(--scb-accent))]'} mt-1`}>•</span>
+                    <span>Fintech Disruption</span>
+                  </li>
+                  <li className="flex items-start gap-1">
+                    <span className={`${isDark ? 'text-blue-400' : 'text-[rgb(var(--scb-accent))]'} mt-1`}>•</span>
+                    <span>Emerging Markets</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div 
+                className={`${
+                  isDark ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
+                } p-3 rounded-md ${isAppleDevice ? 'cursor-pointer hover:opacity-95 active:opacity-90' : ''}`}
+                onClick={() => {
+                  if (isAppleDevice) {
+                    haptics.light();
+                    // In a real app, this would show details
+                  }
+                }}
+              >
+                <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
+                  isDark ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                }`}>Strategic Implications</h4>
+                <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
+                  isDark ? 'text-gray-300' : ''
+                }`}>
+                  <li className="flex items-start gap-1">
+                    <span className={`${isDark ? 'text-blue-400' : 'text-[rgb(var(--scb-accent))]'} mt-1`}>•</span>
+                    <span>Strengthen digital banking to counter fintech disruption</span>
+                  </li>
+                  <li className="flex items-start gap-1">
+                    <span className={`${isDark ? 'text-blue-400' : 'text-[rgb(var(--scb-accent))]'} mt-1`}>•</span>
+                    <span>Develop comprehensive ESG investment offerings</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div 
+                className={`${
+                  isDark ? 'bg-gray-700' : 'bg-[rgba(var(--scb-light-bg),0.5)]'
+                } p-3 rounded-md ${isAppleDevice ? 'cursor-pointer hover:opacity-95 active:opacity-90' : ''} ${isMultiTasking && mode === 'slide-over' ? 'col-span-1' : ''}`}
+                onClick={() => {
+                  if (isAppleDevice) {
+                    haptics.light();
+                    // In a real app, this would show details
+                  }
+                }}
+              >
+                <h4 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} font-medium ${
+                  isDark ? 'text-white' : 'text-[rgb(var(--scb-primary))]'
+                }`}>Risk Assessment</h4>
+                <ul className={`mt-2 space-y-1 ${isMultiTasking && mode === 'slide-over' ? 'text-[10px]' : 'text-sm'} ${
+                  isDark ? 'text-gray-300' : ''
+                }`}>
+                  <li className="flex items-start gap-1">
+                    <span className={`${isDark ? 'text-blue-400' : 'text-[rgb(var(--scb-accent))]'} mt-1`}>•</span>
+                    <span>Market volatility in emerging markets</span>
+                  </li>
+                  <li className="flex items-start gap-1">
+                    <span className={`${isDark ? 'text-blue-400' : 'text-[rgb(var(--scb-accent))]'} mt-1`}>•</span>
+                    <span>Increased competition from fintech companies</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className={`mt-4 flex flex-wrap items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-2 text-[10px]' : 'gap-3 text-xs'} ${
+              isDark ? 'text-gray-400' : 'text-gray-500'
+            }`}>
+              <div className="flex items-center gap-1">
+                <Info className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-3.5 h-3.5'}`} />
+                <span>Confidence Score: {(graphData.aiMetadata.confidenceScore * 100).toFixed(0)}%</span>
+              </div>
+              <div>
+                Generated: {new Date(graphData.aiMetadata.generatedAt).toLocaleString()}
+              </div>
+              <div className="flex items-center gap-1">
+                <span>Sources:</span>
+                <div className="flex flex-wrap gap-1">
+                  {graphData.aiMetadata.dataSource.map((source, idx) => (
+                    <span 
+                      key={idx} 
+                      className={`${
+                        isDark ? 'bg-blue-900 bg-opacity-40 text-blue-300' : 'horizon-chip horizon-chip-blue'
+                      } ${isMultiTasking && mode === 'slide-over' ? 'text-[8px] py-0 px-1.5' : 'text-[10px] py-0.5 px-2'} rounded ${isAppleDevice ? 'cursor-pointer' : ''}`}
+                      onClick={() => {
+                        if (isAppleDevice) {
+                          haptics.light();
+                          // In a real app, this would show source details
+                        }
+                      }}
+                    >
+                      {source}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
+            
+            {/* iOS-specific action button */}
+            {isAppleDevice && (
+              <div className={`mt-3 ${isMultiTasking && mode === 'slide-over' ? 'text-center' : 'text-right'}`}>
+                <EnhancedTouchButton
+                  onClick={() => {
+                    if (isAppleDevice) {
+                      haptics.medium();
+                      alert('Viewing detailed AI analysis...');
+                    }
+                  }}
+                  variant={isDark ? "dark" : "link"}
+                  size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                >
+                  View Full Analysis
+                </EnhancedTouchButton>
+              </div>
+            )}
           </div>
         )}
       
@@ -671,10 +786,17 @@ const KnowledgeDashboard: React.FC = () => {
           respectSafeArea={true}
           hapticFeedback={true}
           blurred={true}
-          showLabels={true}
+          showLabels={!isMultiTasking || mode !== 'slide-over'} // Hide labels in slide-over mode
           theme={isDark ? 'dark' : 'light'}
-          floating={true}
+          floating={!isMultiTasking || mode !== 'slide-over'}
+          compact={isMultiTasking}
+          multiTaskingMode={mode}
         />
+      )}
+      
+      {/* iOS-specific bottom safe area spacer for notched devices */}
+      {isAppleDevice && (
+        <div className="h-6 sm:h-4 md:h-2"></div>
       )}
     </div>
     </div>

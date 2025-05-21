@@ -741,32 +741,20 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              <nav className="flex-1 overflow-y-auto py-4 px-4">
-                {navigation.map((item) => {
-                  const isActive = router.pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => {
-                        setSidebarOpen(false);
-                        triggerHaptics();
-                      }}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 text-sm font-medium touch-manipulation ${
-                        isActive 
-                          ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white' 
-                          : isDarkMode 
-                            ? 'text-gray-300 hover:bg-gray-700' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      <item.icon className="w-5 h-5" />
-                      <span>{preferences.showLabels ? item.name : ''}</span>
-                    </Link>
-                  );
-                })}
-            </nav>
-          </div>
+              <div className="flex-1 overflow-y-auto py-4 px-2">
+                <AppNavigationLinks 
+                  condensed={false}
+                  showLabels={preferences.showLabels !== false}
+                  filterTest={preferences.hideTestPages !== false}
+                  filterMobile={false} // In mobile view, we want to show mobile pages
+                  enableHaptics={preferences.enableHaptics}
+                  onClick={(item) => {
+                    setSidebarOpen(false);
+                    triggerHaptics();
+                  }}
+                />
+              </div>
+            </div>
         </div>
         )}
 
@@ -777,29 +765,14 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
               <div className={`h-12 px-4 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'} flex items-center justify-center`}>
                 {sidebarOpen && <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>FinSight Spaces</span>}
               </div>
-              <nav className="flex-1 overflow-y-auto py-2">
-                {navigation.map((item) => {
-                  const isActive = router.pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`flex items-center ${sidebarOpen ? 'px-4' : 'px-3 justify-center'} py-3 ${
-                        isActive 
-                          ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white hover:bg-[rgb(var(--scb-honolulu-blue))]' 
-                          : isDarkMode 
-                            ? 'text-gray-300 hover:bg-gray-700' 
-                            : 'text-gray-700 hover:bg-gray-100'
-                      } transition-colors`}
-                      title={!sidebarOpen ? item.name : undefined}
-                      onClick={triggerHaptics}
-                    >
-                      <item.icon className="w-5 h-5 flex-shrink-0" />
-                      {sidebarOpen && preferences.showLabels && <span className={`ml-3 ${getFontSizeClasses()}`}>{item.name}</span>}
-                    </Link>
-                  );
-                })}
-              </nav>
+              <AppNavigationLinks 
+                condensed={!sidebarOpen}
+                showLabels={sidebarOpen && preferences.showLabels}
+                filterTest={preferences.hideTestPages !== false}
+                filterMobile={preferences.hideMobilePages !== false}
+                enableHaptics={preferences.enableHaptics}
+                onClick={() => triggerHaptics()}
+              />
             </div>
           </div>
         )}
@@ -818,26 +791,15 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
       {/* Mobile Bottom Navigation - only show if mobile nav style is bottom */}
       {preferences.mobileNavStyle === 'bottom' && (
         <nav className={`lg:hidden fixed bottom-0 left-0 right-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t safe-bottom`}>
-          <div className="grid grid-cols-4 gap-1">
-            {mobileNav.map((item) => {
-              const isActive = router.pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={triggerHaptics}
-                  className={`flex flex-col items-center py-2 px-3 text-xs font-medium touch-manipulation ${
-                    isActive 
-                      ? 'text-[rgb(var(--scb-honolulu-blue))]' 
-                      : isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                  }`}
-                >
-                  <item.icon className={`w-6 h-6 mb-1 ${isActive ? 'text-[rgb(var(--scb-honolulu-blue))]' : ''}`} />
-                  {preferences.showLabels && item.name}
-                </Link>
-              );
-            })}
-          </div>
+          <AppNavigationLinks 
+            condensed={true}
+            showLabels={preferences.showLabels !== false}
+            filterTest={true}
+            filterMobile={false}
+            filterCategory="Main" // Only show main navigation items in the bottom bar
+            enableHaptics={preferences.enableHaptics}
+            onClick={() => triggerHaptics()}
+          />
         </nav>
       )}
     </div>

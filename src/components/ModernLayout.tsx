@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import PerplexitySearchBar from './PerplexitySearchBar';
+import AppNavigationLinks from './layout/AppNavigationLinks';
 // Removed JouleAssistantWrapper import as we're using GlobalJouleAssistant
 import {
   LayoutDashboard,
@@ -629,27 +630,16 @@ export default function ModernLayout({ children }: LayoutProps) {
                   <X className="w-6 h-6" />
                 </button>
               </div>
-              <nav className="flex-1 overflow-y-auto py-4 px-4">
-                {navigation.map((item) => {
-                  const isActive = router.pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 text-sm font-medium touch-manipulation ${
-                        isActive 
-                          ? 'bg-primary text-white' 
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      <item.icon className="w-5 h-5" />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-            </nav>
-          </div>
+              <div className="flex-1 overflow-y-auto py-4 px-2">
+                <AppNavigationLinks 
+                  condensed={false}
+                  showLabels={true}
+                  filterTest={true}
+                  filterMobile={false}
+                  onClick={() => setSidebarOpen(false)}
+                />
+              </div>
+            </div>
         </div>
         )}
 
@@ -659,22 +649,12 @@ export default function ModernLayout({ children }: LayoutProps) {
             <div className="h-12 px-4 border-b flex items-center justify-center">
               {sidebarOpen && <span className="text-sm font-medium text-gray-800">FinSight Spaces</span>}
             </div>
-            <nav className="flex-1 overflow-y-auto py-2">
-              {navigation.map((item) => {
-                const isActive = router.pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`flex items-center ${sidebarOpen ? 'px-4' : 'px-3 justify-center'} py-3 hover:bg-gray-100 transition-colors ${isActive ? 'bg-primary text-white hover:bg-primary' : 'text-gray-700'}`}
-                    title={!sidebarOpen ? item.name : undefined}
-                  >
-                    <item.icon className="w-5 h-5 flex-shrink-0" />
-                    {sidebarOpen && <span className="ml-3">{item.name}</span>}
-                  </Link>
-                );
-              })}
-            </nav>
+            <AppNavigationLinks 
+              condensed={!sidebarOpen}
+              showLabels={sidebarOpen}
+              filterTest={true}
+              filterMobile={false}
+            />
           </div>
         </div>
 
@@ -711,23 +691,13 @@ export default function ModernLayout({ children }: LayoutProps) {
 
       {/* Mobile Bottom Navigation */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-bottom">
-        <div className="grid grid-cols-4 gap-1">
-          {mobileNav.map((item) => {
-            const isActive = router.pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex flex-col items-center py-2 px-3 text-xs font-medium touch-manipulation ${
-                  isActive ? 'text-primary' : 'text-gray-600'
-                }`}
-              >
-                <item.icon className={`w-6 h-6 mb-1 ${isActive ? 'text-primary' : ''}`} />
-                {item.name}
-              </Link>
-            );
-          })}
-        </div>
+        <AppNavigationLinks 
+          condensed={true}
+          showLabels={true}
+          filterTest={true}
+          filterMobile={false}
+          filterCategory="Main" // Only show main navigation items in the bottom bar
+        />
       </nav>
 
       {/* Joule AI Assistant moved to GlobalJouleAssistant */}

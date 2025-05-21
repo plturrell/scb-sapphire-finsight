@@ -95,7 +95,9 @@ const allNavigationItems: NavigationItem[] = [
   { id: 'perplexity-test', name: 'Perplexity Test', href: '/perplexity-test', icon: Sparkles, category: 'AI', isTest: true },
   { id: 'perplexity-central', name: 'Perplexity Central', href: '/perplexity-central-test', icon: Sparkles, category: 'AI', isTest: true },
   { id: 'perplexity-keys', name: 'Perplexity Keys', href: '/perplexity-keys-test', icon: Sparkles, category: 'AI', isTest: true },
+  { id: 'perplexity-migration', name: 'Perplexity Migration', href: '/perplexity-migration-test', icon: Sparkles, category: 'AI', isTest: true },
   { id: 'test-modern', name: 'Modern UI Test', href: '/test-modern', icon: Cpu, category: 'Testing', isTest: true },
+  { id: 'test-navigation', name: 'Navigation Test', href: '/test-navigation', icon: Layers, category: 'Testing', isTest: true, isNew: true },
 ];
 
 // Props for the navigation component
@@ -171,43 +173,67 @@ const AppNavigationLinks: React.FC<AppNavigationLinksProps> = ({
   };
 
   return (
-    <nav className="flex-1 overflow-y-auto py-2">
+    <nav className={`flex-1 overflow-y-auto ${condensed ? 'py-0' : 'py-2'}`}>
       {categories.map((category) => (
-        <div key={category} className="mb-4">
-          {/* Category Header - only show if expanded */}
+        <div key={category} className={`${condensed ? 'mb-0' : 'mb-4'}`}>
+          {/* Category Header - only show if expanded and not condensed */}
           {!condensed && (
             <h3 className={getDefaultCategoryStyle(showLabels)}>{category}</h3>
           )}
           
           {/* Items in this category */}
-          <div className={`mt-1 space-y-1 ${condensed ? 'flex flex-col items-center' : ''}`}>
+          <div className={`
+            ${condensed 
+              ? 'flex flex-row items-center justify-around gap-1 px-1 py-2' 
+              : 'mt-1 space-y-1'
+            }
+          `}>
             {groupedItems[category].map((item) => {
               const active = isActive(item.href);
               return (
                 <Link
                   key={item.id}
                   href={item.href}
-                  className={getDefaultItemStyle(active, showLabels)}
+                  className={`
+                    ${condensed 
+                      ? `flex flex-col items-center ${active 
+                          ? isDarkMode 
+                            ? 'text-white' 
+                            : 'text-blue-700' 
+                          : isDarkMode 
+                            ? 'text-gray-300' 
+                            : 'text-gray-600'
+                        } px-2 py-1 rounded-md transition-colors ${
+                          enableHaptics ? 'active:scale-[0.98] transition-transform' : ''
+                        }`
+                      : getDefaultItemStyle(active, showLabels)
+                    }
+                  `}
                   title={!showLabels ? item.name : undefined}
                   onClick={() => onClick && onClick(item)}
                 >
                   {showIcons && (
                     <item.icon className={`flex-shrink-0 ${
-                      condensed ? 'w-5 h-5' : 'w-5 h-5 mr-3'
+                      condensed ? 'w-6 h-6 mb-1' : 'w-5 h-5 mr-3'
                     } ${active ? (isDarkMode ? 'text-white' : 'text-blue-700') : ''}`} />
                   )}
                   
                   {showLabels && (
-                    <span className="truncate">{item.name}</span>
+                    <span className={`truncate ${condensed ? 'text-xs' : ''}`}>{item.name}</span>
                   )}
                   
-                  {/* New badge */}
-                  {item.isNew && showLabels && (
+                  {/* New badge - not shown in condensed mode for cleaner UI */}
+                  {item.isNew && showLabels && !condensed && (
                     <span className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
                       isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-800'
                     }`}>
                       New
                     </span>
+                  )}
+                  
+                  {/* Dot indicator for new items in condensed mode */}
+                  {item.isNew && condensed && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                   )}
                 </Link>
               );

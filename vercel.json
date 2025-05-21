@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/create-static-deployment.js",
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
-  "framework": "nextjs",
+  "framework": null,
   "outputDirectory": "out",
   "env": {
     "PERPLEXITY_API_KEY": "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",

@@ -11,7 +11,7 @@ import useMultiTasking from '@/hooks/useMultiTasking';
 import { haptics } from '@/lib/haptics';
 import { UserRole } from '@/types';
 import { useMediaQuery } from 'react-responsive';
-import { ArrowUp, ArrowDown, TrendingUp, AlertTriangle, Zap, Clock, Download, Share2, Check } from 'lucide-react';
+import { ArrowUp, ArrowDown, TrendingUp, AlertTriangle, Zap, Clock, Download, Share2, Check, RefreshCw } from 'lucide-react';
 import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
 import EnhancedIOSTabBar from '@/components/EnhancedIOSTabBar';
 import EnhancedIOSBreadcrumb from '@/components/EnhancedIOSBreadcrumb';
@@ -531,14 +531,62 @@ export default function FinancialSimulation() {
     }
   };
   
-  // Handle download action with haptic feedback
-  const handleShareClick = () => {
+  // Handle share action with real sharing functionality
+  const handleShareClick = async () => {
     if (isAppleDevice) {
       haptics.medium();
     }
     
-    // In a real application, this would open a share dialog
-    alert('Opening share dialog...');
+    try {
+      // Check if Web Share API is available
+      if (navigator.share) {
+        // Create a simple text version of the report for sharing
+        const shareText = `
+Financial Simulation Report
+Expected Return: ${summaryMetrics.expectedReturn.toFixed(2)}%
+Risk Score: ${summaryMetrics.riskScore.toFixed(1)}
+Confidence Interval: ${summaryMetrics.confidenceInterval[0].toFixed(1)}% - ${summaryMetrics.confidenceInterval[1].toFixed(1)}%
+Generated on: ${new Date().toLocaleDateString()}
+        `;
+        
+        // Use Web Share API to share the report summary
+        await navigator.share({
+          title: 'SCB Sapphire Financial Simulation Report',
+          text: shareText,
+          url: window.location.href
+        });
+        
+        // Success haptic feedback
+        if (isAppleDevice) {
+          haptics.success();
+        }
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        // Create a temporary textarea to copy text
+        const textarea = document.createElement('textarea');
+        textarea.value = `SCB Sapphire Financial Simulation Report\n\nExpected Return: ${summaryMetrics.expectedReturn.toFixed(2)}%\nRisk Score: ${summaryMetrics.riskScore.toFixed(1)}\nConfidence Interval: ${summaryMetrics.confidenceInterval[0].toFixed(1)}% - ${summaryMetrics.confidenceInterval[1].toFixed(1)}%\n\nView more at: ${window.location.href}`;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        alert('Report summary copied to clipboard. You can now paste it into any messaging app.');
+        
+        // Medium haptic feedback for fallback
+        if (isAppleDevice) {
+          haptics.medium();
+        }
+      }
+    } catch (error) {
+      console.error('Error sharing report:', error);
+      
+      // Error haptic feedback
+      if (isAppleDevice) {
+        haptics.error();
+      }
+      
+      alert('Unable to share the report. Please try again later.');
+    }
   };
 
   // Handle tab changes
@@ -573,20 +621,22 @@ export default function FinancialSimulation() {
             theme={isDark ? 'dark' : 'light'}
             rightActions={isMultiTasking && mode === 'slide-over' ? [
               {
-                icon: 'square.and.arrow.down',
+                icon: isGeneratingPdf ? 'arrow.clockwise' : downloadSuccess ? 'checkmark.circle.fill' : 'square.and.arrow.down',
                 label: null, // No label in slide-over mode
                 onPress: exportSimulationReport,
-                disabled: !summaryMetrics.simulationCompleted,
-                variant: 'primary',
-                size: 'small'
+                disabled: !summaryMetrics.simulationCompleted || isGeneratingPdf,
+                variant: downloadSuccess ? 'success' : 'primary',
+                size: 'small',
+                loading: isGeneratingPdf
               }
             ] : [
               {
-                icon: 'square.and.arrow.down',
-                label: 'Export',
+                icon: isGeneratingPdf ? 'arrow.clockwise' : downloadSuccess ? 'checkmark.circle.fill' : 'square.and.arrow.down',
+                label: isGeneratingPdf ? 'Generating...' : downloadSuccess ? 'Downloaded' : 'Export',
                 onPress: exportSimulationReport,
-                disabled: !summaryMetrics.simulationCompleted,
-                variant: 'primary'
+                disabled: !summaryMetrics.simulationCompleted || isGeneratingPdf,
+                variant: downloadSuccess ? 'success' : 'primary',
+                loading: isGeneratingPdf
               },
               {
                 icon: 'square.and.arrow.up',
@@ -762,13 +812,19 @@ export default function FinancialSimulation() {
                     <div className="float-right">
                       <EnhancedTouchButton
                         onClick={exportSimulationReport}
-                        variant={isDark ? "dark" : "secondary"}
+                        variant={downloadSuccess ? "success" : (isDark ? "dark" : "secondary")}
                         size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
                         className="flex items-center gap-1"
-                        disabled={!summaryMetrics.simulationCompleted}
+                        disabled={!summaryMetrics.simulationCompleted || isGeneratingPdf}
                       >
-                        <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} ${isRefreshing ? 'animate-spin' : ''}`} />
-                        {!isMultiTasking && <span>Export</span>}
+                        {isGeneratingPdf ? (
+                          <RefreshCw className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'} animate-spin`} />
+                        ) : downloadSuccess ? (
+                          <Check className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                        ) : (
+                          <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                        )}
+                        {!isMultiTasking && <span>{isGeneratingPdf ? 'Generating...' : downloadSuccess ? 'Downloaded' : 'Export'}</span>}
                       </EnhancedTouchButton>
                     </div>
                   )}
