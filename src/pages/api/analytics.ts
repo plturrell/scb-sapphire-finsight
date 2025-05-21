@@ -285,7 +285,7 @@ const generateFallbackSectorData = () => {
     const income = Math.round(revenue * (0.10 + Math.random() * 0.05)); // 10-15% of revenue
     const assets = Math.round(revenue * (3.5 + Math.random() * 1.5)); // 3.5-5x revenue
     const deposits = Math.round(assets * (0.70 + Math.random() * 0.10)); // 70-80% of assets
-    const yield = Math.round((4.0 + Math.random() * 2.5) * 100) / 100; // 4.0-6.5%
+    const yieldRate = Math.round((4.0 + Math.random() * 2.5) * 100) / 100; // 4.0-6.5%
     const rowWa = Math.round((2.5 + Math.random() * 2.3) * 100) / 100; // 2.5-4.8%
     const change = Math.round((Math.random() * 7 - 2) * 100) / 100; // -2% to +5%
 
@@ -296,7 +296,7 @@ const generateFallbackSectorData = () => {
       income,
       assets,
       deposits,
-      yield,
+      yield: yieldRate,
       rowWa,
       change
     };

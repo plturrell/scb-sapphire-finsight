@@ -899,7 +899,8 @@ export default function Investments() {
   
   // Use ScbBeautifulUI instead of IOSOptimizedLayout to avoid JSX structure issues
   return (
-    <div>
+    <React.Fragment>
+      <div>
       {/* iOS-specific refresh indicator */}
       {renderRefreshIndicator()}
       
