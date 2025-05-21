@@ -393,19 +393,41 @@ export default function Help() {
                 {filteredFaqs.length > 0 ? (
                   filteredFaqs.map(faq => (
                     <div key={faq.id} className={`border-b ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'}`}>
-                      <button
-                        className={`w-full text-left px-6 py-4 flex items-center justify-between focus:outline-none ${
-                          isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-                        } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
-                        onClick={() => toggleFaqWithHaptics(faq.id)}
-                      >
-                        <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
-                          {faq.question}
-                        </span>
-                        <ChevronDown className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'} ${
-                          preferences.enableAnimations ? 'transition-transform' : ''
-                        } ${expandedFaqs.includes(faq.id) ? 'transform rotate-180' : ''}`} />
-                      </button>
+                      {isApplePlatform ? (
+                        <button
+                          className={`w-full text-left px-6 py-4 flex items-center justify-between focus:outline-none active:bg-[rgba(0,0,0,0.05)] ${
+                            isDarkMode ? 'active:bg-gray-700' : 'active:bg-[rgba(0,0,0,0.05)]'
+                          } transition-colors touch-manipulation`}
+                          onClick={() => toggleFaqWithHaptics(faq.id)}
+                          style={{ 
+                            WebkitTapHighlightColor: 'transparent',
+                            fontFamily: "-apple-system, 'SF Pro Text', system-ui, BlinkMacSystemFont, sans-serif"
+                          }}
+                        >
+                          <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                            {faq.question}
+                          </span>
+                          <ChevronDown 
+                            className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'} 
+                            transition-transform duration-300
+                            ${expandedFaqs.includes(faq.id) ? 'transform rotate-180' : ''}`} 
+                          />
+                        </button>
+                      ) : (
+                        <button
+                          className={`w-full text-left px-6 py-4 flex items-center justify-between focus:outline-none ${
+                            isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                          } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                          onClick={() => toggleFaqWithHaptics(faq.id)}
+                        >
+                          <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
+                            {faq.question}
+                          </span>
+                          <ChevronDown className={`h-5 w-5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'} ${
+                            preferences.enableAnimations ? 'transition-transform' : ''
+                          } ${expandedFaqs.includes(faq.id) ? 'transform rotate-180' : ''}`} />
+                        </button>
+                      )}
                       
                       {expandedFaqs.includes(faq.id) && (
                         <div className={`px-6 pb-4 ${preferences.enableAnimations ? getAnimationClass('animate-fadeIn') : ''}`}>
@@ -418,36 +440,72 @@ export default function Help() {
                               Was this helpful?
                             </span>
                             <div className="flex items-center gap-2">
-                              <button 
-                                className={`p-1.5 rounded-md border ${isDarkMode 
-                                  ? 'border-gray-600 hover:bg-gray-700' 
-                                  : 'border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]'
-                                } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
-                                onClick={() => {
-                                  if (preferences.enableHaptics) {
-                                    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                                      navigator.vibrate(5);
-                                    }
-                                  }
-                                }}
-                              >
-                                <Check className="h-3.5 w-3.5 text-[rgb(var(--scb-american-green))]" />
-                              </button>
-                              <button 
-                                className={`p-1.5 rounded-md border ${isDarkMode 
-                                  ? 'border-gray-600 hover:bg-gray-700' 
-                                  : 'border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]'
-                                } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
-                                onClick={() => {
-                                  if (preferences.enableHaptics) {
-                                    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                                      navigator.vibrate(5);
-                                    }
-                                  }
-                                }}
-                              >
-                                <PlusCircle className={`h-3.5 w-3.5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
-                              </button>
+                              {isApplePlatform ? (
+                                <>
+                                  <button 
+                                    className={`p-1.5 rounded-full border active:scale-95 transition-transform touch-manipulation ${
+                                      isDarkMode ? 'border-gray-600 bg-gray-700/60' : 'border-[rgba(var(--scb-border),0.5)] bg-white/80'
+                                    }`}
+                                    style={{ backdropFilter: 'blur(4px)' }}
+                                    onClick={() => {
+                                      if (isApplePlatform) {
+                                        haptics.success();
+                                      }
+                                      // Mark as helpful
+                                    }}
+                                  >
+                                    <Check className="h-3.5 w-3.5 text-[rgb(var(--scb-american-green))]" />
+                                  </button>
+                                  
+                                  <button 
+                                    className={`p-1.5 rounded-full border active:scale-95 transition-transform touch-manipulation ${
+                                      isDarkMode ? 'border-gray-600 bg-gray-700/60' : 'border-[rgba(var(--scb-border),0.5)] bg-white/80'
+                                    }`}
+                                    style={{ backdropFilter: 'blur(4px)' }}
+                                    onClick={() => {
+                                      if (isApplePlatform) {
+                                        haptics.selection();
+                                      }
+                                      // Request more info
+                                    }}
+                                  >
+                                    <PlusCircle className={`h-3.5 w-3.5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button 
+                                    className={`p-1.5 rounded-md border ${isDarkMode 
+                                      ? 'border-gray-600 hover:bg-gray-700' 
+                                      : 'border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]'
+                                    } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                                    onClick={() => {
+                                      if (preferences.enableHaptics) {
+                                        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                                          navigator.vibrate(5);
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    <Check className="h-3.5 w-3.5 text-[rgb(var(--scb-american-green))]" />
+                                  </button>
+                                  <button 
+                                    className={`p-1.5 rounded-md border ${isDarkMode 
+                                      ? 'border-gray-600 hover:bg-gray-700' 
+                                      : 'border-[rgb(var(--scb-border))] hover:bg-[rgba(var(--scb-light-gray),0.5)]'
+                                    } ${preferences.enableAnimations ? 'transition-colors' : ''}`}
+                                    onClick={() => {
+                                      if (preferences.enableHaptics) {
+                                        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                                          navigator.vibrate(5);
+                                        }
+                                      }
+                                    }}
+                                  >
+                                    <PlusCircle className={`h-3.5 w-3.5 ${isDarkMode ? 'text-gray-400' : 'text-[rgb(var(--scb-dark-gray))]'}`} />
+                                  </button>
+                                </>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -471,9 +529,24 @@ export default function Help() {
                 <Link href="#" className="text-sm text-[rgb(var(--scb-honolulu-blue))] font-medium">
                   View all FAQs
                 </Link>
-                <button className="scb-btn scb-btn-secondary text-sm">
-                  Ask a Question
-                </button>
+                {isApplePlatform ? (
+                  <EnhancedTouchButton 
+                    variant="primary"
+                    size="sm"
+                    onClick={() => {
+                      if (isApplePlatform) {
+                        haptics.medium();
+                      }
+                      alert('Ask a question functionality will be implemented soon.');
+                    }}
+                  >
+                    Ask a Question
+                  </EnhancedTouchButton>
+                ) : (
+                  <button className="scb-btn scb-btn-secondary text-sm">
+                    Ask a Question
+                  </button>
+                )}
               </div>
             </div>
             
@@ -738,13 +811,28 @@ export default function Help() {
                   <div className="bg-white/20 px-2 py-1 rounded">2:00 PM GMT</div>
                 </div>
                 
-                <button className={`font-medium px-4 py-2 rounded-md text-sm ${
-                  isDarkMode 
-                    ? 'bg-blue-400 text-gray-900 hover:bg-blue-300' 
-                    : 'bg-white text-[rgb(var(--scb-honolulu-blue))]'
-                } ${preferences.enableAnimations ? 'transition-colors' : ''}`}>
-                  Register Now
-                </button>
+                {isApplePlatform ? (
+                  <EnhancedTouchButton
+                    variant={isDarkMode ? 'primary' : 'secondary'}
+                    size="sm"
+                    onClick={() => {
+                      if (isApplePlatform) {
+                        haptics.medium();
+                      }
+                      alert('Registration functionality will be implemented soon.');
+                    }}
+                  >
+                    Register Now
+                  </EnhancedTouchButton>
+                ) : (
+                  <button className={`font-medium px-4 py-2 rounded-md text-sm ${
+                    isDarkMode 
+                      ? 'bg-blue-400 text-gray-900 hover:bg-blue-300' 
+                      : 'bg-white text-[rgb(var(--scb-honolulu-blue))]'
+                  } ${preferences.enableAnimations ? 'transition-colors' : ''}`}>
+                    Register Now
+                  </button>
+                )}
               </div>
               {isDarkMode && (
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 to-blue-600/20"></div>

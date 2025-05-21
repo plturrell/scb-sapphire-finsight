@@ -9,7 +9,13 @@ import {
   Download as DownloadIcon,
   Filter as FilterIcon,
   RefreshCw as RefreshCwIcon,
-  BarChart as BarChartIcon
+  BarChart as BarChartIcon,
+  Plus as PlusIcon,
+  Search as SearchIcon,
+  DownloadCloud as DownloadCloudIcon,
+  Share2 as Share2Icon,
+  Database as DatabaseIcon,
+  ArrowUpDown as ArrowUpDownIcon
 } from 'lucide-react';
 
 // Re-export with explicit names to avoid bundling issues
@@ -23,8 +29,15 @@ export const Download = DownloadIcon;
 export const Filter = FilterIcon;
 export const RefreshCw = RefreshCwIcon;
 export const BarChart = BarChartIcon;
+export const Plus = PlusIcon;
+export const Search = SearchIcon;
+export const DownloadCloud = DownloadCloudIcon;
+export const Share2 = Share2Icon;
+export const Database = DatabaseIcon;
+export const ArrowUpDown = ArrowUpDownIcon;
 
 // Also export as a single object for convenience
+// Make sure to export this object directly
 export const Icons = {
   Briefcase, // This is now using Folder icon as a replacement
   LayoutDashboard,
@@ -35,5 +48,11 @@ export const Icons = {
   Download,
   Filter,
   RefreshCw,
-  BarChart
+  BarChart,
+  Plus,
+  Search,
+  DownloadCloud,
+  Share2,
+  Database,
+  ArrowUpDown
 };

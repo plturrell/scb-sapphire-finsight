@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import MobileNavigation from '@/components/MobileNavigation';
-import { LayoutDashboard, BarChart, Briefcase, FileText, Settings, AlertCircle } from '@/components/IconExports';
+import { LayoutDashboard, BarChart, FileText, Settings, AlertCircle, Icons } from '@/components/IconExports';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useSafeArea } from '@/hooks/useSafeArea';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
@@ -18,7 +18,7 @@ const MobileNavigationTest: NextPage = () => {
   const customItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Analytics', href: '/analytics', icon: BarChart },
-    { name: 'Portfolio', href: '/portfolio', icon: Briefcase, badge: 3 },
+    { name: 'Portfolio', href: '/portfolio', icon: Icons.Briefcase, badge: 3 }, // Using Folder icon as Briefcase replacement
     { name: 'Reports', href: '/reports', icon: FileText }
   ];
   

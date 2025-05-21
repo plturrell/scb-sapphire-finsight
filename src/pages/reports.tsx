@@ -3,10 +3,15 @@ import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { useMediaQuery } from 'react-responsive';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import EnhancedSonomaDialog from '@/components/EnhancedSonomaDialog';
-import useMultiTasking from '@/hooks/useMultiTasking';
+import { useMultiTasking } from '@/hooks/useMultiTasking';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { haptics } from '@/lib/haptics';
-import { FileText, Download, Share2, Filter, Calendar, Plus, X, ChevronDown, CheckCircle, Loader2, Sparkles } from 'lucide-react';
+import { FileText, Download, Share2, Filter, Calendar, Plus, X, ChevronDown, CheckCircle, Loader2, Sparkles } from '@/components/IconExports';
 import reportService, { ReportConfig, ReportStructure, ReportTopic, ReportResult } from '@/lib/report-service';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import { ICONS } from '@/components/IconSystem';
 
 const reportsList = [
   { 
@@ -64,9 +69,21 @@ export default function Reports() {
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   const [isAppleDevice, setIsAppleDevice] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
+  const [activeNavItem, setActiveNavItem] = useState('all');
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const { mode, isMultiTasking } = useMultiTasking();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // SF Symbols Navigation items for Reports
+  const reportNavItems = [
+    { id: 'all', label: 'All Reports', icon: 'doc.text.fill', badge: reportsList.length },
+    { id: 'financial', label: 'Financial', icon: 'dollarsign.circle.fill', badge: reportsList.filter(r => r.type === 'Financial').length },
+    { id: 'market', label: 'Market', icon: 'chart.bar.fill', badge: reportsList.filter(r => r.type === 'Market').length },
+    { id: 'portfolio', label: 'Portfolio', icon: 'chart.pie.fill', badge: reportsList.filter(r => r.type === 'Portfolio').length },
+    { id: 'esg', label: 'ESG', icon: 'leaf.fill', badge: reportsList.filter(r => r.type === 'ESG').length },
+    { id: 'new', label: 'Create New', icon: 'square.and.pencil', badge: null }
+  ];
   
   const [reportConfig, setReportConfig] = useState<ReportConfig>({
     topic: {
@@ -118,6 +135,26 @@ export default function Reports() {
     setShowReportModal(false);
   };
   
+  // Handle navigation change with haptic feedback
+  const handleNavChange = (navId: string) => {
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+    
+    setActiveNavItem(navId);
+    
+    if (navId === 'new') {
+      setShowReportModal(true);
+    }
+  };
+  
+  // Filter reports based on active navigation item
+  const filteredReports = activeNavItem === 'all' 
+    ? reportsList 
+    : reportsList.filter(report => 
+        report.type.toLowerCase() === activeNavItem.toLowerCase()
+      );
+  
   const generateStructuredReport = async () => {
     if (!reportConfig.topic.title) {
       // Use haptic feedback for errors on Apple devices
@@ -155,6 +192,45 @@ export default function Reports() {
     } finally {
       setIsGenerating(false);
     }
+  };
+  
+  // SF Symbols horizontal navigation component
+  const SFSymbolsNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className="bg-white dark:bg-gray-900 border border-[hsl(var(--border))] rounded-lg overflow-x-auto mb-4 p-1 shadow-sm">
+        <div className="flex items-center">
+          {reportNavItems.map((item) => (
+            <button 
+              key={item.id}
+              onClick={() => handleNavChange(item.id)}
+              className={`
+                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                ${activeNavItem === item.id 
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                }
+              `}
+            >
+              <div className="relative">
+                <span className="sf-symbol text-xl" role="img">{item.icon}</span>
+                
+                {/* Badge */}
+                {item.badge && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
   };
   
   // Use the appropriate modal component based on the platform
@@ -531,6 +607,11 @@ export default function Reports() {
           <h1 className="text-xl font-normal text-[hsl(var(--foreground))]">Reports</h1>
           <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Access and manage your financial reports</p>
         </div>
+        
+        {/* SF Symbols Navigation for iOS/iPadOS */}
+        {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+          <SFSymbolsNavigation />
+        )}
 
         {/* Reports Control Panel */}
         <div className="bg-white border border-[hsl(var(--border))] rounded shadow-sm p-4">
@@ -593,7 +674,7 @@ export default function Reports() {
                 </tr>
               </thead>
               <tbody>
-                {reportsList.map((report) => (
+                {filteredReports.map((report) => (
                   <tr key={report.id}>
                     <td>
                       <div>

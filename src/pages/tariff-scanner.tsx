@@ -15,7 +15,7 @@ import { useDeviceCapabilities } from '../hooks/useDeviceCapabilities';
 import { useMicroInteractions } from '../hooks/useMicroInteractions';
 import EnhancedTouchButton from '../components/EnhancedTouchButton';
 import { 
-  Briefcase, Map, BarChart2, AlertTriangle, 
+  Folder, Map, BarChart2, AlertTriangle, 
   RefreshCw, Globe, RotateCw, Pause, Play, 
   StopCircle, Workflow, Download, Share2, Bell, 
   HelpCircle, Info
@@ -689,7 +689,7 @@ const TariffScannerPage: NextPage = () => {
                   }`}
                   onClick={() => handleTabChange('general')}
                 >
-                  <Briefcase size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
+                  <Folder size={isMultiTasking && mode === 'slide-over' ? 14 : 16} />
                   <span>ASEAN Tariff Scanner</span>
                 </button>
                 <button
