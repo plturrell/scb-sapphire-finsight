@@ -681,7 +681,7 @@ Generated on: ${new Date().toLocaleDateString()}
             <span className="text-gray-700">{error}</span>
           </div>
         ) : (
-          <React.Fragment>
+          <div className="simulation-content">
             {/* KPI summary cards */}
             <div className={`grid grid-cols-1 gap-4 mb-6 ${isMultiTasking && mode === 'slide-over' ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
               <KPICard 
@@ -929,7 +929,7 @@ Generated on: ${new Date().toLocaleDateString()}
                 </div>
               </div>
             )}
-          </React.Fragment>
+          </div>
         )}
 
         {/* iOS Tab Bar Navigation */}
