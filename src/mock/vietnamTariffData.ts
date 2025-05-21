@@ -117,8 +117,10 @@ export const tradeAgreements = [
   }
 ];
 
-export default {
+const vietnamTariffDataExport = {
   vietnamTariffData,
   tariffCategories,
   tradeAgreements
 };
+
+export default vietnamTariffDataExport;

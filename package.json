@@ -24,9 +24,13 @@
     "date-fns": "^2.30.0",
     "uuid": "^9.0.1",
     "d3": "^7.8.5",
+    "d3-sankey": "^0.12.3",
     "framer-motion": "^10.16.4",
     "axios": "^1.5.1",
-    "@radix-ui/react-dialog": "^1.0.5"
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@chakra-ui/react": "^2.8.1",
+    "@chakra-ui/icons": "^2.1.1",
+    "recharts": "^2.9.0"
   },
   "devDependencies": {
     "@types/node": "^20",
