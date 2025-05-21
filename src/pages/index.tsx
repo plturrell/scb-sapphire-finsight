@@ -4,8 +4,12 @@ import MetricCard from '@/components/MetricCard';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import { useMediaQuery } from 'react-responsive';
 import NetworkAwareImage from '@/components/NetworkAwareImage';
+import useMultiTasking from '@/hooks/useMultiTasking';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { useMicroInteractions } from '@/hooks/useMicroInteractions';
 import {
   BarChart,
   Bar,
@@ -20,6 +24,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+import { RefreshCw, ArrowDownCircle, ChevronRight, Info, Download, Share2 } from 'lucide-react';
 
 // iOS colors for better integration with Apple platforms
 const iosColors = [
@@ -61,6 +66,13 @@ export default function Dashboard() {
   const [isAppleDevice, setIsAppleDevice] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
   const [selectedDataPoint, setSelectedDataPoint] = useState<any>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isSafeAreaInset, setIsSafeAreaInset] = useState(false);
+  
+  // Use multi-tasking hook for iPad modes
+  const { mode, isMultiTasking, orientation, sizeClass } = useMultiTasking();
+  const { isDarkMode, preferences } = useUIPreferences();
+  const { haptic, RippleContainer } = useMicroInteractions();
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   
@@ -81,11 +93,57 @@ export default function Dashboard() {
     setIsAppleDevice(isIOS);
     setIsIPad(isIpad);
     setPlatformDetected(true);
+    
+    // Check for iOS safe area insets (notch/home indicator) for better layout
+    if (isIOS) {
+      // Check for environment with safe area insets (notches, etc)
+      const hasSafeArea = window.innerHeight > window.screen.height || 
+                        (window.screen.height - window.innerHeight > 50);
+      setIsSafeAreaInset(hasSafeArea);
+    }
   }, []);
   
-  // Handle data point selection
+  // Handle refresh data with haptic feedback
+  const handleRefresh = () => {
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    
+    setIsRefreshing(true);
+    
+    // Simulate a data refresh
+    setTimeout(() => {
+      setIsRefreshing(false);
+      
+      // Success haptic feedback when complete
+      if (isAppleDevice) {
+        haptic({ intensity: 'heavy' });
+      }
+    }, 1500);
+  };
+  
+  // Handle data point selection with haptic feedback
   const handleDataPointSelect = (dataPoint: any) => {
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
     setSelectedDataPoint(dataPoint);
+  };
+  
+  // Handle download report with haptic feedback
+  const handleDownload = () => {
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    alert('Downloading report...');
+  };
+  
+  // Handle share dashboard with haptic feedback
+  const handleShare = () => {
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    alert('Sharing dashboard...');
   };
   
   // Render line chart with iOS optimizations
@@ -403,48 +461,101 @@ export default function Dashboard() {
   };
 
   return (
-    <ScbBeautifulUI showNewsBar={!isSmallScreen} pageTitle="SCB FinSight Dashboard" showTabs={isAppleDevice}>
-      <div className="space-y-6">
-        {/* SCB Banner Image - use network-aware image if on Apple devices */}
-        <div className="w-full rounded-lg shadow-sm mb-6 overflow-hidden">
-          {isAppleDevice ? (
-            <NetworkAwareImage 
-              src="/assets/finsight_Banner.png" 
-              alt="FinSight Banner" 
-              width={1200} 
-              height={300}
-              priorityLevel="high"
-              className="w-full" 
-              style={{ objectFit: 'contain' }}
-            />
-          ) : (
-            <Image 
-              src="/assets/finsight_Banner.png" 
-              alt="FinSight Banner" 
-              width={1200} 
-              height={300} 
-              className="w-full" 
-              style={{ objectFit: 'contain' }}
-              priority
-            />
+    <ScbBeautifulUI showNewsBar={!isSmallScreen && !isMultiTasking} pageTitle="SCB FinSight Dashboard" showTabs={isAppleDevice}>
+      <div className={`space-y-6 ${isMultiTasking && mode === 'slide-over' ? 'px-2' : ''} ${isSafeAreaInset && isAppleDevice ? 'pb-6' : ''}`}>
+        {/* Header with action buttons */}
+        <div className={`flex ${isMultiTasking && mode === 'slide-over' ? 'flex-col gap-3' : 'flex-col md:flex-row gap-4'} justify-between items-start md:items-center`}>
+          <div>
+            <h1 className={`${isMultiTasking && mode === 'slide-over' ? 'text-xl' : 'text-2xl'} font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>FinSight Dashboard</h1>
+            <p className={`mt-1 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Financial insights and analytics overview
+            </p>
+          </div>
+          
+          {/* Action Buttons for iPad */}
+          {isAppleDevice && isPlatformDetected && (
+            <div className={`flex items-center ${isMultiTasking && mode === 'slide-over' ? 'gap-2 w-full justify-end' : 'gap-3'}`}>
+              <EnhancedTouchButton
+                onClick={handleRefresh}
+                variant={isDarkMode ? "dark" : "secondary"}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                className="flex items-center gap-1"
+              >
+                <RefreshCw className={`${isRefreshing ? 'animate-spin' : ''} ${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                {!isMultiTasking && <span>Refresh</span>}
+              </EnhancedTouchButton>
+              
+              <EnhancedTouchButton
+                onClick={handleDownload}
+                variant={isDarkMode ? "dark" : "secondary"}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                className="flex items-center gap-1"
+              >
+                <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                {!isMultiTasking && <span>Export</span>}
+              </EnhancedTouchButton>
+              
+              <EnhancedTouchButton
+                onClick={handleShare}
+                variant={isDarkMode ? "dark" : "secondary"}
+                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                className="flex items-center gap-1"
+              >
+                <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                {!isMultiTasking && <span>Share</span>}
+              </EnhancedTouchButton>
+            </div>
           )}
         </div>
+        
+        {/* SCB Banner Image - use network-aware image if on Apple devices */}
+        {(!isMultiTasking || mode !== 'slide-over') && (
+          <div className="w-full rounded-lg shadow-sm mb-6 overflow-hidden">
+            {isAppleDevice ? (
+              <NetworkAwareImage 
+                src="/assets/finsight_Banner.png" 
+                alt="FinSight Banner" 
+                width={1200} 
+                height={300}
+                priorityLevel="high"
+                className="w-full" 
+                style={{ objectFit: 'contain' }}
+              />
+            ) : (
+              <Image 
+                src="/assets/finsight_Banner.png" 
+                alt="FinSight Banner" 
+                width={1200} 
+                height={300} 
+                className="w-full" 
+                style={{ objectFit: 'contain' }}
+                priority
+              />
+            )}
+          </div>
+        )}
         
         {/* Welcome Banner */}
         <div className={`
           flex flex-col sm:flex-row sm:items-center justify-between gap-4 
-          bg-white p-4 border border-[rgb(var(--scb-border))] rounded-lg shadow-sm mb-6
-          ${isAppleDevice ? 'dark:bg-gray-800 dark:border-gray-700' : ''}
+          ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-[rgb(var(--scb-border))]'} 
+          p-4 border rounded-lg shadow-sm mb-6
         `}>
           <div>
-            <p className="text-sm text-[rgb(var(--scb-dark-gray))] dark:text-gray-300">
+            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-[rgb(var(--scb-dark-gray))]'}`}>
               GCFO's digital gateway for data, executive insights driving commercial insights and business decision-making.
             </p>
           </div>
         </div>
 
-        {/* Metric Cards - add platform-specific styling for iOS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Metric Cards - adjust layout for multi-tasking modes */}
+        <div className={`grid ${
+          isMultiTasking && mode === 'slide-over' 
+            ? 'grid-cols-1 gap-3' 
+            : isMultiTasking && mode === 'split-view'
+              ? 'grid-cols-2 gap-3' 
+              : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'
+        }`}>
           <MetricCard
             title="SF Revenue"
             value={120567}

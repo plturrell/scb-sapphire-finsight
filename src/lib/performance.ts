@@ -782,7 +782,7 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 // Hook to detect device memory and CPU cores
-export function useDeviceCapabilities() {
+export function useDeviceHardware() {
   const [deviceMemory, setDeviceMemory] = useState<number | null>(null);
   const [cpuCores, setCpuCores] = useState<number | null>(null);
   const [isLowEndDevice, setIsLowEndDevice] = useState<boolean>(false);

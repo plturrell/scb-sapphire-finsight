@@ -12,6 +12,12 @@ import { haptics } from '@/lib/haptics';
 import { UserRole } from '@/types';
 import { useMediaQuery } from 'react-responsive';
 import { ArrowUp, ArrowDown, TrendingUp, AlertTriangle, Zap, Clock, Download, Share2 } from 'lucide-react';
+import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
+import EnhancedIOSTabBar from '@/components/EnhancedIOSTabBar';
+import EnhancedIOSBreadcrumb from '@/components/EnhancedIOSBreadcrumb';
+import { IconSystemProvider } from '@/components/IconSystem';
+import { ICONS } from '@/components/IconSystem';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
 
 // Simulation page with full MCTS integration for SCB Sapphire FinSight
 export default function FinancialSimulation() {
@@ -35,8 +41,57 @@ export default function FinancialSimulation() {
   const [isAppleDevice, setIsAppleDevice] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
   
+  // Access UI preferences for theme
+  const { isDarkMode: isDark } = useUIPreferences();
+  
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const { mode, isMultiTasking, orientation } = useMultiTasking();
+  
+  // Active tab state for the iOS tab bar
+  const [activeTab, setActiveTab] = useState('analytics');
+  
+  // iOS tab bar configuration
+  const tabItems = [
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      icon: ICONS.HOME,
+      href: '/dashboard',
+    },
+    {
+      key: 'analytics',
+      label: 'Analytics',
+      icon: 'chart.bar.xaxis',
+      activeIcon: 'chart.bar.fill.xaxis',
+      href: '/financial-simulation',
+      sfSymbolVariant: 'fill'
+    },
+    {
+      key: 'knowledge',
+      label: 'Knowledge',
+      icon: 'network',
+      href: '/knowledge-dashboard',
+    },
+    {
+      key: 'reports',
+      label: 'Reports',
+      icon: 'doc.text',
+      href: '/reports',
+      badge: '3',
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: ICONS.SETTINGS,
+      href: '/settings',
+    },
+  ];
+  
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/', icon: 'house' },
+    { label: 'Analytics', href: '/financial-simulation', icon: 'chart.bar' }
+  ];
   
   // Detect platform on mount
   useEffect(() => {
@@ -218,56 +273,66 @@ export default function FinancialSimulation() {
     alert('Opening share dialog...');
   };
 
+  // Handle tab changes
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    // Navigate to the corresponding page
+    const selectedTab = tabItems.find(item => item.key === key);
+    if (selectedTab && selectedTab.href) {
+      router.push(selectedTab.href);
+    }
+  };
+
   return (
-    <ScbBeautifulUI 
-      showNewsBar={!isSmallScreen && !isMultiTasking} 
-      pageTitle="Financial Simulation" 
-      showTabs={isAppleDevice}
-    >
+    <>
       <Head>
-        <title>Financial Simulation | SCB Sapphire FinSight</title>
+        <title>Financial Simulation | SCB Sapphire</title>
+        <meta name="description" content="Monte Carlo financial simulation and analysis for optimized investment strategies" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </Head>
-      
-      <div className={`${isMultiTasking && mode === 'slide-over' ? 'px-3 py-2' : 'px-6 py-4'} max-w-6xl mx-auto`}>
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-[rgb(var(--scb-primary))]">Monte Carlo Financial Simulation</h1>
+      <ScbBeautifulUI showSearchBar={false} showTabs={false} pageTitle="Financial Simulation">
+        <IconSystemProvider>
+        {isAppleDevice && isPlatformDetected ? (
+          <div className={`min-h-screen ${isSmallScreen ? 'pb-20' : 'pb-16'} ${isPlatformDetected ? (isDark ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900') : ''}`}>
+          {/* iOS Navigation Bar */}
+          <EnhancedIOSNavBar 
+            title="Financial Simulation"
+            subtitle="Monte Carlo Analysis"
+            largeTitle={true}
+            blurred={true}
+            showBackButton={true}
+            onBackButtonPress={() => router.push('/dashboard')}
+            theme={isDark ? 'dark' : 'light'}
+            rightActions={[
+              {
+                icon: 'square.and.arrow.down',
+                label: 'Export',
+                onPress: exportSimulationReport,
+                disabled: !summaryMetrics.simulationCompleted,
+                variant: 'primary'
+              },
+              {
+                icon: 'square.and.arrow.up',
+                label: 'Share',
+                onPress: handleShareClick
+              }
+            ]}
+            respectSafeArea={true}
+            hapticFeedback={true}
+          />
           
-          <div className="flex items-center space-x-2">
-            {isAppleDevice ? (
-              <>
-                <EnhancedTouchButton 
-                  onClick={exportSimulationReport}
-                  disabled={!summaryMetrics.simulationCompleted}
-                  variant="primary"
-                  className="flex items-center gap-1"
-                  size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
-                >
-                  <Download className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
-                  <span>Export Report</span>
-                </EnhancedTouchButton>
-                
-                <EnhancedTouchButton
-                  onClick={handleShareClick}
-                  variant="secondary"
-                  className="flex items-center gap-1"
-                  size={isMultiTasking && mode === 'slide-over' ? 'sm' : 'default'}
-                >
-                  <Share2 className={`${isMultiTasking && mode === 'slide-over' ? 'w-3 h-3' : 'w-4 h-4'}`} />
-                  <span>Share</span>
-                </EnhancedTouchButton>
-              </>
-            ) : (
-              <button 
-                onClick={exportSimulationReport}
-                disabled={!summaryMetrics.simulationCompleted}
-                className={`fiori-btn ${summaryMetrics.simulationCompleted ? 'fiori-btn-primary' : 'fiori-btn-disabled'} flex items-center gap-1`}
-              >
-                <Download className="w-4 h-4" />
-                Export Report
-              </button>
-            )}
+          {/* Breadcrumb Navigation */}
+          <div className={`px-4 py-2 ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+            <EnhancedIOSBreadcrumb 
+              items={breadcrumbItems}
+              showIcons={true}
+              hapticFeedback={true}
+              theme={isDark ? 'dark' : 'light'}
+            />
           </div>
-        </div>
+          
+          <div className={`${isMultiTasking && mode === 'slide-over' ? 'px-3 py-2' : 'px-6 py-4'} max-w-6xl mx-auto`}>
+            {/* The main content remains mostly the same, just remove the top heading since it's in the navbar */}
         
         {loading ? (
           <div className="flex justify-center items-center h-64">
@@ -421,7 +486,23 @@ export default function FinancialSimulation() {
             )}
           </>
         )}
+
+        {/* iOS Tab Bar Navigation */}
+        {isAppleDevice && isPlatformDetected && (
+          <EnhancedIOSTabBar
+            items={tabItems}
+            currentTab={activeTab}
+            onChange={handleTabChange}
+            respectSafeArea={true}
+            hapticFeedback={true}
+            blurred={true}
+            showLabels={true}
+            theme={isDark ? 'dark' : 'light'}
+            floating={true}
+          />
+        )}
       </div>
+      </IconSystemProvider>
     </ScbBeautifulUI>
   );
 }

@@ -588,15 +588,15 @@ const TariffScannerPage: NextPage = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <Head>
         <title>Tariff Scanner | SCB Sapphire FinSight</title>
         <meta name="description" content="Real-time tariff monitoring and impact analysis for ASEAN countries with Vietnam focus" />
       </Head>
       
       <ScbBeautifulUI 
-        showNewsBar={!isMultiTasking} 
-        pageTitle="Tariff Scanner" 
+        showNewsBar={!isMultiTasking}
+        pageTitle="Tariff Scanner"
         showTabs={isAppleDevice}
       >
         {loadingState === 'loading' && (
@@ -741,7 +741,7 @@ const TariffScannerPage: NextPage = () => {
                             onClick={() => handleRunSimulation({
                               iterations: 5000,
                               timeHorizon: 24,
-                              confidenceRequired: a0.9
+                              confidenceRequired: 0.9
                             })}
                             className="bg-[rgb(var(--scb-honolulu-blue))] text-white py-1.5 px-3 text-sm font-medium rounded flex items-center gap-1.5"
                           >
@@ -1014,7 +1014,7 @@ const TariffScannerPage: NextPage = () => {
           </div>
         )}
       </ScbBeautifulUI>
-    </>
+    </React.Fragment>
   );
 };
 

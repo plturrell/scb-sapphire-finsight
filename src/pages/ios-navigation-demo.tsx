@@ -182,9 +182,10 @@ export default function IOSNavigationDemo() {
     }
   };
 
-  const handleTabChange = (key: string) => {
-    setActiveTab(key);
-  };
+  // This function is already defined above
+  // const handleTabChange = (key: string) => {
+  //   setActiveTab(key);
+  // };
 
   return (
     <IconSystemProvider>

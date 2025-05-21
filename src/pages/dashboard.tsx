@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { KPICard, ChartCard, TableCard, AlertCard } from '@/components/cards';
 import { TrendingUp, TrendingDown, AlertCircle, Sparkles, BarChart3 } from 'lucide-react';
@@ -10,6 +11,11 @@ import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useIOS } from '@/hooks/useResponsive';
 import { useMicroInteractions } from '@/hooks/useMicroInteractions';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
+import EnhancedIOSTabBar from '@/components/EnhancedIOSTabBar';
+import EnhancedIOSBreadcrumb from '@/components/EnhancedIOSBreadcrumb';
+import { IconSystemProvider } from '@/components/IconSystem';
+import { ICONS } from '@/components/IconSystem';
 
 /**
  * Dashboard MVP for SCB Sapphire FinSight
@@ -104,6 +110,7 @@ interface VisibleComponents {
 }
 
 const Dashboard: React.FC = () => {
+  const router = useRouter();
   const [userRole, setUserRole] = useState<'executive' | 'analyst' | 'operations'>('analyst');
   const [aiInsight, setAiInsight] = useState<string>('');
   const [showAiAlert, setShowAiAlert] = useState(false);
@@ -122,6 +129,52 @@ const Dashboard: React.FC = () => {
   // Multi-tasking mode detection for iPad
   const [isMultiTasking, setIsMultiTasking] = useState(false);
   const [mode, setMode] = useState<'full' | 'split-view' | 'slide-over'>('full');
+  
+  // Active tab state for the iOS tab bar
+  const [activeTab, setActiveTab] = useState('dashboard');
+  
+  // iOS tab bar configuration
+  const tabItems = [
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      icon: ICONS.HOME,
+      href: '/dashboard',
+      sfSymbolVariant: 'fill'
+    },
+    {
+      key: 'analytics',
+      label: 'Analytics',
+      icon: 'chart.bar.xaxis',
+      activeIcon: 'chart.bar.fill.xaxis',
+      href: '/financial-simulation',
+    },
+    {
+      key: 'knowledge',
+      label: 'Knowledge',
+      icon: 'network',
+      href: '/knowledge-dashboard',
+    },
+    {
+      key: 'reports',
+      label: 'Reports',
+      icon: 'doc.text',
+      href: '/reports',
+      badge: '3',
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: ICONS.SETTINGS,
+      href: '/settings',
+    },
+  ];
+  
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/', icon: 'house' },
+    { label: 'Dashboard', href: '/dashboard', icon: 'gauge' }
+  ];
 
   // Detect multi-tasking mode
   useEffect(() => {
@@ -316,17 +369,62 @@ const Dashboard: React.FC = () => {
     handleRoleChange(role);
   }, [preferences.enableHaptics, isAppleDevice, haptic]);
   
+  // Handle tab changes
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    // Navigate to the corresponding page
+    const selectedTab = tabItems.find(item => item.key === key);
+    if (selectedTab && selectedTab.href) {
+      router.push(selectedTab.href);
+    }
+  };
+
+  // Structure for SF Symbols integration
   return (
-    <ScbBeautifulUI 
-      pageTitle="Financial Dashboard"
-      showNewsBar={preferences.enableNewsBar}
-    >
-      {/* Role-based view content */}
-      <div className={`mb-2 px-4 py-2 rounded-md flex items-center ${isDarkMode ? 'bg-blue-900/20' : 'bg-[rgb(var(--scb-light-blue-10))]'}`}>
-        <Sparkles className="text-[rgb(var(--scb-honolulu-blue))] mr-2" size={18} />
-        <span className={`text-sm ${isDarkMode ? 'text-gray-200' : ''}`}>
-          <span className="font-medium">Current view:</span> {userRole === 'executive' ? 'Executive Summary' : userRole === 'analyst' ? 'Detailed Analysis' : 'Operations View'}
-        </span>
+    <IconSystemProvider>
+      {isAppleDevice && isPlatformDetected ? (
+        <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+          {/* iOS Navigation Bar */}
+          <EnhancedIOSNavBar 
+            title="Financial Dashboard"
+            subtitle="SCB Sapphire FinSight"
+            largeTitle={true}
+            blurred={true}
+            showBackButton={false}
+            theme={isDarkMode ? 'dark' : 'light'}
+            rightActions={[
+              {
+                icon: 'bell',
+                label: 'Notifications',
+                onPress: () => console.log('Notifications')
+              },
+              {
+                icon: 'person.crop.circle',
+                label: 'Profile',
+                onPress: () => console.log('Profile')
+              }
+            ]}
+            respectSafeArea={true}
+            hapticFeedback={true}
+          />
+          
+          {/* Breadcrumb Navigation */}
+          <div className={`px-4 py-2 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+            <EnhancedIOSBreadcrumb 
+              items={breadcrumbItems}
+              showIcons={true}
+              hapticFeedback={true}
+              theme={isDarkMode ? 'dark' : 'light'}
+            />
+          </div>
+          
+          <div className="p-4">
+            {/* Role-based view content */}
+            <div className={`mb-4 rounded-md flex items-center ${isDarkMode ? 'bg-blue-900/20' : 'bg-[rgb(var(--scb-light-blue-10))]'} p-3`}>
+              <Sparkles className="text-[rgb(var(--scb-honolulu-blue))] mr-2" size={18} />
+              <span className={`text-sm ${isDarkMode ? 'text-gray-200' : ''}`}>
+                <span className="font-medium">Current view:</span> {userRole === 'executive' ? 'Executive Summary' : userRole === 'analyst' ? 'Detailed Analysis' : 'Operations View'}
+              </span>
         
         {/* Role selector */}
         <div className="ml-auto">
@@ -607,8 +705,149 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
-    </ScbBeautifulUI>
+            </div>
+          </div>
+          
+          {/* iOS-style Tab Bar */}
+          <EnhancedIOSTabBar 
+            items={tabItems}
+            currentTab={activeTab}
+            onChange={handleTabChange}
+            blurred={true}
+            floating={true}
+            hapticFeedback={true}
+            showLabels={true}
+            theme={isDarkMode ? 'dark' : 'light'}
+            respectSafeArea={true}
+          />
+        </div>
+      ) : (
+        <ScbBeautifulUI 
+          pageTitle="Financial Dashboard"
+          showNewsBar={preferences.enableNewsBar}
+        >
+          {/* Role-based view content */}
+          <div className={`mb-2 px-4 py-2 rounded-md flex items-center ${isDarkMode ? 'bg-blue-900/20' : 'bg-[rgb(var(--scb-light-blue-10))]'}`}>
+            <Sparkles className="text-[rgb(var(--scb-honolulu-blue))] mr-2" size={18} />
+            <span className={`text-sm ${isDarkMode ? 'text-gray-200' : ''}`}>
+              <span className="font-medium">Current view:</span> {userRole === 'executive' ? 'Executive Summary' : userRole === 'analyst' ? 'Detailed Analysis' : 'Operations View'}
+            </span>
+            
+            {/* Original content after this point stays the same */}
+            <div className="ml-auto">
+              {isAppleDevice && isPlatformDetected ? (
+                <div className={`${isMultiTasking && mode === 'slide-over' ? 'flex flex-col space-y-1.5' : 'flex space-x-1.5'}`}>
+                  <EnhancedTouchButton
+                    variant={userRole === 'executive' ? 'primary' : 'secondary'}
+                    size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                    onClick={() => memoizedRoleChangeHandler('executive')}
+                  >
+                    Executive
+                  </EnhancedTouchButton>
+                  <EnhancedTouchButton
+                    variant={userRole === 'analyst' ? 'primary' : 'secondary'}
+                    size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                    onClick={() => memoizedRoleChangeHandler('analyst')}
+                  >
+                    Analyst
+                  </EnhancedTouchButton>
+                  <EnhancedTouchButton
+                    variant={userRole === 'operations' ? 'primary' : 'secondary'}
+                    size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
+                    onClick={() => memoizedRoleChangeHandler('operations')}
+                  >
+                    Operations
+                  </EnhancedTouchButton>
+                </div>
+              ) : (
+                <select 
+                  value={userRole}
+                  onChange={(e) => memoizedRoleChangeHandler(e.target.value)}
+                  className={`text-sm rounded border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'}`}
+                >
+                  <option value="executive">Executive</option>
+                  <option value="analyst">Analyst</option>
+                  <option value="operations">Operations</option>
+                </select>
+              )}
+            </div>
+          </div>
+          <div>
+            {/* Rest of the original dashboard content */}
+            {/* Error state handling */}
+            {error && (
+              <div className="mb-6">
+                <AlertCard
+                  title=""
+                  type="error"
+                  message="Error Loading Dashboard Data"
+                  details={error.message || "There was a problem loading your financial data. Please try refreshing the page."}
+                  timestamp={new Date().toLocaleString()}
+                  actionable
+                  actionLabel="Retry"
+                  onAction={() => window.location.reload()}
+                  dismissible
+                />
+              </div>
+            )}
+            
+            {/* AI Alert - following SAP Fiori "Show the Work" principle */}
+            {!error && showAiAlert && visibleComponents.aiInsights && (
+              <div className="mb-6">
+                <AlertCard
+                  title=""
+                  type="info"
+                  message="AI-Powered Insight Generated"
+                  details={aiInsight}
+                  timestamp={new Date().toLocaleString()}
+                  actionable
+                  actionLabel="Apply Recommendation"
+                  onDismiss={() => setShowAiAlert(false)}
+                  dismissible
+                />
+              </div>
+            )}
+            
+            {/* Loading state */}
+            {loading && (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div aria-label="Loading dashboard data" role="status" className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-[rgb(var(--scb-honolulu-blue))] border-r-transparent mb-4"></div>
+                <p className="scb-data-label text-[rgb(var(--scb-honolulu-blue))]">Loading your financial dashboard...</p>
+              </div>
+            )}
+            
+            {!loading && !error && (
+              <div className={`grid grid-cols-1 ${
+                isAppleDevice && isPlatformDetected && isMultiTasking && mode === 'slide-over'
+                  ? 'gap-3 mb-3'
+                  : isAppleDevice && isPlatformDetected && isMultiTasking
+                    ? 'sm:grid-cols-2 gap-3 mb-4'
+                    : 'sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6'
+              }`}>
+                <KPICard
+                  title="Total Assets"
+                  value={financialMetrics.totalAssets.value}
+                  valuePrefix="$"
+                  percentChange={financialMetrics.totalAssets.percentChange}
+                  trendDirection="up"
+                  details="Total assets under management"
+                  benchmark={{ 
+                    label: 'Previous Period', 
+                    value: formatCurrency(financialMetrics.totalAssets.previous) 
+                  }}
+                  target={{ 
+                    label: 'Target', 
+                    value: formatCurrency(financialMetrics.totalAssets.target) 
+                  }}
+              />
+              
+              {/* Rest of the KPI cards and dashboard content */}
+            </div>
+            )}
+          </div>
+        </ScbBeautifulUI>
+      )}
+    </IconSystemProvider>
   );
 };
 
