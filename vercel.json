@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "deploymentTimestamp": "2025-05-21T09:40:30Z",
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
   "framework": "nextjs",
