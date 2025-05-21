@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/force-styling.js",
-    "build": "node scripts/safe-build.js",
+    "build": "next build && next export",
     "postbuild": "node scripts/fix-source-maps.js",
     "start": "next start",
     "lint": "next lint",
