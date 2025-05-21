@@ -11,6 +11,7 @@ import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { haptics } from '@/lib/haptics';
 import { useMediaQuery } from 'react-responsive';
 import { Search, Filter, ArrowUpDown, Plus, Database, RefreshCw, DownloadCloud, Share2 } from '@/components/IconExports';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 
 // Dummy data for demonstration
 const dataProducts = [
@@ -70,6 +71,7 @@ const DataProductsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
   
   // Categories for filtering
   const categories = ['All', 'Financial', 'Accounting', 'Controlling', 'Analytics'];
@@ -79,9 +81,71 @@ const DataProductsPage: React.FC = () => {
   const { isAppleDevice, deviceType } = useDeviceCapabilities();
   const { isDarkMode, preferences } = useUIPreferences();
   const { haptic } = useMicroInteractions();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Effect to detect platform
+  React.useEffect(() => {
+    setPlatformDetected(true);
+  }, []);
   
   // Determine if it's an iPad
   const isIPad = deviceType === 'tablet' && isAppleDevice;
+  
+  // Data product categories with SF Symbols icons
+  const dataProductCategories = [
+    { id: 'All', label: 'All Data', icon: 'server.rack', badge: dataProducts.length.toString() },
+    { id: 'Financial', label: 'Financial', icon: 'dollarsign.circle.fill', badge: dataProducts.filter(p => p.category === 'Financial').length.toString() },
+    { id: 'Accounting', label: 'Accounting', icon: 'doc.plaintext.fill', badge: dataProducts.filter(p => p.category === 'Accounting').length.toString() },
+    { id: 'Controlling', label: 'Controlling', icon: 'slider.horizontal.3', badge: dataProducts.filter(p => p.category === 'Controlling').length.toString() },
+    { id: 'Analytics', label: 'Analytics', icon: 'chart.bar.fill', badge: dataProducts.filter(p => p.category === 'Analytics').length.toString() }
+  ];
+  
+  // SF Symbols Data Products Categories Navigation component
+  const SFSymbolsDataProductsNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`rounded-lg overflow-x-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1 mb-4`}>
+        <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
+          {dataProductCategories.map((category) => (
+            <button 
+              key={category.id}
+              onClick={() => handleCategorySelect(category.id)}
+              className={`
+                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                ${(!selectedCategory && category.id === 'All') || category.id === selectedCategory
+                  ? isDarkMode 
+                    ? 'bg-blue-900/30 text-blue-400' 
+                    : 'bg-blue-50 text-blue-600'
+                  : isDarkMode 
+                    ? 'text-gray-300 hover:bg-gray-700' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }
+              `}
+            >
+              <div className="relative">
+                <span className="sf-symbol text-xl" role="img">{category.icon}</span>
+                
+                {/* Badge */}
+                {category.badge && (
+                  <span className={`
+                    absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
+                    flex items-center justify-center px-1
+                    ${isDarkMode ? 'bg-blue-600' : 'bg-blue-500'}
+                  `}>
+                    {category.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
   
   // Filter data products based on search query and category
   const filteredProducts = dataProducts.filter(product => {

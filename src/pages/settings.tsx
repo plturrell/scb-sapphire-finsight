@@ -5,17 +5,41 @@ import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import useMultiTasking from '@/hooks/useMultiTasking';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedAppleTouchButton from '@/components/EnhancedAppleTouchButton';
+import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
 import { haptics } from '@/lib/haptics';
+import { useSafeArea, safeAreaCss } from '@/hooks/useSafeArea';
+import { useApplePhysics, appleAnimations } from '@/hooks/useApplePhysics';
 import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Eye, Zap, Volume2, Bell, Check } from 'lucide-react';
 
 const SettingsPage = () => {
   const { preferences, setPreference, resetPreferences, isDarkMode } = useUIPreferences();
-  const { deviceType, isAppleDevice, browserName } = useDeviceCapabilities();
+  const { deviceType, isAppleDevice, browserName, prefersColorScheme, prefersReducedMotion } = useDeviceCapabilities();
   const [activeTab, setActiveTab] = useState(0);
-  const { mode, isMultiTasking, orientation } = useMultiTasking();
+  const { mode, isMultiTasking, orientation, windowWidth, windowHeight } = useMultiTasking();
   const [isMounted, setIsMounted] = useState(false);
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
+  
+  // Add iOS-specific hooks
+  const { safeArea, hasDynamicIsland, hasHomeIndicator } = useSafeArea();
+  const physics = useApplePhysics({ motion: 'standard', respectReduceMotion: true });
+  
+  // Platform detection
+  const isiOS = deviceType === 'mobile' && isAppleDevice;
+  const isiPad = deviceType === 'tablet' && isAppleDevice;
+  const isApplePlatform = isiOS || isiPad;
+  
+  // Show settings confirmation sheet (iOS style)
+  const [showConfirmationSheet, setShowConfirmationSheet] = useState(false);
+  
+  // Active settings section for iOS navigation
+  const [activeSection, setActiveSection] = useState<string>('General');
+  
+  // Touch tracking
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const lastScrollTop = useRef<number>(0);
+  const [navbarHidden, setNavbarHidden] = useState(false);
   
   // Save changes notification
   const [showSaveNotice, setShowSaveNotice] = useState(false);
@@ -32,7 +56,55 @@ const SettingsPage = () => {
     
     setIsIPad(isIpad);
     setPlatformDetected(true);
-  }, []);
+    
+    // Initialize scroll listener for iOS-style navigation hiding
+    if (isAppleDevice) {
+      const handleScroll = () => {
+        if (typeof window !== 'undefined') {
+          const scrollTop = window.scrollY;
+          const scrollDelta = scrollTop - lastScrollTop.current;
+          
+          // Hide navbar when scrolling down, show when scrolling up
+          if (scrollDelta > 10 && scrollTop > 100) {
+            setNavbarHidden(true);
+          } else if (scrollDelta < -10 || scrollTop < 50) {
+            setNavbarHidden(false);
+          }
+          
+          lastScrollTop.current = scrollTop;
+        }
+      };
+      
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isAppleDevice]);
+  
+  // iOS-specific gesture handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    setTouchStartY(e.touches[0].clientY);
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isApplePlatform || touchStartY === null) return;
+    const currentY = e.touches[0].clientY;
+    const diffY = touchStartY - currentY;
+    
+    // If scrolling down, hide navbar
+    if (diffY > 20) {
+      setNavbarHidden(true);
+    } else if (diffY < -20) {
+      setNavbarHidden(false);
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    if (!isApplePlatform) return;
+    setTouchStartY(null);
+  };
   
   // Debounce timer ref for preventing UI flicker during theme changes
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -53,13 +125,25 @@ const SettingsPage = () => {
       setShowSaveNotice(false);
       noticeTimerRef.current = null;
     }, 3000);
-  }, []);
+    
+    // On iOS, play success haptic
+    if (isApplePlatform && preferences.enableHaptics) {
+      haptics.success();
+    }
+  }, [isApplePlatform, preferences.enableHaptics]);
   
   // Show save notification when preferences change
   const handlePreferenceChange = useCallback(<K extends keyof typeof preferences>(key: K, value: typeof preferences[K]) => {
-    // Only provide haptic feedback if enabled and on supported devices
-    if (preferences.enableHaptics && isAppleDevice) {
-      haptics.selection();
+    // Provide appropriate haptic feedback based on setting type
+    if (preferences.enableHaptics && isApplePlatform) {
+      // Different haptic patterns for different settings types
+      if (key === 'theme' || key === 'chartTheme' || key === 'accentColor') {
+        haptics.impact('medium');
+      } else if (typeof value === 'boolean') {
+        haptics.toggle();
+      } else {
+        haptics.selection();
+      }
     }
     
     // For theme changes, use debouncing to prevent flicker
@@ -78,18 +162,31 @@ const SettingsPage = () => {
     }
     
     showSaveNotification();
-  }, [preferences.enableHaptics, isAppleDevice, setPreference, showSaveNotification]);
+  }, [preferences.enableHaptics, isApplePlatform, setPreference, showSaveNotification]);
   
-  // Reset all preferences
+  // Reset all preferences with confirmation for iOS
   const handleResetPreferences = useCallback(() => {
+    if (isApplePlatform) {
+      // Show iOS-style confirmation sheet
+      setShowConfirmationSheet(true);
+    } else {
+      // Direct reset for non-Apple platforms
+      resetPreferences();
+      showSaveNotification();
+    }
+  }, [isApplePlatform, resetPreferences, showSaveNotification]);
+  
+  // Confirm reset preferences
+  const confirmReset = useCallback(() => {
     // Provide haptic feedback on Apple devices
-    if (preferences.enableHaptics && isAppleDevice) {
+    if (preferences.enableHaptics && isApplePlatform) {
       haptics.warning();
     }
     
     resetPreferences();
+    setShowConfirmationSheet(false);
     showSaveNotification();
-  }, [preferences.enableHaptics, isAppleDevice, resetPreferences, showSaveNotification]);
+  }, [preferences.enableHaptics, isApplePlatform, resetPreferences, showSaveNotification]);
   
   // Clean up timers on unmount
   useEffect(() => {
@@ -107,8 +204,12 @@ const SettingsPage = () => {
   const handleTabChange = (index: number) => {
     setActiveTab(index);
     
+    // Update active section for iOS navigation
+    const sections = ['General', 'Appearance', 'Layout', 'Performance', 'Notifications'];
+    setActiveSection(sections[index]);
+    
     // Provide haptic feedback on Apple devices
-    if (isAppleDevice) {
+    if (isApplePlatform) {
       haptics.selection();
     }
   };
