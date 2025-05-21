@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
-import { Sparkles, Info, Edit, Download, RefreshCw, Maximize2, ZoomIn, ZoomOut, Filter, X } from 'lucide-react';
+import { Sparkles, Info, Edit, Download, RefreshCw, Maximize2, ZoomIn, ZoomOut, Filter, X, Compass, Share2 } from 'lucide-react';
+import { InlineSpinner } from './LoadingSpinner';
 
 // Extend the SimulationNodeDatum with our custom properties
 interface GraphNode extends d3.SimulationNodeDatum {
@@ -50,41 +51,16 @@ interface ForceDirectedGraphProps {
   title?: string;
   showControls?: boolean;
   showLegend?: boolean;
+  isLoading?: boolean;
   onNodeClick?: (node: GraphNode) => void;
   onRegenerateClick?: () => void;
+  className?: string;
 }
 
-// Horizon color palette - follows SAP Fiori Horizon design
-const horizonColors = {
-  blue: 'rgb(13, 106, 168)', // #0D6AA8
-  teal: 'rgb(0, 112, 122)', // #00707A
-  green: 'rgb(43, 83, 0)', // #2B5300
-  purple: 'rgb(88, 64, 148)', // #584094
-  red: 'rgb(195, 0, 51)', // #C30033
-  yellow: 'rgb(245, 152, 0)', // #F59800
-  neutralGray: 'rgb(74, 84, 86)', // #4A5456
-  lightGray: 'rgb(242, 242, 242)', // #F2F2F2
-  // SCB colors
-  scbBlue: 'rgb(15, 40, 109)', // SCB primary blue
-  scbAccent: 'rgb(76, 165, 133)', // SCB accent green
-  scbLightBlue: 'rgb(42, 120, 188)', // SCB light blue
-};
-
-// Group colors mapping
-const getNodeColor = (group: string): string => {
-  const colorMap: { [key: string]: string } = {
-    'financial': horizonColors.blue,
-    'market': horizonColors.teal,
-    'regulatory': horizonColors.purple,
-    'economic': horizonColors.green,
-    'risk': horizonColors.red,
-    'technology': horizonColors.scbLightBlue,
-    'client': horizonColors.yellow,
-    'internal': horizonColors.scbBlue,
-  };
-  return colorMap[group.toLowerCase()] || horizonColors.neutralGray;
-};
-
+/**
+ * Force Directed Graph with SCB beautiful styling
+ * Used for knowledge graph visualization with support for AI-generated data
+ */
 const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
   data,
   width = 800,
@@ -92,8 +68,10 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
   title = 'Knowledge Graph',
   showControls = true,
   showLegend = true,
+  isLoading = false,
   onNodeClick,
   onRegenerateClick,
+  className = ''
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
@@ -115,7 +93,7 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
   const simulationRef = useRef<d3.Simulation<GraphNode, GraphLink> | null>(null);
 
   useEffect(() => {
-    if (!svgRef.current || !data.nodes.length) return;
+    if (!svgRef.current || !data.nodes.length || isLoading) return;
 
     // Clear any existing chart
     d3.select(svgRef.current).selectAll('*').remove();
@@ -147,7 +125,34 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
     const g = svg.append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Create links
+    // Add a subtle grid pattern for the background
+    const grid = g.append('g')
+      .attr('class', 'grid')
+      .selectAll('line')
+      .data(d3.range(0, innerWidth, 50))
+      .enter()
+      .append('line')
+      .attr('x1', d => d)
+      .attr('y1', 0)
+      .attr('x2', d => d)
+      .attr('y2', innerHeight)
+      .attr('stroke', 'rgba(var(--scb-border), 0.3)')
+      .attr('stroke-width', 0.5);
+
+    const gridHorizontal = g.append('g')
+      .attr('class', 'grid')
+      .selectAll('line')
+      .data(d3.range(0, innerHeight, 50))
+      .enter()
+      .append('line')
+      .attr('x1', 0)
+      .attr('y1', d => d)
+      .attr('x2', innerWidth)
+      .attr('y2', d => d)
+      .attr('stroke', 'rgba(var(--scb-border), 0.3)')
+      .attr('stroke-width', 0.5);
+
+    // Create links with SCB styling
     const linkGroup = g.append('g')
       .attr('class', 'links');
       
@@ -155,13 +160,13 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
       .selectAll('line')
       .data(data.links)
       .join('line')
-      .attr('stroke', d => d.aiGenerated ? horizonColors.scbAccent : horizonColors.neutralGray)
+      .attr('stroke', d => d.aiGenerated ? 'rgb(var(--scb-american-green))' : 'rgb(var(--scb-dark-gray))')
       .attr('stroke-opacity', d => d.aiGenerated ? 0.8 : 0.5)
       .attr('stroke-width', d => Math.sqrt(d.value) * 0.7)
       .attr('class', d => d.aiGenerated ? 'ai-generated-link' : '')
       .attr('stroke-dasharray', d => d.aiGenerated ? '5,3' : '0');
 
-    // Create nodes
+    // Create nodes with SCB styling
     const nodeGroup = g.append('g')
       .attr('class', 'nodes');
       
@@ -171,7 +176,7 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
       .join('circle')
       .attr('r', d => 4 + d.value * 1.5)
       .attr('fill', d => getNodeColor(d.group))
-      .attr('stroke', d => d.aiGenerated ? horizonColors.scbAccent : '#fff')
+      .attr('stroke', d => d.aiGenerated ? 'rgb(var(--scb-american-green))' : '#fff')
       .attr('stroke-width', d => d.aiGenerated ? 2 : 1)
       .attr('opacity', 0.9)
       .call(drag(simulationRef) as any)
@@ -193,16 +198,16 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
         
         node.attr('opacity', n => connectedNodeIds.has(n.id) ? 1 : 0.3);
         
-        // Show tooltip
+        // Show tooltip with SCB styling
         let tooltipContent = `
-          <div class="font-medium text-[rgb(var(--scb-primary))]">${d.label}</div>
-          <div class="text-sm mt-1">Group: ${d.group}</div>
-          <div class="text-sm">Value: ${d.value}</div>
+          <div class="font-medium text-[rgb(var(--scb-honolulu-blue))]">${d.label}</div>
+          <div class="text-sm mt-1 text-[rgb(var(--scb-dark-gray))]">Group: ${d.group}</div>
+          <div class="text-sm text-[rgb(var(--scb-dark-gray))]">Value: ${d.value}</div>
         `;
         
         if (d.aiGenerated) {
           tooltipContent += `
-            <div class="text-xs mt-1 flex items-center gap-1 text-[${horizonColors.scbAccent}]">
+            <div class="text-xs mt-1 flex items-center gap-1 text-[rgb(var(--scb-american-green))]">
               <span>AI generated (confidence: ${(d.confidence || 0) * 100}%)</span>
             </div>
           `;
@@ -210,7 +215,7 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
         
         if (d.description) {
           tooltipContent += `
-            <div class="text-xs mt-1">${d.description}</div>
+            <div class="text-xs mt-1 text-[rgb(var(--scb-dark-gray))]">${d.description}</div>
           `;
         }
         
@@ -234,7 +239,7 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
         if (onNodeClick) onNodeClick(d);
       });
 
-    // Add text labels for larger nodes
+    // Add text labels for larger nodes with SCB font styling
     const labels = nodeGroup
       .selectAll('text')
       .data(data.nodes.filter(d => d.value > 3)) // Only label larger nodes
@@ -242,27 +247,27 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
       .attr('dx', 10)
       .attr('dy', '.35em')
       .text(d => d.label)
-      .attr('font-size', '9px')
-      .attr('font-family', 'var(--fiori-font-family, "72", "72full", Arial, Helvetica, sans-serif)')
-      .attr('fill', 'rgb(74, 84, 86)')
+      .attr('font-size', '10px')
+      .attr('font-family', '"SCProsperSans", "72", "72full", Arial, Helvetica, sans-serif')
+      .attr('fill', 'rgb(var(--scb-dark-gray))')
       .attr('pointer-events', 'none');
     
-    // Add AI indicators for AI-generated nodes
+    // Add AI indicators for AI-generated nodes with SCB styling
     const aiMarkers = nodeGroup
       .selectAll('.ai-marker')
       .data(data.nodes.filter(d => d.aiGenerated))
       .join('circle')
       .attr('class', 'ai-marker')
       .attr('r', 3)
-      .attr('fill', horizonColors.scbAccent)
+      .attr('fill', 'rgb(var(--scb-american-green))')
       .attr('stroke', '#fff')
       .attr('stroke-width', 1)
       .attr('pointer-events', 'none');
 
-    // Create the force simulation
+    // Create the force simulation with improved parameters
     const simulation = d3.forceSimulation(data.nodes)
-      .force('link', d3.forceLink<GraphNode, GraphLink>(data.links).id(d => d.id).distance(70))
-      .force('charge', d3.forceManyBody().strength(-150))
+      .force('link', d3.forceLink<GraphNode, GraphLink>(data.links).id(d => d.id).distance(80))
+      .force('charge', d3.forceManyBody().strength(-180))
       .force('center', d3.forceCenter(innerWidth / 2, innerHeight / 2))
       .force('collision', d3.forceCollide().radius(d => 6 + (d as GraphNode).value * 1.5))
       .on('tick', () => {
@@ -319,7 +324,7 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
         simulationRef.current.stop();
       }
     };
-  }, [data, width, height, onNodeClick]);
+  }, [data, width, height, isLoading, onNodeClick]);
 
   // Handle zoom controls
   const handleZoomIn = () => {
@@ -344,115 +349,137 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
     setZoomLevel(1);
   };
 
+  // Group colors mapping with SCB colors
+  const getNodeColor = (group: string): string => {
+    const colorMap: { [key: string]: string } = {
+      'financial': 'rgb(var(--scb-honolulu-blue))',
+      'market': 'rgb(0, 112, 122)', // teal
+      'regulatory': 'rgb(88, 64, 148)', // purple
+      'economic': 'rgb(var(--scb-american-green))',
+      'risk': 'rgb(var(--scb-muted-red))',
+      'technology': 'rgb(42, 120, 188)', // light blue
+      'client': 'rgb(245, 152, 0)', // yellow
+      'internal': 'rgb(15, 40, 109)', // SCB primary blue
+    };
+    return colorMap[group.toLowerCase()] || 'rgb(var(--scb-dark-gray))';
+  };
+
   return (
-    <div className="h-full flex flex-col">
-      {/* Control panel - follows SAP Fiori Horizon style */}
+    <div className={`h-full flex flex-col ${className}`}>
+      {/* Control panel with SCB styling */}
       {showControls && (
-        <div className="flex justify-between items-center mb-3">
-          <div className="flex-1">
-            <h3 className="fiori-tile-title text-lg text-[rgb(var(--scb-primary))]">{title}</h3>
-          </div>
-          
-          <div className="flex items-center gap-1">
-            <button 
-              onClick={() => setShowAIMetadata(!showAIMetadata)}
-              className="fiori-btn-ghost rounded-full p-1.5 hover:bg-[rgba(var(--horizon-blue),0.08)]"
-              title="AI Metadata"
-            >
-              <Sparkles className="w-4 h-4 text-[rgb(var(--scb-accent))]" />
-            </button>
-            
-            {/* Zoom Controls */}
-            <div className="flex border border-[rgb(var(--scb-border))] rounded-md overflow-hidden">
-              <button 
-                onClick={handleZoomIn}
-                className="p-1.5 hover:bg-[rgba(var(--horizon-blue),0.08)]"
-                title="Zoom In"
-              >
-                <ZoomIn className="w-4 h-4 text-[rgb(var(--horizon-neutral-gray))]" />
-              </button>
-              <button 
-                onClick={handleZoomReset}
-                className="p-1.5 hover:bg-[rgba(var(--horizon-blue),0.08)]"
-                title="Reset Zoom"
-              >
-                <Maximize2 className="w-4 h-4 text-[rgb(var(--horizon-neutral-gray))]" />
-              </button>
-              <button 
-                onClick={handleZoomOut}
-                className="p-1.5 hover:bg-[rgba(var(--horizon-blue),0.08)]"
-                title="Zoom Out"
-              >
-                <ZoomOut className="w-4 h-4 text-[rgb(var(--horizon-neutral-gray))]" />
-              </button>
+        <div className="fiori-tile px-4 py-3 mb-4">
+          <div className="flex justify-between items-center">
+            <div className="flex-1">
+              <h3 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">{title}</h3>
             </div>
             
-            <button 
-              className="fiori-btn-ghost rounded-full p-1.5 hover:bg-[rgba(var(--horizon-blue),0.08)]"
-              title="Filter Graph" 
-            >
-              <Filter className="w-4 h-4 text-[rgb(var(--horizon-neutral-gray))]" />
-            </button>
-            
-            {onRegenerateClick && (
+            <div className="flex items-center gap-2">
               <button 
-                onClick={onRegenerateClick}
-                className="fiori-btn-ghost rounded-full p-1.5 hover:bg-[rgba(var(--horizon-blue),0.08)]"
-                title="Regenerate Graph"
+                onClick={() => setShowAIMetadata(!showAIMetadata)}
+                className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                title="AI Metadata"
               >
-                <RefreshCw className="w-4 h-4 text-[rgb(var(--horizon-blue))]" />
+                <Sparkles className="w-4 h-4 text-[rgb(var(--scb-american-green))]" />
               </button>
-            )}
-            
-            <button 
-              className="fiori-btn-ghost rounded-full p-1.5 hover:bg-[rgba(var(--horizon-blue),0.08)]"
-              title="Download Graph"
-              onClick={() => {
-                if (!svgRef.current) return;
-                // Download SVG
-                const svgData = new XMLSerializer().serializeToString(svgRef.current);
-                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-                const url = URL.createObjectURL(svgBlob);
-                
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${title.replace(/\s+/g, '-').toLowerCase()}.svg`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-              }}
-            >
-              <Download className="w-4 h-4 text-[rgb(var(--horizon-neutral-gray))]" />
-            </button>
+              
+              {/* Zoom Controls with SCB styling */}
+              <div className="flex border border-[rgb(var(--scb-border))] rounded-md overflow-hidden">
+                <button 
+                  onClick={handleZoomIn}
+                  className="p-1.5 hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                  title="Zoom In"
+                >
+                  <ZoomIn className="w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
+                </button>
+                <button 
+                  onClick={handleZoomReset}
+                  className="p-1.5 hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                  title="Reset Zoom"
+                >
+                  <Maximize2 className="w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
+                </button>
+                <button 
+                  onClick={handleZoomOut}
+                  className="p-1.5 hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
+                </button>
+              </div>
+              
+              <button 
+                className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                title="Filter Graph" 
+              >
+                <Filter className="w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
+              </button>
+              
+              {onRegenerateClick && (
+                <button 
+                  onClick={onRegenerateClick}
+                  className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                  title="Regenerate Graph"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <InlineSpinner size="sm" />
+                  ) : (
+                    <RefreshCw className="w-4 h-4 text-[rgb(var(--scb-honolulu-blue))]" />
+                  )}
+                </button>
+              )}
+              
+              <button 
+                className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                title="Download Graph"
+                onClick={() => {
+                  if (!svgRef.current) return;
+                  // Download SVG
+                  const svgData = new XMLSerializer().serializeToString(svgRef.current);
+                  const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                  const url = URL.createObjectURL(svgBlob);
+                  
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = `${title.replace(/\s+/g, '-').toLowerCase()}.svg`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
+                <Download className="w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
+              </button>
+            </div>
           </div>
         </div>
       )}
       
-      {/* AI Metadata Panel - follows "Show the Work" principle */}
+      {/* AI Metadata Panel with SCB styling */}
       {showAIMetadata && data.aiMetadata && (
-        <div className="mb-4 p-3 bg-[rgba(var(--scb-light-blue),0.05)] border border-[rgba(var(--scb-light-blue),0.2)] rounded-md">
+        <div className="mb-4 p-3 bg-[rgba(var(--scb-light-gray),0.3)] border border-[rgb(var(--scb-border))] rounded-md">
           <div className="flex items-start gap-2">
-            <Sparkles className="w-4 h-4 text-[rgb(var(--scb-accent))] mt-0.5" />
+            <Sparkles className="w-4 h-4 text-[rgb(var(--scb-american-green))] mt-0.5" />
             <div className="flex-1">
-              <h4 className="text-sm font-medium text-[rgb(var(--scb-primary))]">AI-Generated Insights</h4>
-              <p className="text-xs mt-1">{data.aiMetadata.insightSummary}</p>
+              <h4 className="text-sm font-medium text-[rgb(var(--scb-dark-gray))]">AI-Generated Insights</h4>
+              <p className="text-xs mt-1 text-[rgb(var(--scb-dark-gray))]">{data.aiMetadata.insightSummary}</p>
               
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
-                <div className="text-[10px] text-gray-600 flex items-center gap-1">
+                <div className="text-[10px] text-[rgb(var(--scb-dark-gray))] flex items-center gap-1">
                   <Info className="w-3 h-3" />
                   <span>Confidence Score: {(data.aiMetadata.confidenceScore * 100).toFixed(0)}%</span>
                 </div>
-                <div className="text-[10px] text-gray-600">
+                <div className="text-[10px] text-[rgb(var(--scb-dark-gray))]">
                   Generated: {new Date(data.aiMetadata.generatedAt).toLocaleString()}
                 </div>
               </div>
               
               {data.aiMetadata.dataSource.length > 0 && (
                 <div className="mt-2">
-                  <p className="text-[10px] text-gray-600">Sources:</p>
+                  <p className="text-[10px] text-[rgb(var(--scb-dark-gray))]">Sources:</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {data.aiMetadata.dataSource.map((source, idx) => (
-                      <div key={idx} className="horizon-chip text-[10px] py-0.5 px-2">
+                      <div key={idx} className="horizon-chip horizon-chip-blue text-[10px] py-0.5 px-2">
                         {source}
                       </div>
                     ))}
@@ -464,14 +491,37 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
         </div>
       )}
       
-      {/* Main visualization */}
-      <div className="relative flex-1 min-h-0 bg-[rgba(var(--scb-light-bg),0.3)] rounded-lg border border-[rgb(var(--scb-border))]">
+      {/* Main visualization with loading state */}
+      <div className="relative flex-1 min-h-0 bg-white rounded-lg border border-[rgb(var(--scb-border))]">
+        {isLoading ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[rgba(255,255,255,0.9)] z-10">
+            <div className="w-12 h-12 animate-spin rounded-full border-4 border-[rgba(var(--scb-honolulu-blue),0.1)] border-t-[rgb(var(--scb-honolulu-blue))]"></div>
+            <p className="mt-4 text-sm text-[rgb(var(--scb-dark-gray))]">Generating knowledge graph...</p>
+          </div>
+        ) : (
+          data.nodes.length === 0 ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <Compass className="w-12 h-12 text-[rgba(var(--scb-dark-gray),0.3)]" />
+              <p className="mt-4 text-sm text-[rgb(var(--scb-dark-gray))]">No data available</p>
+              {onRegenerateClick && (
+                <button 
+                  className="mt-4 fiori-btn fiori-btn-primary text-sm flex items-center gap-2"
+                  onClick={onRegenerateClick}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Generate Graph
+                </button>
+              )}
+            </div>
+          ) : null
+        )}
+        
         <svg ref={svgRef} className="w-full h-full"></svg>
         
-        {/* Tooltip - SAP Fiori Horizon style */}
+        {/* Tooltip with SCB styling */}
         {tooltipData.visible && (
           <div 
-            className="absolute pointer-events-none horizon-dialog p-2.5 text-xs z-10 min-w-[150px] max-w-[250px]"
+            className="absolute pointer-events-none fiori-tile p-2.5 text-xs z-10 min-w-[150px] max-w-[250px] shadow-lg border border-[rgb(var(--scb-border))]"
             style={{
               left: `${tooltipData.x + 15}px`,
               top: `${tooltipData.y - 15}px`,
@@ -482,23 +532,23 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
         )}
       </div>
       
-      {/* Legend - SAP Fiori Horizon style */}
+      {/* Legend with SCB styling */}
       {showLegend && (
         <div className="mt-3 p-3 bg-white rounded-md border border-[rgb(var(--scb-border))]">
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             {Object.entries({
-              'Financial': horizonColors.blue,
-              'Market': horizonColors.teal,
-              'Regulatory': horizonColors.purple,
-              'Economic': horizonColors.green,
-              'Risk': horizonColors.red,
-              'Technology': horizonColors.scbLightBlue,
-              'Client': horizonColors.yellow,
-              'Internal': horizonColors.scbBlue,
+              'Financial': 'rgb(var(--scb-honolulu-blue))',
+              'Market': 'rgb(0, 112, 122)',
+              'Regulatory': 'rgb(88, 64, 148)',
+              'Economic': 'rgb(var(--scb-american-green))',
+              'Risk': 'rgb(var(--scb-muted-red))',
+              'Technology': 'rgb(42, 120, 188)',
+              'Client': 'rgb(245, 152, 0)',
+              'Internal': 'rgb(15, 40, 109)',
             }).map(([group, color], idx) => (
               <div key={idx} className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }}></div>
-                <span className="text-xs">{group}</span>
+                <span className="text-xs text-[rgb(var(--scb-dark-gray))]">{group}</span>
               </div>
             ))}
           </div>
@@ -506,13 +556,13 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
           <div className="mt-2 pt-2 border-t border-[rgba(var(--scb-border),0.5)]">
             <div className="flex flex-wrap gap-5">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-0.5 bg-[rgb(var(--horizon-neutral-gray))] opacity-50"></div>
-                <span className="text-xs">Standard Link</span>
+                <div className="w-8 h-0.5 bg-[rgb(var(--scb-dark-gray))] opacity-50"></div>
+                <span className="text-xs text-[rgb(var(--scb-dark-gray))]">Standard Link</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-0.5 bg-[rgb(var(--scb-accent))] opacity-80 dashed-line"></div>
-                <span className="text-xs flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-[rgb(var(--scb-accent))]" />
+                <div className="w-8 h-0.5 bg-[rgb(var(--scb-american-green))] opacity-80 border-dashed"></div>
+                <span className="text-xs flex items-center gap-1 text-[rgb(var(--scb-dark-gray))]">
+                  <Sparkles className="w-3 h-3 text-[rgb(var(--scb-american-green))]" />
                   AI-Generated Link
                 </span>
               </div>
@@ -521,57 +571,74 @@ const ForceDirectedGraph: React.FC<ForceDirectedGraphProps> = ({
         </div>
       )}
       
-      {/* Node Details Panel - if a node is selected */}
+      {/* Node Details Panel with SCB styling */}
       {selectedNode && (
-        <div className="mt-3 p-4 bg-white rounded-md border border-[rgb(var(--scb-border))]">
-          <div className="flex justify-between items-start">
-            <h4 className="font-medium text-[rgb(var(--scb-primary))]">{selectedNode.label}</h4>
+        <div className="mt-3 fiori-tile p-0 overflow-hidden">
+          <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] flex justify-between items-center">
+            <h4 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">{selectedNode.label}</h4>
             <button 
               onClick={() => setSelectedNode(null)}
-              className="text-gray-500 hover:text-gray-700 p-1"
+              className="text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-honolulu-blue))] p-1 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
           
-          <div className="mt-3 grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-gray-500">Group</p>
-              <p className="text-sm">{selectedNode.group}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Value</p>
-              <p className="text-sm">{selectedNode.value}</p>
-            </div>
-            {selectedNode.relevance && (
+          <div className="p-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-gray-500">Relevance</p>
-                <p className="text-sm">{(selectedNode.relevance * 100).toFixed(1)}%</p>
+                <p className="text-xs text-[rgba(var(--scb-dark-gray),0.7)]">Group</p>
+                <p className="text-sm text-[rgb(var(--scb-dark-gray))]">{selectedNode.group}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[rgba(var(--scb-dark-gray),0.7)]">Value</p>
+                <p className="text-sm text-[rgb(var(--scb-dark-gray))]">{selectedNode.value}</p>
+              </div>
+              {selectedNode.relevance && (
+                <div>
+                  <p className="text-xs text-[rgba(var(--scb-dark-gray),0.7)]">Relevance</p>
+                  <p className="text-sm text-[rgb(var(--scb-dark-gray))]">{(selectedNode.relevance * 100).toFixed(1)}%</p>
+                </div>
+              )}
+              {selectedNode.confidence && (
+                <div>
+                  <p className="text-xs text-[rgba(var(--scb-dark-gray),0.7)]">AI Confidence</p>
+                  <p className="text-sm text-[rgb(var(--scb-dark-gray))]">{(selectedNode.confidence * 100).toFixed(1)}%</p>
+                </div>
+              )}
+            </div>
+            
+            {selectedNode.description && (
+              <div className="mt-3">
+                <p className="text-xs text-[rgba(var(--scb-dark-gray),0.7)]">Description</p>
+                <p className="text-sm mt-1 text-[rgb(var(--scb-dark-gray))]">{selectedNode.description}</p>
               </div>
             )}
-            {selectedNode.confidence && (
-              <div>
-                <p className="text-xs text-gray-500">AI Confidence</p>
-                <p className="text-sm">{(selectedNode.confidence * 100).toFixed(1)}%</p>
+            
+            {selectedNode.aiGenerated && (
+              <div className="mt-3 pt-3 border-t border-[rgba(var(--scb-border),0.5)]">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-[rgb(var(--scb-american-green))]" />
+                  <span className="text-xs text-[rgb(var(--scb-american-green))]">AI-Generated</span>
+                </div>
               </div>
             )}
+
+            <div className="mt-4 flex gap-2">
+              <button 
+                className="fiori-btn fiori-btn-secondary text-xs flex items-center gap-2"
+              >
+                <Share2 className="w-3 h-3" />
+                Share
+              </button>
+              <button 
+                className="fiori-btn fiori-btn-ghost text-xs flex items-center gap-2"
+              >
+                <Edit className="w-3 h-3" />
+                Edit
+              </button>
+            </div>
           </div>
-          
-          {selectedNode.description && (
-            <div className="mt-3">
-              <p className="text-xs text-gray-500">Description</p>
-              <p className="text-sm mt-1">{selectedNode.description}</p>
-            </div>
-          )}
-          
-          {selectedNode.aiGenerated && (
-            <div className="mt-3 pt-3 border-t border-[rgba(var(--scb-border),0.5)]">
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[rgb(var(--scb-accent))]" />
-                <span className="text-xs text-[rgb(var(--scb-accent))]">AI-Generated</span>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>

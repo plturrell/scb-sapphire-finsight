@@ -303,7 +303,7 @@ export default function ModernLayout({ children }: LayoutProps) {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[rgb(var(--fiori-content-bg))]">
+    <div className="min-h-screen flex flex-col bg-[rgb(var(--scb-light-gray))]">
       {/* Modern Header - White background */}
       <header className="bg-white shadow-sm border-b border-gray-200 flex items-center px-4 z-50 h-16">
         {/* Left section - Menu and Logo */}
@@ -689,19 +689,19 @@ export default function ModernLayout({ children }: LayoutProps) {
             </div>
             
             <div className="flex items-center space-x-2">
-              <button className="fiori-btn fiori-btn-secondary flex items-center space-x-1 text-sm">
+              <button className="scb-btn scb-btn-secondary flex items-center space-x-1 text-sm">
                 <span>Filter</span>
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
-              <button className="fiori-btn fiori-btn-primary flex items-center space-x-1 text-sm">
+              <button className="scb-btn scb-btn-primary flex items-center space-x-1 text-sm">
                 <PlusSquare className="w-4 h-4" />
                 <span>New</span>
               </button>
             </div>
           </div>
 
-          {/* SAP Fiori Page Content - Responsive padding */}
-          <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[rgb(var(--fiori-content-bg))] pb-20 lg:pb-6">
+          {/* SCB Beautiful Content - Responsive padding */}
+          <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-[rgb(var(--scb-light-gray))] pb-20 lg:pb-6">
             <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-[rgb(var(--scb-border))]">
               {children}
             </div>

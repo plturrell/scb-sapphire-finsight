@@ -14,11 +14,14 @@ interface SimulationControlsProps {
   onStop: () => void;
   onStep: () => void;
   onRun: (config: any) => void;
+  className?: string;
 }
 
 /**
  * Enhanced Simulation controls with SCB beautiful styling
  * Used in the Tariff Alert Scanner dashboard for impact analysis
+ * Follows Fiori Horizon design patterns with SCB color variables
+ * Responsive and touch-friendly for both desktop and mobile use
  */
 export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
   status,
@@ -27,7 +30,8 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
   onResume,
   onStop,
   onStep,
-  onRun
+  onRun,
+  className = ''
 }) => {
   const formatTime = (ms: number) => {
     if (!ms) return '0s';
@@ -52,7 +56,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
   };
 
   return (
-    <div className="fiori-tile p-0 my-4">
+    <div className={`fiori-tile p-0 my-4 ${className}`}>
       <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] flex justify-between items-center">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-medium text-[rgb(var(--scb-dark-gray))]">
@@ -108,10 +112,10 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
         </div>
       )}
 
-      <div className="px-4 py-3 flex gap-2">
+      <div className="px-4 py-3 flex flex-wrap gap-2 touch-manipulation">
         {status === 'idle' && (
           <button
-            className="fiori-btn fiori-btn-primary flex items-center text-xs"
+            className="fiori-btn fiori-btn-primary flex items-center text-xs touch-min-h"
             onClick={() => onRun(config)}
           >
             <Play size={14} className="mr-1" />
@@ -121,7 +125,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
         {status === 'running' && (
           <>
             <button
-              className="fiori-btn flex items-center text-xs"
+              className="fiori-btn flex items-center text-xs touch-min-h"
               style={{ 
                 backgroundColor: 'rgb(var(--warning))', 
                 color: 'white',
@@ -133,7 +137,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
               Pause
             </button>
             <button
-              className="fiori-btn flex items-center text-xs"
+              className="fiori-btn flex items-center text-xs touch-min-h"
               style={{ 
                 backgroundColor: 'rgb(var(--destructive))', 
                 color: 'white',
@@ -149,7 +153,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
         {status === 'paused' && (
           <>
             <button
-              className="fiori-btn flex items-center text-xs"
+              className="fiori-btn flex items-center text-xs touch-min-h"
               style={{ 
                 backgroundColor: 'rgb(var(--horizon-green))', 
                 color: 'white',
@@ -161,14 +165,14 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
               Resume
             </button>
             <button
-              className="fiori-btn fiori-btn-primary flex items-center text-xs"
+              className="fiori-btn fiori-btn-primary flex items-center text-xs touch-min-h"
               onClick={onStep}
             >
               <SkipForward size={14} className="mr-1" />
               Step 100
             </button>
             <button
-              className="fiori-btn flex items-center text-xs"
+              className="fiori-btn flex items-center text-xs touch-min-h"
               style={{ 
                 backgroundColor: 'rgb(var(--destructive))', 
                 color: 'white',
@@ -183,7 +187,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
         )}
         {status === 'complete' && (
           <button
-            className="fiori-btn fiori-btn-primary flex items-center text-xs"
+            className="fiori-btn fiori-btn-primary flex items-center text-xs touch-min-h"
             onClick={() => setShowConfig(true)}
           >
             <Play size={14} className="mr-1" />
@@ -204,7 +208,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
                 <input
                   type="number"
                   id="timeHorizon"
-                  className="fiori-input text-xs w-full"
+                  className="fiori-input text-xs w-full touch-manipulation"
                   value={config.timeHorizon}
                   min={1}
                   max={60}
@@ -218,7 +222,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
                 <input
                   type="number"
                   id="iterations"
-                  className="fiori-input text-xs w-full"
+                  className="fiori-input text-xs w-full touch-manipulation"
                   value={config.iterations}
                   min={1000}
                   max={10000}
@@ -232,7 +236,7 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
                 </label>
                 <select
                   id="riskTolerance"
-                  className="fiori-input text-xs w-full"
+                  className="fiori-input text-xs w-full touch-manipulation"
                   value={config.riskTolerance}
                   onChange={(e) => setConfig({ ...config, riskTolerance: e.target.value })}
                 >
@@ -244,13 +248,13 @@ export const EnhancedSimulationControls: React.FC<SimulationControlsProps> = ({
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
-                  className="fiori-btn fiori-btn-primary text-xs"
+                  className="fiori-btn fiori-btn-primary text-xs touch-min-h"
                 >
                   Apply & Run
                 </button>
                 <button
                   type="button"
-                  className="fiori-btn fiori-btn-secondary text-xs"
+                  className="fiori-btn fiori-btn-secondary text-xs touch-min-h"
                   onClick={() => setShowConfig(false)}
                 >
                   Cancel

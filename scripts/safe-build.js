@@ -1,29 +1,43 @@
 /**
- * Simple build script that uses Next.js's standard build command
- * but ensures that we don't have any minification errors
+ * Safe build script with source map generation
  */
-const { spawn } = require('child_process');
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-console.log('🏗️ Running safe build script...');
+console.log('🏗️ Running safe build script with source map support...');
 
-// Execute the Next.js build command
-console.log('Starting Next.js build with default configuration...');
+// Path to the Next.js configuration file
+const NEXT_CONFIG_PATH = path.join(__dirname, '../next.config.js');
+const configContent = fs.readFileSync(NEXT_CONFIG_PATH, 'utf8');
 
-const buildProcess = spawn('next', ['build'], {
-  stdio: 'inherit',
-  env: {
-    ...process.env,
-    // Disable telemetry for builds
-    NEXT_TELEMETRY_DISABLED: '1'
-  }
-});
-
-// Handle the build process completion
-buildProcess.on('close', (code) => {
-  if (code !== 0) {
-    console.error(`❌ Build failed with code ${code}`);
-    process.exit(code);
-  }
+// Check if source maps are already enabled
+if (!configContent.includes('productionBrowserSourceMaps: true')) {
+  console.log('Ensuring source maps are enabled in next.config.js...');
   
-  console.log('✅ Build completed successfully');
-});
+  // Add source map support to config if not present
+  const updatedConfig = configContent.replace(
+    'const nextConfig = {',
+    'const nextConfig = {\n  productionBrowserSourceMaps: true,'
+  );
+  
+  fs.writeFileSync(NEXT_CONFIG_PATH, updatedConfig);
+  console.log('✅ Updated next.config.js with source map support');
+}
+
+try {
+  // Use the local next binary from node_modules
+  console.log('Starting Next.js build with source maps enabled...');
+  execSync('node ./node_modules/next/dist/bin/next build', { 
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      NEXT_TELEMETRY_DISABLED: '1'
+    }
+  });
+  
+  console.log('✅ Build completed successfully with source maps');
+} catch (error) {
+  console.error(`❌ Build failed: ${error.message}`);
+  process.exit(1);
+}

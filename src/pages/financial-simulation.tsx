@@ -3,10 +3,10 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import reportService from '../lib/report-service';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import DynamicSankeySimulation from '../components/DynamicSankeySimulation';
+import EnhancedDynamicSankeySimulation from '../components/charts/EnhancedDynamicSankeySimulation';
 import DashboardCard from '../components/cards/DashboardCard';
 import KPICard from '../components/cards/KPICard';
-import LoadingSpinner from '../components/LoadingSpinner';
+import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import { UserRole } from '../types';
 import { ArrowUp, ArrowDown, TrendingUp, AlertTriangle, Zap, Clock } from 'lucide-react';
 
@@ -160,13 +160,13 @@ export default function FinancialSimulation() {
       
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-semibold text-gray-900">Monte Carlo Financial Simulation</h1>
+          <h1 className="text-2xl font-semibold text-[rgb(var(--scb-honolulu-blue))]">Monte Carlo Financial Simulation</h1>
           <div className="flex space-x-2">
             <button 
               onClick={exportSimulationReport}
               disabled={!summaryMetrics.simulationCompleted}
-              className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white 
-                ${summaryMetrics.simulationCompleted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}
+              className={`scb-btn scb-btn-primary inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white 
+                ${summaryMetrics.simulationCompleted ? 'bg-[rgb(var(--scb-honolulu-blue))] hover:bg-[rgb(var(--scb-honolulu-blue-dark))]' : 'bg-[rgb(var(--scb-light-gray))] cursor-not-allowed'}`}
             >
               Export Report
             </button>
@@ -175,12 +175,12 @@ export default function FinancialSimulation() {
         
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <LoadingSpinner />
+            <EnhancedLoadingSpinner size="lg" message="Loading financial data..." variant="primary" />
           </div>
         ) : error ? (
-          <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 mb-8">
+          <div className="bg-[rgba(var(--scb-muted-red),0.1)] border border-[rgba(var(--scb-muted-red),0.3)] text-[rgb(var(--scb-muted-red))] rounded-md p-4 mb-8">
             <div className="flex">
-              <AlertTriangle className="h-5 w-5 text-red-400 mr-2" />
+              <AlertTriangle className="h-5 w-5 text-[rgba(var(--scb-muted-red),0.7)] mr-2" />
               <span>{error}</span>
             </div>
           </div>
@@ -229,7 +229,7 @@ export default function FinancialSimulation() {
             <div ref={simulationRef} className="mb-8">
               <DashboardCard title="Monte Carlo Tree Search Simulation">
                 <div className="h-[600px]">
-                  <DynamicSankeySimulation
+                  <EnhancedDynamicSankeySimulation
                     initialData={simulationData}
                     width={simulationRef.current?.offsetWidth || 1000}
                     height={560}

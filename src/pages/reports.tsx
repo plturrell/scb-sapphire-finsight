@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
-import Layout from '@/components/Layout';
+import React, { useState, useEffect } from 'react';
+import ScbBeautifulUI from '@/components/ScbBeautifulUI';
+import { useMediaQuery } from 'react-responsive';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedSonomaDialog from '@/components/EnhancedSonomaDialog';
+import useMultiTasking from '@/hooks/useMultiTasking';
+import { haptics } from '@/lib/haptics';
 import { FileText, Download, Share2, Filter, Calendar, Plus, X, ChevronDown, CheckCircle, Loader2, Sparkles } from 'lucide-react';
 import reportService, { ReportConfig, ReportStructure, ReportTopic, ReportResult } from '@/lib/report-service';
 
@@ -55,6 +60,14 @@ export default function Reports() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedReport, setGeneratedReport] = useState<ReportResult | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const [isAppleDevice, setIsAppleDevice] = useState(false);
+  const [isIPad, setIsIPad] = useState(false);
+  
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
+  const { mode, isMultiTasking } = useMultiTasking();
+  
   const [reportConfig, setReportConfig] = useState<ReportConfig>({
     topic: {
       title: '',
@@ -70,28 +83,449 @@ export default function Reports() {
     maxLength: 2000
   });
   
+  // Detect platform on mount
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // Check if we're on an Apple platform
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // Check if we're on iPad specifically
+    const isIpad = /iPad/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && 
+       navigator.maxTouchPoints > 1 &&
+       !navigator.userAgent.includes('iPhone'));
+    
+    setIsAppleDevice(isIOS);
+    setIsIPad(isIpad);
+    setPlatformDetected(true);
+  }, []);
+  
+  // Handle button click with haptic feedback
+  const handleButtonClick = () => {
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    setShowReportModal(true);
+  };
+  
+  // Close modal with haptic feedback
+  const handleCloseModal = () => {
+    if (isAppleDevice) {
+      haptics.light();
+    }
+    setShowReportModal(false);
+  };
+  
   const generateStructuredReport = async () => {
     if (!reportConfig.topic.title) {
+      // Use haptic feedback for errors on Apple devices
+      if (isAppleDevice) {
+        haptics.error();
+      }
       alert('Please enter a report topic');
       return;
     }
     
     setIsGenerating(true);
     
+    // Provide haptic feedback when starting generation
+    if (isAppleDevice) {
+      haptics.medium();
+    }
+    
     try {
       // Call the report service to generate a structured report
       const result = await reportService.generateReport(reportConfig);
       setGeneratedReport(result);
+      
+      // Provide success haptic feedback
+      if (isAppleDevice) {
+        haptics.success();
+      }
     } catch (error) {
       console.error('Error generating report:', error);
       alert('Failed to generate report. Please try again.');
+      
+      // Provide error haptic feedback
+      if (isAppleDevice) {
+        haptics.error();
+      }
     } finally {
       setIsGenerating(false);
     }
   };
+  
+  // Use the appropriate modal component based on the platform
+  const ReportModal = () => {
+    if (isAppleDevice && isPlatformDetected) {
+      return (
+        <EnhancedSonomaDialog
+          isOpen={showReportModal}
+          onClose={handleCloseModal}
+          title="Generate Structured Report"
+          width={isMultiTasking && mode === 'slide-over' ? '90%' : 600}
+          type={isMultiTasking && mode === 'slide-over' ? 'sheet' : 'modal'}
+          position={isMultiTasking && mode === 'slide-over' ? 'bottom' : 'center'}
+        >
+          <div className="p-6 space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium block dark:text-white">Report Topic</label>
+              <input 
+                type="text" 
+                className="input-sapui5 w-full dark:bg-gray-800 dark:text-white dark:border-gray-700" 
+                placeholder="Enter report topic" 
+                value={reportConfig.topic.title}
+                onChange={(e) => setReportConfig({
+                  ...reportConfig,
+                  topic: { ...reportConfig.topic, title: e.target.value }
+                })}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium block dark:text-white">Topic Description</label>
+              <textarea 
+                className="input-sapui5 w-full h-24 dark:bg-gray-800 dark:text-white dark:border-gray-700" 
+                placeholder="Provide more details about the report topic" 
+                value={reportConfig.topic.description}
+                onChange={(e) => setReportConfig({
+                  ...reportConfig,
+                  topic: { ...reportConfig.topic, description: e.target.value }
+                })}
+              ></textarea>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium block dark:text-white">Timeframe</label>
+              <select 
+                className="input-sapui5 w-full dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                value={reportConfig.timeframe}
+                onChange={(e) => setReportConfig({
+                  ...reportConfig,
+                  timeframe: e.target.value
+                })}
+              >
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 90 days</option>
+                <option>Year to date</option>
+                <option>Q1 2025</option>
+                <option>Q2 2025</option>
+              </select>
+            </div>
+            
+            <div className="space-y-3">
+              <label className="text-sm font-medium block dark:text-white">Report Structure</label>
+              
+              <div className="space-y-2">
+                {reportConfig.structure.sections.map((section, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input 
+                      type="text" 
+                      className="input-sapui5 flex-1 dark:bg-gray-800 dark:text-white dark:border-gray-700" 
+                      value={section}
+                      onChange={(e) => {
+                        const newSections = [...reportConfig.structure.sections];
+                        newSections[index] = e.target.value;
+                        setReportConfig({
+                          ...reportConfig,
+                          structure: { ...reportConfig.structure, sections: newSections }
+                        });
+                      }}
+                    />
+                    <button 
+                      onClick={() => {
+                        const newSections = reportConfig.structure.sections.filter((_, i) => i !== index);
+                        setReportConfig({
+                          ...reportConfig,
+                          structure: { ...reportConfig.structure, sections: newSections }
+                        });
+                        if (isAppleDevice) {
+                          haptics.light();
+                        }
+                      }}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                    >
+                      <X className="w-4 h-4 dark:text-white" />
+                    </button>
+                  </div>
+                ))}
+                
+                <EnhancedTouchButton
+                  variant="secondary"
+                  label="Add Section"
+                  iconLeft={<Plus className="w-4 h-4" />}
+                  onClick={() => {
+                    const newSections = [...reportConfig.structure.sections, ''];
+                    setReportConfig({
+                      ...reportConfig,
+                      structure: { ...reportConfig.structure, sections: newSections }
+                    });
+                    if (isAppleDevice) {
+                      haptics.light();
+                    }
+                  }}
+                  block
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="execSummary" 
+                  checked={reportConfig.structure.includeExecutiveSummary}
+                  onChange={(e) => setReportConfig({
+                    ...reportConfig,
+                    structure: { ...reportConfig.structure, includeExecutiveSummary: e.target.checked }
+                  })}
+                />
+                <label htmlFor="execSummary" className="text-sm dark:text-white">Include Executive Summary</label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="includeTables" 
+                  checked={reportConfig.structure.includeTables}
+                  onChange={(e) => setReportConfig({
+                    ...reportConfig,
+                    structure: { ...reportConfig.structure, includeTables: e.target.checked }
+                  })}
+                />
+                <label htmlFor="includeTables" className="text-sm dark:text-white">Include Data Tables</label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="includeCharts" 
+                  checked={reportConfig.structure.includeCharts}
+                  onChange={(e) => setReportConfig({
+                    ...reportConfig,
+                    structure: { ...reportConfig.structure, includeCharts: e.target.checked }
+                  })}
+                />
+                <label htmlFor="includeCharts" className="text-sm dark:text-white">Include Visualizations</label>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-2 pt-4">
+              <EnhancedTouchButton
+                variant="secondary"
+                label="Cancel"
+                onClick={handleCloseModal}
+              />
+              <EnhancedTouchButton
+                variant="primary"
+                label={isGenerating ? "Generating..." : "Generate Report"}
+                iconLeft={isGenerating ? 
+                  <Loader2 className="w-4 h-4 animate-spin" /> : 
+                  <FileText className="w-4 h-4" />
+                }
+                onClick={generateStructuredReport}
+                isLoading={isGenerating}
+                disabled={isGenerating}
+              />
+            </div>
+          </div>
+        </EnhancedSonomaDialog>
+      );
+    }
+    
+    // Standard modal for non-Apple devices
+    return showReportModal ? (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-md shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="border-b border-[hsl(var(--border))] p-4 flex justify-between items-center">
+            <h2 className="text-lg font-normal">Generate Structured Report</h2>
+            <button onClick={() => setShowReportModal(false)} className="p-1">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="p-6 space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium block">Report Topic</label>
+              <input 
+                type="text" 
+                className="input-sapui5 w-full" 
+                placeholder="Enter report topic" 
+                value={reportConfig.topic.title}
+                onChange={(e) => setReportConfig({
+                  ...reportConfig,
+                  topic: { ...reportConfig.topic, title: e.target.value }
+                })}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium block">Topic Description</label>
+              <textarea 
+                className="input-sapui5 w-full h-24" 
+                placeholder="Provide more details about the report topic" 
+                value={reportConfig.topic.description}
+                onChange={(e) => setReportConfig({
+                  ...reportConfig,
+                  topic: { ...reportConfig.topic, description: e.target.value }
+                })}
+              ></textarea>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium block">Timeframe</label>
+              <select 
+                className="input-sapui5 w-full"
+                value={reportConfig.timeframe}
+                onChange={(e) => setReportConfig({
+                  ...reportConfig,
+                  timeframe: e.target.value
+                })}
+              >
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 90 days</option>
+                <option>Year to date</option>
+                <option>Q1 2025</option>
+                <option>Q2 2025</option>
+              </select>
+            </div>
+            
+            <div className="space-y-3">
+              <label className="text-sm font-medium block">Report Structure</label>
+              
+              <div className="space-y-2">
+                {reportConfig.structure.sections.map((section, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input 
+                      type="text" 
+                      className="input-sapui5 flex-1" 
+                      value={section}
+                      onChange={(e) => {
+                        const newSections = [...reportConfig.structure.sections];
+                        newSections[index] = e.target.value;
+                        setReportConfig({
+                          ...reportConfig,
+                          structure: { ...reportConfig.structure, sections: newSections }
+                        });
+                      }}
+                    />
+                    <button 
+                      onClick={() => {
+                        const newSections = reportConfig.structure.sections.filter((_, i) => i !== index);
+                        setReportConfig({
+                          ...reportConfig,
+                          structure: { ...reportConfig.structure, sections: newSections }
+                        });
+                      }}
+                      className="p-2 hover:bg-gray-100 rounded"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                
+                <button 
+                  onClick={() => {
+                    const newSections = [...reportConfig.structure.sections, ''];
+                    setReportConfig({
+                      ...reportConfig,
+                      structure: { ...reportConfig.structure, sections: newSections }
+                    });
+                  }}
+                  className="btn-sapui5 w-full flex items-center justify-center space-x-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Section</span>
+                </button>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="execSummary" 
+                  checked={reportConfig.structure.includeExecutiveSummary}
+                  onChange={(e) => setReportConfig({
+                    ...reportConfig,
+                    structure: { ...reportConfig.structure, includeExecutiveSummary: e.target.checked }
+                  })}
+                />
+                <label htmlFor="execSummary" className="text-sm">Include Executive Summary</label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="includeTables" 
+                  checked={reportConfig.structure.includeTables}
+                  onChange={(e) => setReportConfig({
+                    ...reportConfig,
+                    structure: { ...reportConfig.structure, includeTables: e.target.checked }
+                  })}
+                />
+                <label htmlFor="includeTables" className="text-sm">Include Data Tables</label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id="includeCharts" 
+                  checked={reportConfig.structure.includeCharts}
+                  onChange={(e) => setReportConfig({
+                    ...reportConfig,
+                    structure: { ...reportConfig.structure, includeCharts: e.target.checked }
+                  })}
+                />
+                <label htmlFor="includeCharts" className="text-sm">Include Visualizations</label>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-[hsl(var(--border))] p-4 flex justify-end space-x-2">
+            <button 
+              onClick={() => setShowReportModal(false)} 
+              className="btn-sapui5"
+            >
+              Cancel
+            </button>
+            <button 
+              onClick={generateStructuredReport} 
+              disabled={isGenerating}
+              className="btn-sapui5 btn-sapui5-primary flex items-center space-x-2"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-4 h-4" />
+                  <span>Generate Report</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : null;
+  };
+
   return (
-    <Layout>
+    <ScbBeautifulUI 
+      showNewsBar={!isSmallScreen} 
+      pageTitle="Reports" 
+      showTabs={isAppleDevice}
+    >
       <div className="space-y-6">
+        {/* Platform-specific report modal */}
+        <ReportModal />
+        
         {/* Page Header */}
         <div className="bg-white p-4 border border-[hsl(var(--border))] rounded shadow-sm">
           <h1 className="text-xl font-normal text-[hsl(var(--foreground))]">Reports</h1>
@@ -122,13 +556,22 @@ export default function Reports() {
                 </select>
               </div>
             </div>
-            <button 
-              onClick={() => setShowReportModal(true)} 
-              className="btn-sapui5 btn-sapui5-primary flex items-center space-x-2"
-            >
-              <FileText className="w-4 h-4" />
-              <span>New Report</span>
-            </button>
+            {isAppleDevice && isPlatformDetected ? (
+              <EnhancedTouchButton
+                variant="primary"
+                label="New Report"
+                iconLeft={<FileText className="w-4 h-4" />}
+                onClick={handleButtonClick}
+              />
+            ) : (
+              <button 
+                onClick={() => setShowReportModal(true)} 
+                className="btn-sapui5 btn-sapui5-primary flex items-center space-x-2"
+              >
+                <FileText className="w-4 h-4" />
+                <span>New Report</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -191,8 +634,17 @@ export default function Reports() {
               Showing {reportsList.length} reports
             </div>
             <div className="flex items-center space-x-1">
-              <button className="btn-sapui5 btn-sapui5-secondary px-3">Previous</button>
-              <button className="btn-sapui5 btn-sapui5-primary px-3">Next</button>
+              {isAppleDevice && isPlatformDetected ? (
+                <>
+                  <EnhancedTouchButton variant="secondary" label="Previous" compact />
+                  <EnhancedTouchButton variant="primary" label="Next" compact />
+                </>
+              ) : (
+                <>
+                  <button className="btn-sapui5 btn-sapui5-secondary px-3">Previous</button>
+                  <button className="btn-sapui5 btn-sapui5-primary px-3">Next</button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -646,6 +1098,6 @@ export default function Reports() {
           </div>
         )}
       </div>
-    </Layout>
+    </ScbBeautifulUI>
   );
 }

@@ -2,6 +2,7 @@
 export { default as EnhancedAllocationPieChart } from './EnhancedAllocationPieChart';
 export { default as EnhancedLineChart } from './EnhancedLineChart';
 export { default as EnhancedBarChart } from './EnhancedBarChart';
+export { default as EnhancedSankeyChart } from './EnhancedSankeyChart';
 export { default as AllocationPieChart } from './AllocationPieChart';
 
 // Re-export types that may be needed by consumers

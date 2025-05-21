@@ -106,11 +106,11 @@ export const EnhancedLoadingButton: React.FC<{
   disabled = false,
   variant = 'primary'
 }) => {
-  const baseClasses = 'fiori-btn inline-flex items-center justify-center gap-2 rounded-md transition-colors';
+  const baseClasses = 'scb-btn inline-flex items-center justify-center gap-2 rounded-md transition-colors';
   const variantClasses = {
-    primary: 'fiori-btn-primary',
-    secondary: 'fiori-btn-secondary',
-    ghost: 'fiori-btn-ghost'
+    primary: 'scb-btn-primary',
+    secondary: 'scb-btn-secondary',
+    ghost: 'scb-btn-ghost'
   };
 
   return (

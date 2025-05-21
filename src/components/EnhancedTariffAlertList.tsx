@@ -7,21 +7,25 @@ interface TariffAlertListProps {
   isLoading?: boolean;
   onAlertClick?: (alert: TariffAlert) => void;
   title?: string;
+  className?: string;
 }
 
 /**
  * Enhanced TariffAlertList component with SCB beautiful styling
- * Used in the Tariff Alert Scanner dashboard
+ * Used in the Tariff Alert Scanner dashboard and Vietnam Tariff Impact Analysis
+ * Follows Fiori Horizon design patterns with SCB color variables
+ * Includes interactive card design and responsive layout for all screen sizes
  */
 const EnhancedTariffAlertList: React.FC<TariffAlertListProps> = ({
   alerts,
   isLoading = false,
   onAlertClick,
-  title = "Tariff Alerts"
+  title = "Tariff Alerts",
+  className = ""
 }) => {
   if (isLoading) {
     return (
-      <div className="fiori-tile h-full flex items-center justify-center py-8">
+      <div className={`fiori-tile h-full flex items-center justify-center py-8 ${className}`}>
         <div className="animate-pulse flex flex-col items-center">
           <div className="h-5 w-5 bg-[rgba(var(--scb-honolulu-blue),0.3)] rounded-full mb-3" />
           <div className="h-2.5 w-32 bg-[rgba(var(--scb-border),0.7)] rounded-full mb-2" />
@@ -33,7 +37,7 @@ const EnhancedTariffAlertList: React.FC<TariffAlertListProps> = ({
 
   if (!alerts || alerts.length === 0) {
     return (
-      <div className="fiori-tile h-full">
+      <div className={`fiori-tile h-full ${className}`}>
         <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
           <h3 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">{title}</h3>
         </div>
@@ -61,7 +65,7 @@ const EnhancedTariffAlertList: React.FC<TariffAlertListProps> = ({
   };
 
   return (
-    <div className="fiori-tile h-full flex flex-col">
+    <div className={`fiori-tile h-full flex flex-col ${className}`}>
       <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))]">
         <div className="flex items-center justify-between">
           <h3 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">{title}</h3>
@@ -76,7 +80,7 @@ const EnhancedTariffAlertList: React.FC<TariffAlertListProps> = ({
           {alerts.map((alert) => (
             <li 
               key={alert.id || alert.title} 
-              className="px-4 py-4 hover:bg-[rgba(var(--scb-light-gray),0.3)] cursor-pointer transition-colors"
+              className="px-4 py-4 hover:bg-[rgba(var(--scb-light-gray),0.3)] cursor-pointer transition-colors touch-manipulation"
               onClick={() => onAlertClick && onAlertClick(alert)}
             >
               <div className="flex items-start gap-3">
@@ -102,8 +106,8 @@ const EnhancedTariffAlertList: React.FC<TariffAlertListProps> = ({
                 </div>
                 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-[rgb(var(--scb-dark-gray))] line-clamp-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-medium text-[rgb(var(--scb-dark-gray))] line-clamp-1 mr-2">
                       {alert.title}
                     </p>
                     <div 

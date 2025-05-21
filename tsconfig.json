@@ -16,6 +16,7 @@
     "incremental": true,
     "declaration": true,
     "noImplicitAny": false,
+    "sourceMap": true,
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -22,36 +22,95 @@ export default function PerplexityNewsBar({ onAnalyzeNews }: PerplexityNewsBarPr
   const [cachedNews, cacheLoading, cacheError, refreshNews] = useCache<NewsItem[]>(
     'market-news',
     async () => {
-      // Add timeout handling to the API call
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      const MAX_RETRIES = 2;
+      let retryCount = 0;
+      let lastError: Error | null = null;
       
-      try {
-        // Use a wrapper to ensure we get proper error handling
-        const response = await fetch('/api/market-news', { 
-          signal: controller.signal,
-          headers: { 'Content-Type': 'application/json' }
-        });
+      // Retry logic with backoff
+      while (retryCount <= MAX_RETRIES) {
+        // Create a new controller for each attempt
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 second timeout (increased)
         
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
+        try {
+          console.log(`Attempting to fetch news (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+          
+          // Use a wrapper to ensure we get proper error handling
+          const response = await fetch('/api/market-news', { 
+            signal: controller.signal,
+            headers: { 
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache' // Prevent caching
+            }
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Check if we got a fallback response
+          if (data.fallbackContent) {
+            console.warn('Received fallback content');
+            // We still have some data to display, so just log the warning
+            // but don't throw an error
+          }
+          
+          if (!data.articles && data.fallbackContent) {
+            // Create fallback news item when API failed but returned fallback content
+            return [{
+              id: `fallback-${Date.now()}`,
+              title: 'Market News Temporarily Unavailable',
+              summary: data.fallbackContent || 'Unable to retrieve market news at this time. Please try again later.',
+              category: 'Service Alert',
+              timestamp: new Date().toISOString(),
+              source: 'System',
+              url: ''
+            }];
+          }
+          
+          if (!data.articles || !Array.isArray(data.articles)) {
+            throw new Error('Invalid news data format');
+          }
+          
+          return data.articles;
+        } catch (fetchError: any) {
+          clearTimeout(timeoutId);
+          lastError = fetchError;
+          
+          if (fetchError.name === 'AbortError') {
+            console.error(`News fetch timed out (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+          } else {
+            console.error(`News fetch error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, fetchError.message || fetchError);
+          }
+          
+          // If we have retries left, try again with backoff
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            const backoffMs = 1000 * retryCount; // Increasing backoff
+            console.log(`Retrying news fetch in ${backoffMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, backoffMs));
+          } else {
+            // We've exhausted all retries
+            break;
+          }
         }
-        
-        const data = await response.json();
-        if (!data.articles || !Array.isArray(data.articles)) {
-          throw new Error('Invalid news data format');
-        }
-        
-        return data.articles;
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        if (fetchError.name === 'AbortError') {
-          console.error('News fetch timed out');
-        }
-        throw fetchError; // rethrow to outer catch
       }
+      
+      // If we get here, all retries failed - return a fallback item
+      console.error('All news fetch retries failed');
+      return [{
+        id: `error-${Date.now()}`,
+        title: 'Market News Temporarily Unavailable',
+        summary: 'We couldn\'t retrieve the latest market news at this time. Please try refreshing or check back later.',
+        category: 'Service Alert',
+        timestamp: new Date().toISOString(),
+        source: 'System',
+        url: ''
+      }];
     },
     {
       ttl: 5 * 60 * 1000, // 5 minute TTL for news

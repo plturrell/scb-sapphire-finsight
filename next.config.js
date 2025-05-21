@@ -16,18 +16,24 @@ const nextConfig = {
     ignoreDuringBuilds: true, 
   },
   
-  // Use the SWC minifier instead of Terser
-  swcMinify: true,
+  // Enable source maps in production
+  productionBrowserSourceMaps: true,
   
-  // Completely disable optimization
-  webpack: (config, { isServer }) => {
+  // Disable SWC compiler due to issues on some platforms
+  swcMinify: false,
+  
+  // Webpack configuration with source maps
+  webpack: (config, { isServer, dev }) => {
     if (!isServer) {
-      // Disable Terser
+      // Disable Terser but keep source maps
       config.optimization.minimize = false;
       
       // Use named modules for easier debugging
       config.optimization.moduleIds = 'named';
       config.optimization.chunkIds = 'named';
+      
+      // Set proper source map type based on environment
+      config.devtool = dev ? 'eval-source-map' : 'source-map';
     }
     
     return config;

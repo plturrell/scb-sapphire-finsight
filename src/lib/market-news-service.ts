@@ -17,57 +17,109 @@ export async function getMarketNews(): Promise<NewsItem[]> {
       await new Promise(resolve => setTimeout(resolve, timeToWait));
     }
   }
+
+  const MAX_RETRIES = 2;
+  let retryCount = 0;
+  let lastError: Error | null = null;
   
-  try {
-    // Use our proxy API route to avoid CORS issues
-    const response = await fetch('/api/market-news', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      signal: AbortSignal.timeout(15000) // 15 second timeout
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API response error: ${response.status}`);
+  // Implement robust retry logic
+  while (retryCount <= MAX_RETRIES) {
+    try {
+      console.log(`Market news service: Attempting fetch (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+      
+      // Increased timeout to 20 seconds for more reliability
+      const controller = new AbortController();
+      // We create our own timeout controller for better handling
+      const timeoutId = setTimeout(() => controller.abort(), 20000);
+      
+      // Use our proxy API route to avoid CORS issues
+      const response = await fetch('/api/market-news', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache' // Prevent caching issues
+        },
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`API response error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Check for fallback content which indicates API issues
+      if (data.fallbackContent) {
+        console.warn('Received fallback content from market news API');
+        // Record partial success with fallback
+        perplexityRateLimiter.recordRequest({
+          endpoint,
+          tokens: 100, // Lower token usage for fallback
+          model: 'news-service',
+          startTime,
+          success: true
+        });
+        
+        // Return fallback news
+        return generateDynamicNews();
+      }
+      
+      if (!data.articles || !Array.isArray(data.articles)) {
+        throw new Error('Invalid news data format: missing or invalid articles field');
+      }
+      
+      // Estimate token usage based on response size
+      // This is a rough estimate since we don't have actual token usage from the API
+      tokenUsage = Math.max(500, JSON.stringify(data).length / 4);
+      
+      // Record successful API call
+      perplexityRateLimiter.recordRequest({
+        endpoint,
+        tokens: Math.round(tokenUsage),
+        model: 'news-service',
+        startTime,
+        success: true
+      });
+      
+      // Return the articles directly as they're already in the right format
+      return data.articles;
+      
+    } catch (error: any) {
+      lastError = error;
+      
+      const isTimeoutError = error.name === 'AbortError';
+      console.error(`Market news error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, 
+        isTimeoutError ? 'Request timed out' : error.message || error);
+      
+      // If we have retries left, try again with exponential backoff
+      if (retryCount < MAX_RETRIES) {
+        retryCount++;
+        const backoffMs = 1000 * Math.pow(2, retryCount - 1); // Exponential backoff
+        console.log(`Retrying market news fetch in ${backoffMs}ms...`);
+        await new Promise(resolve => setTimeout(resolve, backoffMs));
+      } else {
+        // No more retries
+        break;
+      }
     }
-    
-    const data = await response.json();
-    
-    if (!data.articles) {
-      throw new Error('Invalid news data format: missing articles field');
-    }
-    
-    // Estimate token usage based on response size
-    // This is a rough estimate since we don't have actual token usage from the API
-    tokenUsage = Math.max(500, JSON.stringify(data).length / 4);
-    
-    // Record successful API call
-    perplexityRateLimiter.recordRequest({
-      endpoint,
-      tokens: Math.round(tokenUsage),
-      model: 'news-service',
-      startTime,
-      success: true
-    });
-    
-    // Return the articles directly as they're already in the right format
-    return data.articles;
-  } catch (error) {
-    console.error('Perplexity API error:', error);
-    
-    // Record failed API call
-    perplexityRateLimiter.recordRequest({
-      endpoint,
-      tokens: 0,
-      model: 'news-service',
-      startTime,
-      success: false
-    });
-    
-    // Generate news through alternative means
-    return generateDynamicNews();
   }
+  
+  // If we reach here, all retries failed
+  console.error('All market news fetch retries failed', lastError);
+  
+  // Record failed API call
+  perplexityRateLimiter.recordRequest({
+    endpoint,
+    tokens: 0,
+    model: 'news-service',
+    startTime,
+    success: false
+  });
+  
+  // Generate news through alternative means
+  return generateDynamicNews();
 }
 
 // Helper function to determine news category

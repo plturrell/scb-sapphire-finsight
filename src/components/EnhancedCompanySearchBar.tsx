@@ -1,3 +1,8 @@
+/**
+ * Enhanced Company Search Bar with SCB beautiful styling and S&P Capital IQ Integration
+ * Real-time search with autocomplete, predictive text, and document fetching
+ */
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Search, 
@@ -6,12 +11,14 @@ import {
   Download,
   Loader,
   CheckCircle,
+  X,
   AlertCircle,
   Info
 } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { InlineSpinner } from './LoadingSpinner';
 
-// Debounce function
+// Simple debounce implementation
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
   let timeoutId: NodeJS.Timeout | null = null;
   
@@ -165,7 +172,21 @@ const mockCompanies: CompanySearchResult[] = [
   }
 ];
 
-const EnhancedCompanySearchBar: React.FC = () => {
+interface EnhancedCompanySearchBarProps {
+  placeholder?: string;
+  defaultCountry?: string;
+  onCompanySelect?: (company: CompanySearchResult) => void;
+  className?: string;
+  autoNavigate?: boolean;
+}
+
+const EnhancedCompanySearchBar: React.FC<EnhancedCompanySearchBarProps> = ({
+  placeholder = "Search companies by name, ticker, or industry...",
+  defaultCountry = 'Vietnam',
+  onCompanySelect,
+  className = '',
+  autoNavigate = true
+}) => {
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -252,6 +273,14 @@ const EnhancedCompanySearchBar: React.FC = () => {
     performSearch(query);
   };
 
+  // Clear search input
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setShowResults(false);
+    inputRef.current?.focus();
+  };
+
   // Select company from results
   const selectCompany = (company: CompanySearchResult) => {
     setSearchQuery(company.companyName);
@@ -261,9 +290,16 @@ const EnhancedCompanySearchBar: React.FC = () => {
     const newRecent = [company.companyName, ...recentSearches.filter(s => s !== company.companyName)].slice(0, 5);
     setRecentSearches(newRecent);
     localStorage.setItem('recentCompanySearches', JSON.stringify(newRecent));
+
+    // If provided, call the onCompanySelect callback
+    if (onCompanySelect) {
+      onCompanySelect(company);
+    }
     
-    // Navigate to company page
-    router.push(`/reports/company/${company.companyCode}`);
+    // Navigate to company page if autoNavigate is true
+    if (autoNavigate) {
+      router.push(`/reports/company/${company.companyCode}`);
+    }
   };
 
   // Handle keyboard navigation
@@ -296,25 +332,25 @@ const EnhancedCompanySearchBar: React.FC = () => {
   // Get data availability icon
   const getDataIcon = (available: boolean) => {
     return available 
-      ? <CheckCircle className="w-3 h-3 text-green-500" />
-      : <div className="w-3 h-3 rounded-full bg-gray-300" />;
+      ? <CheckCircle className="w-3 h-3 text-[rgb(var(--scb-american-green))]" />
+      : <div className="w-3 h-3 rounded-full bg-[rgba(var(--scb-light-gray),0.5)]" />;
   };
 
   // Get status icon
   const getStatusIcon = () => {
     switch (searchStatus.type) {
-      case 'loading': return <Loader className="w-4 h-4 text-blue-500 animate-spin" />;
-      case 'success': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'error': return <AlertCircle className="w-4 h-4 text-red-500" />;
+      case 'loading': return <InlineSpinner size="xs" className="text-[rgb(var(--scb-honolulu-blue))]" />;
+      case 'success': return <CheckCircle className="w-4 h-4 text-[rgb(var(--scb-american-green))]" />;
+      case 'error': return <AlertCircle className="w-4 h-4 text-[rgb(var(--scb-muted-red))]" />;
       default: return null;
     }
   };
 
   return (
-    <div ref={searchRef} className="relative w-full">
-      {/* Search Input - Larger */}
+    <div ref={searchRef} className={`relative w-full ${className}`}>
+      {/* Search Input */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[rgb(var(--scb-dark-gray))] w-5 h-5" />
         <input
           ref={inputRef}
           type="text"
@@ -322,23 +358,34 @@ const EnhancedCompanySearchBar: React.FC = () => {
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           onFocus={() => setShowResults(true)}
-          placeholder="Search companies by name, ticker, or industry..."
-          className="w-full bg-gray-50 border border-gray-300 text-gray-900 py-3 px-12 pr-12 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
+          placeholder={placeholder}
+          className="fiori-input w-full py-2.5 pl-10 pr-10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[rgb(var(--scb-honolulu-blue))] focus:border-[rgb(var(--scb-honolulu-blue))] transition-all"
         />
+        {searchQuery && (
+          <button
+            onClick={clearSearch}
+            className="absolute right-10 top-1/2 transform -translate-y-1/2 text-[rgb(var(--scb-dark-gray))] hover:text-[rgb(var(--scb-muted-red))] transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
         {isLoading && (
-          <Loader className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 animate-spin" />
+          <InlineSpinner 
+            size="sm" 
+            className="absolute right-3 top-1/2 transform -translate-y-1/2" 
+          />
         )}
       </div>
 
       {/* Search Results Dropdown */}
       {showResults && (searchResults.length > 0 || (searchQuery.length === 0 && recentSearches.length > 0)) && (
-        <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg overflow-hidden z-50 border border-gray-200">
+        <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg overflow-hidden z-50 border border-[rgb(var(--scb-border))]">
           {/* Status Bar */}
           {searchStatus.type !== 'idle' && searchQuery.length > 0 && (
             <div className={`px-4 py-2 flex items-center gap-2 text-xs ${
-              searchStatus.type === 'error' ? 'bg-red-50 text-red-700' : 
-              searchStatus.type === 'success' ? 'bg-green-50 text-green-700' : 
-              'bg-blue-50 text-blue-700'
+              searchStatus.type === 'error' ? 'bg-[rgba(var(--scb-muted-red),0.1)] text-[rgb(var(--scb-muted-red))]' : 
+              searchStatus.type === 'success' ? 'bg-[rgba(var(--scb-american-green),0.1)] text-[rgb(var(--scb-american-green))]' : 
+              'bg-[rgba(var(--scb-honolulu-blue),0.1)] text-[rgb(var(--scb-honolulu-blue))]'
             }`}>
               {getStatusIcon()}
               <span>{searchStatus.message}</span>
@@ -348,20 +395,20 @@ const EnhancedCompanySearchBar: React.FC = () => {
           {/* Recent Searches */}
           {searchQuery.length === 0 && recentSearches.length > 0 && (
             <>
-              <div className="px-4 py-2 bg-gray-50 border-b">
-                <h4 className="text-xs font-medium text-gray-600 uppercase">Recent Searches</h4>
+              <div className="px-4 py-2 bg-[rgba(var(--scb-light-gray),0.3)] border-b border-[rgb(var(--scb-border))]">
+                <h4 className="text-xs font-medium text-[rgb(var(--scb-dark-gray))] uppercase">Recent Searches</h4>
               </div>
               {recentSearches.map((recent, idx) => (
                 <div
                   key={idx}
-                  className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center"
+                  className="px-4 py-3 hover:bg-[rgba(var(--scb-light-gray),0.3)] cursor-pointer flex items-center"
                   onClick={() => {
                     setSearchQuery(recent);
                     performSearch(recent);
                   }}
                 >
-                  <TrendingUp className="w-4 h-4 text-gray-400 mr-3" />
-                  <span className="text-sm text-gray-700">{recent}</span>
+                  <TrendingUp className="w-4 h-4 text-[rgb(var(--scb-dark-gray))] mr-3" />
+                  <span className="text-sm text-[rgb(var(--scb-dark-gray))]">{recent}</span>
                 </div>
               ))}
             </>
@@ -370,8 +417,8 @@ const EnhancedCompanySearchBar: React.FC = () => {
           {/* Search Results */}
           {searchQuery.length > 0 && searchResults.length > 0 && (
             <>
-              <div className="px-4 py-2 bg-gray-50 border-b">
-                <h4 className="text-xs font-medium text-gray-600 uppercase">
+              <div className="px-4 py-2 bg-[rgba(var(--scb-light-gray),0.3)] border-b border-[rgb(var(--scb-border))]">
+                <h4 className="text-xs font-medium text-[rgb(var(--scb-dark-gray))] uppercase">
                   Search Results ({searchResults.length})
                 </h4>
               </div>
@@ -380,35 +427,35 @@ const EnhancedCompanySearchBar: React.FC = () => {
                 {searchResults.map((company, idx) => (
                   <div
                     key={company.companyId}
-                    className={`px-4 py-3 hover:bg-gray-50 cursor-pointer ${
-                      selectedIndex === idx ? 'bg-gray-50' : ''
+                    className={`px-4 py-3 hover:bg-[rgba(var(--scb-light-gray),0.3)] cursor-pointer ${
+                      selectedIndex === idx ? 'bg-[rgba(var(--scb-light-gray),0.3)]' : ''
                     }`}
                     onClick={() => selectCompany(company)}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center">
-                          <Building2 className="w-4 h-4 text-gray-400 mr-2" />
-                          <span className="font-medium text-gray-900">{company.companyName}</span>
+                          <Building2 className="w-4 h-4 text-[rgb(var(--scb-dark-gray))] mr-2" />
+                          <span className="font-medium text-[rgb(var(--scb-dark-gray))]">{company.companyName}</span>
                           {company.ticker && (
-                            <span className="ml-2 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                            <span className="ml-2 text-xs horizon-chip">
                               {company.ticker}
                             </span>
                           )}
                         </div>
                         
                         {company.companyNameLocal && (
-                          <p className="text-xs text-gray-500 ml-6 mt-0.5">
+                          <p className="text-xs text-[rgb(var(--scb-dark-gray))] ml-6 mt-0.5">
                             {company.companyNameLocal}
                           </p>
                         )}
                         
                         <div className="flex items-center mt-2 ml-6">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-[rgb(var(--scb-dark-gray))]">
                             {company.industry} • {company.country}
                           </span>
                           {company.listingStatus === 'Listed' && (
-                            <span className="ml-2 text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                            <span className="ml-2 text-xs horizon-chip-blue">
                               Listed
                             </span>
                           )}
@@ -419,31 +466,31 @@ const EnhancedCompanySearchBar: React.FC = () => {
                         <div className="flex items-center space-x-1">
                           <div className="relative group">
                             {getDataIcon(company.dataAvailable.profile)}
-                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-[rgb(var(--scb-dark-gray))] text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                               Profile
                             </span>
                           </div>
                           <div className="relative group">
                             {getDataIcon(company.dataAvailable.financials)}
-                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-[rgb(var(--scb-dark-gray))] text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                               Financials
                             </span>
                           </div>
                           <div className="relative group">
                             {getDataIcon(company.dataAvailable.filings)}
-                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-[rgb(var(--scb-dark-gray))] text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                               Filings
                             </span>
                           </div>
                           <div className="relative group">
                             {getDataIcon(company.dataAvailable.tariffData)}
-                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                            <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-[rgb(var(--scb-dark-gray))] text-white text-[10px] px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                               Tariff
                             </span>
                           </div>
                         </div>
                         
-                        <Info className="w-4 h-4 text-gray-400" />
+                        <Download className="w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
                       </div>
                     </div>
                   </div>

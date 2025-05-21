@@ -368,7 +368,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
     <div className={`h-full flex flex-col ${className}`}>
       {/* Control panel with SCB styling */}
       {showControls && (
-        <div className="fiori-tile px-4 py-3 mb-4">
+        <div className="scb-tile px-4 py-3 mb-4">
           <div className="flex justify-between items-center">
             <div className="flex-1">
               <h3 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">{title}</h3>
@@ -377,7 +377,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setShowAIMetadata(!showAIMetadata)}
-                className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                className="scb-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
                 title="AI Metadata"
               >
                 <Sparkles className="w-4 h-4 text-[rgb(var(--scb-american-green))]" />
@@ -409,7 +409,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
               </div>
               
               <button 
-                className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                className="scb-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
                 title="Filter Graph" 
               >
                 <Filter className="w-4 h-4 text-[rgb(var(--scb-dark-gray))]" />
@@ -418,7 +418,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
               {onRegenerateClick && (
                 <button 
                   onClick={onRegenerateClick}
-                  className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                  className="scb-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
                   title="Regenerate Graph"
                   disabled={isLoading}
                 >
@@ -431,7 +431,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
               )}
               
               <button 
-                className="fiori-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
+                className="scb-btn-ghost p-1.5 rounded-full hover:bg-[rgba(var(--scb-light-gray),0.5)] transition-colors"
                 title="Download Graph"
                 onClick={() => {
                   if (!svgRef.current) return;
@@ -479,7 +479,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
                   <p className="text-[10px] text-[rgb(var(--scb-dark-gray))]">Sources:</p>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {data.aiMetadata.dataSource.map((source, idx) => (
-                      <div key={idx} className="horizon-chip horizon-chip-blue text-[10px] py-0.5 px-2">
+                      <div key={idx} className="scb-chip scb-chip-blue text-[10px] py-0.5 px-2">
                         {source}
                       </div>
                     ))}
@@ -505,7 +505,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
               <p className="mt-4 text-sm text-[rgb(var(--scb-dark-gray))]">No data available</p>
               {onRegenerateClick && (
                 <button 
-                  className="mt-4 fiori-btn fiori-btn-primary text-sm flex items-center gap-2"
+                  className="mt-4 scb-btn scb-btn-primary text-sm flex items-center gap-2"
                   onClick={onRegenerateClick}
                 >
                   <RefreshCw className="w-4 h-4" />
@@ -521,7 +521,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
         {/* Tooltip with SCB styling */}
         {tooltipData.visible && (
           <div 
-            className="absolute pointer-events-none fiori-tile p-2.5 text-xs z-10 min-w-[150px] max-w-[250px] shadow-lg border border-[rgb(var(--scb-border))]"
+            className="absolute pointer-events-none scb-tile p-2.5 text-xs z-10 min-w-[150px] max-w-[250px] shadow-lg border border-[rgb(var(--scb-border))]"
             style={{
               left: `${tooltipData.x + 15}px`,
               top: `${tooltipData.y - 15}px`,
@@ -573,7 +573,7 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
       
       {/* Node Details Panel with SCB styling */}
       {selectedNode && (
-        <div className="mt-3 fiori-tile p-0 overflow-hidden">
+        <div className="mt-3 scb-tile p-0 overflow-hidden">
           <div className="px-4 py-3 border-b border-[rgb(var(--scb-border))] flex justify-between items-center">
             <h4 className="text-base font-medium text-[rgb(var(--scb-dark-gray))]">{selectedNode.label}</h4>
             <button 
@@ -626,13 +626,13 @@ const EnhancedForceDirectedGraph: React.FC<EnhancedForceDirectedGraphProps> = ({
 
             <div className="mt-4 flex gap-2">
               <button 
-                className="fiori-btn fiori-btn-secondary text-xs flex items-center gap-2"
+                className="scb-btn scb-btn-secondary text-xs flex items-center gap-2"
               >
                 <Share2 className="w-3 h-3" />
                 Share
               </button>
               <button 
-                className="fiori-btn fiori-btn-ghost text-xs flex items-center gap-2"
+                className="scb-btn scb-btn-ghost text-xs flex items-center gap-2"
               >
                 <Edit className="w-3 h-3" />
                 Edit

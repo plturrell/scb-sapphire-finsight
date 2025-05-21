@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Sparkles, RefreshCw, Info, BarChart3, PieChart, HelpCircle, ChevronRight, Filter, GridIcon, Search, Settings } from 'lucide-react';
-import ForceDirectedGraph from '@/components/ForceDirectedGraph';
-import SankeyChart from '@/components/SankeyChart';
+import EnhancedForceDirectedGraph from '@/components/EnhancedForceDirectedGraph';
+import EnhancedSankeyChart from '@/components/charts/EnhancedSankeyChart';
 import * as d3 from 'd3';
 
 // Define GraphNode interface similar to the one in ForceDirectedGraph.tsx
@@ -269,7 +269,7 @@ const KnowledgeDashboard: React.FC = () => {
             {/* Main visualization - spans 2x2 */}
             <div className="col-span-full lg:col-span-2 lg:row-span-2 bg-white rounded-lg shadow-sm border border-[rgb(var(--scb-border))] p-5 h-[600px]">
               <div className="h-full">
-                <ForceDirectedGraph
+                <EnhancedForceDirectedGraph
                   data={filteredData}
                   title="Knowledge Graph Explorer"
                   showControls={true}
@@ -388,7 +388,7 @@ const KnowledgeDashboard: React.FC = () => {
                       <span>Sources:</span>
                       <div className="flex flex-wrap gap-1">
                         {graphData.aiMetadata.dataSource.map((source, idx) => (
-                          <span key={idx} className="horizon-chip horizon-chip-blue text-[10px] py-0.5 px-2">
+                          <span key={idx} className="scb-chip scb-chip-blue text-[10px] py-0.5 px-2">
                             {source}
                           </span>
                         ))}

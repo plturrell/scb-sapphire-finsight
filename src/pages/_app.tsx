@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { registerServiceWorker } from '@/lib/register-service-worker';
 import dynamic from 'next/dynamic';
+import { UIPreferencesProvider } from '@/context/UIPreferencesContext';
 
 // Import Emotion's createCache and StyleProvider from the correct location
 import createCache from '@emotion/cache';
@@ -86,181 +87,211 @@ export default function App({ Component, pageProps }: AppProps) {
     <StyleProvider value={cache}>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme} resetCSS={false}>
-          <CSSReset />
-          <Head>
-            <title>FinSight - SCB Sapphire Finance Dashboard</title>
-            <meta name="description" content="SCB Sapphire financial insights and visualization platform" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <link rel="icon" href="/favicon.ico" />
-            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-            <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-            {/* Force custom styles to take precedence */}
-            <style>{`
-              /* SCB Brand Colors */
-              :root {
-                --scb-honolulu-blue: 0, 114, 170 !important; 
-                --scb-american-green: 33, 170, 71 !important;
-                --scb-white: 255, 255, 255 !important;
-                --scb-light-gray: 245, 247, 250 !important;
-                --scb-dark-gray: 82, 83, 85 !important;
-                --scb-muted-red: 211, 55, 50 !important;
-                --scb-border: 229, 231, 235 !important;
+          <UIPreferencesProvider>
+            <CSSReset />
+            <Head>
+              <title>FinSight - SCB Sapphire Finance Dashboard</title>
+              <meta name="description" content="SCB Sapphire financial insights and visualization platform" />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
+              <link rel="icon" href="/favicon.ico" />
+              <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+              <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+              {/* Force custom styles to take precedence */}
+              <style>{`
+                /* SCB Brand Colors */
+                :root {
+                  --scb-honolulu-blue: 0, 114, 170 !important; 
+                  --scb-american-green: 33, 170, 71 !important;
+                  --scb-white: 255, 255, 255 !important;
+                  --scb-light-gray: 245, 247, 250 !important;
+                  --scb-dark-gray: 82, 83, 85 !important;
+                  --scb-muted-red: 211, 55, 50 !important;
+                  --scb-border: 229, 231, 235 !important;
+                  
+                  /* SAP Fiori Integration */
+                  --fiori-shell-header-bg: var(--scb-honolulu-blue) !important;
+                  --fiori-shell-header-text: 255, 255, 255 !important;
+                  --fiori-sidebar-bg: var(--scb-white) !important;
+                  --fiori-sidebar-text: var(--scb-dark-gray) !important;
+                  --fiori-sidebar-active-bg: var(--scb-honolulu-blue) !important;
+                  --fiori-sidebar-active-text: 255, 255, 255 !important;
+                  --fiori-content-bg: var(--scb-light-gray) !important;
+                  --fiori-tile-bg: 255, 255, 255 !important;
+                  --fiori-action-color: var(--scb-american-green) !important;
+                  --fiori-button-primary-bg: var(--scb-honolulu-blue) !important;
+                  --fiori-button-primary-text: 255, 255, 255 !important;
+                  --fiori-button-secondary-bg: 255, 255, 255 !important;
+                  --fiori-button-secondary-text: var(--scb-honolulu-blue) !important;
+                  --fiori-notification-bg: var(--scb-honolulu-blue) !important;
+                  
+                  /* SAP Horizon Theme */
+                  --horizon-blue: 0, 114, 170 !important;
+                  --horizon-green: 33, 170, 71 !important;
+                  --horizon-red: 211, 55, 50 !important;
+                  --horizon-neutral-gray: 82, 83, 85 !important;
+                  --horizon-focus-color: 0, 94, 150 !important;
+                  
+                  /* Financial Data Presentation */
+                  --fiori-positive-text: var(--scb-american-green) !important;
+                  --fiori-negative-text: var(--scb-muted-red) !important;
+                  --fiori-neutral-text: var(--scb-honolulu-blue) !important;
+                  --fiori-positive-bg: rgba(var(--scb-american-green), 0.1) !important;
+                  --fiori-negative-bg: rgba(var(--scb-muted-red), 0.1) !important;
+                  --fiori-neutral-bg: rgba(var(--scb-honolulu-blue), 0.1) !important;
+                  
+                  /* General Application */
+                  --primary: var(--scb-honolulu-blue) !important;
+                  --secondary: var(--scb-american-green) !important;
+                }
                 
-                /* SAP Fiori Integration */
-                --fiori-shell-header-bg: var(--scb-honolulu-blue) !important;
-                --fiori-shell-header-text: 255, 255, 255 !important;
-                --fiori-sidebar-bg: var(--scb-white) !important;
-                --fiori-sidebar-text: var(--scb-dark-gray) !important;
-                --fiori-sidebar-active-bg: var(--scb-honolulu-blue) !important;
-                --fiori-sidebar-active-text: 255, 255, 255 !important;
-                --fiori-content-bg: var(--scb-light-gray) !important;
-                --fiori-tile-bg: 255, 255, 255 !important;
-                --fiori-action-color: var(--scb-american-green) !important;
-                --fiori-button-primary-bg: var(--scb-honolulu-blue) !important;
-                --fiori-button-primary-text: 255, 255, 255 !important;
-                --fiori-button-secondary-bg: 255, 255, 255 !important;
-                --fiori-button-secondary-text: var(--scb-honolulu-blue) !important;
-                --fiori-notification-bg: var(--scb-honolulu-blue) !important;
+                /* Component Styling */
+                .fiori-shell-header {
+                  background-color: rgb(var(--scb-honolulu-blue)) !important;
+                  color: white !important;
+                  height: 3rem !important;
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+                  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+                }
                 
-                /* SAP Horizon Theme */
-                --horizon-blue: 0, 114, 170 !important;
-                --horizon-green: 33, 170, 71 !important;
-                --horizon-red: 211, 55, 50 !important;
-                --horizon-neutral-gray: 82, 83, 85 !important;
-                --horizon-focus-color: 0, 94, 150 !important;
+                .fiori-sidebar {
+                  background-color: rgb(var(--fiori-sidebar-bg)) !important;
+                  border-right: 1px solid rgb(var(--scb-border)) !important;
+                  width: 16rem !important;
+                }
                 
-                /* Financial Data Presentation */
-                --fiori-positive-text: var(--scb-american-green) !important;
-                --fiori-negative-text: var(--scb-muted-red) !important;
-                --fiori-neutral-text: var(--scb-honolulu-blue) !important;
-                --fiori-positive-bg: rgba(var(--scb-american-green), 0.1) !important;
-                --fiori-negative-bg: rgba(var(--scb-muted-red), 0.1) !important;
-                --fiori-neutral-bg: rgba(var(--scb-honolulu-blue), 0.1) !important;
+                .fiori-sidebar-item {
+                  color: rgb(var(--fiori-sidebar-text)) !important;
+                  padding: 0.75rem 1rem !important;
+                  transition: background-color 0.2s !important;
+                  border-left: 4px solid transparent !important;
+                }
                 
-                /* General Application */
-                --primary: var(--scb-honolulu-blue) !important;
-                --secondary: var(--scb-american-green) !important;
-              }
-              
-              /* Component Styling */
-              .fiori-shell-header {
-                background-color: rgb(var(--scb-honolulu-blue)) !important;
-                color: white !important;
-                height: 3rem !important;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-              }
-              
-              .fiori-sidebar {
-                background-color: rgb(var(--fiori-sidebar-bg)) !important;
-                border-right: 1px solid rgb(var(--scb-border)) !important;
-                width: 16rem !important;
-              }
-              
-              .fiori-sidebar-item {
-                color: rgb(var(--fiori-sidebar-text)) !important;
-                padding: 0.75rem 1rem !important;
-                transition: background-color 0.2s !important;
-                border-left: 4px solid transparent !important;
-              }
-              
-              .fiori-sidebar-item:hover {
-                background-color: rgba(var(--scb-honolulu-blue), 0.1) !important;
-              }
-              
-              .fiori-sidebar-item.active {
-                background-color: rgba(var(--scb-honolulu-blue), 0.1) !important;
-                border-left-color: rgb(var(--scb-honolulu-blue)) !important;
-                color: rgb(var(--scb-honolulu-blue)) !important;
-                font-weight: 500 !important;
-              }
-              
-              .fiori-tile {
-                background-color: white !important;
-                border: 1px solid rgb(var(--scb-border)) !important;
-                border-radius: 0.25rem !important;
-                padding: 1rem !important;
-                transition: box-shadow 0.2s, transform 0.2s !important;
-                height: 100% !important;
-                display: flex !important;
-                flex-direction: column !important;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
-              }
-              
-              .fiori-tile:hover {
-                box-shadow: 0 4px 6px rgba(var(--scb-honolulu-blue), 0.1) !important;
-                transform: translateY(-2px) !important;
-              }
-              
-              /* Touch-friendly styles */
-              .touch-manipulation {
-                touch-action: manipulation !important;
-              }
-              
-              .touch-min-h {
-                min-height: 44px !important;
-              }
-              
-              /* Typography */
-              .scb-title {
-                font-family: "SC Prosper Sans", Inter, system-ui, sans-serif !important;
-                font-weight: 700 !important;
-                font-size: clamp(1.25rem, 3vw, 1.75rem) !important;
-                line-height: 1.25 !important;
-                letter-spacing: -0.01em !important;
-                color: rgb(var(--scb-honolulu-blue)) !important;
-              }
-              
-              .scb-section-header {
-                font-family: "SC Prosper Sans", Inter, system-ui, sans-serif !important;
-                font-weight: 500 !important;
-                font-size: clamp(1rem, 2.5vw, 1.25rem) !important;
-                line-height: 1.4 !important;
-                color: rgb(var(--scb-dark-gray)) !important;
-                margin-bottom: 0.75rem !important;
-              }
-              
-              /* Animation utilities */
-              .animate-fadeIn {
-                animation: fadeIn 0.3s ease-out !important;
-              }
-              
-              .animate-slide-in {
-                animation: slideIn 0.3s ease-out !important;
-              }
-              
-              /* Add splash screen styling */
-              .scb-splash {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                background-color: rgb(var(--scb-honolulu-blue)) !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                z-index: 9999 !important;
-                transition: opacity 0.5s ease-out !important;
-              }
-              
-              .scb-splash-logo {
-                width: 180px !important;
-                height: 180px !important;
-                animation: pulse 2s infinite !important;
-              }
-              
-              @keyframes pulse {
-                0% { transform: scale(0.95); opacity: 0.8; }
-                50% { transform: scale(1.05); opacity: 1; }
-                100% { transform: scale(0.95); opacity: 0.8; }
-              }
-            `}</style>
-          </Head>
-          <div className="font-sans scb-app-container scb-styled">
-            {mounted && <Component {...pageProps} />}
-            {mounted && <GlobalJouleAssistant />}
-          </div>
+                .fiori-sidebar-item:hover {
+                  background-color: rgba(var(--scb-honolulu-blue), 0.1) !important;
+                }
+                
+                .fiori-sidebar-item.active {
+                  background-color: rgba(var(--scb-honolulu-blue), 0.1) !important;
+                  border-left-color: rgb(var(--scb-honolulu-blue)) !important;
+                  color: rgb(var(--scb-honolulu-blue)) !important;
+                  font-weight: 500 !important;
+                }
+                
+                .fiori-tile {
+                  background-color: white !important;
+                  border: 1px solid rgb(var(--scb-border)) !important;
+                  border-radius: 0.25rem !important;
+                  padding: 1rem !important;
+                  transition: box-shadow 0.2s, transform 0.2s !important;
+                  height: 100% !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+                }
+                
+                .fiori-tile:hover {
+                  box-shadow: 0 4px 6px rgba(var(--scb-honolulu-blue), 0.1) !important;
+                  transform: translateY(-2px) !important;
+                }
+                
+                /* Touch-friendly styles */
+                .touch-manipulation {
+                  touch-action: manipulation !important;
+                }
+                
+                .touch-min-h {
+                  min-height: 44px !important;
+                }
+                
+                /* Typography */
+                .scb-title {
+                  font-family: "SC Prosper Sans", Inter, system-ui, sans-serif !important;
+                  font-weight: 700 !important;
+                  font-size: clamp(1.25rem, 3vw, 1.75rem) !important;
+                  line-height: 1.25 !important;
+                  letter-spacing: -0.01em !important;
+                  color: rgb(var(--scb-honolulu-blue)) !important;
+                }
+                
+                .scb-section-header {
+                  font-family: "SC Prosper Sans", Inter, system-ui, sans-serif !important;
+                  font-weight: 500 !important;
+                  font-size: clamp(1rem, 2.5vw, 1.25rem) !important;
+                  line-height: 1.4 !important;
+                  color: rgb(var(--scb-dark-gray)) !important;
+                  margin-bottom: 0.75rem !important;
+                }
+                
+                /* Animation utilities */
+                .animate-fadeIn {
+                  animation: fadeIn 0.3s ease-out !important;
+                }
+                
+                .animate-slide-in {
+                  animation: slideIn 0.3s ease-out !important;
+                }
+                
+                /* Add splash screen styling */
+                .scb-splash {
+                  position: fixed !important;
+                  top: 0 !important;
+                  left: 0 !important;
+                  right: 0 !important;
+                  bottom: 0 !important;
+                  background-color: rgb(var(--scb-honolulu-blue)) !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                  z-index: 9999 !important;
+                  transition: opacity 0.5s ease-out !important;
+                }
+                
+                .scb-splash-logo {
+                  width: 180px !important;
+                  height: 180px !important;
+                  animation: pulse 2s infinite !important;
+                }
+                
+                @keyframes pulse {
+                  0% { transform: scale(0.95); opacity: 0.8; }
+                  50% { transform: scale(1.05); opacity: 1; }
+                  100% { transform: scale(0.95); opacity: 0.8; }
+                }
+
+                /* Dark mode styles */
+                .dark .fiori-tile {
+                  background-color: rgb(31, 41, 55) !important;
+                  border-color: rgb(55, 65, 81) !important;
+                }
+                
+                .dark .scb-title {
+                  color: rgb(255, 255, 255) !important;
+                }
+                
+                .dark .scb-section-header {
+                  color: rgb(209, 213, 219) !important;
+                }
+
+                .dark .fiori-sidebar-item {
+                  color: rgb(209, 213, 219) !important;
+                }
+                
+                .dark .fiori-sidebar-item:hover {
+                  background-color: rgba(255, 255, 255, 0.1) !important;
+                }
+                
+                .dark .fiori-sidebar-item.active {
+                  background-color: rgba(var(--scb-honolulu-blue), 0.2) !important;
+                  border-left-color: rgb(var(--scb-honolulu-blue)) !important;
+                  color: rgb(209, 213, 219) !important;
+                }
+              `}</style>
+            </Head>
+            <div className="font-sans scb-app-container scb-styled">
+              {mounted && <Component {...pageProps} />}
+              {mounted && <GlobalJouleAssistant />}
+            </div>
+          </UIPreferencesProvider>
         </ChakraProvider>
       </QueryClientProvider>
     </StyleProvider>

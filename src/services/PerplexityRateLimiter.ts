@@ -204,21 +204,57 @@ class PerplexityRateLimiter {
     
     let timeToWait = 0;
     
-    // Calculate time to wait based on which limit is exceeded
+    // Calculate time to wait based on minute limit
     if (this.usageMetrics.requestsLastMinute >= this.options.maxRequestsPerMinute) {
       // Find the timestamp of the oldest request within the last minute
-      const sortedRecords = [...this.usageMetrics.history]
+      const minuteRecords = [...this.usageMetrics.history]
         .filter(record => new Date(record.timestamp).getTime() > Date.now() - 60 * 1000)
         .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
       
-      if (sortedRecords.length > 0) {
-        const oldestTimestamp = new Date(sortedRecords[0].timestamp).getTime();
+      if (minuteRecords.length > 0) {
+        const oldestTimestamp = new Date(minuteRecords[0].timestamp).getTime();
         const waitForMinute = (oldestTimestamp + 60 * 1000) - Date.now();
         timeToWait = Math.max(timeToWait, waitForMinute);
       }
     }
     
-    return Math.max(0, timeToWait);
+    // Calculate time to wait based on hour limit
+    if (this.usageMetrics.requestsLastHour >= this.options.maxRequestsPerHour) {
+      // Find the timestamp of the oldest request within the last hour
+      const hourRecords = [...this.usageMetrics.history]
+        .filter(record => new Date(record.timestamp).getTime() > Date.now() - 60 * 60 * 1000)
+        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      
+      if (hourRecords.length > 0) {
+        const oldestTimestamp = new Date(hourRecords[0].timestamp).getTime();
+        const waitForHour = (oldestTimestamp + 60 * 60 * 1000) - Date.now();
+        timeToWait = Math.max(timeToWait, waitForHour);
+      }
+    }
+    
+    // Calculate time to wait based on day limit
+    if (this.usageMetrics.requestsLast24h >= this.options.maxRequestsPerDay ||
+        this.usageMetrics.tokensUsed24h >= this.options.maxTokensPerDay) {
+      // Find the timestamp of the oldest request within the last 24 hours
+      const dayRecords = [...this.usageMetrics.history]
+        .filter(record => new Date(record.timestamp).getTime() > Date.now() - 24 * 60 * 60 * 1000)
+        .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      
+      if (dayRecords.length > 0) {
+        const oldestTimestamp = new Date(dayRecords[0].timestamp).getTime();
+        const waitForDay = (oldestTimestamp + 24 * 60 * 60 * 1000) - Date.now();
+        timeToWait = Math.max(timeToWait, waitForDay);
+      }
+    }
+    
+    // Add small buffer to avoid immediate retries at the limit edge
+    const waitWithBuffer = Math.max(0, timeToWait) + 500; 
+    
+    if (this.options.debugMode) {
+      console.log(`Rate limit waiting time: ${waitWithBuffer}ms`);
+    }
+    
+    return waitWithBuffer;
   }
   
   /**

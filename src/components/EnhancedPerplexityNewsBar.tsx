@@ -33,77 +33,154 @@ export default function EnhancedPerplexityNewsBar({ onAnalyzeNews }: EnhancedPer
   const fetchNews = async () => {
     try {
       setLoading(true);
-      // Add timeout handling to the API call
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
       
-      try {
-        // Use a wrapper to ensure we get proper error handling
-        const response = await fetch('/api/market-news', { 
-          signal: controller.signal,
-          headers: { 'Content-Type': 'application/json' }
-        });
+      const MAX_RETRIES = 2;
+      let retryCount = 0;
+      let lastError: Error | null = null;
+      
+      // Retry logic with backoff
+      while (retryCount <= MAX_RETRIES) {
+        // Create a new controller for each attempt
+        const controller = new AbortController();
+        // Increased timeout to 20 seconds for more reliability
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
         
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`);
+        try {
+          console.log(`Enhanced news component: Attempting fetch (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+          
+          // Use a wrapper to ensure we get proper error handling
+          const response = await fetch('/api/market-news', { 
+            signal: controller.signal,
+            headers: { 
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache' // Prevent caching issues
+            }
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+          }
+          
+          // Successfully got a response, process it
+          const data = await response.json();
+          
+          // Check if we got a fallback response or an error message
+          if (data.fallbackContent || !data.success) {
+            console.warn('Received fallback content from API');
+            // Create a fallback news item
+            setNews([{
+              id: `fallback-${Date.now()}`,
+              title: 'Market News Temporarily Unavailable',
+              summary: data.fallbackContent || 'Unable to retrieve market news. Please try again later.',
+              category: 'Service Alert',
+              timestamp: new Date().toISOString(),
+              source: 'System',
+              url: ''
+            }]);
+            setLoading(false);
+            setIsRefreshing(false);
+            return;
+          }
+          
+          // Process the successful response
+          if (!data.articles || !Array.isArray(data.articles)) {
+            throw new Error('Invalid news data format');
+          }
+          
+          // Process response and exit retry loop
+          setNews(data.articles);
+          setLoading(false);
+          setIsRefreshing(false);
+          return;
+          
+        } catch (fetchError: any) {
+          clearTimeout(timeoutId);
+          lastError = fetchError;
+          
+          console.error(`News fetch error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, 
+            fetchError.name === 'AbortError' ? 'Request timed out' : fetchError.message || fetchError);
+          
+          // If we have retries left, try again with backoff
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            const backoffMs = 1000 * retryCount; // Increasing backoff
+            console.log(`Retrying news fetch in ${backoffMs}ms...`);
+            await new Promise(resolve => setTimeout(resolve, backoffMs));
+          } else {
+            // No more retries
+            break;
+          }
         }
-        
-        const data = await response.json();
-        if (!data.articles || !Array.isArray(data.articles)) {
-          throw new Error('Invalid news data format');
-        }
-        
-        setNews(data.articles);
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        if (fetchError.name === 'AbortError') {
-          console.error('News fetch timed out');
-        }
-        throw fetchError; // rethrow to outer catch
       }
-    } catch (error) {
-      console.error('Error fetching news:', error);
-      setNews([]);
-    } finally {
+      
+      // If we reach here, all retries failed
+      console.error('All news fetch retries failed');
+      
+      // Create fallback news item when all attempts failed
+      setNews([{
+        id: `error-${Date.now()}`,
+        title: 'Market News Temporarily Unavailable',
+        summary: 'We couldn\'t retrieve the latest market news. Please try again later.',
+        category: 'Service Alert',
+        timestamp: new Date().toISOString(),
+        source: 'System',
+        url: ''
+      }]);
+      
       setLoading(false);
+      setIsRefreshing(false);
+    } catch (error) {
+      console.error('Unexpected error in fetchNews:', error);
+      setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
-  const refreshNews = async () => {
+  const refreshNews = () => {
     setIsRefreshing(true);
-    await fetchNews();
-    setTimeout(() => setIsRefreshing(false), 500);
+    fetchNews();
   };
 
+  // Format timestamp
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
     
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return date.toLocaleDateString();
+    if (diffInHours < 1) {
+      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+      return `${diffInMinutes}m ago`;
+    } else if (diffInHours < 24) {
+      const hours = Math.floor(diffInHours);
+      return `${hours}h ago`;
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
   };
 
+  // Get appropriate icon for news category
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
       case 'markets':
-        return <BarChart className="w-4 h-4" />;
+        return <TrendingUp className='w-4 h-4' />;
+      case 'economy':
+        return <BarChart className='w-4 h-4' />;
       case 'asia':
-        return <Globe className="w-4 h-4" />;
-      case 'technology':
-      case 'banking': 
-        return <TrendingUp className="w-4 h-4" />;
+        return <Globe className='w-4 h-4' />;
+      case 'banking':
+        return <BarChart className='w-4 h-4' />;
+      case 'service alert':
+        return <AlertCircle className='w-4 h-4' />;
       default:
-        return <Newspaper className="w-4 h-4" />;
+        return <Newspaper className='w-4 h-4' />;
     }
   };
-  
-  const getCategoryColor = (category: string): string => {
+
+  // Get color for category
+  const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case 'markets':
         return 'var(--scb-honolulu-blue)';
@@ -113,6 +190,8 @@ export default function EnhancedPerplexityNewsBar({ onAnalyzeNews }: EnhancedPer
         return '#5436D6';
       case 'banking':
         return '#E76F51';
+      case 'service alert':
+        return '#FF4500';
       default:
         return 'var(--scb-dark-gray)';
     }
@@ -262,7 +341,7 @@ export default function EnhancedPerplexityNewsBar({ onAnalyzeNews }: EnhancedPer
                       <span 
                         className="inline-block px-2 py-0.5 text-xs rounded-full"
                         style={{ 
-                          backgroundColor: `rgba(${getCategoryColor(item.category)}, 0.1)`,
+                          backgroundColor: `${getCategoryColor(item.category)}15`,
                           color: getCategoryColor(item.category)
                         }}
                       >
