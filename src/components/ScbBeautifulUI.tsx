@@ -10,7 +10,6 @@ import useSafeArea from '../hooks/useSafeArea';
 import { haptics } from '../lib/haptics';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { LayoutDashboard, FileText, Settings, AlertCircle, Icons } from './IconExports';
-import { LineChart, Line } from 'recharts';
 
 interface ScbBeautifulUIProps {
   children: React.ReactNode;

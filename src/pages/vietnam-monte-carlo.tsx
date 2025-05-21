@@ -27,6 +27,7 @@ import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import useMultiTasking from '@/hooks/useMultiTasking';
 import { haptics } from '@/lib/haptics';
 import { Play, Download, AlertCircle, ChevronRight } from 'lucide-react';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 
 /**
  * Vietnam Tariff Monte Carlo Simulation Page
@@ -41,6 +42,8 @@ const VietnamMonteCarloPage: NextPage = () => {
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   const [isAppleDevice, setIsAppleDevice] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const [activeMonteCarloTab, setActiveMonteCarloTab] = useState<string>('parameters');
   
   // State for simulation configuration and results
   const [config, setConfig] = useState<VietnamMonteCarloConfig | null>(null);
