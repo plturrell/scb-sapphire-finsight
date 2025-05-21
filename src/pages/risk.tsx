@@ -180,6 +180,14 @@ export default function RiskManagement() {
           </div>
         </div>
         
+        {/* SF Symbols Risk Navigation */}
+        <EnhancedRiskNavigation 
+          categories={riskCategories}
+          activeCategory={activeRiskType}
+          onCategoryChange={handleRiskTypeChange}
+          className="mb-2"
+        />
+        
         {/* Risk Score Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {Object.entries(riskScores).map(([key, score]) => (

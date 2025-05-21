@@ -41,7 +41,8 @@ import {
   ChevronDown,
   BookOpen,
   User,
-  Calculator
+  Calculator,
+  MapPin
 } from 'lucide-react';
 
 // Re-export all icons individually
@@ -83,7 +84,8 @@ export {
   ChevronDown,
   BookOpen,
   User,
-  Calculator
+  Calculator,
+  MapPin
 };
 
 // Also export as a single object for convenience
@@ -124,5 +126,6 @@ export const Icons = {
   ChevronDown,
   BookOpen,
   User,
-  Calculator
+  Calculator,
+  MapPin
 };

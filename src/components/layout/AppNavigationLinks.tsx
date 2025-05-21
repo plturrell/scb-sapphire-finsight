@@ -74,7 +74,7 @@ const allNavigationItems: NavigationItem[] = [
   { id: 'tariff-alerts', name: 'Tariff Alerts', href: '/tariff-alerts', icon: AlertTriangle, category: 'Research' },
   
   // Vietnam Research
-  { id: 'vietnam-dashboard', name: 'Vietnam Dashboard', href: '/vietnam-tariff-dashboard', icon: MapPin, category: 'Vietnam' },
+  { id: 'vietnam-dashboard', name: 'Vietnam Dashboard', href: '/vietnam-tariff-dashboard', icon: Icons.MapPin, category: 'Vietnam' },
   { id: 'vietnam-monte-carlo', name: 'Monte Carlo Sim', href: '/vietnam-monte-carlo', icon: Icons.Zap, category: 'Vietnam' },
   { id: 'vietnam-monte-carlo-enhanced', name: 'Enhanced Monte Carlo', href: '/vietnam-monte-carlo-enhanced', icon: Icons.Zap, category: 'Vietnam' },
   { id: 'vietnam-tariff-impact', name: 'Tariff Impact', href: '/vietnam-tariff-impact', icon: Globe, category: 'Vietnam' },

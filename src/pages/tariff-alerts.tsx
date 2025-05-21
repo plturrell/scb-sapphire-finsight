@@ -202,53 +202,67 @@ const TariffAlertsDashboard: NextPage = () => {
       
       setSimulationInProgress(true);
       
-      // In a real implementation, this would call the service
-      // const ontologyManager = new OntologyManager();
-      // await ontologyManager.loadOntology();
-      // const simulator = new TariffImpactSimulator(ontologyManager);
-      // const results = await simulator.runSimulation();
-      // const sankeyData = simulator.generateSankeyData();
+      // Get countries from the current filtered alerts
+      const countries = [...new Set(filteredAlerts.map(alert => alert.country))];
       
-      // For demo purposes, simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Get product categories from the current filtered alerts
+      const products = [...new Set(
+        filteredAlerts
+          .flatMap(alert => alert.productCategories || [])
+          .filter(Boolean)
+      )];
       
-      // Mock Sankey data
-      setSankeyData({
-        nodes: [
-          { name: "Singapore", group: "country" },
-          { name: "Malaysia", group: "country" },
-          { name: "Vietnam", group: "country" },
-          { name: "Electronics", group: "product" },
-          { name: "Textiles", group: "product" },
-          { name: "Automotive", group: "product" },
-          { name: "FTA", group: "policy" },
-          { name: "Protectionist", group: "policy" },
-          { name: "WTO Rules", group: "policy" }
-        ],
-        links: [
-          { source: 0, target: 3, value: 20, uiColor: "rgba(0, 114, 170, 0.6)", aiEnhanced: true },
-          { source: 0, target: 4, value: 15, uiColor: "rgba(0, 114, 170, 0.6)" },
-          { source: 1, target: 4, value: 25, uiColor: "rgba(0, 114, 170, 0.6)" },
-          { source: 1, target: 5, value: 18, uiColor: "rgba(0, 114, 170, 0.6)", aiEnhanced: true },
-          { source: 2, target: 3, value: 22, uiColor: "rgba(0, 114, 170, 0.6)" },
-          { source: 2, target: 5, value: 12, uiColor: "rgba(0, 114, 170, 0.6)" },
-          { source: 3, target: 6, value: 15, uiColor: "rgba(33, 170, 71, 0.6)" },
-          { source: 3, target: 8, value: 5, uiColor: "rgba(33, 170, 71, 0.6)" },
-          { source: 4, target: 7, value: 20, uiColor: "rgba(33, 170, 71, 0.6)", aiEnhanced: true },
-          { source: 5, target: 6, value: 13, uiColor: "rgba(33, 170, 71, 0.6)" },
-          { source: 5, target: 7, value: 8, uiColor: "rgba(33, 170, 71, 0.6)" }
-        ],
-        aiInsights: {
-          summary: "AI-enhanced analysis of tariff impacts across ASEAN countries.",
-          recommendations: [
-            "Monitor changes in Vietnam's electronics tariffs in response to regional tensions.",
-            "Consider diversifying textile suppliers beyond Malaysia to mitigate risk.",
-            "Prepare contingency plans for automotive supply chain disruptions."
+      // Use the TariffService to run the simulation
+      try {
+        const result = await TariffService.runImpactSimulation({
+          countries: countries.length ? countries : undefined,
+          products: products.length ? products : undefined,
+          timeframe: '2025'
+        });
+        
+        // Set the sankey data from the API response
+        setSankeyData(result.sankeyData);
+      } catch (apiError) {
+        console.error('API error, falling back to mock data:', apiError);
+        
+        // Mock Sankey data as fallback
+        setSankeyData({
+          nodes: [
+            { name: "Singapore", group: "country" },
+            { name: "Malaysia", group: "country" },
+            { name: "Vietnam", group: "country" },
+            { name: "Electronics", group: "product" },
+            { name: "Textiles", group: "product" },
+            { name: "Automotive", group: "product" },
+            { name: "FTA", group: "policy" },
+            { name: "Protectionist", group: "policy" },
+            { name: "WTO Rules", group: "policy" }
           ],
-          confidence: 0.85,
-          updatedAt: new Date()
-        }
-      });
+          links: [
+            { source: 0, target: 3, value: 20, uiColor: "rgba(0, 114, 170, 0.6)", aiEnhanced: true },
+            { source: 0, target: 4, value: 15, uiColor: "rgba(0, 114, 170, 0.6)" },
+            { source: 1, target: 4, value: 25, uiColor: "rgba(0, 114, 170, 0.6)" },
+            { source: 1, target: 5, value: 18, uiColor: "rgba(0, 114, 170, 0.6)", aiEnhanced: true },
+            { source: 2, target: 3, value: 22, uiColor: "rgba(0, 114, 170, 0.6)" },
+            { source: 2, target: 5, value: 12, uiColor: "rgba(0, 114, 170, 0.6)" },
+            { source: 3, target: 6, value: 15, uiColor: "rgba(33, 170, 71, 0.6)" },
+            { source: 3, target: 8, value: 5, uiColor: "rgba(33, 170, 71, 0.6)" },
+            { source: 4, target: 7, value: 20, uiColor: "rgba(33, 170, 71, 0.6)", aiEnhanced: true },
+            { source: 5, target: 6, value: 13, uiColor: "rgba(33, 170, 71, 0.6)" },
+            { source: 5, target: 7, value: 8, uiColor: "rgba(33, 170, 71, 0.6)" }
+          ],
+          aiInsights: {
+            summary: "AI-enhanced analysis of tariff impacts across ASEAN countries.",
+            recommendations: [
+              "Monitor changes in Vietnam's electronics tariffs in response to regional tensions.",
+              "Consider diversifying textile suppliers beyond Malaysia to mitigate risk.",
+              "Prepare contingency plans for automotive supply chain disruptions."
+            ],
+            confidence: 0.85,
+            updatedAt: new Date()
+          }
+        });
+      }
       
       // Success haptic feedback
       if (isAppleDevice) {
