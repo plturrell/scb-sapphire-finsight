@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
-import { Switch, Tabs, TabList, TabPanels, Tab, TabPanel, Select, Radio, RadioGroup, Stack, useToast } from '@chakra-ui/react';
+import { Switch, Tabs, TabList, TabPanels, Tab, TabPanel, Select, Radio, RadioGroup, Stack, useToast, Box, Text, useColorModeValue } from '@chakra-ui/react';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import useMultiTasking from '@/hooks/useMultiTasking';
@@ -13,7 +13,8 @@ import { useSafeArea, safeAreaCss } from '@/hooks/useSafeArea';
 import { useApplePhysics } from '@/hooks/useApplePhysics';
 import { useIOS } from '@/hooks/useResponsive';
 import { useSFSymbolsSupport } from '@/lib/sf-symbols';
-import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Bell, Check } from 'lucide-react';
+import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Bell, Check, Zap } from 'lucide-react';
+import ThemePreview from '@/components/ThemePreview';
 
 // Types for notification preferences
 type NotificationPreference = {
@@ -60,21 +61,26 @@ const settingsSections = [
 
 const SettingsPage = () => {
   const { preferences, setPreference, resetPreferences, isDarkMode } = useUIPreferences();
-  const { deviceType, isAppleDevice, browserName } = useDeviceCapabilities();
-  const [activeTab, setActiveTab] = useState(0);
-  const { isMultiTasking } = useMultiTasking();
+  const { deviceType, isAppleDevice } = useDeviceCapabilities();
+  const { isMultiTasking, mode } = useMultiTasking();
   const [isMounted, setIsMounted] = useState(false);
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [activeSection, setActiveSection] = useState<string>('general');
+  const [showSaveNotice, setShowSaveNotice] = useState(false);
+  const [showConfirmationSheet, setShowConfirmationSheet] = useState(false);
+  const [navbarHidden, setNavbarHidden] = useState(false);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const toast = useToast();
   
-  // Notification preferences state
-  const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreference>({
+  // Use notification prefs from preferences context
+  const notificationPrefs = preferences.notificationPrefs || {
     portfolioAlerts: true,
     reportUpdates: true,
     marketNews: true,
     systemUpdates: true,
-  });
+  };
   
   // Platform detection
   const isAppleDeviceHook = useIOS();
@@ -89,36 +95,17 @@ const SettingsPage = () => {
   const isiPad = deviceType === 'tablet' && isAppleDevice;
   const isApplePlatform = isiOS || isiPad;
   
-  // Show settings confirmation sheet (iOS style)
-  const [showConfirmationSheet, setShowConfirmationSheet] = useState(false);
-  
-  // Active settings section for iOS navigation
-  const [activeSection, setActiveSection] = useState<string>('General');
-  
   // Touch tracking
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const lastScrollTop = useRef<number>(0);
   const [navbarHidden, setNavbarHidden] = useState(false);
   
-  // Load saved notification preferences
-  useEffect(() => {
-    const savedPrefs = localStorage.getItem('notificationPreferences');
-    if (savedPrefs) {
-      setNotificationPrefs(JSON.parse(savedPrefs));
-    }
-  }, []);
-  
-  // Save notification preferences when they change
-  useEffect(() => {
-    localStorage.setItem('notificationPreferences', JSON.stringify(notificationPrefs));
-  }, [notificationPrefs]);
-  
   // Handle notification preference change
   const handleNotificationChange = (key: keyof NotificationPreference, value: boolean) => {
-    setNotificationPrefs(prev => ({
-      ...prev,
+    setPreference('notificationPrefs', {
+      ...notificationPrefs,
       [key]: value
-    }));
+    });
     showSaveNotification();
   };
   
@@ -136,39 +123,42 @@ const SettingsPage = () => {
     setPlatformDetected(true);
     
     // Initialize scroll listener for iOS-style navigation hiding
-    if (isAppleDevice) {
-      const handleScroll = () => {
-        if (typeof window !== 'undefined') {
-          const scrollTop = window.scrollY;
-          const scrollDelta = scrollTop - lastScrollTop.current;
-          
-          // Hide navbar when scrolling down, show when scrolling up
-          if (scrollDelta > 10 && scrollTop > 100) {
-            setNavbarHidden(true);
-          } else if (scrollDelta < -10 || scrollTop < 50) {
-            setNavbarHidden(false);
-          }
-          
-          lastScrollTop.current = scrollTop;
-        }
-      };
-      
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, [isAppleDevice]);
+  }, [isAppleDevice, isIPad]);
+  
+  // Handle scroll for iOS-style navbar hiding
+  const handleScroll = useCallback(() => {
+    if (!isApplePlatform) return;
+    
+    const currentScrollY = window.scrollY;
+    setNavbarHidden(currentScrollY > 100);
+  }, [isApplePlatform, setNavbarHidden]);
+  
+  // Set up scroll listener
+  useEffect(() => {
+    if (!isApplePlatform) return;
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll, isApplePlatform]);
   
   // iOS-specific gesture handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isApplePlatform) return;
-    setTouchStartY(e.touches[0].clientY);
+    const touch = e.touches[0];
+    if (touch) {
+      const currentScrollY = window.scrollY;
+      setNavbarHidden(currentScrollY > 100);
+    }
   };
   
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isApplePlatform || touchStartY === null) return;
-    const currentY = e.touches[0].clientY;
+    if (!isApplePlatform) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const currentY = touch.clientY;
+    const touchStartY = 0; // This should be managed with state if needed
     const diffY = touchStartY - currentY;
     
     // If scrolling down, hide navbar
@@ -181,66 +171,77 @@ const SettingsPage = () => {
   
   const handleTouchEnd = () => {
     if (!isApplePlatform) return;
-    setTouchStartY(null);
+    // Reset touch state if needed
   };
   
-  // Debounce timer ref for preventing UI flicker during theme changes
+  // Refs for timers and state management
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const noticeTimerRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Show save notification with debouncing
+  // Browser detection
+  const getBrowserName = (): string => {
+    const userAgent = navigator.userAgent;
+    if (userAgent.includes('Chrome')) return 'Chrome';
+    if (userAgent.includes('Firefox')) return 'Firefox';
+    if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari';
+    if (userAgent.includes('Edge')) return 'Edge';
+    return 'Unknown';
+  };
+  
+  const browserName = isMounted ? getBrowserName() : 'Loading...';
+  
+  // Show save notification with haptic feedback
   const showSaveNotification = useCallback(() => {
-    // Clear any existing timers
-    if (noticeTimerRef.current) {
-      clearTimeout(noticeTimerRef.current);
+    // Haptic feedback for iOS devices
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate(50);
+    } else if (window.Telegram?.WebApp?.HapticFeedback) {
+      window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+    } else if (window?.HapticFeedback) {
+      window.HapticFeedback.impact('medium');
+    }
+    
+    // On iOS, play success haptic
+    if (isApplePlatform && preferences.enableHaptics) {
+      haptics.success();
     }
     
     // Show the notification
     setShowSaveNotice(true);
+    
+    // Clear any existing timers
+    if (noticeTimerRef.current) {
+      clearTimeout(noticeTimerRef.current);
+    }
     
     // Hide notification after 3 seconds
     noticeTimerRef.current = setTimeout(() => {
       setShowSaveNotice(false);
       noticeTimerRef.current = null;
     }, 3000);
-    
-    // On iOS, play success haptic
-    if (isApplePlatform && preferences.enableHaptics) {
-      haptics.success();
-    }
   }, [isApplePlatform, preferences.enableHaptics]);
   
-  // Show save notification when preferences change
-  const handlePreferenceChange = useCallback(<K extends keyof typeof preferences>(key: K, value: typeof preferences[K]) => {
-    // Provide appropriate haptic feedback based on setting type
-    if (preferences.enableHaptics && isApplePlatform) {
-      // Different haptic patterns for different settings types
-      if (key === 'theme' || key === 'chartTheme' || key === 'accentColor') {
-        haptics.impact('medium');
-      } else if (typeof value === 'boolean') {
-        haptics.toggle();
-      } else {
-        haptics.selection();
-      }
+  // Handle preference changes with debouncing
+  const handlePreferenceChange = useCallback((key: keyof typeof preferences, value: typeof preferences[keyof typeof preferences], immediate: boolean = false) => {
+    // Cancel any pending updates
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
     
-    // For theme changes, use debouncing to prevent flicker
-    if (key === 'theme' || key === 'chartTheme') {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-      
-      debounceTimerRef.current = setTimeout(() => {
-        setPreference(key, value);
-        debounceTimerRef.current = null;
-      }, 100);
-    } else {
-      // No debouncing for other preferences
-      setPreference(key, value);
+    // Update local state immediately for responsive UI
+    setPreference(key, value);
+    
+    // For theme changes, we want immediate feedback
+    if (key === 'theme' && immediate) {
+      showSaveNotification();
+      return;
     }
     
-    showSaveNotification();
-  }, [preferences.enableHaptics, isApplePlatform, setPreference, showSaveNotification]);
+    // Show save notification after a short delay
+    debounceTimerRef.current = setTimeout(() => {
+      showSaveNotification();
+    }, 300);
+  }, [setPreference, showSaveNotification]);
   
   // Reset all preferences with confirmation for iOS
   const handleResetPreferences = useCallback(() => {
@@ -295,8 +296,17 @@ const SettingsPage = () => {
   // Handle section change for SF Symbols navigation
   const handleSectionChange = (sectionId: string) => {
     const sectionIndex = settingsSections.findIndex(section => section.id === sectionId);
-    if (sectionIndex !== -1) {
-      handleTabChange(sectionIndex);
+    if (sectionIndex >= 0) {
+      setActiveTab(sectionIndex);
+      setActiveSection(sectionId);
+      
+      // Scroll to top when changing sections
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Provide haptic feedback on mobile
+      if (preferences.enableHaptics && isApplePlatform) {
+        haptics.selection();
+      }
     }
   };
   
@@ -358,18 +368,37 @@ const SettingsPage = () => {
               }}
             >
               {/* Enhanced Settings Navigation with SF Symbols */}
-              {isAppleDeviceHook && isPlatformDetected && sfSymbolsSupported && (
-                <div className="mb-6">
-                  <EnhancedSettingsNavigation
-                    sections={settingsSections}
-                    activeSection={settingsSections[activeTab]?.id || 'general'}
-                    onSectionChange={handleSectionChange}
-                    variant={isIPad && !isMultiTasking ? 'grid' : 'list'}
-                    showDescriptions={isIPad && !isMultiTasking}
-                    className="mb-4"
-                  />
-                </div>
+              <div className={`mb-6 ${!isAppleDeviceHook || !isPlatformDetected || !sfSymbolsSupported ? 'opacity-0 h-0 overflow-hidden' : ''}`}>
+                <EnhancedSettingsNavigation
+                  sections={settingsSections}
+                  activeSection={activeSection}
+                  onSectionChange={handleSectionChange}
+                  variant={isIPad && !isMultiTasking ? 'grid' : 'list'}
+                  showDescriptions={isIPad && !isMultiTasking}
+                  className="mb-4"
+                  theme={isDarkMode ? 'dark' : 'light'}
+                />
+              </div>
+              
+              {/* Fallback Tabs for non-iOS or when SF Symbols aren't supported */}
+              {(!isAppleDeviceHook || !isPlatformDetected || !sfSymbolsSupported) && (
+                <Tabs 
+                  index={activeTab} 
+                  onChange={handleTabChange}
+                  variant="enclosed"
+                  className="mb-6"
+                  colorScheme="blue"
+                >
+                  <TabList>
+                    {settingsSections.map((section) => (
+                      <Tab key={section.id} className="capitalize">
+                        {section.name}
+                      </Tab>
+                    ))}
+                  </TabList>
+                </Tabs>
               )}
+              
               {/* iOS-style grouped table view */}
               <div className="rounded-lg overflow-hidden shadow-sm">
                 {/* System Information */}
@@ -451,34 +480,54 @@ const SettingsPage = () => {
                 <div className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                   {/* Theme Mode */}
                   <div className="px-4 py-3">
-                    <div className="mb-2">
-                      <span className="text-gray-800 dark:text-white">Theme Mode</span>
+                    <div className="mb-8">
+                      <h3 className="text-sm font-medium text-gray-800 dark:text-white mb-3">
+                        Appearance
+                      </h3>
+                      
+                      {/* Theme Preview */}
+                      <ThemePreview 
+                        theme={preferences.theme}
+                        isDarkMode={isDarkMode}
+                        onSelect={(theme) => handlePreferenceChange('theme', theme, true)}
+                      />
+                      
+                      <div className="mt-4">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                          Theme Mode
+                        </p>
+                        <RadioGroup 
+                          value={preferences.theme} 
+                          onChange={(value) => handlePreferenceChange('theme', value as 'light' | 'dark' | 'system')}
+                          className="space-y-2"
+                        >
+                          <div className="flex items-center">
+                            <Radio value="light" className="text-blue-600 dark:text-blue-400">
+                              <div className="flex items-center ml-2">
+                                <Sun className="w-4 h-4 mr-2" />
+                                <span className="text-gray-800 dark:text-white">Light</span>
+                              </div>
+                            </Radio>
+                          </div>
+                          <div className="flex items-center">
+                            <Radio value="dark" className="text-blue-600 dark:text-blue-400">
+                              <div className="flex items-center ml-2">
+                                <Moon className="w-4 h-4 mr-2" />
+                                <span className="text-gray-800 dark:text-white">Dark</span>
+                              </div>
+                            </Radio>
+                          </div>
+                          <div className="flex items-center">
+                            <Radio value="system" className="text-blue-600 dark:text-blue-400">
+                              <div className="flex items-center ml-2">
+                                <Monitor className="w-4 h-4 mr-2" />
+                                <span className="text-gray-800 dark:text-white">System Default</span>
+                              </div>
+                            </Radio>
+                          </div>
+                        </RadioGroup>
+                      </div>
                     </div>
-                    <RadioGroup 
-                      value={preferences.theme} 
-                      onChange={(value) => handlePreferenceChange('theme', value as 'light' | 'dark' | 'system')}
-                    >
-                      <Stack direction="column" spacing={3}>
-                        <Radio value="light" colorScheme="blue">
-                          <div className="flex items-center">
-                            <Sun className="w-4 h-4 mr-2" />
-                            <span className="text-gray-800 dark:text-white">Light</span>
-                          </div>
-                        </Radio>
-                        <Radio value="dark" colorScheme="blue">
-                          <div className="flex items-center">
-                            <Moon className="w-4 h-4 mr-2" />
-                            <span className="text-gray-800 dark:text-white">Dark</span>
-                          </div>
-                        </Radio>
-                        <Radio value="system" colorScheme="blue">
-                          <div className="flex items-center">
-                            <Monitor className="w-4 h-4 mr-2" />
-                            <span className="text-gray-800 dark:text-white">System</span>
-                          </div>
-                        </Radio>
-                      </Stack>
-                    </RadioGroup>
                   </div>
                   
                   {/* Accent Color */}

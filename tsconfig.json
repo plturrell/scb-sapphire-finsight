@@ -22,10 +22,11 @@
     }
   },
   "include": [
-    "next-env.d.ts", 
-    "**/*.ts", 
-    "**/*.tsx", 
-    "src/types/declarations.d.ts"
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/types/declarations.d.ts",
+    "src/types/global.d.ts"
   ],
   "exclude": ["node_modules"]
 }

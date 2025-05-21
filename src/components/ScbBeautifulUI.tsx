@@ -134,25 +134,76 @@ const ScbBeautifulUI: React.FC<ScbBeautifulUIProps> = ({
       }}
     >
       <div className={`flex flex-col w-full ${getFontSizeClass()}`}>
-        {/* Page header with search bar */}
-        {showSearchBar && (
-          <div className={`
-            mb-6 flex flex-col items-center gap-4
-            ${isMultiTasking && mode === 'slide-over' ? 'mb-4 gap-2' : ''}
+        {/* Enhanced Page Header with Search Bar */}
+        <header 
+          className={`
+            sticky top-0 z-10 transition-all duration-300
+            ${showSearchBar ? 'pt-4 pb-2' : 'py-2'}
+            ${isDarkMode ? 'bg-gray-900' : 'bg-white'}
             ${getAnimationClass('animate-fadeIn')}
+            ${isMultiTasking && mode === 'slide-over' ? 'px-2' : 'px-4 md:px-6'}
+            ${!showSearchBar && 'border-b border-opacity-10 ' + (isDarkMode ? 'border-gray-700' : 'border-gray-200')}
+          `}
+        >
+          <div className={`
+            flex flex-col gap-3 w-full
+            ${isMultiTasking && mode === 'slide-over' ? 'max-w-full' : 'max-w-7xl mx-auto'}
           `}>
-            {pageTitle && (
-              <h1 className={`
-                scb-title font-bold self-start
-                ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-honolulu-blue))]'}
-                ${isMultiTasking && mode === 'slide-over' ? 'text-xl' : 'text-2xl'}
+            {/* Title Row */}
+            <div className="flex items-center justify-between w-full">
+              {pageTitle && (
+                <h1 className={`
+                  scb-title font-bold leading-tight
+                  ${isDarkMode ? 'text-white' : 'text-[rgb(var(--scb-honolulu-blue))]'}
+                  ${isMultiTasking && mode === 'slide-over' ? 'text-xl' : 'text-2xl md:text-3xl'}
+                  transition-all duration-200
+                `}>
+                  {pageTitle}
+                </h1>
+              )}
+              
+              {/* Header Actions */}
+              <div className="flex items-center gap-2">
+                {showJoule && (
+                  <button 
+                    onClick={() => joule.toggle()}
+                    className={`
+                      p-2 rounded-full transition-colors
+                      ${isDarkMode 
+                        ? 'hover:bg-gray-800 text-blue-400' 
+                        : 'hover:bg-blue-50 text-blue-600'}
+                    `}
+                    aria-label="Open Joule Assistant"
+                  >
+                    <Zap className="w-5 h-5" />
+                  </button>
+                )}
+                
+                <button 
+                  className={`
+                    p-2 rounded-full transition-colors
+                    ${isDarkMode 
+                      ? 'hover:bg-gray-800 text-gray-300' 
+                      : 'hover:bg-gray-100 text-gray-600'}
+                  `}
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Search Bar */}
+            {showSearchBar && (
+              <div className={`
+                transition-all duration-300
+                ${isMultiTasking && mode === 'slide-over' ? 'w-full' : 'w-full md:w-2/3'}
               `}>
-                {pageTitle}
-              </h1>
+                <EnhancedPerplexitySearchBar />
+              </div>
             )}
-            <EnhancedPerplexitySearchBar />
           </div>
-        )}
+        </header>
 
         {/* Main content */}
         <div className={`flex flex-1 gap-6 ${getAnimationClass('animate-fadeIn')}`}>

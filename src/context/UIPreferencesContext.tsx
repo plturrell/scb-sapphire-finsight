@@ -9,7 +9,7 @@ export interface UIPreferences {
   
   // Theme preferences
   theme: 'light' | 'dark' | 'system';
-  accentColor: 'blue' | 'green' | 'purple' | 'teal' | 'orange';
+  accentColor: 'blue' | 'green' | 'purple' | 'teal' | 'orange' | 'indigo' | 'pink';
   
   // Navigation preferences
   showLabels: boolean;
@@ -18,6 +18,7 @@ export interface UIPreferences {
   // Content preferences
   enableAnimations: boolean;
   enableHaptics: boolean;
+  enableNotifications: boolean;
   fontSize: 'small' | 'medium' | 'large';
   
   // Feature toggles
@@ -29,6 +30,14 @@ export interface UIPreferences {
   chartColorPalette: 'standard' | 'colorblind' | 'monochrome' | 'pastel';
   chartTheme: 'light' | 'dark' | 'system';
   chartLegendPosition: 'top' | 'bottom' | 'left' | 'right';
+  
+  // Notification preferences
+  notificationPrefs: {
+    portfolioAlerts: boolean;
+    reportUpdates: boolean;
+    marketNews: boolean;
+    systemUpdates: boolean;
+  };
 }
 
 // Default preferences
@@ -45,6 +54,7 @@ const defaultPreferences: UIPreferences = {
   
   enableAnimations: true,
   enableHaptics: true,
+  enableNotifications: true,
   fontSize: 'medium',
   
   enableNewsBar: true,
@@ -53,7 +63,14 @@ const defaultPreferences: UIPreferences = {
   
   chartColorPalette: 'standard',
   chartTheme: 'system',
-  chartLegendPosition: 'bottom'
+  chartLegendPosition: 'bottom',
+  
+  notificationPrefs: {
+    portfolioAlerts: true,
+    reportUpdates: true,
+    marketNews: true,
+    systemUpdates: true
+  }
 };
 
 // Create the context

@@ -1219,6 +1219,7 @@ const Dashboard: React.FC = () => {
       
       {/* iOS-specific modal overlays */}
       {renderKPIDetailModal()}
+      {renderChartDetailModal()}
 
       {isAppleDevice ? (
         <IOSOptimizedLayout
@@ -1240,13 +1241,15 @@ const Dashboard: React.FC = () => {
               <span className="font-medium">Current view:</span> {userRole === 'executive' ? 'Executive Summary' : userRole === 'analyst' ? 'Detailed Analysis' : 'Operations View'}
             </span>
             
-            {/* Role selector */}
+            {/* iOS-style Role selector */}
             <div className="ml-auto">
               <div className={`${isMultiTasking && mode === 'slide-over' ? 'flex flex-col space-y-1.5' : 'flex space-x-1.5'}`}>
                 <EnhancedTouchButton
                   variant={userRole === 'executive' ? 'primary' : 'secondary'}
                   size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
                   onClick={() => memoizedRoleChangeHandler('executive')}
+                  icon={sfSymbolsSupported ? 'person.crop.circle.badge.checkmark' : undefined}
+                  hapticFeedback="medium"
                 >
                   Executive
                 </EnhancedTouchButton>
@@ -1254,6 +1257,8 @@ const Dashboard: React.FC = () => {
                   variant={userRole === 'analyst' ? 'primary' : 'secondary'}
                   size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
                   onClick={() => memoizedRoleChangeHandler('analyst')}
+                  icon={sfSymbolsSupported ? 'chart.bar.xaxis.ascending' : undefined}
+                  hapticFeedback="medium"
                 >
                   Analyst
                 </EnhancedTouchButton>
@@ -1261,6 +1266,8 @@ const Dashboard: React.FC = () => {
                   variant={userRole === 'operations' ? 'primary' : 'secondary'}
                   size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
                   onClick={() => memoizedRoleChangeHandler('operations')}
+                  icon={sfSymbolsSupported ? 'gear.badge.checkmark' : undefined}
+                  hapticFeedback="medium"
                 >
                   Operations
                 </EnhancedTouchButton>
@@ -1309,11 +1316,46 @@ const Dashboard: React.FC = () => {
             />
           )}
           
-          {/* Loading state */}
+          {/* Loading state with iOS-style animation */}
           {loading && (
             <div className="flex flex-col items-center justify-center py-12">
-              <div aria-label="Loading dashboard data" role="status" className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-solid border-[rgb(var(--scb-honolulu-blue))] border-r-transparent mb-4"></div>
+              <div 
+                aria-label="Loading dashboard data" 
+                role="status" 
+                className="inline-block h-10 w-10 rounded-full border-4 border-solid border-[rgb(var(--scb-honolulu-blue))] border-r-transparent mb-4"
+                style={{
+                  animation: prefersReducedMotion 
+                    ? 'none' 
+                    : `spin ${applePhysics.config.duration * 2}ms linear infinite`
+                }}
+              />
               <p className="scb-data-label text-[rgb(var(--scb-honolulu-blue))]">Loading your financial dashboard...</p>
+              {isApplePlatform && (
+                <div className="mt-4 flex items-center justify-center">
+                  <button 
+                    className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                      isDarkMode 
+                        ? 'bg-gray-800 text-white border border-gray-700'
+                        : 'bg-white text-gray-800 border border-gray-300'
+                    } active:scale-95 transition-transform duration-100`}
+                    onClick={handleRefresh}
+                    style={{
+                      borderRadius: '12px',
+                      minHeight: '36px',
+                      transition: prefersReducedMotion 
+                        ? 'none' 
+                        : `all ${applePhysics.config.duration * 0.5}ms cubic-bezier(0.25, 0.1, 0.25, 1.0)`
+                    }}
+                  >
+                    {sfSymbolsSupported ? (
+                      <span className="sf-symbol text-[14px] mr-2">arrow.clockwise</span>
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                    )}
+                    Refresh
+                  </button>
+                </div>
+              )}
             </div>
           )}
           

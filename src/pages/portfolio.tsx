@@ -4,6 +4,7 @@ import MetricCard from '@/components/MetricCard';
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import portfolioService, { PortfolioData, TaskData, PortfolioMetrics } from '@/services/PortfolioService';
 import { useMultiTasking } from '@/hooks/useMultiTasking';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
@@ -14,6 +15,7 @@ import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import { ICONS } from '@/components/IconSystem';
 import useApplePhysics from '@/hooks/useApplePhysics';
 import useSafeArea, { safeAreaCss } from '@/hooks/useSafeArea';
+import { AlertCircle, RefreshCw } from '@/components/IconExports';
 import {
   BarChart,
   Bar,
@@ -44,24 +46,16 @@ const iosTransitions = {
   delay: 0
 };
 
-const portfolioData = [
-  { region: 'United Kingdom', planned: 75, actual: 82 },
-  { region: 'India', planned: 65, actual: 70 },
-  { region: 'Bangladesh', planned: 58, actual: 60 },
-  { region: 'United States', planned: 85, actual: 88 },
-  { region: 'United Arab Emirates', planned: 62, actual: 65 },
-  { region: 'China', planned: 78, actual: 80 },
-  { region: 'Korea', planned: 55, actual: 58 },
-];
-
-const taskData = [
-  { id: '1', task: 'Review annual budget allocation', status: 'completed', dueDate: '2025-01-15' },
-  { id: '2', task: 'Provide personal details for company records', status: 'pending', dueDate: '2025-01-20' },
-  { id: '3', task: 'Update compliance certifications', status: 'overdue', dueDate: '2025-01-10' },
-  { id: '4', task: 'Complete Q4 performance review', status: 'pending', dueDate: '2025-01-25' },
-];
+// Data will be loaded from PortfolioService
 
 export default function Portfolio() {
+  // Data states for real API integration
+  const [portfolioData, setPortfolioData] = useState<PortfolioData[]>([]);
+  const [taskData, setTaskData] = useState<TaskData[]>([]);
+  const [portfolioMetrics, setPortfolioMetrics] = useState<PortfolioMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   // State variables for data and UI
   const [selectedBarData, setSelectedBarData] = useState<any>(null);
   const [activePortfolioCategory, setActivePortfolioCategory] = useState('overview');
@@ -95,6 +89,31 @@ export default function Portfolio() {
   const isIPad = deviceType === 'tablet' && isAppleDevice;
   const isIPhone = deviceType === 'mobile' && isAppleDevice;
   const isApplePlatform = isIPad || isIPhone;
+  
+  // Load data from Portfolio Service
+  const loadData = async (forceRefresh = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const data = await portfolioService.getPortfolioData(forceRefresh);
+      
+      setPortfolioData(data.regional);
+      setTaskData(data.tasks);
+      setPortfolioMetrics(data.metrics);
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load portfolio data');
+      console.error('Error loading portfolio data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Initial data load
+  useEffect(() => {
+    loadData();
+  }, []);
   
   // Effect to detect platform
   useEffect(() => {
@@ -210,11 +229,16 @@ export default function Portfolio() {
     setRefreshing(true);
     haptics.medium(); // Medium strength feedback for refresh
     
-    // Simulate refresh (would fetch new data in a real implementation)
-    setTimeout(() => {
-      setRefreshing(false);
+    try {
+      // Load fresh data from API
+      await loadData(true);
       haptics.success(); // Success feedback when refresh completes
-    }, 1500);
+    } catch (err) {
+      console.error('Error refreshing portfolio data:', err);
+      haptics.error();
+    } finally {
+      setRefreshing(false);
+    }
   };
   
   // Handle swipe actions on portfolio items
@@ -1066,6 +1090,105 @@ export default function Portfolio() {
     );
   };
 
+  // Loading state
+  if (loading && portfolioData.length === 0) {
+    return (
+      <>
+        {isAppleDevice ? (
+          <IOSOptimizedLayout
+            title="Asia Portfolio"
+            subtitle="Transaction Banking Overview"
+            showBreadcrumb={true}
+            breadcrumbItems={breadcrumbItems}
+            showTabBar={true}
+            tabItems={tabItems}
+            navBarRightActions={navBarActions}
+            showBackButton={true}
+            largeTitle={!navbarHidden}
+            theme={isDarkMode ? 'dark' : 'light'}
+          >
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>Loading portfolio data...</p>
+              </div>
+            </div>
+          </IOSOptimizedLayout>
+        ) : (
+          <ScbBeautifulUI showNewsBar={!isSmallScreen} pageTitle="Asia Portfolio" showTabs={false}>
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading portfolio data...</p>
+              </div>
+            </div>
+          </ScbBeautifulUI>
+        )}
+      </>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <>
+        {isAppleDevice ? (
+          <IOSOptimizedLayout
+            title="Asia Portfolio"
+            subtitle="Transaction Banking Overview"
+            showBreadcrumb={true}
+            breadcrumbItems={breadcrumbItems}
+            showTabBar={true}
+            tabItems={tabItems}
+            navBarRightActions={navBarActions}
+            showBackButton={true}
+            largeTitle={!navbarHidden}
+            theme={isDarkMode ? 'dark' : 'light'}
+          >
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  Failed to Load Portfolio
+                </h3>
+                <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {error}
+                </p>
+                <EnhancedTouchButton
+                  variant="primary"
+                  label="Retry"
+                  onClick={() => loadData(true)}
+                  iconLeft={<RefreshCw className="w-4 h-4" />}
+                />
+              </div>
+            </div>
+          </IOSOptimizedLayout>
+        ) : (
+          <ScbBeautifulUI showNewsBar={!isSmallScreen} pageTitle="Asia Portfolio" showTabs={false}>
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-gray-900">
+                  Failed to Load Portfolio
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {error}
+                </p>
+                <button
+                  onClick={() => loadData(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Retry
+                </button>
+              </div>
+            </div>
+          </ScbBeautifulUI>
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       {isAppleDevice ? (
@@ -1108,28 +1231,28 @@ export default function Portfolio() {
             }`}>
               <MetricCard
                 title="Total Revenue"
-                value={14.32}
-                change={6.3}
+                value={portfolioMetrics?.totalRevenue || 14.32}
+                change={portfolioMetrics?.revenueChange || 6.3}
                 period="YoY Income"
                 format="percentage"
               />
               <MetricCard
                 title="RoRWA"
-                value={6.3}
-                change={6.3}
+                value={portfolioMetrics?.rorwa || 6.3}
+                change={portfolioMetrics?.rorwaChange || 6.3}
                 period="Risk-adjusted returns"
                 format="percentage"
               />
               <MetricCard
                 title="Sustainable Finance"
-                value={50789}
+                value={portfolioMetrics?.sustainableFinance || 50789}
                 period="Mobilization"
                 format="currency"
               />
               <MetricCard
                 title="Tasks"
-                value="7 overdue"
-                period="3 tasks need attention"
+                value={`${portfolioMetrics?.tasksOverdue || 7} overdue`}
+                period={`${(portfolioMetrics?.tasksTotal || 24) - (portfolioMetrics?.tasksOverdue || 7)} tasks need attention`}
                 format="string"
               />
             </div>
@@ -1195,28 +1318,28 @@ export default function Portfolio() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard
                 title="Total Revenue"
-                value={14.32}
-                change={6.3}
+                value={portfolioMetrics?.totalRevenue || 14.32}
+                change={portfolioMetrics?.revenueChange || 6.3}
                 period="YoY Income"
                 format="percentage"
               />
               <MetricCard
                 title="RoRWA"
-                value={6.3}
-                change={6.3}
+                value={portfolioMetrics?.rorwa || 6.3}
+                change={portfolioMetrics?.rorwaChange || 6.3}
                 period="Risk-adjusted returns"
                 format="percentage"
               />
               <MetricCard
                 title="Sustainable Finance"
-                value={50789}
+                value={portfolioMetrics?.sustainableFinance || 50789}
                 period="Mobilization"
                 format="currency"
               />
               <MetricCard
                 title="Tasks"
-                value="7 overdue"
-                period="3 tasks need attention"
+                value={`${portfolioMetrics?.tasksOverdue || 7} overdue`}
+                period={`${(portfolioMetrics?.tasksTotal || 24) - (portfolioMetrics?.tasksOverdue || 7)} tasks need attention`}
                 format="string"
               />
             </div>

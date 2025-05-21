@@ -26,16 +26,15 @@ const hasHapticSupport = (): boolean => {
   
   // Check for native iOS haptics
   const hasNativeHaptics = !!(
-    navigator.vibrate || 
-    (window as any).Haptics || 
-    (window as any).ReactNativeWebView || 
-    (navigator as any).vibrate
+    navigator.vibrate ||
+    window.HapticFeedback ||
+    window.Telegram?.WebApp?.HapticFeedback ||
+    window.ReactNativeWebView
   );
   
   // Check for experimental Chrome haptics
   const hasChromeHaptics = !!(
-    (navigator as any).vibrate || 
-    ('vibrate' in navigator)
+    'vibrate' in navigator
   );
   
   return hasNativeHaptics || hasChromeHaptics;
@@ -137,14 +136,31 @@ export const triggerHaptic = (
       return;
     }
     
-    // iOS-specific haptics via WebView bridge (if available)
-    const iosHaptics = (window as any).webkit?.messageHandlers?.hapticFeedback;
-    if (iosHaptics) {
-      iosHaptics.postMessage({
-        type: pattern,
-        intensity: intensity
-      });
-      return;
+    // Check for native iOS haptics
+    if (window.HapticFeedback) {
+      // iOS native bridge (React Native, Capacitor, etc.)
+      try {
+        window.HapticFeedback.impact(
+          intensity === 'light' ? 'light' : 
+          intensity === 'heavy' ? 'heavy' : 'medium'
+        );
+        return;
+      } catch (e) {
+        console.warn('Failed to trigger native haptics', e);
+      }
+    }
+    
+    // Check for Telegram WebApp haptics
+    if (window.Telegram?.WebApp?.HapticFeedback) {
+      try {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred(
+          intensity === 'light' ? 'light' : 
+          intensity === 'heavy' ? 'heavy' : 'medium'
+        );
+        return;
+      } catch (e) {
+        console.warn('Failed to trigger Telegram haptics', e);
+      }
     }
     
     // React Native WebView bridge (if available)

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ['class', '[data-theme="dark"]'],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,19 +8,12 @@ module.exports = {
   ],
   theme: {
     screens: {
-      // iPhone SE, standard phones
       'xs': '375px',
-      // Modern phones (iPhone 12-15)
       'sm': '390px',
-      // Large phones/small tablets
       'md': '768px',
-      // iPads (portrait)
       'lg': '1024px',
-      // iPads (landscape) / small laptops
       'xl': '1280px',
-      // Desktop
       '2xl': '1536px',
-      // Large desktop
       '3xl': '1920px',
     },
     container: {
@@ -33,45 +27,71 @@ module.exports = {
     },
     extend: {
       colors: {
+        // Background colors
+        background: 'rgb(var(--color-background) / <alpha-value>)',
+        'background-elevated': 'rgb(var(--color-background-elevated) / <alpha-value>)',
+        'background-muted': 'rgb(var(--color-background-muted) / <alpha-value>)',
+        
+        // Text colors
+        foreground: 'rgb(var(--color-foreground) / <alpha-value>)',
+        'foreground-muted': 'rgb(var(--color-foreground-muted) / <alpha-value>)',
+        'foreground-subtle': 'rgb(var(--color-foreground-subtle) / <alpha-value>)',
+        
+        // Primary colors (SCB Blue)
         primary: {
-          DEFAULT: '#0072AA', // SCB Honolulu Blue
-          light: '#78ADD2',   // SCB Iceberg
-          dark: '#005888',
+          DEFAULT: 'rgb(var(--color-primary) / <alpha-value>)',
+          foreground: 'rgb(var(--color-primary-foreground) / <alpha-value>)',
+          light: 'rgb(var(--color-primary-light) / <alpha-value>)',
+          dark: 'rgb(var(--color-primary-dark) / <alpha-value>)',
         },
+        
+        // Secondary colors (SCB Green)
         secondary: {
-          DEFAULT: '#21AA47', // SCB American Green
-          light: '#A4D0A0',   // SCB Eton Blue
-          dark: '#198238',
+          DEFAULT: 'rgb(var(--color-secondary) / <alpha-value>)',
+          foreground: 'rgb(var(--color-secondary-foreground) / <alpha-value>)',
+          light: 'rgb(var(--color-secondary-light) / <alpha-value>)',
+          dark: 'rgb(var(--color-secondary-dark) / <alpha-value>)',
         },
-        neutral: {
-          50: '#F5F7FA',
-          100: '#F3F4F6',
-          200: '#E5E7EB',
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          500: '#6B7280',
-          600: '#525355',    // SCB Dark Gray
-          700: '#374151',
-          800: '#1F2937',
-          900: '#111827',
+        
+        // Accent colors
+        accent: {
+          DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
+          foreground: 'rgb(var(--color-accent-foreground) / <alpha-value>)',
         },
+        
+        // Destructive colors
         destructive: {
-          DEFAULT: '#D33732', // SCB Muted Red
+          DEFAULT: 'hsl(0, 84%, 60%)',  // Brighter red for better visibility
+          foreground: 'hsl(0, 0%, 100%)',  // White text for contrast
         },
+        
+        // Border colors
+        border: 'rgb(var(--color-border) / <alpha-value>)',
+        'border-muted': 'rgb(var(--color-border-muted) / <alpha-value>)',
+        
+        // Status colors with better contrast
+        success: 'hsl(142, 76%, 36%)',  // Brighter green
+        warning: 'hsl(38, 92%, 50%)',   // Brighter yellow
+        error: 'hsl(0, 84%, 60%)',      // Brighter red
+        info: 'hsl(199, 89%, 48%)',     // Brighter blue
       },
+      
       fontFamily: {
         sans: ['SC Prosper Sans', 'Inter', 'system-ui', 'sans-serif'],
       },
+      
       spacing: {
         'safe-top': 'env(safe-area-inset-top)',
         'safe-bottom': 'env(safe-area-inset-bottom)',
         'safe-left': 'env(safe-area-inset-left)',
         'safe-right': 'env(safe-area-inset-right)',
       },
+      
       minHeight: {
-        'touch': '44px', // Minimum touch target size
-        'touch-sm': '36px', // Smaller touch target
+        'touch': '44px',
+        'touch-sm': '36px',
       },
+      
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],
         'sm': ['0.875rem', { lineHeight: '1.25rem' }],
@@ -82,11 +102,14 @@ module.exports = {
         '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
         '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
       },
+      
       animation: {
         'slide-in': 'slideIn 0.3s ease-out',
         'slide-out': 'slideOut 0.3s ease-out',
         'fade-in': 'fadeIn 0.2s ease-out',
+        'theme-transition': 'themeTransition 0.3s ease-out',
       },
+      
       keyframes: {
         slideIn: {
           '0%': { transform: 'translateX(-100%)' },
@@ -100,10 +123,15 @@ module.exports = {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        themeTransition: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.9' },
+        },
+      },
       },
     },
   },
   plugins: [
     require('@tailwindcss/container-queries'),
   ],
-}
+};
