@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
-import { Switch, Tabs, TabList, TabPanels, Tab, TabPanel, Select, Radio, RadioGroup, Stack } from '@chakra-ui/react';
+import { Switch, Tabs, TabList, TabPanels, Tab, TabPanel, Select, Radio, RadioGroup, Stack, useToast } from '@chakra-ui/react';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import useMultiTasking from '@/hooks/useMultiTasking';
@@ -10,10 +10,18 @@ import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
 import EnhancedSettingsNavigation from '@/components/EnhancedSettingsNavigation';
 import { haptics } from '@/lib/haptics';
 import { useSafeArea, safeAreaCss } from '@/hooks/useSafeArea';
-import { useApplePhysics, appleAnimations } from '@/hooks/useApplePhysics';
+import { useApplePhysics } from '@/hooks/useApplePhysics';
 import { useIOS } from '@/hooks/useResponsive';
 import { useSFSymbolsSupport } from '@/lib/sf-symbols';
-import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Eye, Zap, Volume2, Bell, Check } from 'lucide-react';
+import { Settings, PaintBucket, Monitor, Smartphone, Moon, Sun, Layout, Bell, Check } from 'lucide-react';
+
+// Types for notification preferences
+type NotificationPreference = {
+  portfolioAlerts: boolean;
+  reportUpdates: boolean;
+  marketNews: boolean;
+  systemUpdates: boolean;
+};
 
 // Settings sections with SF Symbol icons
 const settingsSections = [
@@ -52,19 +60,28 @@ const settingsSections = [
 
 const SettingsPage = () => {
   const { preferences, setPreference, resetPreferences, isDarkMode } = useUIPreferences();
-  const { deviceType, isAppleDevice, browserName, prefersColorScheme, prefersReducedMotion } = useDeviceCapabilities();
+  const { deviceType, isAppleDevice, browserName } = useDeviceCapabilities();
   const [activeTab, setActiveTab] = useState(0);
-  const { mode, isMultiTasking, orientation, windowWidth, windowHeight } = useMultiTasking();
+  const { isMultiTasking } = useMultiTasking();
   const [isMounted, setIsMounted] = useState(false);
   const [isPlatformDetected, setPlatformDetected] = useState(false);
   const [isIPad, setIsIPad] = useState(false);
+  const toast = useToast();
+  
+  // Notification preferences state
+  const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreference>({
+    portfolioAlerts: true,
+    reportUpdates: true,
+    marketNews: true,
+    systemUpdates: true,
+  });
   
   // Platform detection
   const isAppleDeviceHook = useIOS();
   const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
   
-  // Add iOS-specific hooks
-  const { safeArea, hasDynamicIsland, hasHomeIndicator } = useSafeArea();
+  // iOS-specific hooks
+  const { safeArea, hasHomeIndicator } = useSafeArea();
   const physics = useApplePhysics({ motion: 'standard', respectReduceMotion: true });
   
   // Platform detection
@@ -83,8 +100,27 @@ const SettingsPage = () => {
   const lastScrollTop = useRef<number>(0);
   const [navbarHidden, setNavbarHidden] = useState(false);
   
-  // Save changes notification
-  const [showSaveNotice, setShowSaveNotice] = useState(false);
+  // Load saved notification preferences
+  useEffect(() => {
+    const savedPrefs = localStorage.getItem('notificationPreferences');
+    if (savedPrefs) {
+      setNotificationPrefs(JSON.parse(savedPrefs));
+    }
+  }, []);
+  
+  // Save notification preferences when they change
+  useEffect(() => {
+    localStorage.setItem('notificationPreferences', JSON.stringify(notificationPrefs));
+  }, [notificationPrefs]);
+  
+  // Handle notification preference change
+  const handleNotificationChange = (key: keyof NotificationPreference, value: boolean) => {
+    setNotificationPrefs(prev => ({
+      ...prev,
+      [key]: value
+    }));
+    showSaveNotification();
+  };
   
   // Detect platform on mount
   useEffect(() => {
@@ -999,40 +1035,84 @@ const SettingsPage = () => {
                   
                   {/* Notification Settings */}
                   <TabPanel>
-                    <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
-                      <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Notification Preferences</h2>
-                      
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="font-medium text-gray-800 dark:text-gray-200">Show Notifications</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Display notification alerts</p>
-                          </div>
-                          <Switch 
-                            colorScheme="blue" 
-                            isChecked={true}
-                          />
-                        </div>
+                    <div className="space-y-6">
+                      <div className="p-4 bg-white dark:bg-gray-700 rounded-md shadow-sm border border-gray-200 dark:border-gray-600">
+                        <h2 className="text-lg font-medium text-[rgb(var(--scb-dark-gray))] dark:text-white mb-4">Notification Preferences</h2>
                         
-                        <div>
-                          <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-2">Notification Types</h3>
-                          <div className="space-y-2">
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-700 dark:text-gray-300">Portfolio Alerts</span>
-                              <Switch colorScheme="blue" defaultChecked />
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h3 className="font-medium text-gray-800 dark:text-gray-200">Enable Notifications</h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">Receive app notifications</p>
                             </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-700 dark:text-gray-300">Report Updates</span>
-                              <Switch colorScheme="blue" defaultChecked />
+                            <Switch 
+                              colorScheme="blue"
+                              isChecked={preferences.enableNotifications}
+                              onChange={() => handlePreferenceChange('enableNotifications', !preferences.enableNotifications)}
+                            />
+                          </div>
+                          
+                          <div>
+                            <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-3">Notification Types</h3>
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                                <div>
+                                  <h4 className="font-medium text-gray-800 dark:text-gray-200">Portfolio Alerts</h4>
+                                  <p className="text-xs text-gray-600 dark:text-gray-300">Price alerts and portfolio updates</p>
+                                </div>
+                                <Switch 
+                                  colorScheme="blue"
+                                  isChecked={notificationPrefs.portfolioAlerts}
+                                  isDisabled={!preferences.enableNotifications}
+                                  onChange={(e) => handleNotificationChange('portfolioAlerts', e.target.checked)}
+                                />
+                              </div>
+                              
+                              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                                <div>
+                                  <h4 className="font-medium text-gray-800 dark:text-gray-200">Report Updates</h4>
+                                  <p className="text-xs text-gray-600 dark:text-gray-300">New reports and analysis</p>
+                                </div>
+                                <Switch 
+                                  colorScheme="blue"
+                                  isChecked={notificationPrefs.reportUpdates}
+                                  isDisabled={!preferences.enableNotifications}
+                                  onChange={(e) => handleNotificationChange('reportUpdates', e.target.checked)}
+                                />
+                              </div>
+                              
+                              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                                <div>
+                                  <h4 className="font-medium text-gray-800 dark:text-gray-200">Market News</h4>
+                                  <p className="text-xs text-gray-600 dark:text-gray-300">Breaking market news and updates</p>
+                                </div>
+                                <Switch 
+                                  colorScheme="blue"
+                                  isChecked={notificationPrefs.marketNews}
+                                  isDisabled={!preferences.enableNotifications}
+                                  onChange={(e) => handleNotificationChange('marketNews', e.target.checked)}
+                                />
+                              </div>
+                              
+                              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                                <div>
+                                  <h4 className="font-medium text-gray-800 dark:text-gray-200">System Updates</h4>
+                                  <p className="text-xs text-gray-600 dark:text-gray-300">App maintenance and updates</p>
+                                </div>
+                                <Switch 
+                                  colorScheme="blue"
+                                  isChecked={notificationPrefs.systemUpdates}
+                                  isDisabled={!preferences.enableNotifications}
+                                  onChange={(e) => handleNotificationChange('systemUpdates', e.target.checked)}
+                                />
+                              </div>
                             </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-700 dark:text-gray-300">Market News</span>
-                              <Switch colorScheme="blue" defaultChecked />
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-700 dark:text-gray-300">System Updates</span>
-                              <Switch colorScheme="blue" defaultChecked />
-                            </div>
+                          </div>
+                          
+                          <div className="pt-2">
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Notification preferences are saved automatically. Some notifications may require app permissions to be enabled in your device settings.
+                            </p>
                           </div>
                         </div>
                       </div>
