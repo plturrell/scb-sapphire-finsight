@@ -87,7 +87,7 @@ export const marketNewsApi = {
     limit?: number;
     offset?: number;
   }) => {
-    const response = await api.get('/market-news/latest', { params: options });
+    const response = await api.get('/market-news', { params: options });
     return response.data;
   },
   

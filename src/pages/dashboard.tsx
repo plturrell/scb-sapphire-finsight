@@ -301,11 +301,11 @@ const Dashboard: React.FC = () => {
   
   // Memoize dashboard data
   const dashboardData = useMemo(() => ({
-    kpiData,
-    tableData,
+    financialMetrics,
+    assetData,
     allocationData,
-    alerts
-  }), [kpiData, tableData, allocationData, alerts]);
+    monteCarloResults: data?.risk?.monteCarloResults
+  }), [financialMetrics, assetData, allocationData, data?.risk?.monteCarloResults]);
   
   // Role change handler with haptics
   const memoizedRoleChangeHandler = useCallback((role: string) => {
@@ -504,12 +504,7 @@ const Dashboard: React.FC = () => {
                   aiInsights={visibleComponents.aiInsights 
                     ? "Your equity allocation is 5% higher than your target allocation. Based on Monte Carlo simulations (5,000+ runs), reducing equity exposure by 3-5% could optimize your risk-adjusted returns."
                     : undefined}
-                  legendItems={[
-                    { label: 'Equities', color: '#0072AA', value: '51%' },
-                    { label: 'Fixed Income', color: '#21AA47', value: '31%' },
-                    { label: 'Real Estate', color: '#78ADD2', value: '10%' },
-                    { label: 'Alternatives', color: '#A4D0A0', value: '8%' }
-                  ]}
+                  legendItems={allocationLegendItems}
                 >
                   <div className="flex items-center justify-center h-64">
                     <AllocationPieChart 
@@ -764,12 +759,7 @@ const Dashboard: React.FC = () => {
                   aiInsights={visibleComponents.aiInsights 
                     ? "Your equity allocation is 5% higher than your target allocation. Based on Monte Carlo simulations (5,000+ runs), reducing equity exposure by 3-5% could optimize your risk-adjusted returns."
                     : undefined}
-                  legendItems={[
-                    { label: 'Equities', color: '#0072AA', value: '51%' },
-                    { label: 'Fixed Income', color: '#21AA47', value: '31%' },
-                    { label: 'Real Estate', color: '#78ADD2', value: '10%' },
-                    { label: 'Alternatives', color: '#A4D0A0', value: '8%' }
-                  ]}
+                  legendItems={allocationLegendItems}
                 >
                   <div className="flex items-center justify-center h-64">
                     <AllocationPieChart 

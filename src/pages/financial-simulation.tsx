@@ -12,7 +12,8 @@ import useMultiTasking from '@/hooks/useMultiTasking';
 import { haptics } from '@/lib/haptics';
 import { UserRole } from '@/types';
 import { useMediaQuery } from 'react-responsive';
-import { ArrowUp, ArrowDown, TrendingUp, AlertTriangle, Zap, Clock, Download, Share2, Check, RefreshCw } from 'lucide-react';
+import { ArrowUp, ArrowDown, TrendingUp, AlertTriangle, Clock, Download, Share2, Check, RefreshCw } from 'lucide-react';
+import { Icons } from '@/components/IconExports';
 import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
 import EnhancedIOSTabBar from '@/components/EnhancedIOSTabBar';
 import EnhancedIOSBreadcrumb from '@/components/EnhancedIOSBreadcrumb';
@@ -81,6 +82,80 @@ export default function FinancialSimulation() {
       }
     });
   };
+  
+  // Handle simulation category selection
+  const handleSimulationModeChange = (modeId: string) => {
+    if (isAppleDevice) {
+      haptics.light();
+    }
+    
+    setActiveSimulationMode(modeId);
+    
+    // In a real implementation, this would load the appropriate simulation mode data
+    console.log(`Switching to simulation mode: ${modeId}`);
+  };
+  
+  // SF Symbols Simulation Categories Navigation Component
+  const SFSymbolsSimulationNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`mb-6 -mx-4 px-4 overflow-x-auto ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDark ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} py-2`}>
+        <div className="flex space-x-4 items-center">
+          {simulationCategories.map((category) => (
+            <div 
+              key={category.id}
+              onClick={() => handleSimulationModeChange(category.id)}
+              className={`flex flex-col items-center p-2 rounded-xl cursor-pointer transition-colors ${
+                activeSimulationMode === category.id
+                ? isDark 
+                  ? 'bg-blue-900/30' 
+                  : 'bg-blue-50'
+                : isDark 
+                  ? 'hover:bg-gray-700' 
+                  : 'hover:bg-gray-100'
+              }`}
+              style={{ minWidth: isMultiTasking && mode === 'slide-over' ? '70px' : '80px' }}
+            >
+              <div className={`relative flex items-center justify-center ${
+                isMultiTasking && mode === 'slide-over' ? 'w-10 h-10' : 'w-12 h-12'
+              } rounded-full mb-1 ${
+                activeSimulationMode === category.id
+                ? 'bg-[rgb(var(--scb-honolulu-blue))]'
+                : isDark 
+                  ? 'bg-gray-700' 
+                  : 'bg-gray-200'
+              }`}>
+                <SFSymbol 
+                  name={category.icon} 
+                  size={isMultiTasking && mode === 'slide-over' ? 22 : 26}
+                  color={activeSimulationMode === category.id ? 'white' : undefined}
+                />
+                
+                {/* Badge indicator */}
+                {category.badge && (
+                  <div className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center rounded-full bg-[rgb(var(--scb-notification))] text-white text-xs px-1">
+                    {category.badge}
+                  </div>
+                )}
+              </div>
+              <span className={`text-center ${isMultiTasking && mode === 'slide-over' ? 'text-xs' : 'text-sm'} ${
+                activeSimulationMode === category.id
+                ? 'text-[rgb(var(--scb-honolulu-blue))] font-medium'
+                : isDark 
+                  ? 'text-gray-300' 
+                  : 'text-gray-600'
+              }`}>
+                {category.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -135,6 +210,11 @@ export default function FinancialSimulation() {
               
               {/* Main content */}
               <div className="px-4 pt-4 pb-20">
+                {/* SF Symbols Simulation Categories Navigation */}
+                {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+                  <SFSymbolsSimulationNavigation />
+                )}
+                
                 {/* All your main content here */}
               </div>
               

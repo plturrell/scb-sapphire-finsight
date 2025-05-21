@@ -235,69 +235,146 @@ export default function Investments() {
     setSwipeTarget(null);
   };
   
+  // Define iOS-specific navigation actions
+  const navBarActions = [
+    {
+      icon: "arrow.clockwise",
+      label: "Refresh",
+      onPress: () => {
+        handleRefresh();
+      }
+    },
+    {
+      icon: "line.3.horizontal.decrease",
+      label: "Filter",
+      onPress: () => {
+        if (isApplePlatform) haptics.medium();
+        console.log("Filter pressed");
+      }
+    }
+  ];
+  
+  // Tab items for navigation
+  const tabItems = [
+    {
+      key: 'dashboard',
+      label: 'Dashboard',
+      icon: 'gauge',
+      href: '/dashboard',
+    },
+    {
+      key: 'investments',
+      label: 'Investments',
+      icon: 'chart.pie.fill',
+      href: '/investments',
+    },
+    {
+      key: 'portfolio',
+      label: 'Portfolio',
+      icon: 'briefcase',
+      href: '/portfolio',
+    },
+    {
+      key: 'reports',
+      label: 'Reports',
+      icon: 'doc.text',
+      href: '/reports',
+    },
+    {
+      key: 'settings',
+      label: 'Settings',
+      icon: 'gearshape',
+      href: '/settings',
+    },
+  ];
+  
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/', icon: 'house' },
+    { label: 'Investments', href: '/investments', icon: 'chart.pie.fill' },
+  ];
+  
+  // iOS-style pull-to-refresh indicator
+  const renderRefreshIndicator = () => {
+    if (!isRefreshing || !isApplePlatform) return null;
+    
+    return (
+      <div className="fixed top-0 left-0 right-0 flex justify-center pt-4 z-40 pointer-events-none">
+        <div className="h-8 w-8 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
+      </div>
+    );
+  };
+  
   return (
-    <ScbBeautifulUI pageTitle="Investment Portfolio">
-      <div className="space-y-6">
-        {/* Header with controls */}
-        <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border`}>
-          <div>
-            <h1 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Investment Portfolio</h1>
-            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Comprehensive view of your investment assets and performance</p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <EnhancedTouchButton
-              onClick={handleRefresh}
-              variant={isDarkMode ? "dark" : "secondary"}
-              size="sm"
-              className="flex items-center gap-1"
-            >
-              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-              <span>Refresh</span>
-            </EnhancedTouchButton>
-            
-            <EnhancedTouchButton
-              variant={isDarkMode ? "dark" : "secondary"}
-              size="sm"
-              className="flex items-center gap-1"
-            >
-              <Filter className="h-4 w-4" />
-              <span>Filter</span>
-            </EnhancedTouchButton>
-          </div>
-        </div>
+    <>
+      {isAppleDevice && isPlatformDetected ? (
+        <IOSOptimizedLayout
+          title="Investments"
+          subtitle="Portfolio & Performance"
+          showBreadcrumb={true}
+          breadcrumbItems={breadcrumbItems}
+          showTabBar={true}
+          tabItems={tabItems}
+          navBarRightActions={navBarActions}
+          showBackButton={true}
+          largeTitle={!navbarHidden}
+          theme={isDarkMode ? 'dark' : 'light'}
+        >
+          <div 
+            ref={contentRef}
+            className="space-y-6" 
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Subtitle */}
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Comprehensive view of your investment assets and performance
+            </p>
         
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            title="Total Portfolio Value"
-            value={2345670}
-            change={2.8}
-            period="This Month"
-            format="currency"
-          />
-          <MetricCard
-            title="YTD Return"
-            value={8.7}
-            change={1.2}
-            period="vs Benchmark 7.5%"
-            format="percentage"
-          />
-          <MetricCard
-            title="Dividend Yield"
-            value={3.2}
-            change={0.3}
-            period="vs Last Year"
-            format="percentage"
-          />
-          <MetricCard
-            title="Risk Score"
-            value={62}
-            change={-3}
-            period="Moderate"
-            format="number"
-          />
-        </div>
+            {/* Key Metrics */}
+            <div className={`grid grid-cols-1 ${
+              isMultiTasking && mode === 'slide-over'
+                ? 'gap-3'
+                : isMultiTasking
+                  ? 'md:grid-cols-2 gap-4'
+                  : isIPad
+                    ? 'md:grid-cols-2 lg:grid-cols-4 gap-4'
+                    : 'md:grid-cols-2 gap-4'
+            }`}>
+              <MetricCard
+                title="Total Portfolio Value"
+                value={2345670}
+                change={2.8}
+                period="This Month"
+                format="currency"
+                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
+              />
+              <MetricCard
+                title="YTD Return"
+                value={8.7}
+                change={1.2}
+                period="vs Benchmark 7.5%"
+                format="percentage"
+                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
+              />
+              <MetricCard
+                title="Dividend Yield"
+                value={3.2}
+                change={0.3}
+                period="vs Last Year"
+                format="percentage"
+                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
+              />
+              <MetricCard
+                title="Risk Score"
+                value={62}
+                change={-3}
+                period="Moderate"
+                format="number"
+                onClick={isApplePlatform ? () => { haptics.light() } : undefined}
+              />
+            </div>
         
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

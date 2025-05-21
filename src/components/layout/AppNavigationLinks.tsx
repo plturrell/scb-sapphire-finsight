@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
+import { Icons } from '../IconExports';
 import {
   LayoutDashboard,
   BarChart3,
@@ -74,8 +75,8 @@ const allNavigationItems: NavigationItem[] = [
   
   // Vietnam Research
   { id: 'vietnam-dashboard', name: 'Vietnam Dashboard', href: '/vietnam-tariff-dashboard', icon: MapPin, category: 'Vietnam' },
-  { id: 'vietnam-monte-carlo', name: 'Monte Carlo Sim', href: '/vietnam-monte-carlo', icon: Zap, category: 'Vietnam' },
-  { id: 'vietnam-monte-carlo-enhanced', name: 'Enhanced Monte Carlo', href: '/vietnam-monte-carlo-enhanced', icon: Zap, category: 'Vietnam' },
+  { id: 'vietnam-monte-carlo', name: 'Monte Carlo Sim', href: '/vietnam-monte-carlo', icon: Icons.Zap, category: 'Vietnam' },
+  { id: 'vietnam-monte-carlo-enhanced', name: 'Enhanced Monte Carlo', href: '/vietnam-monte-carlo-enhanced', icon: Icons.Zap, category: 'Vietnam' },
   { id: 'vietnam-tariff-impact', name: 'Tariff Impact', href: '/vietnam-tariff-impact', icon: Globe, category: 'Vietnam' },
   
   // Tools & Utilities

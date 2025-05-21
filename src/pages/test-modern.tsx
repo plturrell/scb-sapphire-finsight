@@ -12,6 +12,8 @@ import EnhancedIOSBreadcrumb from '@/components/EnhancedIOSBreadcrumb';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useMultiTasking } from '@/hooks/useMultiTasking';
 import haptics from '@/lib/haptics';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import SFSymbol from '@/components/SFSymbol';
 
 export default function TestModernPage() {
   const router = useRouter();
@@ -22,6 +24,8 @@ export default function TestModernPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(prefersColorScheme || 'light');
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const [activeVisualization, setActiveVisualization] = useState<string>('sankey');
   
   // Detect if running on Apple device
   const isiOS = deviceType === 'mobile' && isAppleDevice;
@@ -30,6 +34,15 @@ export default function TestModernPage() {
   
   // Determine if dark mode
   const isDark = theme === 'dark';
+  
+  // Visualization categories with SF Symbols icons
+  const visualizationCategories = [
+    { id: 'sankey', label: 'Sankey Flow', icon: 'arrow.triangle.branch', badge: null },
+    { id: 'bar', label: 'Bar Chart', icon: 'chart.bar.fill', badge: null },
+    { id: 'line', label: 'Line Chart', icon: 'chart.line.uptrend.xyaxis.fill', badge: null },
+    { id: 'pie', label: 'Pie Chart', icon: 'chart.pie.fill', badge: null },
+    { id: 'network', label: 'Network', icon: 'network', badge: null }
+  ];
   
   // Breadcrumb items
   const breadcrumbItems = [
