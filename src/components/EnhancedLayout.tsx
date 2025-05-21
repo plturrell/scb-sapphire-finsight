@@ -234,12 +234,7 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
-  // Apply haptic feedback if enabled
-  const triggerHaptics = () => {
-    if (preferences.enableHaptics && navigator.vibrate) {
-      navigator.vibrate(5); // Subtle vibration for feedback
-    }
-  };
+  // We're using the triggerHaptics function defined earlier
 
   // Mark notification as read
   const markAsRead = (notificationId: string) => {
@@ -342,36 +337,11 @@ const EnhancedLayout: React.FC<LayoutProps> = ({
     ? 'bg-[rgb(var(--scb-honolulu-blue))] text-white'
     : 'bg-white text-[rgb(var(--scb-dark-gray))] shadow-sm border-b border-gray-200';
 
-  // Apply density from preferences
-  const getDensityClasses = () => {
-    switch(preferences.layoutDensity) {
-      case 'compact':
-        return 'p-3 lg:p-4';
-      case 'spacious':
-        return 'p-5 lg:p-8';
-      case 'comfortable':
-      default:
-        return 'p-4 lg:p-6';
-    }
-  };
+  // We're using the getDensityClasses function defined earlier
 
-  // Apply font size from preferences
-  const getFontSizeClasses = () => {
-    switch(preferences.fontSize) {
-      case 'small':
-        return 'text-sm';
-      case 'large':
-        return 'text-base lg:text-lg';
-      case 'medium':
-      default:
-        return 'text-base';
-    }
-  };
+  // We're using the getFontSizeClasses function defined earlier
 
-  // Animation classes based on preferences
-  const getAnimationClasses = (defaultClass: string) => {
-    return preferences.enableAnimations ? defaultClass : '';
-  };
+  // We're using the getAnimationClasses function defined earlier
 
   return (
     <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-[rgb(var(--scb-light-gray))]'}`}>
