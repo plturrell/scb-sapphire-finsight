@@ -42,7 +42,7 @@ import {
   MapPin,
   Calendar,
   Star,
-  Zap,
+  // Zap removed and replaced with Icons.Zap,
   // Briefcase removed and replaced with Icons.Briefcase
   UserPlus,
   Share2,
@@ -116,7 +116,7 @@ const appCatalog: AppItem[] = [
   // Data Products
   { id: 'data-explorer', name: 'Data Explorer', icon: Database, href: '/data-explorer', category: 'Data', color: 'bg-indigo-500', description: 'Browse data products' },
   { id: 'sankey', name: 'Sankey Visualization', icon: Activity, href: '/sankey-demo', category: 'Data', color: 'bg-teal-500', description: 'Flow visualization' },
-  { id: 'montecarlo', name: 'Monte Carlo Sim', icon: Zap, href: '/vietnam-monte-carlo-enhanced', category: 'Data', color: 'bg-orange-500', description: 'Probability simulations' },
+  { id: 'montecarlo', name: 'Monte Carlo Sim', icon: Icons.Zap, href: '/vietnam-monte-carlo-enhanced', category: 'Data', color: 'bg-orange-500', description: 'Probability simulations' },
   
   // Reports & Documents
   { id: 'reports', name: 'Report Builder', icon: FileText, href: '/reports', category: 'Reports', color: 'bg-gray-600', description: 'Generate custom reports' },

@@ -258,6 +258,15 @@ const Dashboard: React.FC = () => {
     if (!data) return [];
     return data.assets.breakdown;
   }, [data]);
+  
+  // Create legend items for allocation chart
+  const allocationLegendItems = useMemo(() => {
+    return allocationData.map(item => ({
+      label: item.name,
+      color: item.color,
+      value: `${Math.round(item.value * 100)}%`
+    }));
+  }, [allocationData]);
 
   const tableColumns: TableColumn[] = [
     { header: 'Asset Class', accessor: 'name', type: 'text' },

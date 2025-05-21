@@ -20,6 +20,8 @@ import { IconSystemProvider } from '@/components/IconSystem';
 import { ICONS } from '@/components/IconSystem';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import SFSymbol from '@/components/SFSymbol';
 
 // Simulation page with full MCTS integration for SCB Sapphire FinSight
 export default function FinancialSimulation() {
@@ -36,6 +38,19 @@ export default function FinancialSimulation() {
     timeHorizon: 10,
     confidenceInterval: 95
   });
+  
+  // SF Symbols support and platform detection
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  const [activeSimulationMode, setActiveSimulationMode] = useState<string>('montecarlo');
+  
+  // Simulation categories with SF Symbols icons
+  const simulationCategories = [
+    { id: 'montecarlo', label: 'Monte Carlo', icon: 'chart.bar', badge: null },
+    { id: 'scenario', label: 'Scenario Analysis', icon: 'chart.line.uptrend.xyaxis', badge: null },
+    { id: 'stress', label: 'Stress Test', icon: 'waveform.path.ecg', badge: null },
+    { id: 'optimization', label: 'Portfolio Optimization', icon: 'checkmark.seal.fill', badge: null },
+    { id: 'backtesting', label: 'Backtesting', icon: 'clock.arrow.circlepath', badge: null }
+  ];
   
   // All the rest of your component code here...
   

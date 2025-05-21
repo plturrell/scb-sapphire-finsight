@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import MetricCard from '@/components/MetricCard';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { RefreshCw, Info, Filter, Download, Share2 } from 'lucide-react';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useMultiTasking } from '@/hooks/useMultiTasking';
+import useApplePhysics from '@/hooks/useApplePhysics';
+import useSafeArea, { safeAreaCss } from '@/hooks/useSafeArea';
+import { haptics } from '@/lib/haptics';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
+import MultiTaskingChart from '@/components/charts/MultiTaskingChart';
 
 // Sample investment data
 const investmentAllocationData = [
@@ -41,12 +50,189 @@ const marketInsights = [
 ];
 
 export default function Investments() {
+  // UI preferences and state
   const { isDarkMode, preferences } = useUIPreferences();
   const [isRefreshing, setIsRefreshing] = useState(false);
   
+  // iOS-specific state for touch interactions
+  const [navbarHidden, setNavbarHidden] = useState(false);
+  const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedHolding, setSelectedHolding] = useState<any>(null);
+  const [showInsightModal, setShowInsightModal] = useState(false);
+  const [selectedInsight, setSelectedInsight] = useState<any>(null);
+  const [touchSwipeDistance, setTouchSwipeDistance] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [swipeTarget, setSwipeTarget] = useState<string | null>(null);
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  
+  // Refs
+  const contentRef = useRef<HTMLDivElement>(null);
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Device capability hooks
+  const { isAppleDevice, deviceType } = useDeviceCapabilities();
+  const { mode, isMultiTasking, sizeClass } = useMultiTasking();
+  const { springPreset } = useApplePhysics({ motion: 'standard' });
+  const { safeArea, hasHomeIndicator, hasDynamicIsland, orientation } = useSafeArea();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Define device types
+  const isIPad = deviceType === 'tablet' && isAppleDevice;
+  const isIPhone = deviceType === 'mobile' && isAppleDevice;
+  const isApplePlatform = isIPad || isIPhone;
+  
+  // Effect to detect platform
+  useEffect(() => {
+    setPlatformDetected(true);
+  }, []);
+  
+  // Effect to handle scroll events for iOS-style navbar hiding/showing
+  useEffect(() => {
+    if (!isApplePlatform) return;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Update navbar visibility based on scroll direction
+      if (currentScrollY > lastScrollY + 10 && currentScrollY > 100) {
+        // Scrolling down - hide navbar
+        setNavbarHidden(true);
+        if (isApplePlatform) {
+          haptics.light(); // Subtle feedback when navbar hides
+        }
+      } else if (currentScrollY < lastScrollY - 10 || currentScrollY < 50) {
+        // Scrolling up or near top - show navbar
+        setNavbarHidden(false);
+      }
+      
+      // Update the last scroll position
+      setLastScrollY(currentScrollY);
+      
+      // Debounce updating scroll position
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+      
+      scrollTimerRef.current = setTimeout(() => {
+        setLastScrollY(currentScrollY);
+      }, 100);
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimerRef.current) {
+        clearTimeout(scrollTimerRef.current);
+      }
+    };
+  }, [lastScrollY, isApplePlatform]);
+  
+  // Handling refresh with iOS-style feedback
   const handleRefresh = () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1500);
+    
+    if (isApplePlatform) {
+      haptics.medium(); // Medium haptic for refresh action
+    }
+    
+    setTimeout(() => {
+      setIsRefreshing(false);
+      
+      if (isApplePlatform) {
+        haptics.success(); // Success feedback when refresh completes
+      }
+    }, 1500);
+  };
+  
+  // Touch event handlers for iOS-specific interactions
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    
+    // Store the initial touch position
+    setTouchStartY(e.touches[0].clientY);
+    
+    // Reset swipe state
+    setIsSwiping(false);
+    setTouchSwipeDistance(0);
+    
+    // Identify swipe target if applicable
+    const target = e.currentTarget.getAttribute('data-swipe-id');
+    if (target) {
+      setSwipeTarget(target);
+    }
+  };
+  
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isApplePlatform || touchStartY === null) return;
+    
+    const currentY = e.touches[0].clientY;
+    const diffY = touchStartY - currentY;
+    const diffX = e.touches[0].clientX - e.currentTarget.getBoundingClientRect().left;
+    
+    // For potential swipe actions in holdings and insights
+    if (swipeTarget && Math.abs(diffY) < 20 && diffX > 20) {
+      setIsSwiping(true);
+      setTouchSwipeDistance(diffX);
+      
+      // Trigger haptic feedback at threshold points
+      if (diffX > 50 && diffX < 52) haptics.light();
+      if (diffX > 100 && diffX < 102) haptics.medium();
+    }
+    
+    // Pull-to-refresh gesture (when at top of page)
+    if (diffY < -50 && window.scrollY <= 0 && !isRefreshing) {
+      handleRefresh();
+    }
+  };
+  
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isApplePlatform) return;
+    
+    // Handle swipe action completion
+    if (isSwiping && touchSwipeDistance > 100 && swipeTarget) {
+      // Complete the swipe action
+      handleSwipeAction(swipeTarget);
+      haptics.success(); // Success feedback
+    } else if (isSwiping) {
+      // Reset if swipe wasn't far enough
+      setIsSwiping(false);
+      setTouchSwipeDistance(0);
+    }
+    
+    // Reset touch state
+    setTouchStartY(null);
+    setSwipeTarget(null);
+  };
+  
+  // Handle swipe actions on investment items
+  const handleSwipeAction = (itemId: string) => {
+    // Identify item type (holding or insight)
+    const itemType = itemId.split('-')[0];
+    const id = itemId.split('-')[1];
+    
+    if (itemType === 'holding') {
+      // Show details for the swiped holding
+      const holding = topHoldingsData.find(item => item.name === id);
+      if (holding) {
+        setSelectedHolding(holding);
+        setShowDetailModal(true);
+      }
+    } else if (itemType === 'insight') {
+      // Show details for the swiped insight
+      const insight = marketInsights.find(item => item.id === parseInt(id));
+      if (insight) {
+        setSelectedInsight(insight);
+        setShowInsightModal(true);
+      }
+    }
+    
+    // Reset swipe state
+    setIsSwiping(false);
+    setTouchSwipeDistance(0);
+    setSwipeTarget(null);
   };
   
   return (
