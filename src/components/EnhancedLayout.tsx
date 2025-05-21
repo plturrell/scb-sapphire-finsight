@@ -91,7 +91,7 @@ const appCatalog: AppItem[] = [
   // Companies & Research
   { id: 'company-search', name: 'Company Search', icon: Building2, href: '/companies', category: 'Research', color: 'bg-cyan-500', description: 'Search S&P companies' },
   { id: 'vietnam-dashboard', name: 'Vietnam Dashboard', icon: Icons.MapPin, href: '/vietnam-tariff-dashboard', category: 'Research', color: 'bg-emerald-500', description: 'Vietnam market insights' },
-  { id: 'knowledge', name: 'Knowledge Base', icon: Book, href: '/knowledge-dashboard', category: 'Research', color: 'bg-violet-500', description: 'Research repository' },
+  { id: 'knowledge', name: 'Knowledge Base', icon: Icons.Book, href: '/knowledge-dashboard', category: 'Research', color: 'bg-violet-500', description: 'Research repository' },
   
   // Tools & Utilities
   { id: 'api-explorer', name: 'API Explorer', icon: Terminal, href: '/api-explorer', category: 'Tools', color: 'bg-slate-600', description: 'Test API endpoints' },

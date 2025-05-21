@@ -7,6 +7,7 @@ import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useMicroInteractions } from '@/hooks/useMicroInteractions';
 import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import SFSymbol from '@/components/SFSymbol';
+import EnhancedTradingNavigation from '@/components/EnhancedTradingNavigation';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 
 // Trading page for SCB Sapphire FinSight

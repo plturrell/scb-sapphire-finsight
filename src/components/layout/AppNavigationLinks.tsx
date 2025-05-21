@@ -65,7 +65,7 @@ const allNavigationItems: NavigationItem[] = [
   { id: 'data-explorer', name: 'Data Explorer', href: '/data-explorer', icon: Database, category: 'Data' },
   { id: 'data-products', name: 'Data Products', href: '/data-products', icon: Layers, category: 'Data' },
   { id: 'sankey', name: 'Sankey Visualization', href: '/sankey-demo', icon: Activity, category: 'Data' },
-  { id: 'knowledge', name: 'Knowledge Dashboard', href: '/knowledge-dashboard', icon: Book, category: 'Data' },
+  { id: 'knowledge', name: 'Knowledge Dashboard', href: '/knowledge-dashboard', icon: Icons.Book, category: 'Data' },
   
   // Research
   { id: 'company-search', name: 'Company Search', href: '/companies', icon: Building2, category: 'Research' },

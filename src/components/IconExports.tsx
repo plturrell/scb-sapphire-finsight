@@ -42,7 +42,8 @@ import {
   BookOpen,
   User,
   Calculator,
-  MapPin
+  MapPin,
+  Book
 } from 'lucide-react';
 
 // Re-export all icons individually
@@ -85,7 +86,8 @@ export {
   BookOpen,
   User,
   Calculator,
-  MapPin
+  MapPin,
+  Book
 };
 
 // Also export as a single object for convenience
@@ -127,5 +129,6 @@ export const Icons = {
   BookOpen,
   User,
   Calculator,
-  MapPin
+  MapPin,
+  Book
 };
