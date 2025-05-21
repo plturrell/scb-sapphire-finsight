@@ -291,6 +291,19 @@ const KnowledgeDashboard: React.FC = () => {
     setSelectedGroup(group);
   };
   
+  // Knowledge domain categories with SF Symbols icons
+  const knowledgeDomains = [
+    { id: 'all', label: 'All', icon: 'network', badge: graphData.nodes.length },
+    { id: 'financial', label: 'Financial', icon: 'dollarsign.circle.fill', badge: graphData.nodes.filter(n => n.group === 'Financial').length },
+    { id: 'market', label: 'Market', icon: 'chart.bar.fill', badge: graphData.nodes.filter(n => n.group === 'Market').length },
+    { id: 'economic', label: 'Economic', icon: 'chart.line.uptrend.xyaxis.fill', badge: graphData.nodes.filter(n => n.group === 'Economic').length },
+    { id: 'regulatory', label: 'Regulatory', icon: 'building.columns.fill', badge: graphData.nodes.filter(n => n.group === 'Regulatory').length },
+    { id: 'risk', label: 'Risk', icon: 'exclamationmark.triangle.fill', badge: graphData.nodes.filter(n => n.group === 'Risk').length },
+    { id: 'technology', label: 'Technology', icon: 'desktopcomputer', badge: graphData.nodes.filter(n => n.group === 'Technology').length },
+    { id: 'client', label: 'Client', icon: 'person.2.fill', badge: graphData.nodes.filter(n => n.group === 'Client').length },
+    { id: 'internal', label: 'Internal', icon: 'building.2.fill', badge: graphData.nodes.filter(n => n.group === 'Internal').length }
+  ];
+  
   // Handle tile click with haptic feedback
   const handleTileClick = (tileId: string, link?: string) => {
     // Provide haptic feedback on Apple devices
@@ -335,6 +348,53 @@ const KnowledgeDashboard: React.FC = () => {
     if (selectedTab && selectedTab.href) {
       router.push(selectedTab.href);
     }
+  };
+  
+  // SF Symbols Knowledge Domain Navigation component
+  const SFSymbolsDomainsNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected) {
+      return null;
+    }
+    
+    return (
+      <div className={`rounded-lg overflow-x-auto ${isDark ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDark ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1 mb-4`}>
+        <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
+          {knowledgeDomains.map((domain) => (
+            <button 
+              key={domain.id}
+              onClick={() => handleGroupSelect(domain.id === 'all' ? null : domain.id)}
+              className={`
+                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                ${(domain.id === 'all' && !selectedGroup) || (selectedGroup && domain.id === selectedGroup.toLowerCase())
+                  ? isDark 
+                    ? 'bg-blue-900/30 text-blue-400' 
+                    : 'bg-blue-50 text-blue-600'
+                  : isDark 
+                    ? 'text-gray-300 hover:bg-gray-700' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }
+              `}
+            >
+              <div className="relative">
+                <span className="sf-symbol text-xl" role="img">{domain.icon}</span>
+                
+                {/* Badge */}
+                {domain.badge && (
+                  <span className={`
+                    absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
+                    flex items-center justify-center
+                    ${isDark ? 'bg-blue-600' : 'bg-red-500'}
+                  `}>
+                    {domain.badge > 99 ? '99+' : domain.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{domain.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
   };
   
   // Filter data by group if a group is selected
@@ -429,20 +489,13 @@ const KnowledgeDashboard: React.FC = () => {
                   : 'px-6 py-4 max-w-6xl'} mx-auto`}>
         {/* Remove dashboard header since it's in the navbar */}
         
-        {/* Group filter badges */}
-        <div className={`mt-2 mb-6 flex flex-wrap ${isMultiTasking && mode === 'slide-over' ? 'gap-1.5' : 'gap-2'}`}>
-          {['All', 'Financial', 'Market', 'Economic', 'Regulatory', 'Risk', 'Technology', 'Client', 'Internal'].map(group => (
-            isAppleDevice ? (
-              <EnhancedTouchButton
-                key={group}
-                onClick={() => handleGroupSelect(group === 'All' ? null : group)}
-                variant={(group === 'All' && !selectedGroup) || selectedGroup === group ? 'primary' : 'secondary'}
-                size={isMultiTasking && mode === 'slide-over' ? 'xs' : 'sm'}
-                className={`rounded-full ${isMultiTasking && mode === 'slide-over' ? 'text-xs py-1 px-2' : ''}`}
-              >
-                {group}
-              </EnhancedTouchButton>
-            ) : (
+        {/* SF Symbols Knowledge Domain Navigation for Apple devices */}
+        {isAppleDevice && isPlatformDetected ? (
+          <SFSymbolsDomainsNavigation />
+        ) : (
+          /* Traditional filter badges for non-Apple devices */
+          <div className={`mt-2 mb-6 flex flex-wrap ${isMultiTasking && mode === 'slide-over' ? 'gap-1.5' : 'gap-2'}`}>
+            {['All', 'Financial', 'Market', 'Economic', 'Regulatory', 'Risk', 'Technology', 'Client', 'Internal'].map(group => (
               <button
                 key={group}
                 onClick={() => handleGroupSelect(group === 'All' ? null : group)}
@@ -456,9 +509,9 @@ const KnowledgeDashboard: React.FC = () => {
               >
                 {group}
               </button>
-            )
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         
         {/* Fiori Launch Pad Grid */}
         <div className={`grid grid-cols-1 ${isMultiTasking && mode === 'slide-over' ? 'gap-3' : 'md:grid-cols-2 lg:grid-cols-4 gap-5'}`}>

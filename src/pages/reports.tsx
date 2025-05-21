@@ -8,7 +8,7 @@ import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { haptics } from '@/lib/haptics';
-import { FileText, Download, Share2, Filter, Calendar, Plus, X, ChevronDown, CheckCircle, Loader2, Sparkles } from '@/components/IconExports';
+import { FileText, Download, Share2, Filter, Calendar, Plus, X, ChevronDown, Loader2, Sparkles } from '@/components/IconExports';
 import reportService, { ReportConfig, ReportStructure, ReportTopic, ReportResult } from '@/lib/report-service';
 import { useSFSymbolsSupport } from '@/lib/sf-symbols';
 import { ICONS } from '@/components/IconSystem';
@@ -739,7 +739,8 @@ export default function Reports() {
           </div>
           <div className="px-4 py-3 border-t border-[hsl(var(--border))] flex justify-between items-center">
             <div className="text-xs text-[hsl(var(--muted-foreground))]">
-              Showing {reportsList.length} reports
+              Showing {filteredReports.length} report{filteredReports.length !== 1 ? 's' : ''}
+              {activeNavItem !== 'all' && ` • ${activeNavItem.charAt(0).toUpperCase() + activeNavItem.slice(1)} reports`}
             </div>
             <div className="flex items-center space-x-1">
               {isAppleDevice && isPlatformDetected ? (

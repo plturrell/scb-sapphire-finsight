@@ -27,7 +27,8 @@ import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 import { useSafeArea } from '@/hooks/useSafeArea';
 import { useApplePhysics } from '@/hooks/useApplePhysics';
 import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
-import { EnhancedTouchButton, EnhancedPillTabs } from '@/components/EnhancedTouchButton';
+import EnhancedTouchButton from '@/components/EnhancedTouchButton';
+import EnhancedPillTabs from '@/components/EnhancedPillTabs';
 import haptics from '@/lib/haptics';
 
 // Sample data for help categories

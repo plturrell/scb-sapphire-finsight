@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { 
@@ -20,6 +20,12 @@ import {
   Calendar
 } from 'lucide-react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useSafeArea } from '@/hooks/useSafeArea';
+import { useApplePhysics } from '@/hooks/useApplePhysics';
+import EnhancedIOSNavBar from '@/components/EnhancedIOSNavBar';
+import { EnhancedTouchButton } from '@/components/EnhancedTouchButton';
+import haptics from '@/lib/haptics';
 
 // Sample notification types
 type NotificationType = 'alert' | 'success' | 'warning' | 'info';
@@ -158,49 +164,151 @@ export default function Notifications() {
   const [selectedNotifications, setSelectedNotifications] = useState<string[]>([]);
   const [readFilter, setReadFilter] = useState<'all' | 'read' | 'unread'>('all');
   
-  const refreshNotifications = () => {
+  // iOS optimization hooks
+  const { deviceType, isAppleDevice, screenSize } = useDeviceCapabilities();
+  const { safeArea, orientation, hasHomeIndicator, hasDynamicIsland } = useSafeArea();
+  const physics = useApplePhysics({ motion: 'standard', respectReduceMotion: true });
+  
+  // Detect if running on Apple device
+  const isiOS = deviceType === 'mobile' && isAppleDevice;
+  const isiPad = deviceType === 'tablet' && isAppleDevice;
+  const isApplePlatform = isiOS || isiPad;
+  
+  // Detect iPad multi-tasking mode (Slide Over, Split View, or Full Screen)
+  const [iPadMode, setIPadMode] = useState<'full' | 'split' | 'slide' | 'none'>('full');
+  
+  // Track the iPad multi-tasking mode
+  useEffect(() => {
+    if (!isiPad) return;
+    
+    const detectMultitaskingMode = () => {
+      const windowWidth = window.innerWidth;
+      const screenWidth = window.screen.width;
+      
+      // iPad multi-tasking detection logic
+      if (windowWidth === screenWidth || (orientation === 'landscape' && windowWidth > 768)) {
+        // Full screen mode
+        setIPadMode('full');
+      } else if (windowWidth >= 320 && windowWidth <= 400) {
+        // Slide Over mode (narrow floating window)
+        setIPadMode('slide');
+      } else {
+        // Split View mode (portion of the screen)
+        setIPadMode('split');
+      }
+    };
+    
+    // Initial detection
+    detectMultitaskingMode();
+    
+    // Update on resize
+    window.addEventListener('resize', detectMultitaskingMode);
+    
+    return () => {
+      window.removeEventListener('resize', detectMultitaskingMode);
+    };
+  }, [isiPad, orientation]);
+  
+  // Helper to adapt layout based on iPad multi-tasking mode
+  const getLayoutForIPadMode = useCallback(() => {
+    if (!isiPad) return '';
+    
+    switch (iPadMode) {
+      case 'slide':
+        return 'ipad-slide-over-mode';
+      case 'split':
+        return 'ipad-split-view-mode';
+      default:
+        return 'ipad-full-screen-mode';
+    }
+  }, [isiPad, iPadMode]);
+
+  // Compact layout for smaller screens or iPad Slide Over mode
+  const useCompactLayout = isiPad && iPadMode === 'slide' || screenSize === 'mobile';
+  
+  const refreshNotifications = useCallback(() => {
+    // iOS haptic feedback
+    if (isApplePlatform) {
+      haptics.light();
+    }
+    
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      
+      // Success haptic feedback when finished loading
+      if (isApplePlatform) {
+        haptics.success();
+      }
     }, 1000);
-  };
+  }, [isApplePlatform]);
   
-  const markAsRead = (notificationId: string) => {
+  const markAsRead = useCallback((notificationId: string) => {
+    // iOS haptic feedback
+    if (isApplePlatform) {
+      haptics.selection();
+    }
+    
     setNotifications(prev => 
       prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
     );
-  };
+  }, [isApplePlatform]);
   
-  const markAllAsRead = () => {
+  const markAllAsRead = useCallback(() => {
+    // iOS haptic feedback
+    if (isApplePlatform) {
+      haptics.medium();
+    }
+    
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-  };
+  }, [isApplePlatform]);
   
-  const deleteNotification = (notificationId: string) => {
+  const deleteNotification = useCallback((notificationId: string) => {
+    // iOS haptic feedback
+    if (isApplePlatform) {
+      haptics.rigid();
+    }
+    
     setNotifications(prev => prev.filter(n => n.id !== notificationId));
     setSelectedNotifications(prev => prev.filter(id => id !== notificationId));
-  };
+  }, [isApplePlatform]);
   
-  const deleteSelected = () => {
+  const deleteSelected = useCallback(() => {
+    // iOS haptic feedback
+    if (isApplePlatform) {
+      haptics.heavy();
+    }
+    
     setNotifications(prev => prev.filter(n => !selectedNotifications.includes(n.id)));
     setSelectedNotifications([]);
-  };
+  }, [isApplePlatform, selectedNotifications]);
   
-  const toggleSelected = (notificationId: string) => {
+  const toggleSelected = useCallback((notificationId: string) => {
+    // iOS haptic feedback
+    if (isApplePlatform) {
+      haptics.selection();
+    }
+    
     if (selectedNotifications.includes(notificationId)) {
       setSelectedNotifications(prev => prev.filter(id => id !== notificationId));
     } else {
       setSelectedNotifications(prev => [...prev, notificationId]);
     }
-  };
+  }, [isApplePlatform, selectedNotifications]);
   
-  const selectAll = () => {
+  const selectAll = useCallback(() => {
+    // iOS haptic feedback
+    if (isApplePlatform) {
+      haptics.selection();
+    }
+    
     const allIds = filteredNotifications.map(n => n.id);
     if (selectedNotifications.length === allIds.length) {
       setSelectedNotifications([]);
     } else {
       setSelectedNotifications(allIds);
     }
-  };
+  }, [isApplePlatform, filteredNotifications, selectedNotifications]);
   
   const formatTimestamp = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -246,7 +354,164 @@ export default function Notifications() {
     }
   };
 
-  return (
+  // Configuration for iOS navigation
+  const navRightActions = [
+    {
+      icon: 'arrow.up.bin.fill',
+      label: 'Mark all read',
+      onPress: markAllAsRead,
+      variant: 'primary',
+      disabled: notifications.filter(n => !n.read).length === 0
+    },
+    {
+      icon: 'line.3.horizontal.filter',
+      label: 'Filter',
+      onPress: () => {
+        if (isApplePlatform) {
+          haptics.selection();
+        }
+        // Filter action would go here
+      }
+    }
+  ];
+
+  return isApplePlatform ? (
+    <>
+      <Head>
+        <title>Notifications | SCB Sapphire FinSight</title>
+      </Head>
+      
+      <EnhancedIOSNavBar
+        title="Notifications"
+        largeTitle={true}
+        rightActions={navRightActions}
+        respectSafeArea={true}
+        transparent={false}
+        blurred={true}
+        theme={undefined} // Use system preference for theme
+        subtitle={unreadCount > 0 ? `${unreadCount} unread` : undefined}
+      />
+      
+      <div 
+        className={`space-y-4 px-4 pt-2 ${getLayoutForIPadMode()}`}
+        style={{ 
+          paddingBottom: hasHomeIndicator ? '34px' : '16px',
+          maxWidth: isiPad && iPadMode === 'full' ? '768px' : '100%',
+          margin: isiPad && iPadMode === 'full' ? '0 auto' : '0'
+        }}>
+        
+        {/* iOS-style search and filter bar */}
+        <div className={`rounded-xl shadow-sm border p-4 ${isDarkMode => isDarkMode ? 'bg-gray-800/90 border-gray-700' : 'bg-white/95 border-[rgba(var(--scb-border),0.8)]'}`}
+          style={{ backdropFilter: 'blur(8px)' }}>
+          <div className="flex flex-col md:flex-row gap-3">
+            {/* iOS-style search field with rounded corners and blurred background */}
+            <div className="relative flex-1">
+              <div className={`flex items-center overflow-hidden 
+                rounded-full border shadow-sm
+                ${isDarkMode => isDarkMode 
+                  ? 'bg-gray-700/80 border-gray-600' 
+                  : 'bg-[rgba(var(--scb-light-gray),0.5)] border-[rgba(var(--scb-border),0.6)]'}`}
+                style={{ backdropFilter: 'blur(4px)' }}>
+                <div className="pl-4 flex items-center">
+                  <Search className="h-4 w-4 text-[rgb(var(--scb-dark-gray))]" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search notifications..."
+                  className="w-full py-3 px-3 bg-transparent border-0 outline-none text-[rgb(var(--scb-dark-gray))]"
+                  style={{ fontFamily: "-apple-system, system-ui, BlinkMacSystemFont, sans-serif" }}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    // iOS-specific haptic feedback
+                    if (isApplePlatform) {
+                      haptics.selection();
+                    }
+                  }}
+                  onFocus={() => {
+                    if (isApplePlatform) {
+                      haptics.light();
+                    }
+                  }}
+                />
+                {searchQuery.length > 0 && (
+                  <button 
+                    className="pr-4 text-[rgb(var(--scb-dark-gray))]"
+                    onClick={() => {
+                      setSearchQuery('');
+                      // Provide haptic feedback
+                      if (isApplePlatform) {
+                        haptics.light();
+                      }
+                    }}
+                  >
+                    <span className="sr-only">Clear search</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="10" cy="10" r="8" fill="currentColor" fillOpacity="0.2" />
+                      <path d="M7.05 7.05L12.95 12.95M7.05 12.95L12.95 7.05" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+            
+            {/* iOS-style filter buttons */}
+            <div className="flex gap-2">
+              <div className="relative flex-1 min-w-[120px]">
+                <select
+                  className="appearance-none w-full pl-4 pr-8 py-3 rounded-full border bg-[rgba(var(--scb-light-gray),0.3)] border-[rgba(var(--scb-border),0.4)] text-sm shadow-sm"
+                  style={{ 
+                    backdropFilter: 'blur(4px)',
+                    fontFamily: "-apple-system, system-ui, BlinkMacSystemFont, sans-serif",
+                    WebkitTapHighlightColor: 'transparent'
+                  }}
+                  value={filter}
+                  onChange={(e) => {
+                    setFilter(e.target.value);
+                    if (isApplePlatform) {
+                      haptics.selection();
+                    }
+                  }}
+                >
+                  {categories.map(category => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                  <ChevronDown className="h-4 w-4 text-[rgb(var(--scb-dark-gray))]" />
+                </div>
+              </div>
+              
+              <div className="relative flex-1 min-w-[100px]">
+                <select
+                  className="appearance-none w-full pl-4 pr-8 py-3 rounded-full border bg-[rgba(var(--scb-light-gray),0.3)] border-[rgba(var(--scb-border),0.4)] text-sm shadow-sm"
+                  style={{ 
+                    backdropFilter: 'blur(4px)',
+                    fontFamily: "-apple-system, system-ui, BlinkMacSystemFont, sans-serif",
+                    WebkitTapHighlightColor: 'transparent'
+                  }}
+                  value={readFilter}
+                  onChange={(e) => {
+                    setReadFilter(e.target.value as 'all' | 'read' | 'unread');
+                    if (isApplePlatform) {
+                      haptics.selection();
+                    }
+                  }}
+                >
+                  <option value="all">All</option>
+                  <option value="read">Read</option>
+                  <option value="unread">Unread</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                  <ChevronDown className="h-4 w-4 text-[rgb(var(--scb-dark-gray))]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  ) : (
     <ScbBeautifulUI pageTitle="Notifications" showNewsBar={false}>
       <Head>
         <title>Notifications | SCB Sapphire FinSight</title>
