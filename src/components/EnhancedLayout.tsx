@@ -86,7 +86,7 @@ const appCatalog: AppItem[] = [
   // Reports & Documents
   { id: 'reports', name: 'Report Builder', icon: FileText, href: '/reports', category: 'Reports', color: 'bg-gray-600', description: 'Generate custom reports' },
   { id: 'tariff-alerts', name: 'Tariff Alerts', icon: AlertTriangle, href: '/tariff-alerts', category: 'Reports', color: 'bg-yellow-500', description: 'Trade tariff monitoring' },
-  { id: 'financial-sim', name: 'Financial Simulator', icon: Calculator, href: '/financial-simulation', category: 'Reports', color: 'bg-pink-500', description: 'Financial modeling' },
+  { id: 'financial-sim', name: 'Financial Simulator', icon: Icons.Calculator, href: '/financial-simulation', category: 'Reports', color: 'bg-pink-500', description: 'Financial modeling' },
   
   // Companies & Research
   { id: 'company-search', name: 'Company Search', icon: Building2, href: '/companies', category: 'Research', color: 'bg-cyan-500', description: 'Search S&P companies' },

@@ -11,6 +11,7 @@ import { WebSearchService } from '../services/WebSearchService';
 import NotificationDispatcher from '../services/NotificationDispatcher';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import TariffImpactSimulator from '../services/TariffImpactSimulator';
+import TariffService from '../services/TariffService';
 import { TariffAlert, TariffChange, SankeyData } from '../types';
 import { RefreshCw, Filter, Search, AlertTriangle, Info, Download, Share2, Bell, Globe } from 'lucide-react';
 
@@ -99,29 +100,32 @@ const TariffAlertsDashboard: NextPage = () => {
   
   // Initialize services
   useEffect(() => {
-    const initializeServices = async () => {
+    const fetchTariffAlerts = async () => {
       try {
         setIsLoading(true);
         
-        // In a real implementation, these would be initialized and loaded
-        // For now, we'll use mock data
-        setAlerts(mockTariffAlerts);
-        setFilteredAlerts(mockTariffAlerts);
+        // Fetch tariff alerts using the TariffService
+        const result = await TariffService.getTariffAlerts();
         
-        // In real implementation:
-        // const ontologyManager = new OntologyManager();
-        // await ontologyManager.loadOntology();
-        // const webSearchService = new WebSearchService(ontologyManager);
-        // await webSearchService.performSearch();
+        // Set the alert data
+        setAlerts(result.data);
+        setFilteredAlerts(result.data);
         
         setIsLoading(false);
       } catch (error) {
-        console.error('Failed to initialize services:', error);
+        console.error('Failed to fetch tariff alerts:', error);
+        
+        // Fall back to mock data if API fails
+        if (mockTariffAlerts.length > 0) {
+          setAlerts(mockTariffAlerts);
+          setFilteredAlerts(mockTariffAlerts);
+        }
+        
         setIsLoading(false);
       }
     };
     
-    initializeServices();
+    fetchTariffAlerts();
     
     // Initialize WebSocket for real-time updates
     const ws = NotificationDispatcher.initializeWebSocket();
@@ -271,17 +275,24 @@ const TariffAlertsDashboard: NextPage = () => {
     
     setIsLoading(true);
     
-    // In a real implementation, this would refresh from services
-    // const ontologyManager = new OntologyManager();
-    // await ontologyManager.loadOntology();
-    // const webSearchService = new WebSearchService(ontologyManager);
-    // await webSearchService.performSearch();
-    
-    // For now, simulate a delay and use mock data
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setAlerts(mockTariffAlerts);
-    
-    setIsLoading(false);
+    try {
+      // Use TariffService to refresh alerts (with cache busting)
+      const result = await TariffService.refreshTariffAlerts();
+      
+      setAlerts(result.data);
+      // Filters will be reapplied automatically thanks to the useEffect
+    } catch (error) {
+      console.error('Failed to refresh tariff alerts:', error);
+      
+      // If refresh fails and we don't have any alerts yet, use mock data
+      if (alerts.length === 0 && mockTariffAlerts.length > 0) {
+        setAlerts(mockTariffAlerts);
+      }
+      
+      // Show a user-friendly error toast or notification here
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleShareClick = () => {

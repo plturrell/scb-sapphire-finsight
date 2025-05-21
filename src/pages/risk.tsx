@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { 
   AlertTriangle, 
@@ -14,6 +14,13 @@ import {
   ChevronDown
 } from 'lucide-react';
 import ScbBeautifulUI from '@/components/ScbBeautifulUI';
+import { useIOS } from '@/hooks/useResponsive';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useMicroInteractions } from '@/hooks/useMicroInteractions';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import SFSymbol from '@/components/SFSymbol';
+import EnhancedRiskNavigation from '@/components/EnhancedRiskNavigation';
+import { useUIPreferences } from '@/context/UIPreferencesContext';
 
 // Sample data for risk metrics
 const riskScores = {
@@ -66,6 +73,30 @@ const riskAlerts = [
 export default function RiskManagement() {
   const [selectedPeriod, setSelectedPeriod] = useState('1m');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [activeRiskType, setActiveRiskType] = useState<string>('all');
+  
+  // Platform detection and UI enhancement hooks
+  const isAppleDevice = useIOS();
+  const [isPlatformDetected, setIsPlatformDetected] = useState(false);
+  const { haptic } = useMicroInteractions();
+  const { touchCapable } = useDeviceCapabilities();
+  const { isDarkMode } = useUIPreferences();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Risk categories with SF Symbols icons
+  const riskCategories = [
+    { id: 'all', label: 'All Risks', icon: 'shield.fill', badge: Object.keys(riskScores).length.toString() },
+    { id: 'market', label: 'Market', icon: 'chart.line.uptrend.xyaxis.fill', badge: riskScores.market > 65 ? 'High' : null },
+    { id: 'credit', label: 'Credit', icon: 'chart.pie.fill', badge: riskScores.credit > 65 ? 'High' : null  },
+    { id: 'liquidity', label: 'Liquidity', icon: 'drop.fill', badge: null },
+    { id: 'operational', label: 'Operational', icon: 'gear.fill', badge: null },
+    { id: 'strategic', label: 'Strategic', icon: 'target', badge: riskScores.strategic > 60 ? 'Med' : null }
+  ];
+  
+  // Platform detection effect
+  useEffect(() => {
+    setIsPlatformDetected(true);
+  }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -78,8 +109,26 @@ export default function RiskManagement() {
   };
 
   const refreshData = () => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'medium' });
+    }
+    
     setIsRefreshing(true);
     setTimeout(() => setIsRefreshing(false), 1500);
+  };
+  
+  // Handle risk type selection
+  const handleRiskTypeChange = (riskType: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    
+    setActiveRiskType(riskType);
+    
+    // In a real implementation, this would filter the data based on risk type
+    console.log(`Selected risk type: ${riskType}`);
   };
 
   return (

@@ -12,9 +12,9 @@ import {
   Building2,
   Database,
   Activity,
-  Zap,
+  // Zap imported from Icons
   AlertTriangle,
-  Calculator,
+  // Calculator imported from Icons
   MapPin,
   Book,
   Terminal,
@@ -59,7 +59,7 @@ const allNavigationItems: NavigationItem[] = [
   // Finance
   { id: 'trading', name: 'Trading Desk', href: '/trading', icon: TrendingUp, category: 'Finance' },
   { id: 'risk', name: 'Risk Management', href: '/risk', icon: ShieldAlert, category: 'Finance' },
-  { id: 'financial-sim', name: 'Financial Simulator', href: '/financial-simulation', icon: Calculator, category: 'Finance' },
+  { id: 'financial-sim', name: 'Financial Simulator', href: '/financial-simulation', icon: Icons.Calculator, category: 'Finance' },
   
   // Data Products
   { id: 'data-explorer', name: 'Data Explorer', href: '/data-explorer', icon: Database, category: 'Data' },
