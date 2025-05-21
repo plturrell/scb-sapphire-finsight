@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useMediaQuery } from 'react-responsive';
 import { Info, Clock } from 'lucide-react';
@@ -7,6 +7,8 @@ import { useUIPreferences } from '@/context/UIPreferencesContext';
 import useMultiTasking from '@/hooks/useMultiTasking';
 import { useMicroInteractions } from '@/hooks/useMicroInteractions';
 import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import { ICONS } from '@/components/IconSystem';
 
 export default function Home() {
   const router = useRouter();
@@ -15,6 +17,25 @@ export default function Home() {
   const { deviceType, isAppleDevice } = useDeviceCapabilities();
   const { haptic } = useMicroInteractions();
   const isSmallScreen = useMediaQuery({ maxWidth: 640 });
+  const [activeNewsCategory, setActiveNewsCategory] = useState('all');
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
+  
+  // Effect to detect platform
+  useEffect(() => {
+    setPlatformDetected(true);
+  }, []);
+  
+  // News categories with SF Symbols icons
+  const newsCategories = [
+    { id: 'all', label: 'All News', icon: 'newspaper.fill', badge: '9' },
+    { id: 'markets', label: 'Markets', icon: 'chart.xyaxis.line', badge: '2' },
+    { id: 'economy', label: 'Economy', icon: 'dollarsign.circle.fill', badge: '3' },
+    { id: 'banking', label: 'Banking', icon: 'building.columns.fill', badge: '1' },
+    { id: 'commodities', label: 'Commodities', icon: 'hammer.fill', badge: '1' },
+    { id: 'esg', label: 'ESG', icon: 'leaf.fill', badge: '1' },
+    { id: 'regulation', label: 'Regulation', icon: 'building.2.fill', badge: '1' }
+  ];
   
   // News items data
   const cnbcNews = [
@@ -137,6 +158,64 @@ export default function Home() {
     }
     e.stopPropagation();
     alert(`${source} info`);
+  };
+  
+  // Handle news category selection
+  const handleCategorySelect = (categoryId) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptic({ intensity: 'light' });
+    }
+    setActiveNewsCategory(categoryId);
+    // In a real app, this would filter news items
+    console.log(`Selected news category: ${categoryId}`);
+  };
+  
+  // SF Symbols News Categories Navigation component
+  const SFSymbolsNewsNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`rounded-lg overflow-x-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1 mb-4`}>
+        <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
+          {newsCategories.map((category) => (
+            <button 
+              key={category.id}
+              onClick={() => handleCategorySelect(category.id)}
+              className={`
+                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                ${activeNewsCategory === category.id
+                  ? isDarkMode 
+                    ? 'bg-blue-900/30 text-blue-400' 
+                    : 'bg-blue-50 text-blue-600'
+                  : isDarkMode 
+                    ? 'text-gray-300 hover:bg-gray-700' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }
+              `}
+            >
+              <div className="relative">
+                <span className="sf-symbol text-xl" role="img">{category.icon}</span>
+                
+                {/* Badge */}
+                {category.badge && (
+                  <span className={`
+                    absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
+                    flex items-center justify-center px-1
+                    ${isDarkMode ? 'bg-red-600' : 'bg-red-500'}
+                  `}>
+                    {category.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
   };
   
   // Render news cards
@@ -339,6 +418,10 @@ export default function Home() {
       largeTitle={true}
     >
       <div className="p-2 md:p-4">
+        {/* SF Symbols News Categories Navigation */}
+        {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+          <SFSymbolsNewsNavigation />
+        )}
         {renderNewsGrid()}
       </div>
     </IOSOptimizedLayout>

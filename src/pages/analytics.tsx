@@ -246,7 +246,7 @@ export default function Analytics() {
     {
       key: 'portfolio',
       label: 'Portfolio',
-      icon: 'briefcase',
+      icon: 'folder',
       href: '/portfolio',
     },
     {

@@ -1,6 +1,5 @@
 // Centralized icon exports to ensure consistent usage across the application
 import { 
-  Briefcase, 
   LayoutDashboard, 
   FileText, 
   Settings, 
@@ -34,9 +33,15 @@ import {
   Newspaper
 } from 'lucide-react';
 
-// Export all icons
-export {
-  Briefcase,
+// Import Briefcase from IconExports
+import { Icons as ImportedIcons } from '../IconExports';
+
+// Create a combined icons object with Briefcase from IconExports
+export const Icons = {
+  // Use Briefcase from IconExports
+  Briefcase: ImportedIcons.Briefcase,
+  
+  // Standard icons
   LayoutDashboard,
   FileText,
   Settings,
@@ -70,9 +75,8 @@ export {
   Newspaper
 };
 
-// For convenience, also export as a named object
-export const Icons = {
-  Briefcase,
+// Also export individual icons for backward compatibility
+export {
   LayoutDashboard,
   FileText,
   Settings,
@@ -105,3 +109,6 @@ export const Icons = {
   Globe,
   Newspaper
 };
+
+// Default export for convenience
+export default Icons;

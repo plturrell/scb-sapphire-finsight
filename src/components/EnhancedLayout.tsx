@@ -9,6 +9,7 @@ import {
   RefreshCcw, Building2, Globe, Shield, AlertTriangle, 
   Activity, TrendingUp, Layers, Database, Terminal, Sparkles
 } from 'lucide-react';
+import { Icons } from './IconExports';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
 import AppNavigationLinks from './layout/AppNavigationLinks';
 
@@ -71,7 +72,7 @@ const mobileNav = [
 // Comprehensive app catalog (same as in ModernLayout)
 const appCatalog: AppItem[] = [
   // Finance Apps
-  { id: 'portfolio', name: 'Portfolio Manager', icon: Briefcase, href: '/portfolio', category: 'Finance', color: 'bg-blue-500', description: 'Manage investment portfolios' },
+  { id: 'portfolio', name: 'Portfolio Manager', icon: Icons.Briefcase, href: '/portfolio', category: 'Finance', color: 'bg-blue-500', description: 'Manage investment portfolios' },
   { id: 'analytics', name: 'Financial Analytics', icon: LineChart, href: '/analytics', category: 'Finance', color: 'bg-green-500', description: 'Advanced financial analysis' },
   { id: 'trading', name: 'Trading Desk', icon: TrendingUp, href: '/trading', category: 'Finance', color: 'bg-purple-500', description: 'Real-time trading platform' },
   { id: 'risk', name: 'Risk Management', icon: Shield, href: '/risk', category: 'Finance', color: 'bg-red-500', description: 'Risk assessment tools' },

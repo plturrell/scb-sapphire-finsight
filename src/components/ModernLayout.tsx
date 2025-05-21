@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Icons } from './IconExports';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -42,7 +43,7 @@ import {
   Calendar,
   Star,
   Zap,
-  Briefcase,
+  // Briefcase removed and replaced with Icons.Briefcase
   UserPlus,
   Share2,
   Lock,
@@ -107,7 +108,7 @@ const mobileNav = [
 // Comprehensive App Catalog
 const appCatalog: AppItem[] = [
   // Finance Apps
-  { id: 'portfolio', name: 'Portfolio Manager', icon: Briefcase, href: '/portfolio', category: 'Finance', color: 'bg-blue-500', description: 'Manage investment portfolios' },
+  { id: 'portfolio', name: 'Portfolio Manager', icon: Icons.Briefcase, href: '/portfolio', category: 'Finance', color: 'bg-blue-500', description: 'Manage investment portfolios' },
   { id: 'analytics', name: 'Financial Analytics', icon: LineChart, href: '/analytics', category: 'Finance', color: 'bg-green-500', description: 'Advanced financial analysis' },
   { id: 'trading', name: 'Trading Desk', icon: TrendingUp, href: '/trading', category: 'Finance', color: 'bg-purple-500', description: 'Real-time trading platform' },
   { id: 'risk', name: 'Risk Management', icon: Shield, href: '/risk', category: 'Finance', color: 'bg-red-500', description: 'Risk assessment tools' },

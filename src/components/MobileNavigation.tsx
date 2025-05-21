@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { 
   Home, BarChart3, Target, FileText, Settings, 
   Search, Bell, User, Grid, HelpCircle, Plus,
-  ChevronDown, BookOpen, Briefcase
+  ChevronDown, BookOpen
 } from 'lucide-react';
+import { Icons } from './IconExports';
 import { haptics } from '../lib/haptics';
 import { useSafeArea } from '../hooks/useSafeArea';
 

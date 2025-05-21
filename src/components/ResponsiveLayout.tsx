@@ -16,7 +16,7 @@ import {
   ChevronLeft,
   Home,
   Activity,
-  Briefcase,
+  // Briefcase removed and replaced with Folder from IconExports
   FileBarChart,
   Globe,
   Package,
@@ -27,6 +27,7 @@ import {
   TrendingUp,
   UserCircle,
 } from 'lucide-react';
+import { Icons } from './IconExports';
 
 interface ResponsiveLayoutProps {
   children: React.ReactNode;
@@ -51,7 +52,7 @@ const secondaryNavigation = [
 const mobileBottomNav = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Analytics', href: '/analytics', icon: Activity },
-  { name: 'Portfolio', href: '/portfolio', icon: Briefcase },
+  { name: 'Portfolio', href: '/portfolio', icon: Icons.Briefcase },
   { name: 'Reports', href: '/reports', icon: FileBarChart },
 ];
 

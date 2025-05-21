@@ -10,6 +10,8 @@ import { useUIPreferences } from '@/context/UIPreferencesContext';
 import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { useMediaQuery } from 'react-responsive';
 import { haptics } from '@/lib/haptics';
+import { useSFSymbolsSupport } from '@/lib/sf-symbols';
+import { ICONS } from '@/components/IconSystem';
 import {
   BarChart,
   Bar,
@@ -52,14 +54,33 @@ const taskData = [
 
 export default function Portfolio() {
   const [selectedBarData, setSelectedBarData] = useState<any>(null);
+  const [activePortfolioCategory, setActivePortfolioCategory] = useState('overview');
+  const [isPlatformDetected, setPlatformDetected] = useState(false);
   
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const { mode, isMultiTasking } = useMultiTasking();
   const { isAppleDevice, deviceType } = useDeviceCapabilities();
   const { isDarkMode } = useUIPreferences();
+  const { supported: sfSymbolsSupported } = useSFSymbolsSupport();
   
   // Determine if it's an iPad
   const isIPad = deviceType === 'tablet' && isAppleDevice;
+  
+  // Effect to detect platform
+  useEffect(() => {
+    setPlatformDetected(true);
+  }, []);
+  
+  // Portfolio categories with SF Symbols icons
+  const portfolioCategories = [
+    { id: 'overview', label: 'Overview', icon: 'chart.pie.fill', badge: null },
+    { id: 'regions', label: 'Regions', icon: 'globe.asia.australia', badge: '7' },
+    { id: 'assets', label: 'Assets', icon: 'building.columns.fill', badge: '$3.2M' },
+    { id: 'performance', label: 'Performance', icon: 'chart.line.uptrend.xyaxis.fill', badge: '+6.3%' },
+    { id: 'tasks', label: 'Tasks', icon: 'checklist', badge: '4' },
+    { id: 'compliance', label: 'Compliance', icon: 'lock.shield.fill', badge: null },
+    { id: 'documents', label: 'Documents', icon: 'doc.on.doc.fill', badge: '12' }
+  ];
 
   // Handle bar data selection
   const handleBarSelect = (data: any) => {
@@ -76,6 +97,84 @@ export default function Portfolio() {
     if (isAppleDevice) {
       haptics.medium();
     }
+  };
+  
+  // Handle portfolio category selection
+  const handleCategorySelect = (categoryId: string) => {
+    // Provide haptic feedback on Apple devices
+    if (isAppleDevice) {
+      haptics.selection();
+    }
+    setActivePortfolioCategory(categoryId);
+    // In a real app, this would update the displayed content
+    console.log(`Selected portfolio category: ${categoryId}`);
+  };
+  
+  // SF Symbols Portfolio Categories Navigation component
+  const SFSymbolsPortfolioNavigation = () => {
+    if (!isAppleDevice || !isPlatformDetected || !sfSymbolsSupported) {
+      return null;
+    }
+    
+    return (
+      <div className={`rounded-lg overflow-x-auto ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm border ${isDarkMode ? 'border-gray-700' : 'border-[rgb(var(--scb-border))]'} p-1 mb-4`}>
+        <div className="flex items-center overflow-x-auto hide-scrollbar pb-1">
+          {portfolioCategories.map((category) => (
+            <button 
+              key={category.id}
+              onClick={() => handleCategorySelect(category.id)}
+              className={`
+                flex flex-col items-center justify-center p-2 min-w-[72px] rounded-lg transition-colors
+                ${activePortfolioCategory === category.id
+                  ? isDarkMode 
+                    ? 'bg-blue-900/30 text-blue-400' 
+                    : 'bg-blue-50 text-blue-600'
+                  : isDarkMode 
+                    ? 'text-gray-300 hover:bg-gray-700' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                }
+              `}
+            >
+              <div className="relative">
+                <span className="sf-symbol text-xl" role="img">{category.icon}</span>
+                
+                {/* Badge */}
+                {category.badge && (
+                  <span className={`
+                    absolute -top-1 -right-1 text-white text-[10px] font-bold rounded-full min-w-[16px] h-[16px] 
+                    flex items-center justify-center px-1
+                    ${category.badge.startsWith('+') 
+                      ? isDarkMode ? 'bg-green-600' : 'bg-green-500' 
+                      : category.badge.startsWith('$')
+                        ? isDarkMode ? 'bg-purple-600' : 'bg-purple-500'
+                        : isDarkMode ? 'bg-blue-600' : 'bg-red-500'
+                    }
+                  `}>
+                    {category.badge.length > 4 ? category.badge.substring(0, 3) + '..' : category.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };$')
+                        ? isDarkMode ? 'bg-purple-600' : 'bg-purple-500'
+                        : isDarkMode ? 'bg-blue-600' : 'bg-red-500'
+                    }
+                  `}>
+                    {category.badge.length > 4 ? category.badge.substring(0, 3) + '...' : category.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium mt-1">{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
   };
   
   // Navigation bar actions
@@ -472,6 +571,11 @@ export default function Portfolio() {
                 Sofia - Transaction Banking CFO
               </p>
             </div>
+            
+            {/* SF Symbols Portfolio Categories Navigation */}
+            {isAppleDevice && isPlatformDetected && sfSymbolsSupported && (
+              <SFSymbolsPortfolioNavigation />
+            )}
 
             <div className={`grid grid-cols-1 ${
               isMultiTasking && mode === 'slide-over'

@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Icons } from './IconExports';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -40,7 +41,7 @@ import {
   Database,
   Grid,
   Terminal,
-  Briefcase,
+  // Briefcase removed and replaced with Icons.Briefcase
   DollarSign,
   Calendar,
   Clock,
@@ -130,7 +131,7 @@ const secondaryNav: NavigationItem[] = [
 const mobileNav: MobileFooterItem[] = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Analytics', href: '/analytics', icon: Activity },
-  { name: 'Portfolio', href: '/portfolio', icon: Briefcase },
+  { name: 'Portfolio', href: '/portfolio', icon: Icons.Briefcase },
   { name: 'Reports', href: '/reports', icon: FileText },
 ];
 
@@ -644,7 +645,7 @@ export default function EnhancedResponsiveLayout({
                         setUserMenuOpen(false);
                       }}
                     >
-                      <LogOut className="mr-3 h-4 w-4 text-[rgb(var(--scb-dark-gray))] opacity-70" />
+                      <Icons.LogOut className="mr-3 h-4 w-4 text-[rgb(var(--scb-dark-gray))] opacity-70" />
                       Sign Out
                     </button>
                   </div>
