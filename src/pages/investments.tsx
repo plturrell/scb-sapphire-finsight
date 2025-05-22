@@ -900,20 +900,6 @@ export default function Investments() {
   // Use ScbBeautifulUI instead of IOSOptimizedLayout to avoid JSX structure issues
   return (
     <div>
-      {/* iOS-specific refresh indicator */}
-      {renderRefreshIndicator()}
-      
-      {/* iOS-specific offline banner */}
-      {renderOfflineBanner()}
-      
-      {/* iOS-specific modal overlays */}
-      {renderHoldingDetailModal()}
-      {renderInsightDetailModal()}
-      
-      <ScbBeautifulUI
-        showSearchBar={true}
-        pageTitle="Investments"
-      >
         <div 
           ref={contentRef}
           className={`space-y-6 ${getIOSClasses()}`}
@@ -1564,7 +1550,6 @@ export default function Investments() {
             ))}
           </div>
         </div>
-      </ScbBeautifulUI>
     </div>
   );
 }
