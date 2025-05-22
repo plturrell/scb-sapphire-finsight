@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PerplexityLLMService } from '@/services/PerplexityLLMService';
+import { PerplexityService } from '@/services/PerplexityService';
 
 /**
  * Analytics Data API
@@ -133,7 +133,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
  */
 const generateSectorData = async () => {
   try {
-    const perplexityService = new PerplexityLLMService();
+    const perplexityService = new PerplexityService();
     
     const prompt = `Generate realistic Thai financial sector performance data for 2025 for these sectors:
     - Aluminum
@@ -159,13 +159,14 @@ const generateSectorData = async () => {
     
     Return as JSON array with realistic but varied numbers based on current Thai economic conditions.`;
 
-    const response = await perplexityService.chat([{
+    const response = await perplexityService.callPerplexityAPI([{
       role: 'user',
       content: prompt
     }]);
 
     // Parse AI response or use fallback
-    let sectorData = parseSectorDataFromResponse(response);
+    const responseContent = response.choices[0]?.message?.content || '';
+    let sectorData = parseSectorDataFromResponse(responseContent);
     
     if (!sectorData || sectorData.length === 0) {
       // Fallback to enhanced realistic data
@@ -308,7 +309,7 @@ const generateFallbackSectorData = () => {
  */
 const generateCustomSectorAnalysis = async (parameters: any) => {
   try {
-    const perplexityService = new PerplexityLLMService();
+    const perplexityService = new PerplexityService();
     
     const prompt = `Analyze the Thai financial sector performance for ${parameters.sector || 'all sectors'} with focus on:
     ${parameters.focusAreas?.join(', ') || 'general performance, risk factors, growth opportunities'}
@@ -322,13 +323,14 @@ const generateCustomSectorAnalysis = async (parameters: any) => {
     
     Consider current Thai economic conditions and regional market dynamics.`;
 
-    const response = await perplexityService.chat([{
+    const response = await perplexityService.callPerplexityAPI([{
       role: 'user',
       content: prompt
     }]);
 
+    const responseContent = response.choices[0]?.message?.content || 'Unable to generate analysis';
     return {
-      analysis: response,
+      analysis: responseContent,
       sector: parameters.sector || 'Multi-Sector',
       focusAreas: parameters.focusAreas || ['general_performance'],
       confidence: 0.85,

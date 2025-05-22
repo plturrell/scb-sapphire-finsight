@@ -899,8 +899,7 @@ export default function Investments() {
   
   // Use ScbBeautifulUI instead of IOSOptimizedLayout to avoid JSX structure issues
   return (
-    <>
-      <div>
+    <div>
       {/* iOS-specific refresh indicator */}
       {renderRefreshIndicator()}
       
@@ -1566,7 +1565,6 @@ export default function Investments() {
           </div>
         </div>
       </ScbBeautifulUI>
-      </div>
-    </>
+    </div>
   );
 }

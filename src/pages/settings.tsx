@@ -96,9 +96,7 @@ const SettingsPage = () => {
   const isApplePlatform = isiOS || isiPad;
   
   // Touch tracking
-  const [touchStartY, setTouchStartY] = useState<number | null>(null);
   const lastScrollTop = useRef<number>(0);
-  const [navbarHidden, setNavbarHidden] = useState(false);
   
   // Handle notification preference change
   const handleNotificationChange = (key: keyof NotificationPreference, value: boolean) => {

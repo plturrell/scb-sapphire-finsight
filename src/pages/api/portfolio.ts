@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PerplexityLLMService } from '@/services/PerplexityLLMService';
+import { PerplexityService } from '@/services/PerplexityService';
 
 /**
  * Portfolio API Endpoint
@@ -62,7 +62,7 @@ const setCache = (key: string, data: any, ttlMinutes: number = 10): void => {
 // Generate realistic portfolio data with AI
 const generatePortfolioData = async (): Promise<PortfolioData[]> => {
   try {
-    const perplexityService = new PerplexityLLMService();
+    const perplexityService = new PerplexityService();
     const prompt = `Generate realistic portfolio performance data for SCB (Standard Chartered Bank) Asia regions for 2025 transaction banking. Include 7 key Asian markets with their planned vs actual performance percentages.
 
 Format as JSON array with these fields for each region:
@@ -75,12 +75,13 @@ Format as JSON array with these fields for each region:
 
 Focus on realistic Asian markets plus key global partners. Make the data reflect current 2025 market conditions with slight variations between planned and actual performance.`;
 
-    const response = await perplexityService.chat([
+    const response = await perplexityService.callPerplexityAPI([
       { role: 'user', content: prompt }
     ]);
 
     // Try to parse AI response as JSON
-    const jsonMatch = response.match(/\[[\s\S]*\]/);
+    const responseContent = response.choices[0]?.message?.content || "";
+    const jsonMatch = responseContent.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
       try {
         const data = JSON.parse(jsonMatch[0]);
@@ -111,7 +112,7 @@ Focus on realistic Asian markets plus key global partners. Make the data reflect
 // Generate realistic task data with AI
 const generateTaskData = async (): Promise<TaskData[]> => {
   try {
-    const perplexityService = new PerplexityLLMService();
+    const perplexityService = new PerplexityService();
     const prompt = `Generate 8-10 realistic banking portfolio management tasks for a Transaction Banking CFO at Standard Chartered Bank in 2025. Include a mix of completed, pending, overdue, and in-progress tasks.
 
 Format as JSON array with these fields:
@@ -126,12 +127,13 @@ Format as JSON array with these fields:
 
 Focus on realistic transaction banking tasks like compliance reviews, client onboarding, regulatory reporting, budget reviews, etc.`;
 
-    const response = await perplexityService.chat([
+    const response = await perplexityService.callPerplexityAPI([
       { role: 'user', content: prompt }
     ]);
 
     // Try to parse AI response as JSON
-    const jsonMatch = response.match(/\[[\s\S]*\]/);
+    const responseContent = response.choices[0]?.message?.content || "";
+    const jsonMatch = responseContent.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
       try {
         const data = JSON.parse(jsonMatch[0]);
@@ -165,7 +167,7 @@ Focus on realistic transaction banking tasks like compliance reviews, client onb
 // Generate portfolio metrics with AI
 const generatePortfolioMetrics = async (): Promise<PortfolioMetrics> => {
   try {
-    const perplexityService = new PerplexityLLMService();
+    const perplexityService = new PerplexityService();
     const prompt = `Generate realistic portfolio metrics for Standard Chartered Bank's Transaction Banking Asia portfolio for Q1 2025. Include:
 
 Format as JSON object:
@@ -180,12 +182,13 @@ Format as JSON object:
 
 Reflect realistic banking performance metrics for 2025 market conditions in Asia.`;
 
-    const response = await perplexityService.chat([
+    const response = await perplexityService.callPerplexityAPI([
       { role: 'user', content: prompt }
     ]);
 
     // Try to parse AI response as JSON
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    const responseContent = response.choices[0]?.message?.content || "";
+    const jsonMatch = responseContent.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       try {
         const data = JSON.parse(jsonMatch[0]);
