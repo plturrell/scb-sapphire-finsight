@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Single Focus Interface -->
+        <div class="focus-area">
+            <!-- Minimal Header -->
+            <header class="header">
+                <div class="wordmark">FinSight</div>
+                <div class="status-indicator" id="status-indicator">
+                    <div class="status-dot"></div>
+                </div>
+            </header>
+
+            <!-- Primary Content - Single Focus Area -->
+            <main class="content">
+                <!-- Current State Display -->
+                <section class="state-display" id="state-display">
+                    <div class="state-content">
+                        <h1 id="primary-title">Ready</h1>
+                        <p id="secondary-info">Select an action to begin</p>
+                        <div class="state-details" id="state-details">
+                            <!-- Dynamic content based on current state -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Primary Actions - Context Aware -->
+                <section class="actions" id="actions">
+                    <div class="action-primary" id="action-primary">
+                        <button class="btn-primary" id="primary-action">
+                            <span class="btn-text">New Branch</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-secondary" id="action-secondary">
+                        <button class="btn-secondary" id="switch-action">Switch</button>
+                        <button class="btn-secondary" id="sync-action">Sync</button>
+                        <button class="btn-secondary" id="status-action">Status</button>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Contextual Detail Area -->
+            <aside class="detail-area" id="detail-area">
+                <!-- Shows detailed information when needed -->
+                <div class="detail-content" id="detail-content">
+                    <!-- Dynamic detailed content -->
+                </div>
+            </aside>
+        </div>
+
+        <!-- Minimal Modals -->
+        <div class="modal-overlay" id="modal-overlay">
+            <div class="modal-content" id="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title"></h2>
+                    <button class="modal-close" id="modal-close">
+                        <svg width="14" height="14" viewBox="0 0 14 14">
+                            <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- Dynamic modal content -->
+                </div>
+                <div class="modal-actions" id="modal-actions">
+                    <!-- Dynamic modal actions -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-content">
+                <h2>Preferences</h2>
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="dark-mode-toggle">
+                        <span class="setting-label">Dark Mode</span>
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>
+                        <span class="setting-label">Cleanup after</span>
+                        <input type="number" id="cleanup-days" value="7" min="1" max="30">
+                        <span class="setting-unit">days</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

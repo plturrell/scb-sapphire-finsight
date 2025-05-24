@@ -6,7 +6,9 @@
   "outputDirectory": ".next",
   "env": {
     "PERPLEXITY_API_KEY": "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",
-    "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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"
+    "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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",
+    "ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here",
+    "NEXT_PUBLIC_ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here"
   },
   "rewrites": [
     {

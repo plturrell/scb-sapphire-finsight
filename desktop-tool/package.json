@@ -1,0 +1,207 @@
+{
+  "name": "finsight-desktop",
+  "productName": "FinSight",
+  "version": "2.0.0",
+  "description": "FinSight Desktop - Jony Ive Inspired Git Manager for SCB Sapphire FinSight Project",
+  "main": "main.js",
+  "author": {
+    "name": "SCB Sapphire FinSight Team",
+    "email": "finsight@scb.co.th"
+  },
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/scb-sapphire/finsight-desktop",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scb-sapphire/finsight-desktop.git"
+  },
+  "keywords": [
+    "electron",
+    "claude",
+    "git",
+    "branch-manager",
+    "desktop-app",
+    "finsight",
+    "jony-ive-design"
+  ],
+  "scripts": {
+    "start": "electron .",
+    "dev": "NODE_ENV=development electron . --dev",
+    "test": "jest",
+    "lint": "eslint *.js --fix",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "build": "npm run lint && npm run dist",
+    "clean": "rimraf dist",
+    "release": "npm run clean && npm run build",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.scb.finsight.desktop",
+    "productName": "FinSight",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "style.css",
+      "assets/**/*",
+      "!assets/*.svg",
+      "!**/*.md",
+      "!**/.DS_Store"
+    ],
+    "extraMetadata": {
+      "name": "FinSight"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "category": "public.app-category.developer-tools",
+      "icon": "assets/icon.icns",
+      "bundleVersion": "2.0.0",
+      "minimumSystemVersion": "10.15.0",
+      "darkModeSupport": true,
+      "gatekeeperAssess": false,
+      "hardenedRuntime": false,
+      "notarize": false,
+      "identity": null
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "publisherName": "SCB Sapphire FinSight",
+      "verifyUpdateCodeSignature": false
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "category": "Development",
+      "desktop": {
+        "Name": "FinSight",
+        "Comment": "Git branch manager for FinSight project",
+        "Keywords": "git;development;claude;branch;"
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "FinSight"
+    },
+    "dmg": {
+      "title": "FinSight ${version}",
+      "backgroundColor": "#FFFFFF",
+      "icon": "assets/icon.icns",
+      "iconSize": 128,
+      "contents": [
+        {
+          "x": 150,
+          "y": 220,
+          "type": "file"
+        },
+        {
+          "x": 450,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 600,
+        "height": 400
+      }
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "scb-sapphire",
+      "repo": "finsight-desktop"
+    }
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "electron": "^28.1.0",
+    "electron-builder": "^24.8.0",
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "electronVersion": "28.1.0",
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "name": "FinSight",
+        "executableName": "finsight",
+        "icon": "assets/icon"
+      }
+    }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.js",
+      "**/?(*.)+(spec|test).js"
+    ],
+    "collectCoverageFrom": [
+      "*.js",
+      "!dist/**",
+      "!node_modules/**"
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es2022": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 2022,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-unused-vars": "warn",
+      "no-console": "off",
+      "indent": ["error", 2],
+      "quotes": ["error", "single"],
+      "semi": ["error", "always"]
+    }
+  }
+}

@@ -9,9 +9,21 @@
     "postbuild": "node scripts/fix-source-maps.js",
     "start": "next start",
     "lint": "next lint",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "claude:new": "node scripts/claude-git-manager.js new",
+    "claude:list": "node scripts/claude-git-manager.js list",
+    "claude:status": "node scripts/claude-git-manager.js status",
+    "claude:cleanup": "node scripts/claude-git-manager.js cleanup",
+    "claude:help": "node scripts/claude-git-manager.js help",
+    "sync:local": "./scripts/sync-to-local.sh",
+    "sync:from-local": "./scripts/sync-from-local.sh",
+    "offline:status": "./scripts/offline-status.sh",
+    "desktop": "./desktop-tool/launch.sh",
+    "desktop:dev": "./desktop-tool/launch.sh dev",
+    "desktop:build": "./desktop-tool/launch.sh build"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0",
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
