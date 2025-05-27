@@ -897,9 +897,13 @@ export default function Investments() {
     );
   };
   
-  // Use ScbBeautifulUI instead of IOSOptimizedLayout to avoid JSX structure issues
+  // Main component return  
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {renderOfflineBanner()}
+      {renderRefreshIndicator()}
+      {renderHoldingDetailModal()}
+      {renderInsightDetailModal()}
         <div 
           ref={contentRef}
           className={`space-y-6 ${getIOSClasses()}`}
