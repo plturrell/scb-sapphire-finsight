@@ -1,6 +1,5 @@
 import '@/styles/globals.css';
 import '@/styles/typography.css';
-import '@/styles/ios-enhancements.css';
 import type { AppProps } from 'next/app';
 import { ChakraProvider, extendTheme, CSSReset } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

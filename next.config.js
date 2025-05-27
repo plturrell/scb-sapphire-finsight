@@ -22,6 +22,13 @@ const nextConfig = {
   // Disable SWC compiler due to issues on some platforms
   swcMinify: false,
   
+  // Experimental features
+  experimental: {
+    craCompat: false,
+    esmExternals: false,
+    webpackBuildWorker: false
+  },
+  
   // Completely disable minification and source maps to avoid Terser
   webpack: (config, { isServer, dev }) => {
     // Disable all minimizers
@@ -41,32 +48,24 @@ const nextConfig = {
       config.devtool = 'nosources-source-map';
     }
     
-    // Completely bypass problematic CSS processing
+    // Simplify CSS processing
     config.module.rules.forEach((rule) => {
       if (rule.oneOf) {
         rule.oneOf.forEach((oneOfRule) => {
           if (oneOfRule.test && oneOfRule.test.toString().includes('\\.css')) {
-            // Disable source maps and advanced processing for CSS
             if (oneOfRule.use && Array.isArray(oneOfRule.use)) {
-              oneOfRule.use = oneOfRule.use.map((loader) => {
-                if (typeof loader === 'object' && loader.loader) {
-                  if (loader.loader.includes('css-loader')) {
-                    return {
-                      ...loader,
-                      options: {
-                        sourceMap: false,
-                        importLoaders: 0,
-                        modules: false
-                      }
-                    };
+              oneOfRule.use.forEach((loader) => {
+                if (typeof loader === 'object' && loader.options) {
+                  // Only disable source maps for css-loader and postcss-loader
+                  if (loader.loader && (loader.loader.includes('css-loader') || loader.loader.includes('postcss-loader'))) {
+                    loader.options.sourceMap = false;
                   }
-                  if (loader.loader.includes('postcss-loader')) {
-                    // Skip postcss-loader entirely
-                    return null;
+                  // Remove invalid sourceMap option from mini-css-extract-plugin
+                  if (loader.loader && loader.loader.includes('mini-css-extract-plugin')) {
+                    delete loader.options.sourceMap;
                   }
                 }
-                return loader;
-              }).filter(Boolean);
+              });
             }
           }
         });
