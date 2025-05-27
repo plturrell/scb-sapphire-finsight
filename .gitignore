@@ -41,3 +41,13 @@ next-env.d.ts
 
 # nested repository
 finsight-app/
+
+# Claude Git Tree tracking
+.claude-branches
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="window">
+        <!-- Authentic macOS window -->
+        <div class="titlebar">
+            <div class="traffic-lights">
+                <div class="traffic-light close"></div>
+                <div class="traffic-light minimize"></div>
+                <div class="traffic-light maximize"></div>
+            </div>
+            <div class="window-title">
+                <img src="assets/icon.png" alt="FinSight" class="title-icon">
+                FinSight
+            </div>
+        </div>
+
+        <!-- Authentic macOS toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <button class="toolbar-btn active">
+                    <div class="btn-icon">○</div>
+                    <div class="btn-label">Branches</div>
+                </button>
+                <button class="toolbar-btn">
+                    <div class="btn-icon">◉</div>
+                    <div class="btn-label">Analysis</div>
+                </button>
+                <button class="toolbar-btn">
+                    <div class="btn-icon">☰</div>
+                    <div class="btn-label">Tasks</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main content area -->
+        <div class="content">
+            <!-- Left sidebar - like Finder sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="section-header">
+                        <span class="section-title">Current</span>
+                    </div>
+                    <div class="current-branch-display">
+                        <div class="current-branch-name" id="currentBranchName">Loading...</div>
+                        <div class="current-branch-stats">
+                            <span id="changesCount">0</span> changes • <span id="branchesCount">0</span> branches
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-header">
+                        <span class="section-title">All Branches</span>
+                        <button class="add-btn" id="newBranchBtn" title="New Branch">+</button>
+                    </div>
+                    <div class="branch-list" id="branchList">
+                        <!-- Branches will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content area - like Finder main view -->
+            <div class="main-view">
+                <div class="view-content" id="branchDetails">
+                    <div class="empty-state">
+                        <div class="empty-icon">○</div>
+                        <h2>Select a Branch</h2>
+                        <p>Choose a branch from the sidebar to view its details and analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentic macOS loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">Loading...</div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="notification" id="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

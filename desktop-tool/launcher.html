@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight - Select Application</title>
+    <link rel="stylesheet" href="launcher-style.css">
+</head>
+<body>
+    <div class="launcher">
+        <!-- Header -->
+        <header class="launcher-header">
+            <div class="header-content">
+                <img src="assets/icon.png" alt="FinSight" class="main-logo">
+                <div class="header-text">
+                    <h1>FinSight Suite</h1>
+                    <p>Financial Intelligence & Development Tools</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Application Selection -->
+        <main class="app-selection">
+            <div class="selection-grid">
+                <!-- FinSight Financial Application -->
+                <div class="app-card primary" data-app="finsight">
+                    <div class="app-icon">
+                        <div class="icon-wrapper financial">
+                            <span class="icon">💰</span>
+                        </div>
+                    </div>
+                    <div class="app-info">
+                        <h2>FinSight Financial</h2>
+                        <p>Complete financial intelligence platform with real-time market data, portfolio management, and AI-powered insights</p>
+                        <div class="app-features">
+                            <span class="feature">📊 Real-time Market Data</span>
+                            <span class="feature">🇻🇳 Vietnam Intelligence</span>
+                            <span class="feature">📈 Monte Carlo Simulations</span>
+                            <span class="feature">🏢 Company Analysis</span>
+                        </div>
+                    </div>
+                    <button class="launch-btn primary" data-target="finsight-app.html">
+                        <span class="btn-text">Launch FinSight</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </div>
+
+                <!-- Git Manager Tool -->
+                <div class="app-card secondary" data-app="git-manager">
+                    <div class="app-icon">
+                        <div class="icon-wrapper development">
+                            <span class="icon">🔧</span>
+                        </div>
+                    </div>
+                    <div class="app-info">
+                        <h2>Git Manager</h2>
+                        <p>Professional git branch management tool for Claude development work with AI-powered code analysis</p>
+                        <div class="app-features">
+                            <span class="feature">🌲 Branch Management</span>
+                            <span class="feature">🤖 AI Code Analysis</span>
+                            <span class="feature">⚡ Real Git Operations</span>
+                            <span class="feature">🔍 Repository Insights</span>
+                        </div>
+                    </div>
+                    <button class="launch-btn secondary" data-target="index.html">
+                        <span class="btn-text">Launch Git Manager</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">📊</span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="dataStatus">Connected</span>
+                        <span class="stat-label">Data Connection</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🌲</span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="branchCount">2</span>
+                        <span class="stat-label">Git Branches</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🤖</span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="aiStatus">Active</span>
+                        <span class="stat-label">AI Analysis</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Recent Activity -->
+        <section class="recent-activity">
+            <div class="section-header">
+                <h3>Recent Activity</h3>
+                <button class="refresh-activity" id="refreshActivity">🔄</button>
+            </div>
+            <div class="activity-list" id="activityList">
+                <div class="activity-item">
+                    <span class="activity-icon">🔧</span>
+                    <div class="activity-content">
+                        <span class="activity-title">Git Manager</span>
+                        <span class="activity-desc">Branch analysis completed</span>
+                    </div>
+                    <span class="activity-time">2m ago</span>
+                </div>
+                <div class="activity-item">
+                    <span class="activity-icon">💰</span>
+                    <div class="activity-content">
+                        <span class="activity-title">FinSight Financial</span>
+                        <span class="activity-desc">Market data updated</span>
+                    </div>
+                    <span class="activity-time">5m ago</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="launcher-footer">
+            <div class="footer-left">
+                <span class="version">FinSight Suite v2.0.0</span>
+                <span class="build">Build: Production</span>
+            </div>
+            <div class="footer-right">
+                <button class="footer-btn" id="settingsBtn">Settings</button>
+                <button class="footer-btn" id="helpBtn">Help</button>
+            </div>
+        </footer>
+
+        <!-- Settings Modal -->
+        <div class="modal-overlay" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Settings</h3>
+                    <button class="close-modal" id="closeSettings">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="checkmark"></span>
+                            Dark Mode
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">
+                            <input type="checkbox" id="autoUpdateToggle" checked>
+                            <span class="checkmark"></span>
+                            Auto-update Data
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <label class="setting-label">Default Application</label>
+                        <select id="defaultApp">
+                            <option value="launcher">Show Launcher</option>
+                            <option value="finsight">FinSight Financial</option>
+                            <option value="git-manager">Git Manager</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="launcher.js"></script>
+</body>
+</html>

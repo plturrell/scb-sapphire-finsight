@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight Suite</title>
+    <link rel="stylesheet" href="apple-design-system.css">
+    <link rel="stylesheet" href="launcher-apple.css">
+</head>
+<body>
+    <!-- Include custom icons -->
+    <div style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <symbol id="finsight-app" viewBox="0 0 100 100">
+                <path d="M20 75 L50 25 L80 75 Z M35 60 L65 60" 
+                      stroke="currentColor" 
+                      stroke-width="3" 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round" 
+                      fill="none"/>
+                <circle cx="50" cy="35" r="3" fill="currentColor"/>
+                <path d="M25 80 L75 80" 
+                      stroke="currentColor" 
+                      stroke-width="2" 
+                      stroke-linecap="round"/>
+            </symbol>
+            
+            <symbol id="git-manager" viewBox="0 0 100 100">
+                <circle cx="25" cy="30" r="8" 
+                        stroke="currentColor" 
+                        stroke-width="2.5" 
+                        fill="none"/>
+                <circle cx="75" cy="30" r="8" 
+                        stroke="currentColor" 
+                        stroke-width="2.5" 
+                        fill="none"/>
+                <circle cx="50" cy="70" r="8" 
+                        stroke="currentColor" 
+                        stroke-width="2.5" 
+                        fill="none"/>
+                <path d="M33 30 L42 70 M67 30 L58 70" 
+                      stroke="currentColor" 
+                      stroke-width="2.5" 
+                      stroke-linecap="round"/>
+            </symbol>
+            
+            <symbol id="activity" viewBox="0 0 100 100">
+                <circle cx="25" cy="50" r="4" fill="currentColor"/>
+                <circle cx="50" cy="35" r="4" fill="currentColor"/>
+                <circle cx="75" cy="60" r="4" fill="currentColor"/>
+                <path d="M29 50 L46 35 M54 35 L71 60" 
+                      stroke="currentColor" 
+                      stroke-width="2.5" 
+                      stroke-linecap="round"/>
+            </symbol>
+            
+            <symbol id="settings" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="12" 
+                        stroke="currentColor" 
+                        stroke-width="2.5" 
+                        fill="none"/>
+                <path d="M50 25 L50 30 M50 70 L50 75 M25 50 L30 50 M70 50 L75 50 M35.86 35.86 L39.29 39.29 M60.71 60.71 L64.14 64.14 M64.14 35.86 L60.71 39.29 M39.29 60.71 L35.86 64.14" 
+                      stroke="currentColor" 
+                      stroke-width="2.5" 
+                      stroke-linecap="round"/>
+            </symbol>
+        </svg>
+    </div>
+
+    <div class="launcher-window">
+        <!-- Apple-style window header -->
+        <div class="window-header">
+            <div class="traffic-lights">
+                <div class="traffic-light close"></div>
+                <div class="traffic-light minimize"></div>
+                <div class="traffic-light maximize"></div>
+            </div>
+            <div class="window-title">
+                <div class="app-icon-small">
+                    <svg class="icon icon-small">
+                        <use href="#finsight-app"></use>
+                    </svg>
+                </div>
+                <span class="title-3">FinSight Suite</span>
+            </div>
+        </div>
+
+        <!-- Main content with Apple glass effect -->
+        <div class="launcher-content">
+            <!-- Header section -->
+            <div class="launcher-header">
+                <div class="app-icon-large">
+                    <svg class="icon icon-xl">
+                        <use href="#finsight-app"></use>
+                    </svg>
+                </div>
+                <div class="header-text stack stack-small">
+                    <h1 class="large-title">FinSight Suite</h1>
+                    <p class="subhead status-info">Financial Intelligence & Development Tools</p>
+                </div>
+            </div>
+
+            <!-- Application selection -->
+            <div class="app-selection">
+                <div class="apps-grid">
+                    <!-- FinSight Financial App -->
+                    <div class="app-card card animate-scale-in" data-app="finsight" tabindex="0">
+                        <div class="app-card-icon">
+                            <svg class="icon icon-xl">
+                                <use href="#finsight-app"></use>
+                            </svg>
+                        </div>
+                        <div class="app-card-content stack stack-small">
+                            <h2 class="title-2">FinSight Financial</h2>
+                            <p class="callout">Complete financial intelligence platform with real-time market data and AI-powered insights</p>
+                            <div class="app-features stack stack-small">
+                                <div class="feature-tag">Real-time Market Data</div>
+                                <div class="feature-tag">Vietnam Intelligence</div>
+                                <div class="feature-tag">Monte Carlo Analysis</div>
+                            </div>
+                        </div>
+                        <button class="button button-primary button-large launch-btn" data-target="finsight-app.html">
+                            Launch FinSight
+                        </button>
+                    </div>
+
+                    <!-- Git Manager -->
+                    <div class="app-card card animate-scale-in" data-app="git-manager" tabindex="0">
+                        <div class="app-card-icon">
+                            <svg class="icon icon-xl">
+                                <use href="#git-manager"></use>
+                            </svg>
+                        </div>
+                        <div class="app-card-content stack stack-small">
+                            <h2 class="title-2">Git Manager</h2>
+                            <p class="callout">Professional git branch management tool with AI-powered code analysis for development workflows</p>
+                            <div class="app-features stack stack-small">
+                                <div class="feature-tag">Branch Management</div>
+                                <div class="feature-tag">AI Code Analysis</div>
+                                <div class="feature-tag">Real Git Operations</div>
+                            </div>
+                        </div>
+                        <button class="button button-secondary button-large launch-btn" data-target="index.html">
+                            Launch Git Manager
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System status -->
+            <div class="system-status">
+                <div class="status-grid">
+                    <div class="status-item list-item">
+                        <div class="status-icon status-success">
+                            <svg class="icon icon-small">
+                                <use href="#activity"></use>
+                            </svg>
+                        </div>
+                        <div class="status-content stack">
+                            <span class="footnote status-label" id="dataStatus">Connected</span>
+                            <span class="caption-2">Data Connection</span>
+                        </div>
+                    </div>
+                    
+                    <div class="status-item list-item">
+                        <div class="status-icon">
+                            <svg class="icon icon-small">
+                                <use href="#git-manager"></use>
+                            </svg>
+                        </div>
+                        <div class="status-content stack">
+                            <span class="footnote status-label" id="branchCount">2</span>
+                            <span class="caption-2">Git Branches</span>
+                        </div>
+                    </div>
+                    
+                    <div class="status-item list-item">
+                        <div class="status-icon status-success">
+                            <svg class="icon icon-small">
+                                <use href="#activity"></use>
+                            </svg>
+                        </div>
+                        <div class="status-content stack">
+                            <span class="footnote status-label" id="aiStatus">Active</span>
+                            <span class="caption-2">AI Analysis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent activity -->
+            <div class="recent-activity card">
+                <div class="activity-header inline inline-medium">
+                    <h3 class="title-3">Recent Activity</h3>
+                    <button class="button button-small" id="refreshActivity" aria-label="Refresh Activity">
+                        <svg class="icon icon-small">
+                            <use href="#activity"></use>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="activity-list list" id="activityList">
+                    <div class="activity-item list-item">
+                        <div class="activity-icon">
+                            <svg class="icon icon-small">
+                                <use href="#git-manager"></use>
+                            </svg>
+                        </div>
+                        <div class="activity-content stack">
+                            <span class="callout">Git Manager</span>
+                            <span class="caption-1">Branch analysis completed</span>
+                        </div>
+                        <span class="caption-2">2m ago</span>
+                    </div>
+                    
+                    <div class="activity-item list-item">
+                        <div class="activity-icon">
+                            <svg class="icon icon-small">
+                                <use href="#finsight-app"></use>
+                            </svg>
+                        </div>
+                        <div class="activity-content stack">
+                            <span class="callout">FinSight Financial</span>
+                            <span class="caption-1">Market data updated</span>
+                        </div>
+                        <span class="caption-2">5m ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Apple-style footer -->
+        <div class="launcher-footer">
+            <div class="footer-left">
+                <span class="caption-2">FinSight Suite v2.0.0</span>
+                <span class="caption-2">Production Build</span>
+            </div>
+            <div class="footer-right inline inline-small">
+                <button class="button button-small" id="settingsBtn">
+                    <svg class="icon icon-small">
+                        <use href="#settings"></use>
+                    </svg>
+                    Settings
+                </button>
+                <button class="button button-small" id="helpBtn">Help</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Apple-style modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content card-large animate-scale-in">
+            <div class="modal-header inline inline-medium">
+                <h3 class="title-2">Settings</h3>
+                <button class="button button-small" id="closeSettings" aria-label="Close Settings">
+                    <span>✕</span>
+                </button>
+            </div>
+            
+            <div class="modal-body stack stack-medium">
+                <div class="setting-group list">
+                    <label class="setting-item list-item">
+                        <div class="setting-control">
+                            <input type="checkbox" id="darkModeToggle" class="apple-checkbox">
+                            <span class="checkmark"></span>
+                        </div>
+                        <span class="body">Dark Mode</span>
+                    </label>
+                    
+                    <label class="setting-item list-item">
+                        <div class="setting-control">
+                            <input type="checkbox" id="autoUpdateToggle" class="apple-checkbox" checked>
+                            <span class="checkmark"></span>
+                        </div>
+                        <span class="body">Auto-update Data</span>
+                    </label>
+                </div>
+                
+                <div class="setting-group stack stack-small">
+                    <label class="subhead">Default Application</label>
+                    <select id="defaultApp" class="apple-select">
+                        <option value="launcher">Show Launcher</option>
+                        <option value="finsight">FinSight Financial</option>
+                        <option value="git-manager">Git Manager</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="launcher.js"></script>
+</body>
+</html>

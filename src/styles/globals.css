@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './perfect-spacing.css';
+@import './perfect-typography.css';
+
 :root {
   /* Standard Chartered Bank Colors - 2021 Brand Refresh */
   --scb-honolulu-blue: 0 114 170; /* #0072AA - Primary Blue */

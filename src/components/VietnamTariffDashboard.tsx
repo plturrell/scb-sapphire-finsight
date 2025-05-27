@@ -28,12 +28,8 @@ import {
   AlertCircle,
   ChevronRight
 } from 'lucide-react';
-import { 
-  mockVietnamTariffAlerts, 
-  vietnamAiPredictions,
-  vietnamTariffTrends,
-  vietnamTradeCorrelations 
-} from '../mock/vietnamTariffData';
+// Real API data - no more mock data imports
+// Data will be fetched from /api/vietnam/real-search endpoint
 import { VietnamMonteCarloHistory } from './VietnamMonteCarloHistory';
 import { VietnamMonteCarloLlmAnalysis } from './VietnamMonteCarloLlmAnalysis';
 
@@ -42,11 +38,108 @@ import { VietnamMonteCarloLlmAnalysis } from './VietnamMonteCarloLlmAnalysis';
  * Comprehensive dashboard for Vietnam tariff analysis with AI insights and Monte Carlo simulations
  * Following SAP Fiori Horizon design principles with SCB branding
  */
+// Types for real API data
+interface VietnamTariffAlert {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  priority: 'low' | 'medium' | 'high' | 'Critical';
+  publishDate: string;
+  impactSeverity: number;
+  tariffRate?: number;
+  productCategories?: string[];
+  affectedProvinces?: string[];
+  sourceName: string;
+  country: string;
+}
+
+interface VietnamProvince {
+  id: string;
+  name: string;
+  imports: number;
+  exports: number;
+  mainSectors: string[];
+  tariffImpact: number;
+  description?: string;
+}
+
+interface VietnamTradeData {
+  id: string;
+  name: string;
+  volume: number;
+  growth: number;
+  mainProducts: string[];
+  tariffAverage: number;
+  checkpoints: string[];
+  description?: string;
+}
+
+interface VietnamAIPrediction {
+  id: string;
+  category: string;
+  prediction: string;
+  confidence: number;
+  impactScore: number;
+  affectedSectors: string[];
+  lastUpdated: string;
+  recommendation?: string;
+}
+
 const VietnamTariffDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [selectedSimulationId, setSelectedSimulationId] = useState<string | null>(null);
   const [selectedComparisonId, setSelectedComparisonId] = useState<string | null>(null);
+  
+  // Real data states
+  const [tariffAlerts, setTariffAlerts] = useState<VietnamTariffAlert[]>([]);
+  const [provinceData, setProvinceData] = useState<VietnamProvince[]>([]);
+  const [tradeData, setTradeData] = useState<VietnamTradeData[]>([]);
+  const [aiPredictions, setAiPredictions] = useState<VietnamAIPrediction[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Load real data from Vietnam API
+  useEffect(() => {
+    const fetchVietnamData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch comprehensive Vietnam data from real API
+        const response = await fetch('/api/vietnam/real-search?dataType=all&includeAsean=true&limit=10');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch Vietnam data: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Set real data from API
+          if (data.alerts) setTariffAlerts(data.alerts);
+          if (data.provinceData) setProvinceData(data.provinceData);
+          if (data.tradeData) setTradeData(data.tradeData);
+          if (data.predictions) setAiPredictions(data.predictions);
+        } else {
+          throw new Error(data.message || 'Failed to load Vietnam data');
+        }
+      } catch (err) {
+        console.error('Error fetching Vietnam data:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load Vietnam data');
+        
+        // Set empty arrays as fallback instead of using mock data
+        setTariffAlerts([]);
+        setProvinceData([]);
+        setTradeData([]);
+        setAiPredictions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchVietnamData();
+  }, []);
   
   // Mock LLM analysis state - would be fetched from API in production
   const [llmAnalysis, setLlmAnalysis] = useState<any>({
@@ -191,7 +284,31 @@ const VietnamTariffDashboard: React.FC = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {mockVietnamTariffAlerts.slice(0, 3).map((alert) => (
+                        {loading ? (
+                          <TableRow>
+                            <TableCell colSpan={4} align="center">
+                              <CircularProgress size={24} />
+                              <Typography variant="body2" sx={{ mt: 1 }}>Loading tariff alerts...</Typography>
+                            </TableCell>
+                          </TableRow>
+                        ) : error ? (
+                          <TableRow>
+                            <TableCell colSpan={4} align="center">
+                              <Alert severity="error" sx={{ mb: 2 }}>
+                                Error loading data: {error}
+                              </Alert>
+                            </TableCell>
+                          </TableRow>
+                        ) : tariffAlerts.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={4} align="center">
+                              <Typography variant="body2" color="text.secondary">
+                                No tariff alerts available
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          tariffAlerts.slice(0, 3).map((alert) => (
                           <TableRow key={alert.id}>
                             <TableCell>
                               <Typography variant="body2">{alert.title}</Typography>
@@ -205,9 +322,10 @@ const VietnamTariffDashboard: React.FC = () => {
                               />
                             </TableCell>
                             <TableCell>{new Date(alert.publishDate).toLocaleDateString()}</TableCell>
-                            <TableCell>{Math.round(alert.confidence * 100)}%</TableCell>
+                            <TableCell>{alert.confidence ? Math.round(alert.confidence * 100) + '%' : 'N/A'}</TableCell>
                           </TableRow>
-                        ))}
+                        ))
+                        )}
                       </TableBody>
                     </Table>
                   </TableContainer>
@@ -218,7 +336,21 @@ const VietnamTariffDashboard: React.FC = () => {
                   </Typography>
                   
                   <Grid container spacing={2} sx={{ mb: 3 }}>
-                    {vietnamAiPredictions.predictions.slice(0, 3).map((prediction, idx) => (
+                    {loading ? (
+                      <Grid item xs={12}>
+                        <Box display="flex" justifyContent="center" alignItems="center" py={3}>
+                          <CircularProgress size={24} />
+                          <Typography variant="body2" sx={{ ml: 2 }}>Loading AI predictions...</Typography>
+                        </Box>
+                      </Grid>
+                    ) : aiPredictions.length === 0 ? (
+                      <Grid item xs={12}>
+                        <Typography variant="body2" color="text.secondary" align="center">
+                          No AI predictions available
+                        </Typography>
+                      </Grid>
+                    ) : (
+                      aiPredictions.slice(0, 3).map((prediction, idx) => (
                       <Grid item xs={12} sm={6} md={4} key={idx}>
                         <Paper 
                           elevation={0} 
@@ -238,29 +370,26 @@ const VietnamTariffDashboard: React.FC = () => {
                               variant="outlined"
                             />
                           </Typography>
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            {prediction.prediction}
+                          </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Typography variant="body2">
-                              Current: <strong>{prediction.currentTariff}%</strong>
-                            </Typography>
-                            <Typography variant="body2" sx={{ mx: 1 }}>
-                              → 
-                            </Typography>
-                            <Typography 
-                              variant="body2" 
-                              sx={{ 
-                                fontWeight: 'bold', 
-                                color: prediction.predictedTariff < prediction.currentTariff ? 'success.main' : 'error.main'
-                              }}
-                            >
-                              {prediction.predictedTariff}%
+                            <Typography variant="body2" color="text.secondary">
+                              Impact Score: <strong>{prediction.impactScore}/100</strong>
                             </Typography>
                           </Box>
                           <Typography variant="caption" color="text.secondary">
-                            {prediction.timeframe} | {prediction.impactLevel} impact
+                            Sectors: {prediction.affectedSectors.join(', ')}
                           </Typography>
+                          {prediction.recommendation && (
+                            <Typography variant="caption" color="primary.main" sx={{ display: 'block', mt: 1 }}>
+                              Recommendation: {prediction.recommendation}
+                            </Typography>
+                          )}
                         </Paper>
                       </Grid>
-                    ))}
+                    ))
+                    )}
                   </Grid>
                   
                   <Button 
