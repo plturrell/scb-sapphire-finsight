@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" style="display: none;">
+  
+  <!-- FinSight Main App Icon -->
+  <symbol id="finsight-app" viewBox="0 0 100 100">
+    <path d="M20 75 L50 25 L80 75 Z M35 60 L65 60" 
+          stroke="currentColor" 
+          stroke-width="3" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+    <circle cx="50" cy="35" r="3" fill="currentColor"/>
+    <path d="M25 80 L75 80" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Git Manager Icon -->
+  <symbol id="git-manager" viewBox="0 0 100 100">
+    <circle cx="25" cy="30" r="8" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <circle cx="75" cy="30" r="8" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <circle cx="50" cy="70" r="8" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <path d="M33 30 L42 70 M67 30 L58 70" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Dashboard Icon -->
+  <symbol id="dashboard" viewBox="0 0 100 100">
+    <rect x="20" y="20" width="25" height="25" rx="4" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          fill="none"/>
+    <rect x="55" y="20" width="25" height="25" rx="4" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          fill="none"/>
+    <rect x="20" y="55" width="25" height="25" rx="4" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          fill="none"/>
+    <rect x="55" y="55" width="25" height="25" rx="4" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          fill="none"/>
+  </symbol>
+  
+  <!-- Portfolio Icon -->
+  <symbol id="portfolio" viewBox="0 0 100 100">
+    <path d="M20 70 L30 50 L40 60 L50 40 L60 55 L70 35 L80 45" 
+          stroke="currentColor" 
+          stroke-width="3" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+    <path d="M20 80 L80 80" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round"/>
+    <path d="M20 20 L20 80" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Vietnam Flag Icon -->
+  <symbol id="vietnam" viewBox="0 0 100 100">
+    <rect x="20" y="30" width="60" height="40" rx="4" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          fill="none"/>
+    <path d="M50 40 L53 48 L62 48 L55 53 L58 61 L50 56 L42 61 L45 53 L38 48 L47 48 Z" 
+          fill="currentColor"/>
+  </symbol>
+  
+  <!-- Monte Carlo Icon -->
+  <symbol id="monte-carlo" viewBox="0 0 100 100">
+    <circle cx="35" cy="40" r="3" fill="currentColor"/>
+    <circle cx="55" cy="35" r="3" fill="currentColor"/>
+    <circle cx="45" cy="55" r="3" fill="currentColor"/>
+    <circle cx="65" cy="50" r="3" fill="currentColor"/>
+    <circle cx="25" cy="60" r="3" fill="currentColor"/>
+    <circle cx="75" cy="40" r="3" fill="currentColor"/>
+    <path d="M20 70 Q50 30 80 60" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-dasharray="3,3" 
+          fill="none"/>
+  </symbol>
+  
+  <!-- Companies Icon -->
+  <symbol id="companies" viewBox="0 0 100 100">
+    <rect x="30" y="25" width="20" height="50" rx="3" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          fill="none"/>
+    <rect x="55" y="35" width="20" height="40" rx="3" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          fill="none"/>
+    <rect x="33" y="35" width="3" height="3" fill="currentColor"/>
+    <rect x="40" y="35" width="3" height="3" fill="currentColor"/>
+    <rect x="33" y="45" width="3" height="3" fill="currentColor"/>
+    <rect x="40" y="45" width="3" height="3" fill="currentColor"/>
+    <rect x="58" y="45" width="3" height="3" fill="currentColor"/>
+    <rect x="65" y="45" width="3" height="3" fill="currentColor"/>
+  </symbol>
+  
+  <!-- Settings Icon -->
+  <symbol id="settings" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="12" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <path d="M50 25 L50 30 M50 70 L50 75 M25 50 L30 50 M70 50 L75 50 M35.86 35.86 L39.29 39.29 M60.71 60.71 L64.14 64.14 M64.14 35.86 L60.71 39.29 M39.29 60.71 L35.86 64.14" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Refresh Icon -->
+  <symbol id="refresh" viewBox="0 0 100 100">
+    <path d="M35 25 Q50 15 65 25 Q75 35 75 50 Q75 65 65 75 Q50 85 35 75" 
+          stroke="currentColor" 
+          stroke-width="3" 
+          stroke-linecap="round" 
+          fill="none"/>
+    <path d="M35 25 L30 35 L40 30" 
+          stroke="currentColor" 
+          stroke-width="3" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+  </symbol>
+  
+  <!-- Activity Icon -->
+  <symbol id="activity" viewBox="0 0 100 100">
+    <circle cx="25" cy="50" r="4" fill="currentColor"/>
+    <circle cx="50" cy="35" r="4" fill="currentColor"/>
+    <circle cx="75" cy="60" r="4" fill="currentColor"/>
+    <path d="M29 50 L46 35 M54 35 L71 60" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Branch Icon -->
+  <symbol id="branch" viewBox="0 0 100 100">
+    <circle cx="25" cy="25" r="6" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <circle cx="25" cy="75" r="6" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <circle cx="75" cy="50" r="6" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <path d="M25 31 L25 44 Q25 50 31 50 L69 50" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          stroke-linecap="round" 
+          fill="none"/>
+    <path d="M25 56 L25 69" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- AI Analysis Icon -->
+  <symbol id="ai-analysis" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="25" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            fill="none"/>
+    <circle cx="40" cy="45" r="3" fill="currentColor"/>
+    <circle cx="60" cy="45" r="3" fill="currentColor"/>
+    <path d="M42 58 Q50 65 58 58" 
+          stroke="currentColor" 
+          stroke-width="2.5" 
+          stroke-linecap="round" 
+          fill="none"/>
+    <path d="M30 30 L35 35 M70 30 L65 35 M30 70 L35 65 M70 70 L65 65" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Search Icon -->
+  <symbol id="search" viewBox="0 0 100 100">
+    <circle cx="45" cy="45" r="20" 
+            stroke="currentColor" 
+            stroke-width="3" 
+            fill="none"/>
+    <path d="M61 61 L75 75" 
+          stroke="currentColor" 
+          stroke-width="3" 
+          stroke-linecap="round"/>
+  </symbol>
+  
+  <!-- Launch Icon -->
+  <symbol id="launch" viewBox="0 0 100 100">
+    <path d="M30 70 L70 30 M70 30 L50 30 M70 30 L70 50" 
+          stroke="currentColor" 
+          stroke-width="3" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+    <path d="M25 45 L25 75 L55 75" 
+          stroke="currentColor" 
+          stroke-width="3" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+  </symbol>
+
+</svg>

@@ -117,13 +117,14 @@ class FinSightApp {
           console.log('📋 Loaded branches:', this.branches);
         }
       } else {
-        // Fallback data for demo
-        this.branches = [
-          { name: 'main', isCurrent: false, type: 'main', lastCommit: 'ac7b82b', changeCount: 0 },
-          { name: 'claude-work/claude-2025-05-22T16-19-00-1fb0d540', isCurrent: true, type: 'claude', lastCommit: 'bdaa591', changeCount: 7 }
-        ];
-        this.currentBranch = 'claude-work/claude-2025-05-22T16-19-00-1fb0d540';
-        this.projectStats.branches = this.branches.length;
+        // Real functionality only - no fallbacks
+        console.error('❌ electronAPI not available - application requires real git connection');
+        this.branches = [];
+        this.currentBranch = 'Connection Required';
+        this.projectStats.branches = 0;
+        this.updateBranchesDisplay();
+        this.updateProjectStatsDisplay();
+        throw new Error('Real git connection required - demo mode disabled');
       }
     } catch (error) {
       console.error('Failed to load branches:', error);
@@ -168,7 +169,7 @@ class FinSightApp {
     
     // Then enhance with Grok3 analysis and LLM summaries
     try {
-      if (window.electronAPI && basicBranch.lastCommit && basicBranch.lastCommit !== 'demo-hash') {
+      if (window.electronAPI && basicBranch.lastCommit) {
         // Get changed files for Grok analysis
         const diffResult = await window.electronAPI.gitCommand('diff', { 
           args: ['--name-only', 'main...' + branch.name]
@@ -300,29 +301,33 @@ class FinSightApp {
     return [...new Set(types)];
   }
   
-  // === DEMO MODE SUMMARIES ===
-  generateMockTodoSummary(branchName) {
-    const mockTodos = [
-      'Add unit tests for new components',
-      'Validate responsive design on mobile',
-      'Update API documentation',
-      'Optimize performance bottlenecks',
-      'Review security vulnerabilities',
-      'Add error handling for edge cases'
-    ];
-    return mockTodos[Math.floor(Math.random() * mockTodos.length)];
+  // === REAL AI ANALYSIS ONLY ===
+  async generateRealTodoSummary(branchName, analysisData) {
+    if (!window.electronAPI?.grokAnalyzeBranch) {
+      throw new Error('Real AI analysis required - no fallback data');
+    }
+    
+    try {
+      const result = await window.electronAPI.grokAnalyzeBranch(branchName, analysisData.changedFiles, analysisData.lastCommit);
+      return result.data?.todos?.[0] || 'Review changes and test functionality';
+    } catch (error) {
+      console.error('Failed to generate real todo summary:', error);
+      throw new Error('Real AI analysis failed');
+    }
   }
   
-  generateMockFeaturesSummary(branchName) {
-    const mockFeatures = [
-      'UI redesign with Jony Ive standards',
-      'Real-time git integration',
-      'AI-powered branch analysis', 
-      'Enhanced user experience',
-      'Performance optimizations',
-      'Security improvements'
-    ];
-    return mockFeatures[Math.floor(Math.random() * mockFeatures.length)];
+  async generateRealFeaturesSummary(branchName, analysisData) {
+    if (!window.electronAPI?.grokAnalyzeBranch) {
+      throw new Error('Real AI analysis required - no fallback data');
+    }
+    
+    try {
+      const result = await window.electronAPI.grokAnalyzeBranch(branchName, analysisData.changedFiles, analysisData.lastCommit);
+      return result.data?.analysis || 'Real analysis not available';
+    } catch (error) {
+      console.error('Failed to generate real features summary:', error);
+      throw new Error('Real AI analysis failed');
+    }
   }
   
   // === JENA STORAGE INTEGRATION ===
@@ -354,7 +359,7 @@ class FinSightApp {
       if (!window.electronAPI) {
         return { 
           ...branch, 
-          lastCommit: 'demo-hash', 
+          lastCommit: 'unknown', 
           lastCommitMessage: 'Demo mode',
           changeCount: 5
         };
@@ -556,7 +561,7 @@ class FinSightApp {
   renderCommitInfo(branch) {
     console.log('Rendering commit info for:', branch.name, branch.lastCommit);
     
-    if (!branch.lastCommit || branch.lastCommit === 'demo-hash' || branch.lastCommit === 'error') {
+    if (!branch.lastCommit || branch.lastCommit === 'error' || branch.lastCommit === 'unknown') {
       return `
         <div class="detail-section">
           <h3>Commit Information</h3>
@@ -895,19 +900,8 @@ class FinSightApp {
           this.showNotification('❌ Failed to create branch', 'error');
         }
       } else {
-        // Demo mode
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const newBranch = {
-          name: `claude-work/demo-${timestamp}`,
-          isCurrent: false,
-          type: 'claude',
-          lastCommit: 'new',
-          changeCount: 0
-        };
-        
-        this.branches.push(newBranch);
-        this.updateInterface();
-        this.showNotification('✅ Demo branch created', 'success');
+        console.error('❌ electronAPI not available - cannot create real branches');
+        this.showNotification('❌ Real git connection required to create branches', 'error');
       }
     } catch (error) {
       console.error('Failed to create branch:', error);
@@ -938,13 +932,8 @@ class FinSightApp {
           this.showNotification(`❌ Failed to switch: ${result.error}`, 'error');
         }
       } else {
-        // Demo mode
-        this.currentBranch = branchName;
-        this.branches.forEach(branch => {
-          branch.isCurrent = branch.name === branchName;
-        });
-        this.updateInterface();
-        this.showNotification(`✅ Switched to ${branchName}`, 'success');
+        console.error('❌ electronAPI not available - cannot switch branches');
+        this.showNotification('❌ Real git connection required to switch branches', 'error');
       }
     } catch (error) {
       console.error('Failed to switch branch:', error);
@@ -977,8 +966,8 @@ class FinSightApp {
           this.showNotification(`❌ Failed to launch: ${result.error}`, 'error');
         }
       } else {
-        // Demo mode
-        this.showNotification(`🚀 Demo: Claude Code would launch on ${branchName}`, 'success');
+        // Real functionality required
+        throw new Error('electronAPI not available - real functionality required');
       }
     } catch (error) {
       console.error('Failed to launch Claude Code:', error);
@@ -999,8 +988,8 @@ class FinSightApp {
         await this.loadProjectData();
         this.showNotification('✅ Changes synced', 'success');
       } else {
-        // Demo mode
-        this.showNotification('✅ Demo: Changes would be synced', 'success');
+        // Real functionality required
+        throw new Error('electronAPI not available - real sync functionality required');
       }
     } catch (error) {
       console.error('Failed to sync changes:', error);

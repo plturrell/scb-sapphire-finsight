@@ -73,7 +73,7 @@ function createWindow() {
   mainWindow = new BrowserWindow(windowConfig);
 
   // Elegant loading - prevent visual flash
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile('launcher-apple.html');
 
   // Graceful window appearance
   mainWindow.once('ready-to-show', () => {

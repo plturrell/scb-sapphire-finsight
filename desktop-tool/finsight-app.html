@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight - Financial Intelligence Platform</title>
+    <link rel="stylesheet" href="finsight-app-style.css">
+</head>
+<body>
+    <div class="finsight-app">
+        <!-- Header with navigation -->
+        <header class="app-header">
+            <div class="header-left">
+                <img src="assets/icon.png" alt="FinSight" class="app-logo">
+                <h1>FinSight</h1>
+                <span class="app-subtitle">Financial Intelligence Platform</span>
+            </div>
+            <div class="header-center">
+                <nav class="main-nav">
+                    <button class="nav-item active" data-view="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-label">Dashboard</span>
+                    </button>
+                    <button class="nav-item" data-view="portfolio">
+                        <span class="nav-icon">💰</span>
+                        <span class="nav-label">Portfolio</span>
+                    </button>
+                    <button class="nav-item" data-view="vietnam">
+                        <span class="nav-icon">🇻🇳</span>
+                        <span class="nav-label">Vietnam</span>
+                    </button>
+                    <button class="nav-item" data-view="monte-carlo">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-label">Monte Carlo</span>
+                    </button>
+                    <button class="nav-item" data-view="companies">
+                        <span class="nav-icon">🏢</span>
+                        <span class="nav-label">Companies</span>
+                    </button>
+                </nav>
+            </div>
+            <div class="header-right">
+                <button class="git-manager-btn" id="gitManagerBtn">
+                    <span class="nav-icon">🔧</span>
+                    <span class="nav-label">Git Manager</span>
+                </button>
+                <button class="settings-btn" id="settingsBtn">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Main content area -->
+        <main class="app-main">
+            <!-- Dashboard View -->
+            <div class="view-container active" id="dashboard-view">
+                <div class="dashboard-grid">
+                    <!-- Market Overview -->
+                    <div class="dashboard-card market-overview">
+                        <h3>Market Overview</h3>
+                        <div class="metric-grid">
+                            <div class="metric">
+                                <span class="metric-label">VN-Index</span>
+                                <span class="metric-value" id="vnIndex">1,245.67</span>
+                                <span class="metric-change positive">+2.34%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">USD/VND</span>
+                                <span class="metric-value" id="usdVnd">24,185</span>
+                                <span class="metric-change negative">-0.12%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio Summary -->
+                    <div class="dashboard-card portfolio-summary">
+                        <h3>Portfolio Performance</h3>
+                        <div class="portfolio-stats">
+                            <div class="stat">
+                                <span class="stat-label">Total Value</span>
+                                <span class="stat-value">$2,456,789</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Today's P&L</span>
+                                <span class="stat-value positive">+$12,345</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Alerts -->
+                    <div class="dashboard-card alerts">
+                        <h3>Trade Alerts</h3>
+                        <div class="alert-list" id="alertList">
+                            <div class="alert-item high">
+                                <span class="alert-icon">🚨</span>
+                                <div class="alert-content">
+                                    <span class="alert-title">Vietnam Tariff Change</span>
+                                    <span class="alert-desc">New 15% tariff on steel imports</span>
+                                </div>
+                                <span class="alert-time">2m ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="dashboard-card quick-actions">
+                        <h3>Quick Actions</h3>
+                        <div class="action-grid">
+                            <button class="action-btn" data-action="run-simulation">
+                                <span class="action-icon">📊</span>
+                                <span class="action-label">Run Monte Carlo</span>
+                            </button>
+                            <button class="action-btn" data-action="analyze-company">
+                                <span class="action-icon">🔍</span>
+                                <span class="action-label">Analyze Company</span>
+                            </button>
+                            <button class="action-btn" data-action="vietnam-report">
+                                <span class="action-icon">📋</span>
+                                <span class="action-label">Vietnam Report</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio View -->
+            <div class="view-container" id="portfolio-view">
+                <div class="portfolio-header">
+                    <h2>Portfolio Management</h2>
+                    <button class="refresh-btn">🔄 Refresh Data</button>
+                </div>
+                <div class="portfolio-grid">
+                    <div class="portfolio-card holdings">
+                        <h3>Current Holdings</h3>
+                        <div class="holdings-list" id="holdingsList">
+                            <!-- Real holdings will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="portfolio-card performance">
+                        <h3>Performance Chart</h3>
+                        <div class="chart-container" id="performanceChart">
+                            <!-- Real chart will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vietnam View -->
+            <div class="view-container" id="vietnam-view">
+                <div class="vietnam-header">
+                    <h2>Vietnam Market Intelligence</h2>
+                    <div class="vietnam-filters">
+                        <select id="vietnamSector">
+                            <option value="">All Sectors</option>
+                            <option value="banking">Banking</option>
+                            <option value="manufacturing">Manufacturing</option>
+                            <option value="real-estate">Real Estate</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="vietnam-grid">
+                    <div class="vietnam-card tariff-monitor">
+                        <h3>Tariff Monitor</h3>
+                        <div class="tariff-updates" id="tariffUpdates">
+                            <!-- Real tariff data will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="vietnam-card market-data">
+                        <h3>Market Data</h3>
+                        <div class="market-metrics" id="vietnamMarketData">
+                            <!-- Real Vietnam market data -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monte Carlo View -->
+            <div class="view-container" id="monte-carlo-view">
+                <div class="monte-carlo-header">
+                    <h2>Monte Carlo Simulation</h2>
+                    <button class="run-simulation-btn" id="runSimulationBtn">▶️ Run Simulation</button>
+                </div>
+                <div class="simulation-grid">
+                    <div class="simulation-card parameters">
+                        <h3>Parameters</h3>
+                        <div class="parameter-inputs">
+                            <div class="input-group">
+                                <label>Scenarios</label>
+                                <input type="number" id="scenarioCount" value="10000" min="1000" max="100000">
+                            </div>
+                            <div class="input-group">
+                                <label>Time Horizon (days)</label>
+                                <input type="number" id="timeHorizon" value="252" min="1" max="1000">
+                            </div>
+                            <div class="input-group">
+                                <label>Volatility</label>
+                                <input type="number" id="volatility" value="0.15" min="0.01" max="1" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="simulation-card results">
+                        <h3>Results</h3>
+                        <div class="results-display" id="simulationResults">
+                            <p>Run simulation to see results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Companies View -->
+            <div class="view-container" id="companies-view">
+                <div class="companies-header">
+                    <h2>Company Analysis</h2>
+                    <div class="company-search">
+                        <input type="text" id="companySearch" placeholder="Search companies...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                </div>
+                <div class="companies-grid">
+                    <div class="companies-card search-results">
+                        <h3>Search Results</h3>
+                        <div class="company-list" id="companyList">
+                            <!-- Real company data will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="companies-card company-details">
+                        <h3>Company Details</h3>
+                        <div class="company-info" id="companyDetails">
+                            <p>Select a company to view details</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Status bar -->
+        <footer class="app-footer">
+            <div class="status-info">
+                <span class="status-item">
+                    <span class="status-icon">🟢</span>
+                    <span class="status-text">Connected</span>
+                </span>
+                <span class="status-item">
+                    <span class="status-text">Last updated: <span id="lastUpdated">Just now</span></span>
+                </span>
+            </div>
+            <div class="data-sources">
+                <span class="source-item">📊 Vietnam Stock Exchange</span>
+                <span class="source-item">🤖 AI Analysis: Active</span>
+                <span class="source-item">⚡ Real-time Data</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="finsight-app.js"></script>
+</body>
+</html>
