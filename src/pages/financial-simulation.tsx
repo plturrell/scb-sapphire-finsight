@@ -20,7 +20,6 @@ import { haptics } from '@/lib/haptics';
 import EnhancedTouchButton from '@/components/EnhancedTouchButton';
 import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import { ICONS } from '@/components/IconSystem';
-import '@/styles/ios-enhancements.css';
 
 /**
  * Financial Simulation Page for SCB Sapphire FinSight

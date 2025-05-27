@@ -41,6 +41,38 @@ const nextConfig = {
       config.devtool = 'nosources-source-map';
     }
     
+    // Completely bypass problematic CSS processing
+    config.module.rules.forEach((rule) => {
+      if (rule.oneOf) {
+        rule.oneOf.forEach((oneOfRule) => {
+          if (oneOfRule.test && oneOfRule.test.toString().includes('\\.css')) {
+            // Disable source maps and advanced processing for CSS
+            if (oneOfRule.use && Array.isArray(oneOfRule.use)) {
+              oneOfRule.use = oneOfRule.use.map((loader) => {
+                if (typeof loader === 'object' && loader.loader) {
+                  if (loader.loader.includes('css-loader')) {
+                    return {
+                      ...loader,
+                      options: {
+                        sourceMap: false,
+                        importLoaders: 0,
+                        modules: false
+                      }
+                    };
+                  }
+                  if (loader.loader.includes('postcss-loader')) {
+                    // Skip postcss-loader entirely
+                    return null;
+                  }
+                }
+                return loader;
+              }).filter(Boolean);
+            }
+          }
+        });
+      }
+    });
+    
     return config;
   },
   

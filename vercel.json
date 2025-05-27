@@ -64,5 +64,12 @@
         }
       ]
     }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)\\.map$",
+      "dest": "/_next/static/source-maps/$1.map",
+      "status": 200
+    }
   ]
 }

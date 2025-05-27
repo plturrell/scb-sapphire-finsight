@@ -22,7 +22,6 @@ import EnhancedDashboardNavigation from '@/components/EnhancedDashboardNavigatio
 import IOSOptimizedLayout from '@/components/layout/IOSOptimizedLayout';
 import EnhancedIOSDataVisualization from '@/components/charts/EnhancedIOSDataVisualization';
 import { ICONS } from '@/components/IconSystem';
-import '@/styles/ios-enhancements.css';
 
 /**
  * Dashboard MVP for SCB Sapphire FinSight
