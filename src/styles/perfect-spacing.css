@@ -1,0 +1,364 @@
+/**
+ * Perfect Spacing System - Jony Ive Design Philosophy
+ * 
+ * Principles:
+ * 1. Rhythm & Proportion - Based on golden ratio and 8px grid
+ * 2. Breathing Room - Generous whitespace creates calm confidence
+ * 3. Visual Hierarchy - Space itself communicates importance
+ * 4. Coherent Relationships - Related elements feel connected
+ */
+
+:root {
+  /* Perfect Spacing Scale - Based on 8px grid with golden ratio */
+  --space-0: 0;
+  --space-1: 0.125rem;    /* 2px - hairline */
+  --space-2: 0.25rem;     /* 4px - tight */
+  --space-3: 0.5rem;      /* 8px - base unit */
+  --space-4: 0.75rem;     /* 12px - small */
+  --space-5: 1rem;        /* 16px - medium */
+  --space-6: 1.5rem;      /* 24px - large */
+  --space-7: 2rem;        /* 32px - extra large */
+  --space-8: 3rem;        /* 48px - section */
+  --space-9: 4rem;        /* 64px - page */
+  --space-10: 6rem;       /* 96px - hero */
+  --space-11: 8rem;       /* 128px - dramatic */
+  --space-12: 12rem;      /* 192px - architectural */
+
+  /* Contextual Spacing - Semantic meaning */
+  --space-hair: var(--space-1);
+  --space-tight: var(--space-2);
+  --space-base: var(--space-3);
+  --space-comfortable: var(--space-5);
+  --space-generous: var(--space-6);
+  --space-dramatic: var(--space-8);
+  --space-architectural: var(--space-10);
+
+  /* Component Spacing */
+  --padding-element: var(--space-5);
+  --padding-container: var(--space-6);
+  --padding-section: var(--space-8);
+  --padding-page: var(--space-9);
+
+  /* Margin for Vertical Rhythm */
+  --margin-element: var(--space-4);
+  --margin-component: var(--space-6);
+  --margin-section: var(--space-8);
+
+  /* Interactive Element Sizing */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+  --touch-target-generous: 56px;
+
+  /* Content Width Constraints */
+  --content-width-text: 65ch;
+  --content-width-form: 32rem;
+  --content-width-card: 24rem;
+  --content-width-section: 72rem;
+  --content-width-page: 90rem;
+}
+
+/* Perfect Layout System */
+.perfect-container {
+  width: 100%;
+  max-width: var(--content-width-page);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--padding-container);
+  padding-right: var(--padding-container);
+}
+
+.perfect-section {
+  padding-top: var(--padding-section);
+  padding-bottom: var(--padding-section);
+}
+
+.perfect-page {
+  padding-top: var(--padding-page);
+  padding-bottom: var(--padding-page);
+}
+
+/* Breathing Room Utilities */
+.breathe-minimal {
+  padding: var(--space-4);
+}
+
+.breathe-comfortable {
+  padding: var(--space-6);
+}
+
+.breathe-generous {
+  padding: var(--space-8);
+}
+
+.breathe-dramatic {
+  padding: var(--space-10);
+}
+
+/* Vertical Rhythm */
+.rhythm-tight > * + * {
+  margin-top: var(--space-3);
+}
+
+.rhythm-comfortable > * + * {
+  margin-top: var(--space-5);
+}
+
+.rhythm-generous > * + * {
+  margin-top: var(--space-6);
+}
+
+.rhythm-dramatic > * + * {
+  margin-top: var(--space-8);
+}
+
+/* Grid System with Perfect Proportions */
+.perfect-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(var(--content-width-card), 1fr));
+}
+
+.perfect-grid-tight {
+  gap: var(--space-4);
+}
+
+.perfect-grid-generous {
+  gap: var(--space-8);
+}
+
+/* Card System with Purposeful Spacing */
+.perfect-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1.5rem;
+  padding: var(--space-7);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.perfect-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.perfect-card-compact {
+  padding: var(--space-5);
+  border-radius: 1rem;
+}
+
+.perfect-card-generous {
+  padding: var(--space-8);
+  border-radius: 2rem;
+}
+
+/* Button Spacing - Touch-Friendly */
+.perfect-button {
+  min-height: var(--touch-target-comfortable);
+  padding: var(--space-4) var(--space-6);
+  border-radius: 1.5rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.perfect-button-small {
+  min-height: var(--touch-target-min);
+  padding: var(--space-3) var(--space-5);
+  border-radius: 1rem;
+}
+
+.perfect-button-large {
+  min-height: var(--touch-target-generous);
+  padding: var(--space-5) var(--space-8);
+  border-radius: 2rem;
+}
+
+/* Input Field Spacing */
+.perfect-input {
+  min-height: var(--touch-target-comfortable);
+  padding: var(--space-4) var(--space-5);
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.perfect-input:focus {
+  outline: none;
+  border-color: rgba(0, 114, 170, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 114, 170, 0.1);
+}
+
+/* Navigation Spacing */
+.perfect-nav-item {
+  padding: var(--space-4) var(--space-5);
+  border-radius: 1rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.perfect-nav-vertical .perfect-nav-item {
+  margin-bottom: var(--space-2);
+}
+
+.perfect-nav-horizontal {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Header Spacing */
+.perfect-header {
+  padding: var(--space-6) var(--space-8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.perfect-header-compact {
+  padding: var(--space-4) var(--space-6);
+}
+
+/* Content Spacing */
+.perfect-content {
+  max-width: var(--content-width-text);
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.perfect-content > * + * {
+  margin-top: var(--space-5);
+}
+
+.perfect-content > h1 + *,
+.perfect-content > h2 + *,
+.perfect-content > h3 + * {
+  margin-top: var(--space-4);
+}
+
+/* Responsive Spacing */
+@media (max-width: 768px) {
+  :root {
+    --padding-container: var(--space-5);
+    --padding-section: var(--space-6);
+    --padding-page: var(--space-7);
+  }
+  
+  .perfect-card {
+    padding: var(--space-5);
+    border-radius: 1rem;
+  }
+  
+  .perfect-header {
+    padding: var(--space-4) var(--space-5);
+  }
+  
+  .perfect-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --padding-container: var(--space-4);
+    --padding-section: var(--space-5);
+    --padding-page: var(--space-6);
+  }
+  
+  .perfect-card {
+    padding: var(--space-4);
+    border-radius: 0.75rem;
+  }
+}
+
+/* Dark Mode Spacing Adjustments */
+@media (prefers-color-scheme: dark) {
+  .perfect-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  
+  .perfect-input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .perfect-input:focus {
+    border-color: rgba(0, 114, 170, 0.7);
+    box-shadow: 0 0 0 3px rgba(0, 114, 170, 0.2);
+  }
+}
+
+/* Animation Spacing */
+.perfect-enter {
+  animation: perfectEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes perfectEnter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-4));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus States with Perfect Spacing */
+.perfect-focus:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 114, 170, 0.2);
+}
+
+/* List Spacing */
+.perfect-list {
+  list-style: none;
+  padding: 0;
+}
+
+.perfect-list > li {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.perfect-list > li:last-child {
+  border-bottom: none;
+}
+
+/* Sidebar Spacing */
+.perfect-sidebar {
+  width: 16rem;
+  padding: var(--space-6);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.perfect-sidebar-item {
+  padding: var(--space-4) var(--space-5);
+  border-radius: 1rem;
+  margin-bottom: var(--space-2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modal Spacing */
+.perfect-modal {
+  padding: var(--space-8);
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  max-width: 32rem;
+  margin: var(--space-10) auto;
+}
+
+.perfect-modal-content > * + * {
+  margin-top: var(--space-5);
+}
+
+/* Notification Spacing */
+.perfect-notification {
+  padding: var(--space-5) var(--space-6);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: var(--space-4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}

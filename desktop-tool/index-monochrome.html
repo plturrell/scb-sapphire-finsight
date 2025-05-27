@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight - Git Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header-title">FinSight</h1>
+            <p class="header-subtitle">Git Management • Claude Integration</p>
+            
+            <div class="header-actions">
+                <button class="action-btn" id="settingsBtn" title="Settings">
+                    <svg width="14" height="14" viewBox="0 0 14 14">
+                        <circle cx="7" cy="7" r="2" fill="none" stroke="currentColor" stroke-width="1"/>
+                        <path d="M7 1v2M7 11v2M1 7h2M11 7h2M2.64 2.64l1.42 1.42M9.94 9.94l1.42 1.42M2.64 11.36l1.42-1.42M9.94 4.06l1.42-1.42" stroke="currentColor" stroke-width="1"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Project Status -->
+                <section class="sidebar-section">
+                    <h2 class="section-title">Project Status</h2>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="status-label">Current Branch</span>
+                            <span class="status-value" id="currentBranch">Loading...</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Changes</span>
+                            <span class="status-value" id="changeCount">0</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Branches</span>
+                            <span class="status-value" id="branchCount">0</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Branch List -->
+                <section class="sidebar-section">
+                    <h2 class="section-title">Branches</h2>
+                    <div class="branch-list" id="branchList">
+                        <!-- Branches will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Actions -->
+                <section class="sidebar-section">
+                    <div class="action-grid">
+                        <button class="primary-action" id="newBranchBtn">
+                            <svg width="16" height="16" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8 5v6M5 8h6" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                            New Branch
+                        </button>
+                        <button class="secondary-action" id="syncBtn">
+                            <svg width="16" height="16" viewBox="0 0 16 16">
+                                <path d="M8 3v10M5 6l3-3 3 3M5 10l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            </svg>
+                            Sync Changes
+                        </button>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="content-wrapper">
+                    <div class="focus-area">
+                        <h2 class="focus-title">Branch Analysis</h2>
+                        <p class="focus-subtitle">Intelligent categorization and LLM-generated insights</p>
+                        
+                        <div class="branch-details" id="branchDetails">
+                            <div class="detail-card">
+                                <h3>Current Branch Details</h3>
+                                <p>Select a branch to view detailed analysis and LLM-generated todos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2 class="settings-title">Settings</h2>
+            <p class="settings-subtitle">Configure your FinSight experience</p>
+            <button class="close-btn" id="closeSettingsBtn">
+                <svg width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="settings-content">
+            <div class="setting-group">
+                <div class="setting-label">Dark Mode</div>
+                <div class="setting-description">Switch between light and dark themes</div>
+                <div class="toggle-switch" id="darkModeToggle">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">Auto-cleanup Days</div>
+                <div class="setting-description">Automatically cleanup old branches after specified days</div>
+                <select class="setting-select" id="cleanupDaysSelect">
+                    <option value="3">3 days</option>
+                    <option value="7" selected>7 days</option>
+                    <option value="14">14 days</option>
+                    <option value="30">30 days</option>
+                </select>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">LLM Analysis</div>
+                <div class="setting-description">Enable AI-powered branch analysis and todo generation</div>
+                <div class="toggle-switch active" id="llmAnalysisToggle">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text" id="loadingText">Loading...</p>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span class="notification-text"></span>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

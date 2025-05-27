@@ -1,0 +1,51 @@
+const fs = require('fs');
+const path = require('path');
+
+// Create SVG icon for FinSight
+const svgIcon = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#007AFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0051D5;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0.7" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bg)" stroke="none"/>
+  
+  <!-- Git branch icon -->
+  <g transform="translate(256,256)">
+    <!-- Main branch line -->
+    <line x1="-80" y1="-60" x2="-80" y2="60" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    
+    <!-- Branch fork -->
+    <line x1="-80" y1="-20" x2="20" y2="-20" stroke="url(#accent)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="20" y1="-20" x2="20" y2="40" stroke="url(#accent)" stroke-width="6" stroke-linecap="round"/>
+    
+    <!-- Nodes -->
+    <circle cx="-80" cy="-60" r="12" fill="white"/>
+    <circle cx="-80" cy="-20" r="10" fill="white"/>
+    <circle cx="-80" cy="20" r="8" fill="white"/>
+    <circle cx="-80" cy="60" r="12" fill="white"/>
+    <circle cx="20" cy="-20" r="10" fill="white"/>
+    <circle cx="20" cy="40" r="12" fill="white"/>
+    
+    <!-- FinSight text -->
+    <text x="0" y="120" font-family="SF Pro Display, -apple-system, system-ui" font-size="36" font-weight="600" fill="white" text-anchor="middle">FinSight</text>
+  </g>
+</svg>`;
+
+// Write the SVG file
+const iconPath = path.join(__dirname, 'assets', 'icon-new.svg');
+fs.writeFileSync(iconPath, svgIcon);
+
+console.log('✅ New professional icon created at:', iconPath);
+console.log('📱 To convert to other formats, use:');
+console.log('   - macOS: Use "Icon Composer" or online converter');
+console.log('   - Online: Convert SVG to ICO/ICNS/PNG');

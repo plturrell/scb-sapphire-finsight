@@ -1,0 +1,593 @@
+/* 
+ * FinSight Desktop - Jony Ive Design Language
+ * Design Principles: Radical Simplification, Material Honesty, Purposeful Interaction
+ */
+
+/* Design Tokens - Monochromatic System */
+:root {
+    /* Primary Palette - Inspired by iOS */
+    --color-primary: #007AFF;
+    --color-primary-soft: rgba(0, 122, 255, 0.1);
+    --color-primary-medium: rgba(0, 122, 255, 0.3);
+    
+    /* Neutral Palette - True Material Colors */
+    --color-surface: #FFFFFF;
+    --color-surface-elevated: #FBFBFD;
+    --color-surface-secondary: #F2F2F7;
+    --color-background: #FFFFFF;
+    
+    /* Typography - SF Pro Hierarchy */
+    --color-text: #1D1D1F;
+    --color-text-secondary: #86868B;
+    --color-text-tertiary: #C7C7CC;
+    
+    /* Spacing - Golden Ratio Based */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-xxl: 64px;
+    
+    /* Typography Scale */
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-base: 15px;
+    --text-lg: 17px;
+    --text-xl: 22px;
+    --text-xxl: 28px;
+    --text-display: 34px;
+    
+    /* Interaction Physics */
+    --transition-micro: cubic-bezier(0.4, 0.0, 0.2, 1);
+    --transition-gentle: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-expressive: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Shadows - Realistic Depth */
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.08);
+    
+    /* Dark Mode */
+    --color-surface-dark: #000000;
+    --color-surface-elevated-dark: #1C1C1E;
+    --color-surface-secondary-dark: #2C2C2E;
+    --color-text-dark: #FFFFFF;
+    --color-text-secondary-dark: #98989D;
+    --color-text-tertiary-dark: #48484A;
+}
+
+/* Reset - Minimal and Purposeful */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Base - Material Foundation */
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    font-size: var(--text-base);
+    font-weight: 400;
+    line-height: 1.47;
+    color: var(--color-text);
+    background: var(--color-background);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* App Container - Single Focus */
+.app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-background);
+}
+
+.focus-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-lg);
+    gap: var(--space-xl);
+}
+
+/* Header - Minimal Wordmark */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md) 0;
+    -webkit-app-region: drag;
+}
+
+.wordmark {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    -webkit-app-region: no-drag;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-text-tertiary);
+    transition: all 0.4s var(--transition-gentle);
+}
+
+.status-indicator.connected .status-dot {
+    background: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-soft);
+}
+
+/* Content - Single Focus Design */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-xxl);
+    text-align: center;
+}
+
+/* State Display - Primary Information */
+.state-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.state-content h1 {
+    font-size: var(--text-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+}
+
+.state-content p {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+}
+
+.state-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    min-height: 80px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Actions - Purposeful Hierarchy */
+.actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.action-primary {
+    margin-bottom: var(--space-md);
+}
+
+.action-secondary {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+/* Buttons - Physics-Based Interactions */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg) var(--space-xxl);
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: var(--text-lg);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s var(--transition-gentle);
+    box-shadow: var(--shadow-medium);
+    min-width: 200px;
+    height: 48px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s var(--transition-gentle);
+}
+
+.btn-primary:hover {
+    transform: scale(1.02) translateY(-1px);
+    box-shadow: var(--shadow-elevated);
+}
+
+.btn-primary:hover::before {
+    opacity: 1;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    transition: transform 0.1s var(--transition-micro);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--color-surface-secondary);
+    color: var(--color-text);
+    border: none;
+    border-radius: 16px;
+    font-size: var(--text-base);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s var(--transition-gentle);
+    min-width: 80px;
+    height: 36px;
+    backdrop-filter: blur(20px);
+}
+
+.btn-secondary:hover {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+    transform: scale(0.96);
+    transition: transform 0.1s var(--transition-micro);
+}
+
+/* Detail Area - Contextual Information */
+.detail-area {
+    max-height: 200px;
+    overflow: hidden;
+    transition: all 0.4s var(--transition-gentle);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.detail-area.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.detail-content {
+    padding: var(--space-lg);
+    background: var(--color-surface-elevated);
+    border-radius: 16px;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* Modal - Minimal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s var(--transition-gentle);
+    z-index: 1000;
+}
+
+.modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--color-surface);
+    border-radius: 20px;
+    box-shadow: var(--shadow-elevated);
+    max-width: 480px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s var(--transition-expressive);
+}
+
+.modal-overlay.visible .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--color-surface-secondary);
+}
+
+.modal-header h2 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s var(--transition-gentle);
+}
+
+.modal-close:hover {
+    background: var(--color-surface-secondary);
+    color: var(--color-text);
+}
+
+.modal-body {
+    padding: var(--space-lg);
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-actions {
+    padding: var(--space-lg);
+    border-top: 1px solid var(--color-surface-secondary);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-md);
+}
+
+/* Settings Panel - Slide-in */
+.settings-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100vh;
+    background: var(--color-surface-elevated);
+    box-shadow: var(--shadow-elevated);
+    transform: translateX(100%);
+    transition: transform 0.4s var(--transition-gentle);
+    z-index: 999;
+    padding: var(--space-xl);
+}
+
+.settings-panel.visible {
+    transform: translateX(0);
+}
+
+.settings-content h2 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-xl);
+}
+
+.setting-group {
+    margin-bottom: var(--space-lg);
+}
+
+.setting-group label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    font-size: var(--text-base);
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.setting-label {
+    flex: 1;
+}
+
+.setting-unit {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    border: 2px solid var(--color-text-tertiary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s var(--transition-gentle);
+    position: relative;
+}
+
+input[type="checkbox"]:checked {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+input[type="checkbox"]:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+input[type="number"] {
+    width: 60px;
+    padding: var(--space-sm);
+    border: 1px solid var(--color-surface-secondary);
+    border-radius: 8px;
+    font-size: var(--text-base);
+    text-align: center;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+/* State Variations */
+.state-loading .state-content h1 {
+    color: var(--color-text-secondary);
+}
+
+.state-error .state-content h1 {
+    color: #FF3B30;
+}
+
+.state-success .state-content h1 {
+    color: var(--color-primary);
+}
+
+/* Micro-interactions */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.loading .status-dot {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in {
+    animation: slideInUp 0.4s var(--transition-gentle);
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-surface: var(--color-surface-dark);
+        --color-surface-elevated: var(--color-surface-elevated-dark);
+        --color-surface-secondary: var(--color-surface-secondary-dark);
+        --color-background: var(--color-surface-dark);
+        --color-text: var(--color-text-dark);
+        --color-text-secondary: var(--color-text-secondary-dark);
+        --color-text-tertiary: var(--color-text-tertiary-dark);
+    }
+}
+
+.dark-mode {
+    --color-surface: var(--color-surface-dark);
+    --color-surface-elevated: var(--color-surface-elevated-dark);
+    --color-surface-secondary: var(--color-surface-secondary-dark);
+    --color-background: var(--color-surface-dark);
+    --color-text: var(--color-text-dark);
+    --color-text-secondary: var(--color-text-secondary-dark);
+    --color-text-tertiary: var(--color-text-tertiary-dark);
+}
+
+/* Responsive - Mobile First */
+@media (max-height: 600px) {
+    .focus-area {
+        gap: var(--space-lg);
+    }
+    
+    .content {
+        gap: var(--space-lg);
+    }
+    
+    .state-content h1 {
+        font-size: var(--text-xxl);
+    }
+}
+
+@media (max-width: 480px) {
+    .focus-area {
+        padding: var(--space-md);
+    }
+    
+    .action-secondary {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+    
+    .btn-secondary {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus States */
+.btn-primary:focus,
+.btn-secondary:focus,
+.modal-close:focus,
+input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --color-text: #000000;
+        --color-text-secondary: #333333;
+        --color-surface-secondary: #F0F0F0;
+    }
+}

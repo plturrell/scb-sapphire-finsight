@@ -49,6 +49,7 @@
       "main.js",
       "preload.js",
       "renderer.js",
+      "grok-api.js",
       "index.html",
       "style.css",
       "assets/**/*",

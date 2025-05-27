@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSight</title>
+    <link rel="stylesheet" href="style-jony-ive.css">
+</head>
+<body class="light-mode">
+    <!-- Jony Ive Principle: Single Focus Interface -->
+    <div class="app" id="app">
+        
+        <!-- Traffic Light Area (macOS) -->
+        <div class="traffic-lights">
+            <div class="traffic-light close"></div>
+            <div class="traffic-light minimize"></div>
+            <div class="traffic-light maximize"></div>
+        </div>
+
+        <!-- Primary Content Area -->
+        <main class="main-content">
+            
+            <!-- Header: Radical Simplicity -->
+            <header class="header">
+                <h1 class="wordmark">FinSight</h1>
+                <div class="status-system">
+                    <div class="connection-indicator" id="connection-status">
+                        <div class="status-dot"></div>
+                    </div>
+                    <button class="settings-trigger" id="settings-btn" aria-label="Settings">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path d="M10 13a3 3 0 100-6 3 3 0 000 6z" fill="currentColor"/>
+                            <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14.5a6.5 6.5 0 110-13 6.5 6.5 0 010 13z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Central Focus: Current State -->
+            <section class="focus-area" id="focus-area">
+                
+                <!-- Current Project Status -->
+                <div class="current-state">
+                    <div class="project-indicator">
+                        <div class="project-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24">
+                                <path d="M8 16l-4-4 4-4M16 8l4 4-4 4" stroke="currentColor" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="project-info">
+                            <span class="project-name">SCB Sapphire FinSight</span>
+                            <span class="current-branch" id="current-branch-name">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-stats" id="project-stats">
+                        <div class="stat">
+                            <span class="stat-value" id="changes-count">-</span>
+                            <span class="stat-label">Changes</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="branches-count">-</span>
+                            <span class="stat-label">Branches</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branch Management Interface -->
+                <div class="branch-interface" id="branch-interface">
+                    
+                    <!-- Branch List: Core Functionality -->
+                    <div class="branch-section">
+                        <div class="section-header">
+                            <h2>Git Branches</h2>
+                            <button class="refresh-btn" id="refresh-branches" aria-label="Refresh">
+                                <svg width="16" height="16" viewBox="0 0 16 16">
+                                    <path d="M8 3a5 5 0 104.546 2.914M8 3V1m0 2l2-2M8 3L6 1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="branch-list" id="branch-list">
+                            <div class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <span>Loading branches...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Primary Actions -->
+                    <div class="actions-section">
+                        <button class="primary-action" id="new-branch-btn">
+                            <svg width="16" height="16" viewBox="0 0 16 16">
+                                <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>New Claude Branch</span>
+                        </button>
+                        
+                        <div class="secondary-actions">
+                            <button class="secondary-action" id="sync-btn">
+                                <svg width="14" height="14" viewBox="0 0 14 14">
+                                    <path d="M2 7h10M9 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                Sync Changes
+                            </button>
+                            <button class="secondary-action" id="cleanup-btn">
+                                <svg width="14" height="14" viewBox="0 0 14 14">
+                                    <path d="M10 6v6H4V6M1 4h12M5 4V2h4v2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                Cleanup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Settings Panel: iOS-Style Side Panel -->
+        <aside class="settings-panel" id="settings-panel">
+            <div class="settings-content">
+                
+                <header class="settings-header">
+                    <h2>Settings</h2>
+                    <button class="close-settings" id="close-settings" aria-label="Close">
+                        <svg width="14" height="14" viewBox="0 0 14 14">
+                            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                    </button>
+                </header>
+
+                <div class="settings-groups">
+                    
+                    <!-- Appearance -->
+                    <div class="settings-group">
+                        <h3>Appearance</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-title">Dark Mode</span>
+                                <span class="setting-description">Use dark interface</span>
+                            </div>
+                            <div class="ios-toggle" id="dark-mode-toggle">
+                                <input type="checkbox" id="dark-mode-input">
+                                <span class="toggle-slider"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Git Management -->
+                    <div class="settings-group">
+                        <h3>Git Management</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-title">Auto-cleanup</span>
+                                <span class="setting-description">Remove old branches after</span>
+                            </div>
+                            <div class="setting-value">
+                                <input type="number" id="cleanup-days-input" min="1" max="30" value="7">
+                                <span class="unit">days</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About -->
+                    <div class="settings-group">
+                        <h3>About</h3>
+                        <div class="setting-item info-item">
+                            <div class="setting-info">
+                                <span class="setting-title">FinSight Desktop</span>
+                                <span class="setting-description">Version 2.0.0</span>
+                            </div>
+                        </div>
+                        <div class="setting-item info-item">
+                            <div class="setting-info">
+                                <span class="setting-title">Project Path</span>
+                                <span class="setting-description" id="project-path">/Users/apple/projects/scb-sapphire-finsight</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </aside>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner large"></div>
+                <span class="loading-text" id="loading-text">Processing...</span>
+            </div>
+        </div>
+
+        <!-- Success/Error Notifications -->
+        <div class="notification" id="notification">
+            <div class="notification-content">
+                <div class="notification-icon" id="notification-icon"></div>
+                <span class="notification-text" id="notification-text"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="renderer-jony-ive.js"></script>
+</body>
+</html>

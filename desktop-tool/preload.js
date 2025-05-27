@@ -16,10 +16,18 @@ contextBridge.exposeInMainWorld('electronAPI', {
     
   // Switch to existing branch
   switchBranch: (branchName) => {
-    if (typeof branchName !== 'string' || !branchName.startsWith('claude-work/')) {
+    if (typeof branchName !== 'string' || branchName.trim().length === 0) {
       throw new Error('Invalid branch name');
     }
     return ipcRenderer.invoke('switch-branch', branchName);
+  },
+
+  // Launch Claude Code on specific branch
+  launchClaudeCodeOnBranch: (branchName) => {
+    if (typeof branchName !== 'string' || branchName.trim().length === 0) {
+      throw new Error('Invalid branch name');
+    }
+    return ipcRenderer.invoke('launch-claude-code-on-branch', branchName);
   },
     
   // Sync changes to local repository
@@ -41,7 +49,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   gitCommand: (command, options = {}) => {
     // Whitelist safe git commands
     const safeCommands = [
-      'status', 'branch', 'log', 'diff', 'show', 'ls-files'
+      'status', 'branch', 'log', 'diff', 'show', 'ls-files', 'rev-parse', 'rev-list', 
+      'add', 'commit', 'push', 'checkout', 'switch', 'config', 'remote'
     ];
         
     if (!safeCommands.includes(command)) {
@@ -50,6 +59,33 @@ contextBridge.exposeInMainWorld('electronAPI', {
         
     return ipcRenderer.invoke('git-command', command, options);
   },
+
+  // === DEPLOYMENT INTEGRATION ===
+  
+  // Deploy to Vercel
+  deployToVercel: () => ipcRenderer.invoke('deploy-to-vercel'),
+  
+  // Get Vercel deployment status
+  getVercelStatus: () => ipcRenderer.invoke('get-vercel-status'),
+
+  // === ZOOKEEPER FEATURE MANAGEMENT ===
+  
+  // Connect to Zookeeper
+  connectToZookeeper: () => ipcRenderer.invoke('connect-to-zookeeper'),
+  
+  // Get Zookeeper features
+  getZookeeperFeatures: () => ipcRenderer.invoke('get-zookeeper-features'),
+
+  // === REAL CODE ANALYSIS ===
+  
+  // Analyze code quality with real tools
+  analyzeCodeQuality: () => ipcRenderer.invoke('analyze-code-quality'),
+  
+  // Get real Vercel deployment logs
+  getVercelLogs: () => ipcRenderer.invoke('get-vercel-logs'),
+  
+  // Analyze project files
+  analyzeProjectFiles: () => ipcRenderer.invoke('analyze-project-files'),
 
   // === SYSTEM INTEGRATION ===
     
@@ -78,6 +114,41 @@ contextBridge.exposeInMainWorld('electronAPI', {
     };
         
     return ipcRenderer.invoke('save-settings', sanitizedSettings);
+  },
+
+  // === GROK3 LLM INTEGRATION ===
+  
+  // Grok3 branch analysis
+  grokAnalyzeBranch: (branchName, changedFiles, lastCommit) => 
+    ipcRenderer.invoke('grok-analyze-branch', branchName, changedFiles, lastCommit),
+  
+  // Grok3 commit message generation
+  grokGenerateCommit: (changedFiles, diffSummary) => 
+    ipcRenderer.invoke('grok-generate-commit', changedFiles, diffSummary),
+  
+  // Grok3 code quality analysis
+  grokAnalyzeQuality: (eslintResults, tsErrors, testResults) => 
+    ipcRenderer.invoke('grok-analyze-quality', eslintResults, tsErrors, testResults),
+  
+  // Test Grok3 connection
+  grokTestConnection: () => ipcRenderer.invoke('grok-test-connection'),
+
+  // === JENA TRIPLE STORE INTEGRATION ===
+  
+  // Store branch analysis in Jena
+  storeBranchAnalysis: (branchData) => {
+    if (typeof branchData !== 'object' || !branchData.branchName) {
+      throw new Error('Invalid branch data for Jena storage');
+    }
+    return ipcRenderer.invoke('store-branch-analysis', branchData);
+  },
+  
+  // Query branch analysis from Jena
+  queryBranchAnalysis: (branchName) => {
+    if (typeof branchName !== 'string' || branchName.trim().length === 0) {
+      throw new Error('Invalid branch name for Jena query');
+    }
+    return ipcRenderer.invoke('query-branch-analysis', branchName);
   },
 
   // === APP INFORMATION ===
