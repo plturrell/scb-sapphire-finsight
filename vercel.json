@@ -10,15 +10,14 @@
     "ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here",
     "NEXT_PUBLIC_ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here"
   },
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/dashboard.html"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/dashboard.html"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "^/$", "dest": "/dashboard.html" },
+    { "src": "^/dashboard/?$", "dest": "/dashboard.html" },
+    { "src": "^/styles/(.+)", "dest": "/styles/$1" },
+    { "src": "^/fonts/(.+)", "dest": "/fonts/$1" },
+    { "src": "^/images/(.+)", "dest": "/images/$1" },
+    { "src": "^/assets/(.+)", "dest": "/assets/$1" }
   ],
   "headers": [
     {

@@ -36,31 +36,38 @@ try {
     }
   }
   
-  // Step 2: Create a minimal index.html if it doesn't exist
+  // Step 2: Create index.html that redirects to dashboard or is a copy of dashboard.html
   const indexHtmlPath = path.join(outDir, 'index.html');
-  if (!fs.existsSync(indexHtmlPath)) {
-    console.log('📝 Creating index.html');
-    
+  const dashboardHtmlPath = path.join(outDir, 'dashboard.html');
+  
+  console.log('📝 Creating index.html that uses dashboard.html content');
+  
+  // Create dashboard.html first (this is done in next step)
+  
+  // Then create index.html as a redirect or copy of dashboard
+  if (fs.existsSync(dashboardHtmlPath)) {
+    // Copy dashboard.html to index.html for local development
+    fs.copyFileSync(dashboardHtmlPath, indexHtmlPath);
+    console.log('✅ Created index.html as a copy of dashboard.html');
+  } else {
+    // Create a minimal redirect
     const indexHtml = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta http-equiv="refresh" content="0;url=/dashboard.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SCB Sapphire FinSight</title>
   <link rel="icon" href="/favicon.ico" />
-  <link rel="stylesheet" href="/styles/scb-styles.css" />
+  <script>window.location.href = "/dashboard.html";</script>
 </head>
 <body>
-  <div id="__next">
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-      <div style="text-align: center;">
-        <h1 class="perfect-h1">SCB Sapphire FinSight</h1>
-        <p class="perfect-body">Loading dashboard...</p>
-        <div class="fiori-btn fiori-btn-primary" style="margin-top: 20px;">
-          <a href="/dashboard" style="color: white; text-decoration: none;">View Dashboard</a>
-        </div>
-      </div>
+  <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="text-align: center;">
+      <h1>SCB Sapphire FinSight</h1>
+      <p>Redirecting to dashboard...</p>
+      <p>If you are not redirected, <a href="/dashboard.html">click here</a>.</p>
     </div>
   </div>
 </body>
@@ -72,7 +79,6 @@ try {
   
   // Step 3: Create a dashboard.html file
   console.log('📝 Creating dashboard.html');
-  const dashboardHtmlPath = path.join(outDir, 'dashboard.html');
   const dashboardHtml = `
 <!DOCTYPE html>
 <html>
