@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:static",
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
-  "framework": "nextjs",
-  "outputDirectory": ".next",
+  "framework": null,
+  "outputDirectory": "out",
   "env": {
     "PERPLEXITY_API_KEY": "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",
     "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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",
@@ -12,12 +12,8 @@
   },
   "rewrites": [
     {
-      "source": "/(.*)\\.map",
-      "destination": "/_next/static/source-maps/$1.map"
-    },
-    {
       "source": "/",
-      "destination": "/dashboard"
+      "destination": "/dashboard.html"
     },
     {
       "source": "/dashboard",
@@ -62,22 +58,6 @@
           "value": "true"
         }
       ]
-    },
-    {
-      "source": "/(.*)\\.map",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        }
-      ]
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)\\.map$",
-      "dest": "/_next/static/source-maps/$1.map",
-      "status": 200
     }
   ]
 }
