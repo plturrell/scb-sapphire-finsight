@@ -1,0 +1,252 @@
+/* Base Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Font Declarations */
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Bold.woff2') format('woff2');
+}
+
+/* Base layer - theme variables */
+@layer base {
+  :root {
+    /* Standard Chartered Bank Colors - 2021 Brand Refresh */
+    --scb-honolulu-blue: 0, 114, 170; /* #0072AA - Primary Blue */
+    --scb-american-green: 33, 170, 71; /* #21AA47 - Secondary Green */
+    --scb-white: 255, 255, 255; /* #FFFFFF */
+    --scb-light-gray: 245, 247, 250; /* #F5F7FA - Background color */
+    --scb-dark-gray: 82, 83, 85; /* #525355 - Secondary text */
+    --scb-muted-red: 211, 55, 50; /* #D33732 - For negative values */
+    --scb-border: 229, 231, 235; /* #E5E7EB - Subtle dividers */
+    
+    /* Tailwind variables for theme system */
+    --color-primary: var(--scb-honolulu-blue);
+    --color-secondary: var(--scb-american-green);
+  }
+  
+  html {
+    font-family: 'SCProsperSans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+  
+  /* Dark mode variables */
+  .dark {
+    --scb-bg-primary: 17, 24, 39;
+    --scb-text-primary: 255, 255, 255;
+  }
+}
+
+/* Components layer - custom components */
+@layer components {
+  /* Perfect Typography Classes */
+  .perfect-h1 {
+    @apply text-4xl font-bold leading-tight;
+  }
+  
+  .perfect-h2 {
+    @apply text-3xl font-semibold leading-tight;
+  }
+  
+  .perfect-h3 {
+    @apply text-2xl font-semibold leading-snug;
+  }
+  
+  .perfect-h4 {
+    @apply text-xl font-medium leading-snug;
+  }
+  
+  .perfect-h5 {
+    @apply text-lg font-medium leading-snug;
+  }
+  
+  .perfect-body {
+    @apply text-base leading-relaxed;
+  }
+  
+  .perfect-body-large {
+    @apply text-lg leading-relaxed;
+  }
+  
+  .perfect-body-small {
+    @apply text-sm leading-normal;
+  }
+  
+  .perfect-caption {
+    @apply text-xs leading-normal opacity-80;
+  }
+  
+  /* Fiori Component Styles */
+  .fiori-shell-header {
+    @apply bg-blue-600 text-white h-12 shadow-sm border-b border-opacity-10;
+  }
+  
+  .fiori-sidebar {
+    @apply bg-white border-r border-gray-200 w-64;
+  }
+  
+  .fiori-sidebar-item {
+    @apply text-gray-600 py-3 px-4 transition-colors duration-200 border-l-4 border-transparent;
+  }
+  
+  .fiori-sidebar-item:hover {
+    @apply bg-blue-50;
+  }
+  
+  .fiori-sidebar-item.active {
+    @apply bg-blue-100 border-l-blue-500 text-blue-700 font-medium;
+  }
+  
+  .fiori-tile {
+    @apply bg-white border border-gray-200 rounded shadow-sm p-4 transition-all duration-200 h-full flex flex-col;
+  }
+  
+  .fiori-tile:hover {
+    @apply shadow-md -translate-y-0.5;
+  }
+  
+  .fiori-tile-title {
+    @apply font-semibold text-base mb-2 text-blue-600;
+  }
+  
+  .fiori-btn {
+    @apply px-4 py-2 rounded-md font-medium transition-all duration-200 flex items-center justify-center gap-2 relative overflow-hidden;
+  }
+  
+  .fiori-btn-primary {
+    @apply bg-blue-600 text-white border border-blue-600;
+  }
+  
+  .fiori-btn-primary:hover {
+    @apply bg-blue-700 -translate-y-0.5 shadow-md;
+  }
+  
+  .fiori-btn-secondary {
+    @apply bg-white text-blue-600 border border-blue-600;
+  }
+  
+  .fiori-btn-secondary:hover {
+    @apply bg-blue-50 -translate-y-0.5;
+  }
+  
+  /* SCB Section Header */
+  .scb-section-header {
+    @apply font-medium text-lg text-gray-600 mb-3;
+  }
+  
+  /* Perfect section spacing */
+  .perfect-section {
+    @apply mb-12;
+  }
+  
+  .perfect-page {
+    @apply mb-16;
+  }
+  
+  /* Perfect link style */
+  .perfect-link {
+    @apply text-blue-600 hover:text-blue-800 transition-colors duration-200;
+  }
+  
+  /* Dark mode versions */
+  .dark .fiori-tile {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .dark .fiori-tile-title {
+    @apply text-blue-400;
+  }
+  
+  .dark .fiori-btn-secondary {
+    @apply bg-gray-800 text-blue-400 border-blue-500;
+  }
+  
+  .dark .fiori-btn-secondary:hover {
+    @apply bg-gray-700;
+  }
+  
+  .dark .scb-section-header {
+    @apply text-gray-300;
+  }
+  
+  .dark .perfect-link {
+    @apply text-blue-400 hover:text-blue-300;
+  }
+}
+
+/* Utilities layer - custom utilities */
+@layer utilities {
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  .theme-transition {
+    @apply transition-colors duration-300;
+  }
+  
+  .safe-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Animation classes */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+  }
+}

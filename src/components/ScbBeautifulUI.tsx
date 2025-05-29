@@ -9,7 +9,7 @@ import useMultiTasking from '../hooks/useMultiTasking';
 import useSafeArea from '../hooks/useSafeArea';
 import { haptics } from '../lib/haptics';
 import { useUIPreferences } from '@/context/UIPreferencesContext';
-import { LayoutDashboard, FileText, Settings, AlertCircle, Book, Zap, Icons } from './IconExports';
+import { LayoutDashboard, FileText, Settings, AlertCircle, Book, Zap, Bell, Icons } from './IconExports';
 
 interface ScbBeautifulUIProps {
   children: React.ReactNode;

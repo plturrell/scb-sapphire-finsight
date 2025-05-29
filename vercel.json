@@ -14,6 +14,14 @@
     {
       "source": "/(.*)\\.map",
       "destination": "/_next/static/source-maps/$1.map"
+    },
+    {
+      "source": "/",
+      "destination": "/dashboard"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
     }
   ],
   "headers": [

@@ -1,5 +1,5 @@
-// import '@/styles/globals.css';
-// import '@/styles/typography.css';
+// Import our core CSS file (no Tailwind directives)
+import '../styles/core.css';
 import type { AppProps } from 'next/app';
 import { ChakraProvider, extendTheme, CSSReset } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -50,8 +50,8 @@ const theme = extendTheme({
     },
   },
   fonts: {
-    heading: "'SC Prosper Sans', 'Inter', sans-serif",
-    body: "'SC Prosper Sans', 'Inter', sans-serif",
+    heading: "'SCProsperSans', 'Inter', sans-serif",
+    body: "'SCProsperSans', 'Inter', sans-serif",
   },
 });
 

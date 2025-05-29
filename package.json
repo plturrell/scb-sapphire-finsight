@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/force-styling.js",
-    "build": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 next build || true",
+    "build": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 next build",
+    "build:safe": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 next build || true",
     "postbuild": "node scripts/fix-source-maps.js",
+    "build:static": "node scripts/static-deploy.js",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
@@ -61,6 +63,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.0",
     "postcss": "^8",
+    "postcss-preset-env": "^10.2.0",
     "tailwindcss": "^3",
     "typescript": "^5"
   }

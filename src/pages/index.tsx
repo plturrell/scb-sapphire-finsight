@@ -288,11 +288,12 @@ export default function Home() {
                 : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200/50'
               }
               backdrop-blur-sm
+              fiori-tile
             `}>
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="perfect-h2 mb-2">Portfolio Overview</h2>
+                    <h2 className="perfect-h2 fiori-tile-title mb-2">Portfolio Overview</h2>
                     <p className="perfect-body-small opacity-70">
                       Real-time performance and insights
                     </p>
@@ -301,6 +302,7 @@ export default function Home() {
                     href="/portfolio"
                     className={`
                       flex items-center space-x-2 px-6 py-3 rounded-2xl transition-all duration-200
+                      fiori-btn fiori-btn-primary
                       ${isDarkMode 
                         ? 'bg-blue-500/20 hover:bg-blue-500/30 text-blue-400' 
                         : 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-600'
@@ -370,11 +372,11 @@ export default function Home() {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center space-x-3">
                 <Sparkles className="w-6 h-6 text-blue-500" />
-                <h2 className="perfect-h3">Intelligent Insights</h2>
+                <h2 className="perfect-h3 scb-section-header">Intelligent Insights</h2>
               </div>
               <Link 
                 href="/analytics"
-                className="perfect-link flex items-center space-x-1"
+                className="perfect-link fiori-btn flex items-center space-x-1"
               >
                 <span>View All</span>
                 <ChevronRight className="w-4 h-4" />
@@ -391,12 +393,14 @@ export default function Home() {
                     key={insight.id}
                     className={`
                       group p-6 rounded-2xl transition-all duration-300 cursor-pointer
+                      fiori-tile
                       ${isDarkMode 
                         ? 'bg-gray-800/30 hover:bg-gray-700/50 border border-gray-700/50' 
                         : 'bg-white/50 hover:bg-white border border-gray-200/50'
                       }
                       backdrop-blur-sm hover:scale-[1.01] hover:shadow-lg
                       ${insight.actionable ? 'hover:shadow-blue-500/20' : ''}
+                      animate-fadeIn
                     `}
                     onClick={() => insight.href && router.push(insight.href)}
                   >
@@ -410,7 +414,7 @@ export default function Home() {
                       
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="perfect-h5">{insight.title}</h3>
+                          <h3 className="perfect-h5 fiori-tile-title">{insight.title}</h3>
                           <div className="flex items-center space-x-2">
                             <div className="flex items-center space-x-1">
                               <Clock className="w-3 h-3 opacity-50" />
@@ -445,9 +449,9 @@ export default function Home() {
           
           {/* Quick Actions */}
           <section className="perfect-section">
-            <h2 className="perfect-h3 mb-8">Quick Actions</h2>
+            <h2 className="perfect-h3 scb-section-header mb-8">Quick Actions</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fadeIn">
               {quickActions.map((action) => (
                 <Link
                   key={action.id}
@@ -456,11 +460,12 @@ export default function Home() {
                     group block p-6 rounded-3xl transition-all duration-300
                     bg-gradient-to-br ${action.color} hover:scale-105 hover:shadow-xl
                     text-white relative overflow-hidden
+                    touch-manipulation
                   `}
                 >
                   <div className="relative z-10">
                     <action.icon className="w-8 h-8 mb-4 group-hover:scale-110 transition-transform duration-300" />
-                    <h3 className="perfect-h5 text-white mb-2">{action.label}</h3>
+                    <h3 className="perfect-h5 fiori-tile-title text-white mb-2">{action.label}</h3>
                     <p className="perfect-caption text-white/80">{action.description}</p>
                   </div>
                   

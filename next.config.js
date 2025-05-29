@@ -24,20 +24,14 @@ const nextConfig = {
   
   // Experimental features
   experimental: {
-    craCompat: false,
-    esmExternals: false,
+    esmExternals: true,
     webpackBuildWorker: false
   },
   
-  // Completely disable minification and source maps to avoid Terser
+  // Simplified webpack configuration
   webpack: (config, { isServer, dev }) => {
     // Disable all minimizers
     config.optimization.minimize = false;
-    
-    // Remove any Terser plugins from the minimizer array
-    if (config.optimization.minimizer) {
-      config.optimization.minimizer = [];
-    }
     
     // Use named modules for easier debugging
     config.optimization.moduleIds = 'named';
@@ -48,35 +42,8 @@ const nextConfig = {
       config.devtool = 'nosources-source-map';
     }
     
-    // Simplify CSS processing
-    config.module.rules.forEach((rule) => {
-      if (rule.oneOf) {
-        rule.oneOf.forEach((oneOfRule) => {
-          if (oneOfRule.test && oneOfRule.test.toString().includes('\\.css')) {
-            if (oneOfRule.use && Array.isArray(oneOfRule.use)) {
-              oneOfRule.use.forEach((loader) => {
-                if (typeof loader === 'object' && loader.options) {
-                  // Only disable source maps for css-loader and postcss-loader
-                  if (loader.loader && (loader.loader.includes('css-loader') || loader.loader.includes('postcss-loader'))) {
-                    loader.options.sourceMap = false;
-                  }
-                  // Remove invalid sourceMap option from mini-css-extract-plugin
-                  if (loader.loader && loader.loader.includes('mini-css-extract-plugin')) {
-                    delete loader.options.sourceMap;
-                  }
-                }
-              });
-            }
-          }
-        });
-      }
-    });
-    
     return config;
   },
-  
-  // Server-side rendering enabled for API routes
-  // output: 'export', // Commented out to allow API routes
   
   // Environment variables for build
   env: {
