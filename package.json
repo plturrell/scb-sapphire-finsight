@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "node scripts/force-styling.js",
-    "build": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 next build",
-    "build:safe": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 next build || true",
+    "build": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 SKIP_CSS_TRANSFORM=true next build",
+    "build:safe": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 SKIP_CSS_TRANSFORM=true next build || true",
     "postbuild": "node scripts/fix-source-maps.js",
     "build:static": "node scripts/static-deploy.js",
+    "build:dynamic": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 SKIP_CSS_TRANSFORM=true next build && node scripts/post-build-dynamic.js",
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
