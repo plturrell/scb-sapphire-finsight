@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:dynamic",
+  "buildCommand": "npm run build:static",
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
-  "framework": "nextjs",
-  "outputDirectory": ".next",
+  "framework": null,
+  "outputDirectory": "out",
   "env": {
     "PERPLEXITY_API_KEY": "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",
     "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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",
@@ -27,33 +27,19 @@
           "value": "X-Requested-With, Content-Type, Accept, Authorization"
         }
       ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-Requested-With, Content-Type, Accept, Authorization"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
     }
   ],
-  "rewrites": [
-    {
-      "source": "/(.*)\\.map",
-      "destination": "/_next/static/source-maps/$1.map"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "^/$", "dest": "/index.html" },
+    { "src": "^/dashboard/?$", "dest": "/index.html" },
+    { "src": "^/vietnam-tariff-dashboard/?$", "dest": "/vietnam-tariff-dashboard.html" },
+    { "src": "^/vietnam-monte-carlo/?$", "dest": "/vietnam-monte-carlo.html" },
+    { "src": "^/perplexity-test/?$", "dest": "/perplexity-test.html" },
+    { "src": "^/financial-simulation/?$", "dest": "/financial-simulation.html" },
+    { "src": "^/styles/(.+)", "dest": "/styles/$1" },
+    { "src": "^/fonts/(.+)", "dest": "/fonts/$1" },
+    { "src": "^/images/(.+)", "dest": "/images/$1" },
+    { "src": "^/assets/(.+)", "dest": "/assets/$1" }
   ]
 }

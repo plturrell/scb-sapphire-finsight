@@ -290,6 +290,15 @@ try {
     }
   }
   
+  // Create enhanced HTML pages with dynamic features
+  try {
+    console.log('📝 Creating enhanced HTML pages with dynamic features');
+    require('./create-enhanced-html');
+    console.log('✅ Enhanced HTML pages created successfully');
+  } catch (error) {
+    console.error(`❌ Error creating enhanced HTML pages: ${error.message}`);
+  }
+
   console.log('✅ Static deployment created successfully');
   console.log('To view the application, run: npx serve out');
   
