@@ -8,7 +8,7 @@
     "build": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 SKIP_CSS_TRANSFORM=true next build",
     "build:safe": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 SKIP_CSS_TRANSFORM=true next build || true",
     "postbuild": "node scripts/fix-source-maps.js",
-    "build:static": "node scripts/static-deploy.js",
+    "build:static": "next build && next export && node scripts/enhanced-ui/deploy-refined-ui.js",
     "build:dynamic": "NODE_OPTIONS='--max_old_space_size=4096 --unhandled-rejections=strict' NEXT_TELEMETRY_DISABLED=1 SKIP_CSS_TRANSFORM=true next build && node scripts/post-build-dynamic.js",
     "start": "next start",
     "lint": "next lint",
@@ -23,7 +23,8 @@
     "offline:status": "./scripts/offline-status.sh",
     "desktop": "./desktop-tool/launch.sh",
     "desktop:dev": "./desktop-tool/launch.sh dev",
-    "desktop:build": "./desktop-tool/launch.sh build"
+    "desktop:build": "./desktop-tool/launch.sh build",
+    "build:refined-ui": "node scripts/enhanced-ui/deploy-refined-ui.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.52.0",
@@ -61,6 +62,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10",
+    "cheerio": "^1.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.0.0",
     "postcss": "^8",
