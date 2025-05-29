@@ -10,27 +10,17 @@
     "ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here",
     "NEXT_PUBLIC_ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here"
   },
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "X-Requested-With, Content-Type, Accept, Authorization"
-        }
-      ]
-    }
-  ],
   "routes": [
     { "handle": "filesystem" },
+    { 
+      "src": "/(.*)",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Authorization"
+      },
+      "continue": true
+    },
     { "src": "^/$", "dest": "/index.html" },
     { "src": "^/dashboard/?$", "dest": "/index.html" },
     { "src": "^/vietnam-tariff-dashboard/?$", "dest": "/vietnam-tariff-dashboard.html" },
