@@ -28,7 +28,7 @@ const nextConfig = {
     webpackBuildWorker: false
   },
   
-  // Simplified webpack configuration
+  // Improved webpack configuration
   webpack: (config, { isServer, dev }) => {
     // Disable all minimizers
     config.optimization.minimize = false;
@@ -41,6 +41,30 @@ const nextConfig = {
     if (!isServer) {
       config.devtool = 'nosources-source-map';
     }
+    
+    // Special handling for CSS files
+    const cssRules = config.module.rules.find(rule => 
+      rule.oneOf && rule.oneOf.find(r => r.test && r.test.toString().includes('css'))
+    ).oneOf;
+    
+    // Modify CSS rules to avoid parsing errors
+    cssRules.forEach(rule => {
+      if (rule.test && rule.test.toString().includes('css')) {
+        if (rule.use && Array.isArray(rule.use)) {
+          rule.use.forEach(loader => {
+            if (loader.options && loader.options.postcssOptions) {
+              // Simplify PostCSS processing
+              loader.options.postcssOptions = {
+                ...loader.options.postcssOptions,
+                plugins: [
+                  ["autoprefixer", {}]
+                ]
+              };
+            }
+          });
+        }
+      }
+    });
     
     return config;
   },

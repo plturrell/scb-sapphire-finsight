@@ -1,41 +1,59 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:static",
+  "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps && npm uninstall @react-spring/web --legacy-peer-deps",
-  "framework": null,
-  "outputDirectory": "out",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
   "env": {
     "PERPLEXITY_API_KEY": "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",
     "NEXT_PUBLIC_PERPLEXITY_API_KEY": "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",
     "ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here",
     "NEXT_PUBLIC_ANTHROPIC_API_KEY": "sk-ant-your-actual-api-key-here"
   },
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "^/$", "dest": "/dashboard.html" },
-    { "src": "^/dashboard/?$", "dest": "/dashboard.html" },
-    { "src": "^/styles/(.+)", "dest": "/styles/$1" },
-    { "src": "^/fonts/(.+)", "dest": "/fonts/$1" },
-    { "src": "^/images/(.+)", "dest": "/images/$1" },
-    { "src": "^/assets/(.+)", "dest": "/assets/$1" },
-    { 
-      "src": "/(.*)", 
-      "headers": { 
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Authorization"
-      }, 
-      "continue": true 
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Accept, Authorization"
+        }
+      ]
     },
-    { 
-      "src": "/api/(.*)", 
-      "headers": { 
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Authorization",
-        "Access-Control-Allow-Credentials": "true"
-      }, 
-      "continue": true 
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Accept, Authorization"
+        },
+        {
+          "key": "Access-Control-Allow-Credentials",
+          "value": "true"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)\\.map",
+      "destination": "/_next/static/source-maps/$1.map"
     }
   ]
 }
