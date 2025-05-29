@@ -60,9 +60,9 @@
   --text-inverse: rgb(255, 255, 255);   /* Dark backgrounds */
 }
 
-/* Base Typography - True Apple System Fonts */
+/* Base Typography - SC Prosper Sans with Apple System Fallbacks */
 html {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+  font-family: 'SCProsperSans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
   font-feature-settings: 'kern', 'liga', 'clig', 'calt';
   font-variation-settings: normal;
   text-rendering: optimizeLegibility;
@@ -366,7 +366,40 @@ body {
   border: 0;
 }
 
-/* Font Loading Optimization */
+/* Font Loading Optimization - SCProsperSans */
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'SCProsperSans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/SCProsperSans-Bold.woff2') format('woff2');
+}
+
+/* Fallback to Inter */
 @font-face {
   font-family: 'Inter';
   font-style: normal;

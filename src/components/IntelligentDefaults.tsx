@@ -17,9 +17,16 @@ interface IntelligentDefaultsProps {
 const IntelligentDefaults: React.FC<IntelligentDefaultsProps> = ({
   onDefaultsApplied
 }) => {
-  const { preferences, updatePreferences } = useUIPreferences();
+  const { preferences, setPreference } = useUIPreferences();
   const [isLearning, setIsLearning] = useState(true);
   const [detectedContext, setDetectedContext] = useState<any>({});
+  
+  // Helper function to apply multiple preferences
+  const applyIntelligentSettings = (settings: any) => {
+    Object.entries(settings).forEach(([key, value]) => {
+      setPreference(key, value);
+    });
+  };
   
   // Intelligent context detection
   useEffect(() => {
@@ -92,7 +99,7 @@ const IntelligentDefaults: React.FC<IntelligentDefaultsProps> = ({
     const shouldApplyDefaults = !preferences.hasBeenCustomized;
     
     if (shouldApplyDefaults) {
-      updatePreferences({
+      applyIntelligentSettings({
         ...intelligentSettings,
         hasBeenCustomized: false // Mark as intelligent defaults, not user customization
       });
@@ -104,7 +111,7 @@ const IntelligentDefaults: React.FC<IntelligentDefaultsProps> = ({
     } else {
       setIsLearning(false);
     }
-  }, [detectedContext, preferences.hasBeenCustomized, updatePreferences]);
+  }, [detectedContext, preferences.hasBeenCustomized]);
   
   // Generate intelligent settings based on context
   const generateIntelligentSettings = (context: any) => {
